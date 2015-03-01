@@ -27,25 +27,25 @@
     <orderEntry type="library" scope="TEST" name="SBT: org.scalatest:scalatest_2.11:2.2.1:jar" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="SBT: org.scoverage:scalac-scoverage-plugin_2.11:1.0.4:jar" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="SBT: org.scoverage:scalac-scoverage-runtime_2.11:1.0.4:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.google.code.findbugs:jsr305:1.3.9:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.google.guava:guava:16.0.1:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:finagle-core_2.11:6.24.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:finagle-http_2.11:6.24.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:util-app_2.11:6.23.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:util-codec_2.11:6.23.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:util-collection_2.11:6.23.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:util-core_2.11:6.23.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:util-hashing_2.11:6.23.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:util-jvm_2.11:6.23.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:util-logging_2.11:6.23.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: com.twitter:util-stats_2.11:6.23.0:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: commons-codec:commons-codec:1.6:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: commons-collections:commons-collections:3.2.1:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: commons-lang:commons-lang:2.6:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: io.netty:netty:3.9.4.Final:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: javax.inject:javax.inject:1:jar" level="project" />
-    <orderEntry type="library" name="SBT: joda-time:joda-time:2.6:jar" level="project" />
     <orderEntry type="library" name="SBT: net.sourceforge.argo:argo:3.12:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: org.scala-lang.modules:scala-parser-combinators_2.11:1.0.2:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.google.code.findbugs:jsr305:1.3.9:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.google.guava:guava:16.0.1:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:finagle-core_2.11:6.24.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:finagle-http_2.11:6.24.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:util-app_2.11:6.23.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:util-codec_2.11:6.23.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:util-collection_2.11:6.23.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:util-core_2.11:6.23.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:util-hashing_2.11:6.23.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:util-jvm_2.11:6.23.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:util-logging_2.11:6.23.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: com.twitter:util-stats_2.11:6.23.0:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: commons-codec:commons-codec:1.6:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: commons-collections:commons-collections:3.2.1:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: commons-lang:commons-lang:2.6:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: io.netty:netty:3.9.4.Final:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: javax.inject:javax.inject:1:jar" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="SBT: org.scala-lang.modules:scala-parser-combinators_2.11:1.0.2:jar" level="project" />
+    <orderEntry type="library" name="SBT: joda-time:joda-time:2.7:jar" level="project" />
   </component>
 </module>
