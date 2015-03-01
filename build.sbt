@@ -15,7 +15,6 @@ crossScalaVersions := Seq("2.10.4", "2.11.5")
 
 libraryDependencies ++= Seq(
   "net.sourceforge.argo" % "argo" % "3.12",
-  "joda-time" % "joda-time" % "2.6",
   "com.twitter" %% "finagle-http" % "6.24.0" % "test",
   "org.scalatest" %% "scalatest" % "2.2.1" % "test")
 
