@@ -2,13 +2,15 @@ package io.github.daviddenton.fintrospect.util
 
 import argo.format.{CompactJsonFormatter, PrettyJsonFormatter}
 import argo.jdom.JsonNodeFactories._
-import argo.jdom.{JsonNode, JsonNodeFactories, JsonRootNode}
+import argo.jdom.{JdomParser, JsonNode, JsonNodeFactories, JsonRootNode}
 
 object ArgoUtil {
 
   private val pretty = new PrettyJsonFormatter()
   private val compact = new CompactJsonFormatter()
 
+  def parse(in: String): JsonRootNode = new JdomParser().parse(in)
+  
   def pretty(node: JsonRootNode): String = pretty.format(node)
 
   def compact(node: JsonRootNode): String = compact.format(node)

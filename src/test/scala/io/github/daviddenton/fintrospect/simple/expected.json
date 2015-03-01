@@ -1,0 +1,7 @@
+{
+  "resources": {
+    "GET:/welcome/{firstName}/bertrand/{secondName}": "a friendly endpoint",
+    "POST:/echo/{message}": "a post endpoint",
+    "GET:/echo/{message}": "a get endpoint"
+  }
+}
