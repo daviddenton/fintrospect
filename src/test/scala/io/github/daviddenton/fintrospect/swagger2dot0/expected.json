@@ -1,0 +1,86 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "title",
+    "version": "version"
+  },
+  "basePath": "/",
+  "paths": {
+    "/welcome/{firstName}/bertrand/{secondName}": {
+      "get": {
+        "summary": "a friendly endpoint",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "firstName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "secondName",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {}
+        ]
+      }
+    },
+    "/echo/{message}": {
+      "post": {
+        "summary": "a post endpoint",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {}
+        ]
+      },
+      "get": {
+        "summary": "a get endpoint",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {}
+        ]
+      }
+    }
+  }
+}
