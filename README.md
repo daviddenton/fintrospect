@@ -4,7 +4,8 @@ Fintrospect [![Build Status](https://travis-ci.org/daviddenton/fintrospect.svg)]
 ###Get it:
 Add the following dependency to ```build.sbt```:
 ```scala
-libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "0.0.0"
+resolvers += "JCenter" at "https://jcenter.bintray.com"
+libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "0.0.1"
 ```
 
 ###See it:

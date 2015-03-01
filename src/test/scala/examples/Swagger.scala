@@ -1,4 +1,4 @@
-package io.github.daviddenton.fintrospect.example
+package examples
 
 import java.nio.charset.StandardCharsets._
 
@@ -6,8 +6,8 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.{Await, Future}
-import io.github.daviddenton.fintrospect.SegmentMatchers._
 import io.github.daviddenton.fintrospect.FintrospectModule
+import io.github.daviddenton.fintrospect.SegmentMatchers._
 import io.github.daviddenton.fintrospect.swagger2dot0.{SwDescription, SwaggerJson}
 import org.jboss.netty.handler.codec.http.HttpMethod
 
