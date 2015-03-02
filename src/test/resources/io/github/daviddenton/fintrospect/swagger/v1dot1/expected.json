@@ -1,34 +1,70 @@
 {
   "swaggerVersion": "1.1",
   "resourcePath": "/",
-  "description": "InstitutionalTokenController",
   "apis": [
     {
-      "path": "/institutional-token/",
+      "path": "/welcome/{firstName}/bertrand/{secondName}",
       "operations": [
         {
-          "httpMethod": "POST",
-          "responseClass": "InstitutionalTokenResponse",
-          "summary": "Creates an institutional token from the given parameters",
+          "httpMethod": "GET",
+          "summary": "a friendly endpoint",
+          "produces": [
+            "application/json"
+          ],
           "parameters": [
             {
-              "name": "institutional-token-request",
-              "description": "payload of the institutional token request",
+              "name": "firstName",
+              "paramType": "path",
               "required": true,
-              "paramType": "body|header|query|body",
+              "dataType": "string"
+            },
+            {
+              "name": "secondName",
+              "paramType": "path",
+              "required": true,
               "dataType": "string"
             }
           ],
-          "errorResponses": [
+          "errorResponses": []
+        }
+      ]
+    },
+    {
+      "path": "/echo/{message}",
+      "operations": [
+        {
+          "httpMethod": "POST",
+          "summary": "a post endpoint",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
             {
-              "code": 401,
-              "reason": "If X-API-Key is missing or invalid"
+              "name": "message",
+              "paramType": "path",
+              "required": true,
+              "dataType": "string"
             }
-          ]
+          ],
+          "errorResponses": []
+        },
+        {
+          "httpMethod": "GET",
+          "summary": "a get endpoint",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "message",
+              "paramType": "path",
+              "required": true,
+              "dataType": "string"
+            }
+          ],
+          "errorResponses": []
         }
       ]
     }
-  ],
-  "models": {
-  }
+  ]
 }

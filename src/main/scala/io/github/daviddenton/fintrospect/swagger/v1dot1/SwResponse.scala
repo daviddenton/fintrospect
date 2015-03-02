@@ -5,5 +5,5 @@ import argo.jdom.JsonNodeFactories._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 case class SwResponse(private val code: Int, private val description: String) {
-   protected[v1dot1] def toJsonPair: (String, JsonNode) = code.toString -> obj("description" -> string(description))
- }
+  protected[v1dot1] def toJson: JsonNode = obj("code" -> number(code), "description" -> string(description))
+}
