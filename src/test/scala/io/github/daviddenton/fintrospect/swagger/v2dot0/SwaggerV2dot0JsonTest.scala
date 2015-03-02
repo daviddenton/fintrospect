@@ -1,4 +1,4 @@
-package io.github.daviddenton.fintrospect.swagger.v2
+package io.github.daviddenton.fintrospect.swagger.v2dot0
 
 import java.nio.charset.StandardCharsets._
 
@@ -13,11 +13,11 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.io.Source
 
-class SwaggerV2JsonTest extends FunSpec with ShouldMatchers {
+class SwaggerV2dot0JsonTest extends FunSpec with ShouldMatchers {
 
   describe("swagger") {
     it("renders as expected") {
-      val module = FintrospectModule(Root, SwaggerV2Json)
+      val module = FintrospectModule(Root, SwaggerV2dot0Json)
         .withRoute(SwDescription("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => null)
         .withRoute(SwDescription("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => null)
         .withRoute(SwDescription("a friendly endpoint", HttpMethod.GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => null)
