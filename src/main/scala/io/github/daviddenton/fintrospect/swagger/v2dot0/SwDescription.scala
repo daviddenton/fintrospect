@@ -1,4 +1,4 @@
-package io.github.daviddenton.fintrospect.swagger.v2
+package io.github.daviddenton.fintrospect.swagger.v2dot0
 
 import java.beans.Introspector.decapitalize
 

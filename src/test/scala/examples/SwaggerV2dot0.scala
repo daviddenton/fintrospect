@@ -8,16 +8,16 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.{Await, Future}
 import io.github.daviddenton.fintrospect.FintrospectModule
 import io.github.daviddenton.fintrospect.SegmentMatchers._
-import io.github.daviddenton.fintrospect.swagger.v2.{SwDescription, SwaggerV2Json}
+import io.github.daviddenton.fintrospect.swagger.v2dot0.{SwaggerV2dot0Json, SwDescription}
 import org.jboss.netty.handler.codec.http.HttpMethod
 
-object SwaggerV2 extends App {
+object SwaggerV2dot0 extends App {
 
   case class AService() extends Service[Request, Response] {
     def apply(request: Request): Future[Response] = ???
   }
 
-  val module = FintrospectModule(Root, SwaggerV2Json)
+  val module = FintrospectModule(Root, SwaggerV2dot0Json)
     .withRoute(SwDescription("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => AService())
     .withRoute(SwDescription("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => AService())
     .withRoute(SwDescription("a friendly endpoint", HttpMethod.GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => AService())
