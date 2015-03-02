@@ -1,12 +1,12 @@
-package io.github.daviddenton.fintrospect.swagger2dot0
+package io.github.daviddenton.fintrospect.swagger.v2
 
 import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories._
-import org.jboss.netty.handler.codec.http.HttpMethod
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import org.jboss.netty.handler.codec.http.HttpMethod
 
 case class SwPathMethod(private val method: HttpMethod, private val summary: String, private val params: Seq[SwParameter], private val responses: Seq[SwResponse], private val securities: Seq[SwSecurity]) {
-  protected[swagger2dot0] def toJsonPair: (String, JsonNode) = method.getName.toLowerCase -> obj(
+  protected[v2] def toJsonPair: (String, JsonNode) = method.getName.toLowerCase -> obj(
     "summary" -> string(summary),
     "produces" -> array(string("application/json")),
     "parameters" -> array(params.map(_.toJson): _*),
