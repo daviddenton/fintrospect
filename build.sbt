@@ -7,7 +7,7 @@ organization := orgName
 
 name := projectName
 
-description := ""
+description := "Library that adds self-documentation to Finagle server endpoint services"
 
 scalaVersion := "2.11.5"
 

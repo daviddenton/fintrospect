@@ -13,7 +13,7 @@ case class SwDescription(value: String, method: HttpMethod, complete: (Path => P
       .flatMap(_.argument)
       .map { case (name, clazz) => SwParameter(name, Location.path, decapitalize(clazz.getSimpleName))}
 
-    SwPathMethod(method, value, params, Seq(SwResponse(200, ""))).toJsonPair
+    SwPathMethod(method, value, params, Seq()).toJsonPair
   }
 
 }
