@@ -12,7 +12,7 @@ resolvers += "JCenter" at "https://jcenter.bintray.com"
 
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.24.0"
 
-libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "0.0.1"
+libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "X.X.X"
 ```
 
 ###See it:
