@@ -1,11 +1,11 @@
-package io.github.daviddenton.fintrospect.swagger2dot0
+package io.github.daviddenton.fintrospect.swagger.v2
 
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.JsonRootNode
 import io.github.daviddenton.fintrospect.ModuleRoute
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
-object SwaggerJson extends (Seq[ModuleRoute[SwDescription]] => JsonRootNode) {
+object SwaggerV2Json extends (Seq[ModuleRoute[SwDescription]] => JsonRootNode) {
   def apply(moduleRoutes: Seq[ModuleRoute[SwDescription]]): JsonRootNode = {
     val paths = moduleRoutes
       .groupBy(_.toString)
