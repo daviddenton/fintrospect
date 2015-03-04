@@ -7,6 +7,7 @@
       "operations": [
         {
           "httpMethod": "GET",
+          "nickname": "a friendly endpoint",
           "summary": "a friendly endpoint",
           "produces": [
             "application/json"
@@ -34,6 +35,7 @@
       "operations": [
         {
           "httpMethod": "POST",
+          "nickname": "a post endpoint",
           "summary": "a post endpoint",
           "produces": [
             "application/json"
@@ -50,6 +52,7 @@
         },
         {
           "httpMethod": "GET",
+          "nickname": "a get endpoint",
           "summary": "a get endpoint",
           "produces": [
             "application/json"
