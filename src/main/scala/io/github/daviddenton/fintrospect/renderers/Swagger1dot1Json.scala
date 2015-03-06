@@ -9,8 +9,11 @@ import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
+import org.jboss.netty.handler.codec.http.HttpMethod
 
 object Swagger1dot1Json {
+
+  private case class PathMethod(method: HttpMethod, summary: String, params: Seq[Parameter], responses: Seq[PathResponse], securities: Seq[Security])
 
   private def render(p: Parameter): JsonNode = obj(
     "name" -> string(p.name),
