@@ -10,7 +10,7 @@ import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule
 import io.github.daviddenton.fintrospect.SegmentMatchers._
 import io.github.daviddenton.fintrospect.simple.SimpleJson
-import io.github.daviddenton.fintrospect.swagger.SwDescription
+import io.github.daviddenton.fintrospect.swagger.Description
 import org.jboss.netty.handler.codec.http.HttpMethod
 
 object Simple extends App {
@@ -20,9 +20,9 @@ object Simple extends App {
   }
 
   val module = FintrospectModule(Root, SimpleJson)
-    .withRoute(SwDescription("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => AService())
-    .withRoute(SwDescription("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => AService())
-    .withRoute(SwDescription("a friendly endpoint", HttpMethod.GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => AService())
+    .withRoute(Description("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => AService())
+    .withRoute(Description("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => AService())
+    .withRoute(Description("a friendly endpoint", HttpMethod.GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => AService())
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))

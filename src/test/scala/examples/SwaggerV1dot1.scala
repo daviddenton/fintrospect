@@ -7,16 +7,16 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Http, Request, RichHttp}
 import io.github.daviddenton.fintrospect.FintrospectModule
 import io.github.daviddenton.fintrospect.SegmentMatchers._
-import io.github.daviddenton.fintrospect.swagger.SwDescription
+import io.github.daviddenton.fintrospect.swagger.Description
 import io.github.daviddenton.fintrospect.swagger.v1dot1.Swagger1Renderer
 import org.jboss.netty.handler.codec.http.HttpMethod
 import util.Echo
 
 object SwaggerV1dot1 extends App {
    val module = FintrospectModule(Root, Swagger1Renderer)
-     .withRoute(SwDescription("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => Echo(s))
-     .withRoute(SwDescription("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => Echo(s))
-     .withRoute(SwDescription("a friendly endpoint", HttpMethod.GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
+     .withRoute(Description("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => Echo(s))
+     .withRoute(Description("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => Echo(s))
+     .withRoute(Description("a friendly endpoint", HttpMethod.GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))
