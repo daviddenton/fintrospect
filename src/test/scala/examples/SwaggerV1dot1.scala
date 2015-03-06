@@ -13,7 +13,6 @@ import org.jboss.netty.handler.codec.http.HttpMethod
 import util.Echo
 
 object SwaggerV1dot1 extends App {
-
    val module = FintrospectModule(Root, Swagger1Renderer)
      .withRoute(SwDescription("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => Echo(s))
      .withRoute(SwDescription("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => Echo(s))
