@@ -1,7 +1,6 @@
 package io.github.daviddenton.fintrospect
 
 import argo.jdom.JsonRootNode
-import com.twitter.finagle.http.filter.Cors.{HttpFilter, UnsafePermissivePolicy}
 import com.twitter.finagle.http.path.{Path, _}
 import com.twitter.finagle.http.service.RoutingService
 import com.twitter.finagle.http.{Request, Response}
@@ -47,7 +46,7 @@ class FintrospectModule private(private val rootPath: Path, private val defaultR
   }
 
   private def withDefault() = {
-    withRoute(Description("Description route", GET, identity), () => new HttpFilter(UnsafePermissivePolicy).andThen(RoutesContent(pretty(defaultRender(moduleRoutes)))))
+    withRoute(Description("Description route", GET, identity), () => RoutesContent(pretty(defaultRender(moduleRoutes))))
   }
 
   private def withDescribedRoute(description: Description, sm: SM[_]*)(bindFn: Identify => Binding): FintrospectModule = {

@@ -9,6 +9,9 @@ import util.ResponseBuilder._
 
 case class Echo(parts: String*) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
-    Ok(obj("message" -> string(parts.mkString(" "))))
+    Ok(obj(
+      "headers" -> string(request.getHeaders().toString),
+      "params" -> string(request.getParams().toString),
+      "message" -> string(parts.mkString(" "))))
   }
 }

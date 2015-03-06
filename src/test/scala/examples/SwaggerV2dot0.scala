@@ -3,6 +3,7 @@ package examples
 import java.net.InetSocketAddress
 
 import com.twitter.finagle.builder.ServerBuilder
+import com.twitter.finagle.http.filter.Cors._
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Http, Request, RichHttp}
 import io.github.daviddenton.fintrospect.SegmentMatchers._
@@ -21,7 +22,7 @@ object SwaggerV2dot0 extends App {
     .codec(RichHttp[Request](Http()))
     .bindTo(new InetSocketAddress(8080))
     .name("")
-    .build(module.toService)
+    .build(new HttpFilter(UnsafePermissivePolicy).andThen(module.toService))
 
   println("See the service description at: http://localhost:8080")
 }
