@@ -1,5 +1,6 @@
 package io.github.daviddenton.fintrospect
 
+import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.filter.Cors.{HttpFilter, UnsafePermissivePolicy}
 import com.twitter.finagle.http.path.{Path, _}
 import com.twitter.finagle.http.service.RoutingService
@@ -22,10 +23,10 @@ object FintrospectModule {
 
   def toService(binding: Binding): Svc = RoutingService.byMethodAndPathObject(binding)
 
-  def apply[Ds <: Description](rootPath: Path, defaultRender: Renderer): FintrospectModule = new FintrospectModule(rootPath, defaultRender, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
+  def apply[Ds <: Description](rootPath: Path, defaultRender: (Seq[ModuleRoute] => JsonRootNode)): FintrospectModule = new FintrospectModule(rootPath, defaultRender, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
 }
 
-class FintrospectModule private(private val rootPath: Path, private val defaultRender: Renderer, private val moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
+class FintrospectModule private(private val rootPath: Path, private val defaultRender: (Seq[ModuleRoute] => JsonRootNode), private val moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
 
   private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
@@ -46,7 +47,7 @@ class FintrospectModule private(private val rootPath: Path, private val defaultR
 
   private def withDefault() = {
     new FintrospectModule(rootPath, defaultRender, moduleRoutes, userRoutes.orElse({
-      case HttpMethod.GET -> p if p == rootPath => new HttpFilter(UnsafePermissivePolicy).andThen(RoutesToJson(pretty(defaultRender.render(moduleRoutes))))
+      case HttpMethod.GET -> p if p == rootPath => new HttpFilter(UnsafePermissivePolicy).andThen(RoutesToJson(pretty(defaultRender(moduleRoutes))))
     }))
   }
 

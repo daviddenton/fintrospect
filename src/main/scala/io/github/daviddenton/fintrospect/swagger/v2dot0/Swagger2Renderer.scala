@@ -4,11 +4,11 @@ import java.beans.Introspector.decapitalize
 
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
+import io.github.daviddenton.fintrospect.ModuleRoute
 import io.github.daviddenton.fintrospect.swagger.{Location, SwParameter, SwPathMethod, SwResponse}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import io.github.daviddenton.fintrospect.{ModuleRoute, Renderer}
 
-object Swagger2Renderer extends Renderer {
+object Swagger2Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
   private def render(p: SwParameter): JsonNode = obj(
     "in" -> string(p.location.toString),
     "name" -> string(p.name),
@@ -37,7 +37,7 @@ object Swagger2Renderer extends Renderer {
     render(SwPathMethod(r.description.method, r.description.value, params, Seq(SwResponse(200, "")), Seq()))
   }
 
-  override def render(mr: Seq[ModuleRoute]): JsonRootNode = {
+  override def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
     val paths = mr
       .groupBy(_.toString)
       .map { case (path, routes) => path -> obj(routes.map(render))}.toSeq
