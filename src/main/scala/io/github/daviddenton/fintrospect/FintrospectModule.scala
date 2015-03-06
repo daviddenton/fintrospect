@@ -23,7 +23,7 @@ object FintrospectModule {
 
   def toService(binding: Binding): Svc = RoutingService.byMethodAndPathObject(binding)
 
-  def apply[Ds <: Description](rootPath: Path, defaultRender: (Seq[ModuleRoute] => JsonRootNode)): FintrospectModule = new FintrospectModule(rootPath, defaultRender, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
+  def apply(rootPath: Path, defaultRender: (Seq[ModuleRoute] => JsonRootNode)): FintrospectModule = new FintrospectModule(rootPath, defaultRender, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
 }
 
 class FintrospectModule private(private val rootPath: Path, private val defaultRender: (Seq[ModuleRoute] => JsonRootNode), private val moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
