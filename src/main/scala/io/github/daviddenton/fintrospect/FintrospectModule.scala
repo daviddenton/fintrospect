@@ -11,6 +11,7 @@ import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.util.ArgoUtil.pretty
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpMethod
+import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.util.CharsetUtil._
 
 object FintrospectModule {
@@ -35,7 +36,7 @@ class FintrospectModule private(private val rootPath: Path, private val defaultR
     }
   }
 
-  private case class RoutesToJson(descriptionContent: String) extends Service[Request, Response]() {
+  private case class RoutesContent(descriptionContent: String) extends Service[Request, Response]() {
     override def apply(request: Request): Future[Response] = {
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + s":${request.getUri()}")
       val response = Response()
@@ -46,9 +47,7 @@ class FintrospectModule private(private val rootPath: Path, private val defaultR
   }
 
   private def withDefault() = {
-    new FintrospectModule(rootPath, defaultRender, moduleRoutes, userRoutes.orElse({
-      case HttpMethod.GET -> p if p == rootPath => new HttpFilter(UnsafePermissivePolicy).andThen(RoutesToJson(pretty(defaultRender(moduleRoutes))))
-    }))
+    withRoute(Description("Description route", GET, identity), () => new HttpFilter(UnsafePermissivePolicy).andThen(RoutesContent(pretty(defaultRender(moduleRoutes)))))
   }
 
   private def withDescribedRoute(description: Description, sm: SM[_]*)(bindFn: Identify => Binding): FintrospectModule = {
