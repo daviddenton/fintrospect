@@ -24,6 +24,12 @@
             "name": "secondName",
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": true,
+            "type": "boolean"
           }
         ],
         "responses": {
@@ -48,6 +54,12 @@
             "name": "message",
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "bodyParam",
+            "required": true,
+            "type": "int"
           }
         ],
         "responses": {
@@ -68,6 +80,12 @@
           {
             "in": "path",
             "name": "message",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "header",
             "required": true,
             "type": "string"
           }
