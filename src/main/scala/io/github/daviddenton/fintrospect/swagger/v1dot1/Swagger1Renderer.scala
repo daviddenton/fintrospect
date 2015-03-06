@@ -11,14 +11,14 @@ import io.github.daviddenton.fintrospect.{ModuleRoute, Renderer}
 import scala.collection.JavaConversions._
 
 object Swagger1Renderer extends Renderer {
-  override def render(p: SwParameter): JsonNode = obj(
+  private def render(p: SwParameter): JsonNode = obj(
     "name" -> string(p.name),
     "paramType" -> string(p.location.toString),
     "required" -> booleanNode(true),
     "dataType" -> string(p.paramType)
   )
 
-  override def render(pm: SwPathMethod): (String, JsonNode) = pm.method.getName.toLowerCase -> obj(
+  private def render(pm: SwPathMethod): (String, JsonNode) = pm.method.getName.toLowerCase -> obj(
     "httpMethod" -> string(pm.method.getName),
     "nickname" -> string(pm.summary),
     "summary" -> string(pm.summary),
@@ -29,7 +29,7 @@ object Swagger1Renderer extends Renderer {
     }
   )
 
-  override def render(r: ModuleRoute): (String, JsonNode) = {
+  private def render(r: ModuleRoute): (String, JsonNode) = {
     val params = r.segmentMatchers
       .flatMap(_.argument)
       .map { case (name, clazz) => SwParameter(name, Location.path, decapitalize(clazz.getSimpleName))}
@@ -37,7 +37,7 @@ object Swagger1Renderer extends Renderer {
     render(SwPathMethod(r.description.method, r.description.value, params, Seq(), Seq()))
   }
 
-  override def render(r: SwResponse): (Int, JsonNode) = r.code -> string(r.description)
+  private def render(r: SwResponse): (Int, JsonNode) = r.code -> string(r.description)
 
   override def render(mr: Seq[ModuleRoute]): JsonRootNode = {
     val api = mr
