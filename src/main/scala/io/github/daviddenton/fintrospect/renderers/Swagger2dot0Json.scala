@@ -14,7 +14,7 @@ object Swagger2dot0Json {
   private def render(p: Parameter): JsonNode = obj(
     "in" -> string(p.location.toString),
     "name" -> string(p.name),
-    "required" -> booleanNode(true),
+    "required" -> booleanNode(p.required),
     "type" -> string(p.paramType)
   )
 
