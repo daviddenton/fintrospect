@@ -5,14 +5,14 @@ import java.net.InetSocketAddress
 import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Http, Request, RichHttp}
+import io.github.daviddenton.fintrospect.renderers.Swagger1dot1Json
 import io.github.daviddenton.fintrospect.{Description, FintrospectModule}
 import io.github.daviddenton.fintrospect.SegmentMatchers._
-import io.github.daviddenton.fintrospect.swagger.v1dot1.Swagger1Renderer
 import org.jboss.netty.handler.codec.http.HttpMethod
 import util.Echo
 
 object SwaggerV1dot1 extends App {
-   val module = FintrospectModule(Root, Swagger1Renderer)
+   val module = FintrospectModule(Root, Swagger1dot1Json())
      .withRoute(Description("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => Echo(s))
      .withRoute(Description("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => Echo(s))
      .withRoute(Description("a friendly endpoint", HttpMethod.GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
