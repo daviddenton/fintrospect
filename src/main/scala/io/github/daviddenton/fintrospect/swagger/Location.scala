@@ -1,4 +1,4 @@
-package io.github.daviddenton.fintrospect.swagger.v2dot0
+package io.github.daviddenton.fintrospect.swagger
 
 object Location extends Enumeration {
   type Location = Value
