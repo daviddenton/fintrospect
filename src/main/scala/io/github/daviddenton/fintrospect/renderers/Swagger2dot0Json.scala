@@ -19,11 +19,10 @@ object Swagger2dot0Json {
   )
 
   private def render(r: ModuleRoute): (String, JsonNode) = {
-    val params = r.segmentMatchers.flatMap(_.toParameter)
     r.description.method.getName.toLowerCase -> obj(
       "summary" -> string(r.description.value),
       "produces" -> array(string("application/json")),
-      "parameters" -> array(params.map(render): _*),
+      "parameters" -> array(r.params.map(render): _*),
       "responses" -> obj(Seq(PathResponse(200, "")).map(r => r.code.toString -> obj("description" -> string(r.description)))),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )

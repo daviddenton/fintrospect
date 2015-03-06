@@ -17,16 +17,13 @@ object Swagger1dot1Json {
     "dataType" -> string(p.paramType)
   )
 
-
   private def render(r: ModuleRoute): (String, JsonNode) = {
-    val params = r.segmentMatchers.flatMap(_.toParameter)
-
     r.description.method.getName.toLowerCase -> obj(
       "httpMethod" -> string(r.description.method.getName),
       "nickname" -> string(r.description.value),
       "summary" -> string(r.description.value),
       "produces" -> array(string("application/json")),
-      "parameters" -> array(params.map(render): _*),
+      "parameters" -> array(r.params.map(render): _*),
       "errorResponses" ->  array(Seq[PathResponse]().map(r => obj("code" -> number(r.code), "description" -> string(r.description))))
     )
   }
