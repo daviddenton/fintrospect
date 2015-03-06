@@ -32,7 +32,7 @@ object Swagger2dot0Json {
       .flatMap(_.argument)
       .map { case (name, clazz) => Parameter(name, Location.path, decapitalize(clazz.getSimpleName))}
 
-    render(PathMethod(r.description.method, r.description.value, params, Seq(Response(200, "")), Seq()))
+    render(PathMethod(r.description.method, r.description.value, params, Seq(PathResponse(200, "")), Seq()))
   }
 
   def apply(): Renderer =

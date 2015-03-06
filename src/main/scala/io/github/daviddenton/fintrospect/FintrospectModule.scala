@@ -4,7 +4,7 @@ import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.filter.Cors.{HttpFilter, UnsafePermissivePolicy}
 import com.twitter.finagle.http.path.{Path, _}
 import com.twitter.finagle.http.service.RoutingService
-import com.twitter.finagle.http.{Request, Response => FinRs}
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
@@ -17,7 +17,7 @@ object FintrospectModule {
   val IDENTIFY_SVC_HEADER = "descriptionServiceId"
 
   type Renderer = (Seq[ModuleRoute] => JsonRootNode)
-  private type Svc = Service[Request, FinRs]
+  private type Svc = Service[Request, Response]
   private type Binding = PartialFunction[(HttpMethod, Path), Svc]
   private type SM[P] = SegmentMatcher[P]
 
@@ -28,17 +28,17 @@ object FintrospectModule {
 
 class FintrospectModule private(private val rootPath: Path, private val defaultRender: Renderer, private val moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
 
-  private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, FinRs]() {
-    override def apply(request: Request, service: Service[Request, FinRs]): Future[FinRs] = {
+  private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
+    override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + ":" + moduleRoute.toString())
       service(request)
     }
   }
 
-  private case class RoutesToJson(jsonStr: String) extends Service[Request, FinRs]() {
-    override def apply(request: Request): Future[FinRs] = {
+  private case class RoutesToJson(jsonStr: String) extends Service[Request, Response]() {
+    override def apply(request: Request): Future[Response] = {
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + s":${request.getUri()}")
-      val response = FinRs()
+      val response = Response()
       response.setStatusCode(200)
       response.setContent(copiedBuffer(jsonStr, UTF_8))
       Future.value(response)
