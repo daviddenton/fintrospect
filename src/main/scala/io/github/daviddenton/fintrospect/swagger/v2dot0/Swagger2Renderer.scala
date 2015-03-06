@@ -4,8 +4,7 @@ import java.beans.Introspector.decapitalize
 
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
-import io.github.daviddenton.fintrospect.{Response, PathMethod, Location, ModuleRoute}
-import io.github.daviddenton.fintrospect.swagger.Parameter
+import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 object Swagger2Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
