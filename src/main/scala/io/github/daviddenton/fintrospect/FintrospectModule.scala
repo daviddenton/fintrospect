@@ -35,12 +35,12 @@ class FintrospectModule private(private val rootPath: Path, private val defaultR
     }
   }
 
-  private case class RoutesToJson(jsonStr: String) extends Service[Request, Response]() {
+  private case class RoutesToJson(descriptionContent: String) extends Service[Request, Response]() {
     override def apply(request: Request): Future[Response] = {
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + s":${request.getUri()}")
       val response = Response()
       response.setStatusCode(200)
-      response.setContent(copiedBuffer(jsonStr, UTF_8))
+      response.setContent(copiedBuffer(descriptionContent, UTF_8))
       Future.value(response)
     }
   }
