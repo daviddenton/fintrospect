@@ -1,4 +1,4 @@
-package io.github.daviddenton.fintrospect.swagger
+package io.github.daviddenton.fintrospect
 
 import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories._
