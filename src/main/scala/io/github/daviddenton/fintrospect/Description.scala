@@ -1,4 +1,4 @@
-package io.github.daviddenton.fintrospect.swagger
+package io.github.daviddenton.fintrospect
 
 import com.twitter.finagle.http.path.Path
 import org.jboss.netty.handler.codec.http.HttpMethod

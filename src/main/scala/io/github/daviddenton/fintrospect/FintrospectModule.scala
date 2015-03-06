@@ -8,7 +8,6 @@ import com.twitter.finagle.http.{Request, Response => FinRs}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
-import io.github.daviddenton.fintrospect.swagger.Description
 import io.github.daviddenton.fintrospect.util.ArgoUtil.pretty
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpMethod
