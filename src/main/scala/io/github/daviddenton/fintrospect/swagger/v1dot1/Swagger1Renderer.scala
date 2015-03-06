@@ -1,8 +1,10 @@
 package io.github.daviddenton.fintrospect.swagger.v1dot1
 
+import java.beans.Introspector.decapitalize
+
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
-import io.github.daviddenton.fintrospect.swagger.{SwParameter, SwPathMethod, SwResponse}
+import io.github.daviddenton.fintrospect.swagger.{Location, SwParameter, SwPathMethod, SwResponse}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.{ModuleRoute, Renderer}
 
@@ -27,7 +29,13 @@ object Swagger1Renderer extends Renderer {
     }
   )
 
-  override def render(r: ModuleRoute): (String, JsonNode) = ???
+  override def render(r: ModuleRoute): (String, JsonNode) = {
+    val params = r.segmentMatchers
+      .flatMap(_.argument)
+      .map { case (name, clazz) => SwParameter(name, Location.path, decapitalize(clazz.getSimpleName))}
+
+    render(SwPathMethod(r.description.method, r.description.value, params, Seq(), Seq()))
+  }
 
   override def render(r: SwResponse): (Int, JsonNode) = r.code -> string(r.description)
 
