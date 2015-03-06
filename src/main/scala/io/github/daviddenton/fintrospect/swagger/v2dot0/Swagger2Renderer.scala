@@ -1,8 +1,10 @@
 package io.github.daviddenton.fintrospect.swagger.v2dot0
 
+import java.beans.Introspector.decapitalize
+
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
-import io.github.daviddenton.fintrospect.swagger.{SwParameter, SwPathMethod, SwResponse}
+import io.github.daviddenton.fintrospect.swagger.{Location, SwParameter, SwPathMethod, SwResponse}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.{ModuleRoute, Renderer}
 
@@ -28,18 +30,11 @@ object Swagger2Renderer extends Renderer {
   override def render(r: SwResponse): (Int, JsonNode) = r.code -> obj("description" -> string(r.description))
 
   override def render(r: ModuleRoute): (String, JsonNode) = {
+    val params = r.segmentMatchers
+      .flatMap(_.argument)
+      .map { case (name, clazz) => SwParameter(name, Location.path, decapitalize(clazz.getSimpleName))}
 
-    //    def render(rootPath: Path, sm: Seq[SegmentMatcher[_]]): (String, JsonNode) = {
-    //      val params = sm
-    //        .flatMap(_.argument)
-    //        .map { case (name, clazz) => SwParameter(name, Location.path, decapitalize(clazz.getSimpleName))}
-    //
-    //      render(SwPathMethod(method, value, params, Seq(SwResponse(200, "")), Seq()).toJsonPair
-    //    }
-    ???
-    //    render(SwPathMethod(r.))
-    //
-    //    r.description.toJsonField(rootPath, segmentMatchers)
+    render(SwPathMethod(r.description.method, r.description.value, params, Seq(SwResponse(200, "")), Seq()))
   }
 
   override def render(mr: Seq[ModuleRoute]): JsonRootNode = {
