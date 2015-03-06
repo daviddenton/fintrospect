@@ -4,8 +4,8 @@ import java.beans.Introspector._
 
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
-import io.github.daviddenton.fintrospect.ModuleRoute
-import io.github.daviddenton.fintrospect.swagger.{Location, Parameter, PathMethod}
+import io.github.daviddenton.fintrospect.{Location, ModuleRoute}
+import io.github.daviddenton.fintrospect.swagger.{Parameter, PathMethod}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
