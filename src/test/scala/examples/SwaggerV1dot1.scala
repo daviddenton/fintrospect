@@ -5,9 +5,9 @@ import java.net.InetSocketAddress
 import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Http, Request, RichHttp}
+import io.github.daviddenton.fintrospect.SegmentMatchers._
 import io.github.daviddenton.fintrospect.renderers.Swagger1dot1Json
 import io.github.daviddenton.fintrospect.{Description, FintrospectModule}
-import io.github.daviddenton.fintrospect.SegmentMatchers._
 import org.jboss.netty.handler.codec.http.HttpMethod
 import util.Echo
 

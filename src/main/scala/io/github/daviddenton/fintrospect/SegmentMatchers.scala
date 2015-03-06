@@ -1,7 +1,7 @@
 package io.github.daviddenton.fintrospect
 
-import org.joda.time.DateTime
 import com.twitter.finagle.http.{path => fp}
+import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat.dateTimeNoMillis
 
 import scala.util.Try

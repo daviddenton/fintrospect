@@ -2,7 +2,7 @@ package io.github.daviddenton.fintrospect
 
 import io.github.daviddenton.fintrospect.SegmentMatchers._
 import org.joda.time.DateTime
-import org.scalatest.{ShouldMatchers, FunSpec}
+import org.scalatest.{FunSpec, ShouldMatchers}
 
 class SegmentMatcherTest extends FunSpec with ShouldMatchers {
 
