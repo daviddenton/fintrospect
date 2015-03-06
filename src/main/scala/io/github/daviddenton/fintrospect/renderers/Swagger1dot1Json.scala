@@ -5,13 +5,10 @@ import argo.jdom.JsonNodeFactories._
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import org.jboss.netty.handler.codec.http.HttpMethod
 
 import scala.collection.JavaConversions._
 
 object Swagger1dot1Json {
-
-  private case class PathMethod(method: HttpMethod, summary: String, params: Seq[Parameter], responses: Seq[PathResponse], securities: Seq[Security])
 
   private def render(p: Parameter): JsonNode = obj(
     "name" -> string(p.name),
@@ -20,19 +17,20 @@ object Swagger1dot1Json {
     "dataType" -> string(p.paramType)
   )
 
-  private def render(pm: PathMethod): (String, JsonNode) = pm.method.getName.toLowerCase -> obj(
-    "httpMethod" -> string(pm.method.getName),
-    "nickname" -> string(pm.summary),
-    "summary" -> string(pm.summary),
-    "produces" -> array(string("application/json")),
-    "parameters" -> array(pm.params.map(render): _*),
-    "errorResponses" -> {
-      array(pm.responses.map(r => r.code -> string(r.description)).map(p => obj("code" -> number(p._1), "description" -> p._2)))
-    }
-  )
 
   private def render(r: ModuleRoute): (String, JsonNode) = {
-    render(PathMethod(r.description.method, r.description.value, r.segmentMatchers.flatMap(_.toParameter), Seq(), Seq()))
+    val params = r.segmentMatchers.flatMap(_.toParameter)
+
+    r.description.method.getName.toLowerCase -> obj(
+      "httpMethod" -> string(r.description.method.getName),
+      "nickname" -> string(r.description.value),
+      "summary" -> string(r.description.value),
+      "produces" -> array(string("application/json")),
+      "parameters" -> array(params.map(render): _*),
+      "errorResponses" -> {
+        array(Seq[PathResponse]().map(r => r.code -> string(r.description)).map(p => obj("code" -> number(p._1), "description" -> p._2)))
+      }
+    )
   }
 
   def apply(): Renderer =
