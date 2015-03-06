@@ -27,9 +27,7 @@ object Swagger1dot1Json {
       "summary" -> string(r.description.value),
       "produces" -> array(string("application/json")),
       "parameters" -> array(params.map(render): _*),
-      "errorResponses" -> {
-        array(Seq[PathResponse]().map(r => r.code -> string(r.description)).map(p => obj("code" -> number(p._1), "description" -> p._2)))
-      }
+      "errorResponses" ->  array(Seq[PathResponse]().map(r => obj("code" -> number(r.code), "description" -> string(r.description))))
     )
   }
 

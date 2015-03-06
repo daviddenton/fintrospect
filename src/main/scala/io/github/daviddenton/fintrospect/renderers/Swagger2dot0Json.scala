@@ -24,7 +24,7 @@ object Swagger2dot0Json {
       "summary" -> string(r.description.value),
       "produces" -> array(string("application/json")),
       "parameters" -> array(params.map(render): _*),
-      "responses" -> obj(Seq(PathResponse(200, "")).map(r => r.code -> obj("description" -> string(r.description))).map(cd => cd._1.toString -> cd._2)),
+      "responses" -> obj(Seq(PathResponse(200, "")).map(r => r.code.toString -> obj("description" -> string(r.description)))),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
   }
