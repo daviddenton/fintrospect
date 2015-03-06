@@ -8,7 +8,7 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 object SimpleJson {
   private def render(mr: ModuleRoute): (String, JsonNode) = {
-    mr.description.method + ":" + (mr.description.complete(mr.rootPath).toString :: mr.segmentMatchers.map(_.toString).toList).mkString("/") -> string(mr.description.value)
+    mr.description.method + ":" + mr.toString -> string(mr.description.value)
   }
 
   def apply(): Renderer = mr => obj("resources" -> obj(mr.map(render)))
