@@ -1,6 +1,6 @@
 package io.github.daviddenton.fintrospect.swagger.v1dot1
 
-import java.beans.Introspector.decapitalize
+import java.beans.Introspector._
 
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
