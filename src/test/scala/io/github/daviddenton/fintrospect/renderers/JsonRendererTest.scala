@@ -16,7 +16,7 @@ abstract class JsonRendererTest(name: String, renderer: FintrospectModule.Render
   describe(name) {
     it("renders as expected") {
       val module = FintrospectModule(Root, renderer)
-        .withRoute(Description("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => null)
+        .withRoute(Description("a get endpoint", HttpMethod.GET, _ / "echo").withHeader("aHeader", classOf[String]), string("message"), (s: String) => null)
         .withRoute(Description("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => null)
         .withRoute(Description("a friendly endpoint", HttpMethod.GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => null)
 
