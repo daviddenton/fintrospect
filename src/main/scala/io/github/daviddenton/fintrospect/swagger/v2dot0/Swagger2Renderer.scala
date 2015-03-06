@@ -22,12 +22,10 @@ object Swagger2Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
       "summary" -> string(pm.summary),
       "produces" -> array(string("application/json")),
       "parameters" -> array(pm.params.map(render): _*),
-      "responses" -> obj(pm.responses.map(render).map(cd => cd._1.toString -> cd._2)),
+      "responses" -> obj(pm.responses.map(r => r.code -> obj("description" -> string(r.description))).map(cd => cd._1.toString -> cd._2)),
       "security" -> array(obj(pm.securities.map(_.toPathSecurity)))
     )
   }
-
-  private def render(r: SwResponse): (Int, JsonNode) = r.code -> obj("description" -> string(r.description))
 
   private def render(r: ModuleRoute): (String, JsonNode) = {
     val params = r.segmentMatchers

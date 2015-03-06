@@ -5,7 +5,7 @@ import java.beans.Introspector._
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect.ModuleRoute
-import io.github.daviddenton.fintrospect.swagger.{Location, SwParameter, SwPathMethod, SwResponse}
+import io.github.daviddenton.fintrospect.swagger.{Location, SwParameter, SwPathMethod}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
@@ -25,7 +25,7 @@ object Swagger1Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
     "produces" -> array(string("application/json")),
     "parameters" -> array(pm.params.map(render): _*),
     "errorResponses" -> {
-      array(pm.responses.map(render).map(p => obj("code" -> number(p._1), "description" -> p._2)))
+      array(pm.responses.map(r => r.code -> string(r.description)).map(p => obj("code" -> number(p._1), "description" -> p._2)))
     }
   )
 
@@ -36,8 +36,6 @@ object Swagger1Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
 
     render(SwPathMethod(r.description.method, r.description.value, params, Seq(), Seq()))
   }
-
-  private def render(r: SwResponse): (Int, JsonNode) = r.code -> string(r.description)
 
   override def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
     val api = mr
