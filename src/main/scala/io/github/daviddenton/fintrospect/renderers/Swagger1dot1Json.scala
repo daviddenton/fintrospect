@@ -1,15 +1,17 @@
-package io.github.daviddenton.fintrospect.swagger.v1dot1
+package io.github.daviddenton.fintrospect.renderers
 
 import java.beans.Introspector._
 
+import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories._
-import argo.jdom.{JsonNode, JsonRootNode}
-import io.github.daviddenton.fintrospect.{Parameter, PathMethod, Location, ModuleRoute}
+import io.github.daviddenton.fintrospect.FintrospectModule._
+import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
 
-object Swagger1Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
+object Swagger1dot1Json {
+
   private def render(p: Parameter): JsonNode = obj(
     "name" -> string(p.name),
     "paramType" -> string(p.location.toString),
@@ -36,25 +38,26 @@ object Swagger1Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
     render(PathMethod(r.description.method, r.description.value, params, Seq(), Seq()))
   }
 
-  override def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
-    val api = mr
-      .groupBy(_.toString)
-      .map { case (path, routes) => obj("path" -> string(path), "operations" -> array(routes.map(render(_)._2): _*))}
+  def apply(): Renderer =
+    mr => {
+      val api = mr
+        .groupBy(_.toString)
+        .map { case (path, routes) => obj("path" -> string(path), "operations" -> array(routes.map(render(_)._2): _*))}
 
-    obj(
-      "swaggerVersion" -> string("1.1"),
-      "resourcePath" -> string("/"),
-      "apis" -> array(asJavaIterable(api))
-      //    "definitions" -> obj(
-      //      "User" -> obj(
-      //        "properties" -> obj(
-      //          "id" -> obj(
-      //            "type" -> "integer",
-      //            "format" -> "int64"
-      //          )
-      //        )
-      //      )
-      //    )
-    )
-  }
+      obj(
+        "swaggerVersion" -> string("1.1"),
+        "resourcePath" -> string("/"),
+        "apis" -> array(asJavaIterable(api))
+        //    "definitions" -> obj(
+        //      "User" -> obj(
+        //        "properties" -> obj(
+        //          "id" -> obj(
+        //            "type" -> "integer",
+        //            "format" -> "int64"
+        //          )
+        //        )
+        //      )
+        //    )
+      )
+    }
 }

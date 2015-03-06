@@ -16,16 +16,17 @@ import org.jboss.netty.util.CharsetUtil._
 object FintrospectModule {
   val IDENTIFY_SVC_HEADER = "descriptionServiceId"
 
+  type Renderer = (Seq[ModuleRoute] => JsonRootNode)
   private type Svc = Service[Request, FinRs]
   private type Binding = PartialFunction[(HttpMethod, Path), Svc]
   private type SM[P] = SegmentMatcher[P]
 
   def toService(binding: Binding): Svc = RoutingService.byMethodAndPathObject(binding)
 
-  def apply(rootPath: Path, defaultRender: (Seq[ModuleRoute] => JsonRootNode)): FintrospectModule = new FintrospectModule(rootPath, defaultRender, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
+  def apply(rootPath: Path, defaultRender: Renderer): FintrospectModule = new FintrospectModule(rootPath, defaultRender, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
 }
 
-class FintrospectModule private(private val rootPath: Path, private val defaultRender: (Seq[ModuleRoute] => JsonRootNode), private val moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
+class FintrospectModule private(private val rootPath: Path, private val defaultRender: Renderer, private val moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
 
   private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, FinRs]() {
     override def apply(request: Request, service: Service[Request, FinRs]): Future[FinRs] = {

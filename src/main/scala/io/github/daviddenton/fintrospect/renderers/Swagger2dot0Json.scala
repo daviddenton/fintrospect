@@ -1,13 +1,14 @@
-package io.github.daviddenton.fintrospect.swagger.v2dot0
+package io.github.daviddenton.fintrospect.renderers
 
 import java.beans.Introspector.decapitalize
 
+import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories._
-import argo.jdom.{JsonNode, JsonRootNode}
+import io.github.daviddenton.fintrospect.FintrospectModule.Renderer
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
-object Swagger2Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
+object Swagger2dot0Json {
   private def render(p: Parameter): JsonNode = obj(
     "in" -> string(p.location.toString),
     "name" -> string(p.name),
@@ -34,26 +35,27 @@ object Swagger2Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
     render(PathMethod(r.description.method, r.description.value, params, Seq(Response(200, "")), Seq()))
   }
 
-  override def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
-    val paths = mr
-      .groupBy(_.toString)
-      .map { case (path, routes) => path -> obj(routes.map(render))}.toSeq
+  def apply(): Renderer =
+    mr => {
+      val paths = mr
+        .groupBy(_.toString)
+        .map { case (path, routes) => path -> obj(routes.map(render))}.toSeq
 
-    obj(
-      "swagger" -> string("2.0"),
-      "info" -> obj("title" -> string("title"), "version" -> string("version")),
-      "basePath" -> string("/"),
-      "paths" -> obj(paths)
-      //    "definitions" -> obj(
-      //      "User" -> obj(
-      //        "properties" -> obj(
-      //          "id" -> obj(
-      //            "type" -> "integer",
-      //            "format" -> "int64"
-      //          )
-      //        )
-      //      )
-      //    )
-    )
-  }
+      obj(
+        "swagger" -> string("2.0"),
+        "info" -> obj("title" -> string("title"), "version" -> string("version")),
+        "basePath" -> string("/"),
+        "paths" -> obj(paths)
+        //    "definitions" -> obj(
+        //      "User" -> obj(
+        //        "properties" -> obj(
+        //          "id" -> obj(
+        //            "type" -> "integer",
+        //            "format" -> "int64"
+        //          )
+        //        )
+        //      )
+        //    )
+      )
+    }
 }
