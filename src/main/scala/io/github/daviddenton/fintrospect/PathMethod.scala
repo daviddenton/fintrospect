@@ -1,8 +1,6 @@
-package io.github.daviddenton.fintrospect.swagger
+package io.github.daviddenton.fintrospect
 
-import argo.jdom.JsonNode
-import argo.jdom.JsonNodeFactories._
-import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.swagger.{Parameter, Response, SwSecurity}
 import org.jboss.netty.handler.codec.http.HttpMethod
 
 case class PathMethod(method: HttpMethod, summary: String, params: Seq[Parameter], responses: Seq[Response], securities: Seq[SwSecurity])
