@@ -24,6 +24,12 @@
               "paramType": "path",
               "required": true,
               "dataType": "string"
+            },
+            {
+              "name": "query",
+              "paramType": "query",
+              "required": true,
+              "dataType": "boolean"
             }
           ],
           "errorResponses": []
@@ -46,6 +52,12 @@
               "paramType": "path",
               "required": true,
               "dataType": "string"
+            },
+            {
+              "name": "bodyParam",
+              "paramType": "body",
+              "required": true,
+              "dataType": "int"
             }
           ],
           "errorResponses": []
@@ -61,6 +73,12 @@
             {
               "name": "message",
               "paramType": "path",
+              "required": true,
+              "dataType": "string"
+            },
+            {
+              "name": "header",
+              "paramType": "header",
               "required": true,
               "dataType": "string"
             }

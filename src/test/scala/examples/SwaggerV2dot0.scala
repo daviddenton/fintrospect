@@ -12,10 +12,7 @@ import org.jboss.netty.handler.codec.http.HttpMethod
 import util.Echo
 
 object SwaggerV2dot0 extends App {
-
-  private val renderer = Swagger2dot0Json()
-
-  val module = FintrospectModule(Root, renderer)
+  val module = FintrospectModule(Root, Swagger2dot0Json())
     .withRoute(Description("a get endpoint", HttpMethod.GET, _ / "echo").withHeader("header", classOf[String]), string("message"), (s: String) => Echo(s))
     .withRoute(Description("a post endpoint", HttpMethod.POST, _ / "echo").withBodyParam("bodyParam", classOf[Int]), string("message"), (s: String) => Echo(s))
     .withRoute(Description("a friendly endpoint", HttpMethod.GET, _ / "welcome").withQueryParam("query", classOf[Boolean]), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
