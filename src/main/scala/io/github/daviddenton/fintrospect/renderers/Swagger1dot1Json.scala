@@ -32,7 +32,7 @@ object Swagger1dot1Json {
   )
 
   private def render(r: ModuleRoute): (String, JsonNode) = {
-    render(PathMethod(r.description.method, r.description.value, r.segmentMatchers.flatMap(_.argument), Seq(), Seq()))
+    render(PathMethod(r.description.method, r.description.value, r.segmentMatchers.flatMap(_.toParameter), Seq(), Seq()))
   }
 
   def apply(): Renderer =

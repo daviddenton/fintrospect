@@ -1,7 +1,7 @@
 package io.github.daviddenton.fintrospect
 
 trait SegmentMatcher[T] {
-  val argument: Option[Parameter] = None
+  val toParameter: Option[Parameter] = None
 
   def unapply(str: String): Option[T]
 }
