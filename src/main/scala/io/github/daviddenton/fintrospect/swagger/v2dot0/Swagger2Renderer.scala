@@ -5,11 +5,11 @@ import java.beans.Introspector.decapitalize
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect.ModuleRoute
-import io.github.daviddenton.fintrospect.swagger.{Location, SwParameter, SwPathMethod, SwResponse}
+import io.github.daviddenton.fintrospect.swagger.{Location, Parameter, PathMethod, Response}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 object Swagger2Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
-  private def render(p: SwParameter): JsonNode = obj(
+  private def render(p: Parameter): JsonNode = obj(
     "in" -> string(p.location.toString),
     "name" -> string(p.name),
     "required" -> booleanNode(true),
@@ -17,7 +17,7 @@ object Swagger2Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
   )
 
 
-  private def render(pm: SwPathMethod): (String, JsonNode) = {
+  private def render(pm: PathMethod): (String, JsonNode) = {
     pm.method.getName.toLowerCase -> obj(
       "summary" -> string(pm.summary),
       "produces" -> array(string("application/json")),
@@ -30,9 +30,9 @@ object Swagger2Renderer extends (Seq[ModuleRoute] => JsonRootNode) {
   private def render(r: ModuleRoute): (String, JsonNode) = {
     val params = r.segmentMatchers
       .flatMap(_.argument)
-      .map { case (name, clazz) => SwParameter(name, Location.path, decapitalize(clazz.getSimpleName))}
+      .map { case (name, clazz) => Parameter(name, Location.path, decapitalize(clazz.getSimpleName))}
 
-    render(SwPathMethod(r.description.method, r.description.value, params, Seq(SwResponse(200, "")), Seq()))
+    render(PathMethod(r.description.method, r.description.value, params, Seq(Response(200, "")), Seq()))
   }
 
   override def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
