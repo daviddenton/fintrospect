@@ -1,15 +1,13 @@
 package io.github.daviddenton.fintrospect.renderers
 
-import java.beans.Introspector._
-
 import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories._
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import org.jboss.netty.handler.codec.http.HttpMethod
 
 import scala.collection.JavaConversions._
-import org.jboss.netty.handler.codec.http.HttpMethod
 
 object Swagger1dot1Json {
 
@@ -34,11 +32,7 @@ object Swagger1dot1Json {
   )
 
   private def render(r: ModuleRoute): (String, JsonNode) = {
-    val params = r.segmentMatchers
-      .flatMap(_.argument)
-      .map { case (name, clazz) => Parameter(name, Location.path, decapitalize(clazz.getSimpleName))}
-
-    render(PathMethod(r.description.method, r.description.value, params, Seq(), Seq()))
+    render(PathMethod(r.description.method, r.description.value, r.segmentMatchers.flatMap(_.argument), Seq(), Seq()))
   }
 
   def apply(): Renderer =

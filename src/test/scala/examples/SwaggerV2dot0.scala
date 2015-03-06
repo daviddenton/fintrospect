@@ -13,7 +13,9 @@ import util.Echo
 
 object SwaggerV2dot0 extends App {
 
-  val module = FintrospectModule(Root, Swagger2dot0Json())
+  private val renderer = Swagger2dot0Json()
+
+  val module = FintrospectModule(Root, renderer)
     .withRoute(Description("a get endpoint", HttpMethod.GET, _ / "echo"), string("message"), (s: String) => Echo(s))
     .withRoute(Description("a post endpoint", HttpMethod.POST, _ / "echo"), string("message"), (s: String) => Echo(s))
     .withRoute(Description("a friendly endpoint", HttpMethod.GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
