@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 
 object Swagger1dot1Json {
 
-  private def render(p: Parameter): JsonNode = obj(
+  private def render(p: Parameter[_]): JsonNode = obj(
     "name" -> string(p.name),
     "paramType" -> string(p.location.toString),
     "required" -> booleanNode(true),

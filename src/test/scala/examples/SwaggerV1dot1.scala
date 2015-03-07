@@ -14,9 +14,9 @@ import util.Echo
 
 object SwaggerV1dot1 extends App {
    val module = FintrospectModule(Root, Swagger1dot1Json())
-     .withRoute(Description("a get endpoint", HttpMethod.GET, _ / "echo").withHeader("header", classOf[String]), string("message"), (s: String) => Echo(s))
-     .withRoute(Description("a post endpoint", HttpMethod.POST, _ / "echo").withBodyParam("bodyParam", classOf[Int]), string("message"), (s: String) => Echo(s))
-     .withRoute(Description("a friendly endpoint", HttpMethod.GET, _ / "welcome").withQueryParam("query", classOf[Boolean]), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
+     .withRoute(Description("a get endpoint", HttpMethod.GET, _ / "echo").withHeader[String]("header"), string("message"), (s: String) => Echo(s))
+     .withRoute(Description("a post endpoint", HttpMethod.POST, _ / "echo").withBodyParam[Int]("bodyParam"), string("message"), (s: String) => Echo(s))
+     .withRoute(Description("a friendly endpoint", HttpMethod.GET, _ / "welcome").withQueryParam[Boolean]("query"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))
