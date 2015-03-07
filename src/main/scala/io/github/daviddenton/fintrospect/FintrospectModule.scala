@@ -96,7 +96,5 @@ class FintrospectModule private(rootPath: Path, renderer: Renderer, moduleRoutes
     }
   }
 
-  def routes = withDefault().userRoutes
-
-  def toService = FintrospectModule.toService(routes)
+  def toService = FintrospectModule.toService(withDefault().userRoutes)
 }
