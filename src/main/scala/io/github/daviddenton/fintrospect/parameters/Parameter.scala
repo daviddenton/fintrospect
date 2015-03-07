@@ -6,6 +6,7 @@ import scala.reflect.ClassTag
 
 abstract class Parameter[T] protected[fintrospect](val name: String, val where: String, val required: Boolean)(implicit ct: ClassTag[T]) {
   val paramType = decapitalize(ct.runtimeClass.getSimpleName)
+  override def toString = name
 }
 
 

@@ -7,7 +7,6 @@ import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.filter.Cors._
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Http, Request, RichHttp}
-import io.github.daviddenton.fintrospect.SegmentMatchers._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.renderers.Swagger1dot1Json
