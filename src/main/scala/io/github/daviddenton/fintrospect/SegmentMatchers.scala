@@ -1,6 +1,6 @@
 package io.github.daviddenton.fintrospect
 
-import io.github.daviddenton.fintrospect.Locations.Path
+import io.github.daviddenton.fintrospect.Parameters._
 import org.joda.time.DateTime
 
 object SegmentMatchers {
@@ -10,14 +10,14 @@ object SegmentMatchers {
     override def toString: String = value
   }
 
-  def dateTime(name: String): SegmentMatcher[DateTime] = new NamedArgSegmentMatcher(Parameters.dateTime(Path, name))
+  def dateTime(name: String): SegmentMatcher[DateTime] = new NamedArgSegmentMatcher(Path.dateTime(name))
 
-  def boolean(name: String): SegmentMatcher[Boolean] = new NamedArgSegmentMatcher(Parameters.boolean(Path, name))
+  def boolean(name: String): SegmentMatcher[Boolean] = new NamedArgSegmentMatcher(Path.boolean(name))
 
-  def string(name: String): SegmentMatcher[String] = new NamedArgSegmentMatcher(Parameters.string(Path, name))
+  def string(name: String): SegmentMatcher[String] = new NamedArgSegmentMatcher(Path.string( name))
 
-  def long(name: String): SegmentMatcher[Long] = new NamedArgSegmentMatcher(Parameters.long(Path, name))
+  def long(name: String): SegmentMatcher[Long] = new NamedArgSegmentMatcher(Path.long(name))
 
-  def int(name: String): SegmentMatcher[Int] = new NamedArgSegmentMatcher(Parameters.int(Path, name))
+  def int(name: String): SegmentMatcher[Int] = new NamedArgSegmentMatcher(Path.int(name))
 
-  def integer(name: String): SegmentMatcher[Integer] = new NamedArgSegmentMatcher(Parameters.integer(Path, name))}
+  def integer(name: String): SegmentMatcher[Integer] = new NamedArgSegmentMatcher(Path.integer(name))}

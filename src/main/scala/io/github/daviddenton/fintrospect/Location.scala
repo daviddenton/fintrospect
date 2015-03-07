@@ -7,17 +7,17 @@ sealed trait Location {
 }
 
 object Locations {
-  object Path extends Location {
+  object PathLocation extends Location {
     override def toString = "path"
     override def from(name: String, request: Request): Option[String] = None
   }
 
-  object Header extends Location {
+  object HeaderLocation extends Location {
     override def toString = "header"
     override def from(name: String, request: Request): Option[String] = Option(request.headers().get(name))
   }
 
-  object Query extends Location {
+  object QueryLocation extends Location {
     override def toString = "query"
     override def from(name: String, request: Request): Option[String] = request.params.get(name)
   }
