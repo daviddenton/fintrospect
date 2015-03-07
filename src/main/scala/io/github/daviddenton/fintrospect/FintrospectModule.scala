@@ -32,7 +32,6 @@ class FintrospectModule private(rootPath: Path, renderer: Renderer, moduleRoutes
   private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + ":" + moduleRoute.toString())
-      println(request.getMethod() + ":" + moduleRoute.toString())
       service(request)
     }
   }
