@@ -1,7 +1,6 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import Locations.QueryLocation
-import io.github.daviddenton.fintrospect.parameters.RequestParameter
+import io.github.daviddenton.fintrospect.parameters.Locations.QueryLocation
 
 import scala.reflect.ClassTag
 

@@ -1,6 +1,6 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import Locations.HeaderLocation
+import io.github.daviddenton.fintrospect.parameters.Locations.HeaderLocation
 
 import scala.reflect.ClassTag
 
