@@ -20,4 +20,5 @@ object SegmentMatchers {
 
   def int(name: String): SegmentMatcher[Int] = new NamedArgSegmentMatcher(Path.int(name))
 
-  def integer(name: String): SegmentMatcher[Integer] = new NamedArgSegmentMatcher(Path.integer(name))}
+  def integer(name: String): SegmentMatcher[Integer] = new NamedArgSegmentMatcher(Path.integer(name))
+}
