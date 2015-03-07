@@ -24,4 +24,3 @@ object Simple extends App {
     .name("")
     .build(new HttpFilter(UnsafePermissivePolicy).andThen(module.toService))
 }
-

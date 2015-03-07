@@ -9,9 +9,9 @@ import org.jboss.netty.handler.codec.http.HttpMethod
 
 object Swagger2dot0Json {
 
-  private case class PathMethod(method: HttpMethod, summary: String, params: Seq[Parameter], responses: Seq[PathResponse], securities: Seq[Security])
+  private case class PathMethod(method: HttpMethod, summary: String, params: Seq[Parameter[_]], responses: Seq[PathResponse], securities: Seq[Security])
 
-  private def render(p: Parameter): JsonNode = obj(
+  private def render(p: Parameter[_]): JsonNode = obj(
     "in" -> string(p.location.toString),
     "name" -> string(p.name),
     "required" -> booleanNode(p.required),
