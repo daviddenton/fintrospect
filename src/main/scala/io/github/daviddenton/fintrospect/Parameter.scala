@@ -6,12 +6,13 @@ import com.twitter.finagle.http.Request
 
 import scala.reflect.ClassTag
 
-class Parameter[T] protected[fintrospect](val name: String, val where: String, val required: Boolean)(implicit ct: ClassTag[T]) {
+abstract class Parameter[T] protected[fintrospect](val name: String, val where: String, val required: Boolean)(implicit ct: ClassTag[T]) {
   val paramType = decapitalize(ct.runtimeClass.getSimpleName)
 }
 
 class PathParameter[T](name: String, parse: (String => Option[T]))(implicit ct: ClassTag[T]) extends Parameter[T](name, "path", true)(ct) {
   def unapply(str: String): Option[T] = parse(str)
+  override def toString = s"{$name}"
 }
 
 class RequestParameter[T](name: String, location: Location, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) extends Parameter[T](name, location.toString, required)(ct) {
