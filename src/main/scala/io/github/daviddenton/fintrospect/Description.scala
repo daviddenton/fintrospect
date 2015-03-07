@@ -1,7 +1,7 @@
 package io.github.daviddenton.fintrospect
 
 import com.twitter.finagle.http.path.Path
-import io.github.daviddenton.fintrospect.Parameter._
+import io.github.daviddenton.fintrospect.Parameters._
 import org.jboss.netty.handler.codec.http.HttpMethod
 
 import scala.reflect.ClassTag

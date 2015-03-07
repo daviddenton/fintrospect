@@ -1,6 +1,6 @@
 package examples
 
-import io.github.daviddenton.fintrospect.{Description, FintrospectModule, Parameter, SegmentMatchers}
+import io.github.daviddenton.fintrospect._
 import org.jboss.netty.handler.codec.http.HttpMethod
 
 class FintrospectEndpoint {
@@ -14,7 +14,5 @@ class FintrospectEndpoint {
 }
 
 object FintrospectEndpoint extends App {
-
-  println(Parameter.query[Int]("bob").paramType)
-
+  println(Parameters.query[Int]("bob").paramType)
 }
