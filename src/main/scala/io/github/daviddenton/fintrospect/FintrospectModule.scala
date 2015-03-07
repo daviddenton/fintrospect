@@ -27,18 +27,18 @@ object FintrospectModule {
   def apply(rootPath: Path, defaultRender: Renderer): FintrospectModule = new FintrospectModule(rootPath, defaultRender, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
 }
 
-class FintrospectModule private(private val rootPath: Path, private val defaultRender: Renderer, private val moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
+class FintrospectModule private(rootPath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
 
   private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + ":" + moduleRoute.toString())
+      println(request.getMethod() + ":" + moduleRoute.toString())
       service(request)
     }
   }
 
   private case class RoutesContent(descriptionContent: String) extends Service[Request, Response]() {
     override def apply(request: Request): Future[Response] = {
-      request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + s":${request.getUri()}")
       val response = Response()
       response.setStatusCode(200)
       response.setContent(copiedBuffer(descriptionContent, UTF_8))
@@ -47,12 +47,12 @@ class FintrospectModule private(private val rootPath: Path, private val defaultR
   }
 
   private def withDefault() = {
-    withRoute(Description("Description route", GET, identity), () => RoutesContent(pretty(defaultRender(moduleRoutes))))
+    withRoute(Description("Description route", GET, identity), () => RoutesContent(pretty(renderer(moduleRoutes))))
   }
 
   private def withDescribedRoute(description: Description, PP: PP[_]*)(bindFn: Identify => Binding): FintrospectModule = {
     val moduleRoute = new ModuleRoute(description, rootPath, PP)
-    new FintrospectModule(rootPath, defaultRender, moduleRoute :: moduleRoutes, userRoutes.orElse(bindFn(Identify(moduleRoute))))
+    new FintrospectModule(rootPath, renderer, moduleRoute :: moduleRoutes, userRoutes.orElse(bindFn(Identify(moduleRoute))))
   }
 
   def withRoute(description: Description, fn: () => Svc) = withDescribedRoute(description) {
