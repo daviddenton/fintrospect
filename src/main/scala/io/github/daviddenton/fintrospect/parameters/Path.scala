@@ -1,7 +1,5 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import io.github.daviddenton.fintrospect.parameters.PathParameter
-
 import scala.reflect.ClassTag
 
 object Path extends Parameters[PathParameter]() {
