@@ -24,7 +24,7 @@ abstract class JsonRendererTest(name: String, renderer: FintrospectModule.Render
 
       val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
       val actual = Await.result(module.toService(Request("/"))).content.toString(Utf8)
-//      println(actual)
+      println(actual)
       parse(actual) should be === expected
     }
   }
