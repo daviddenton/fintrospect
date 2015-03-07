@@ -1,14 +1,13 @@
-package io.github.daviddenton.fintrospect
+package io.github.daviddenton.fintrospect.parameters
 
 import com.twitter.finagle.http.path
-import io.github.daviddenton.fintrospect.Locations._
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat._
 
 import scala.reflect.ClassTag
 import scala.util.Try
 
-abstract class Parameters[P[_] <: Parameter[_]] {
+abstract class Parameters[P[_] <: Parameter[_]] protected[parameters]() {
   def dateTime(name: String): P[DateTime] = create(name, required = true, str => Try(dateTimeNoMillis().parseDateTime(str)).toOption)
 
   def boolean(name: String): P[Boolean] = create(name, required = true, str => Try(str.toBoolean).toOption)
@@ -24,16 +23,9 @@ abstract class Parameters[P[_] <: Parameter[_]] {
   protected def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]): P[T]
 }
 
-object Parameters {
-  val Header = new Parameters[RequestParameter] {
-    protected def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, HeaderLocation, required, parse)
-  }
 
-  val Path = new Parameters[PathParameter] {
-    protected def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new PathParameter[T](name, parse)
-  }
 
-  val Query = new Parameters[RequestParameter] {
-    protected def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, QueryLocation, required, parse)
-  }
-}
+
+
+
+

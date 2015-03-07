@@ -1,6 +1,7 @@
 package io.github.daviddenton.fintrospect
 
 import com.twitter.finagle.http.path.Path
+import io.github.daviddenton.fintrospect.parameters.RequestParameter
 import org.jboss.netty.handler.codec.http.HttpMethod
 
 case class Description private(value: String, method: HttpMethod, params: List[RequestParameter[_]], complete: (Path => Path)) {
