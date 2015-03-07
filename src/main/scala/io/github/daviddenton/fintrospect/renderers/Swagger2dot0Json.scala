@@ -4,6 +4,7 @@ import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories._
 import io.github.daviddenton.fintrospect.FintrospectModule.Renderer
 import io.github.daviddenton.fintrospect._
+import io.github.daviddenton.fintrospect.parameters.Parameter
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod
 

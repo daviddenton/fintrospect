@@ -1,8 +1,9 @@
-package io.github.daviddenton.fintrospect
+package io.github.daviddenton.fintrospect.parameters
 
 import java.beans.Introspector._
 
 import com.twitter.finagle.http.Request
+import io.github.daviddenton.fintrospect.SegmentMatcher
 
 import scala.reflect.ClassTag
 

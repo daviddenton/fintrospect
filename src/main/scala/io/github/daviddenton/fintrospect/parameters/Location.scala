@@ -1,4 +1,4 @@
-package io.github.daviddenton.fintrospect
+package io.github.daviddenton.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
 
