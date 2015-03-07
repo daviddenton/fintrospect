@@ -4,9 +4,10 @@ import scala.reflect.ClassTag
 
 object Path extends Parameters[PathParameter]() {
   protected def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new PathParameter[T](name)(ct) {
-    def unapply(str: String): Option[T] = parse(str)
 
     override def toString() = s"{$name}"
+
+    override def unapply(str: String): Option[T] = parse(str)
 
     override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
   }
