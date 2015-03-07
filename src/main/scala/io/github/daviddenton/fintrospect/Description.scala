@@ -10,5 +10,5 @@ case class Description private(value: String, method: HttpMethod, params: List[R
 }
 
 object Description {
-  def apply(value: String, method: HttpMethod, complete: (Path => Path)): Description = new Description(value, method, Nil, complete)
+  def apply(value: String, method: HttpMethod, complete: (Path => Path)): Description = Description(value, method, Nil, complete)
 }
