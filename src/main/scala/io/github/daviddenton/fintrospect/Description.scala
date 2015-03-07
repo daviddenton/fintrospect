@@ -6,7 +6,7 @@ import org.jboss.netty.handler.codec.http.HttpMethod
 
 import scala.reflect.ClassTag
 
-case class Description private(value: String, method: HttpMethod, params: List[Parameter[_]], complete: (Path => Path)) {
+case class Description private(value: String, method: HttpMethod, params: List[RequestParameter[_]], complete: (Path => Path)) {
   def withHeader[T](name: String)(implicit ct: ClassTag[T]) = copy(params = header[T](name) :: params)
 
   def withQueryParam[T](name: String)(implicit ct: ClassTag[T]) = copy(params = query[T](name) :: params)
