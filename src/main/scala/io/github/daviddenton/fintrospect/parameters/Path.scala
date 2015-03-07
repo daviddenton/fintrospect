@@ -8,13 +8,15 @@ object Path extends Parameters[PathParameter]() {
 
     override def toString = s"{$name}"
 
-    override val toParameter: Option[PathParameter[_]] = Some(this)
+    override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
   }
 
-
   def fixed(value: String): PathParameter[String] = new PathParameter[String](value) {
-    val toParameter: Option[PathParameter[_]] = None
+
+    override def toString = name
 
     override def unapply(str: String): Option[String] = if (str == value) Some(str) else None
+
+    override def iterator: Iterator[PathParameter[_]] = Nil.iterator
   }
 }
