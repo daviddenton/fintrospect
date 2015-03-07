@@ -10,6 +10,10 @@ class Parameter[T] protected[fintrospect](val name: String, val where: String, v
   val paramType = decapitalize(ct.runtimeClass.getSimpleName)
 }
 
+class PathParameter[T](name: String, parse: (String => Option[T]))(implicit ct: ClassTag[T]) extends Parameter[T](name, "path", true)(ct) {
+  def unapply(str: String): Option[T] = parse(str)
+}
+
 class RequestParameter[T](name: String, location: Location, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) extends Parameter[T](name, location.toString, required)(ct) {
   def from(request: Request): Option[T] = location.from(name, request).flatMap(parse)
   def unapply(str: String): Option[T] = parse(str)
