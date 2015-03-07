@@ -1,6 +1,7 @@
 package io.github.daviddenton.fintrospect
 
-import com.twitter.finagle.http.{path => fp}
+import com.twitter.finagle.http.path
+import io.github.daviddenton.fintrospect.Locations._
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat._
 
@@ -20,20 +21,20 @@ class Parameters private(location: Location) {
   }
 
   def long(name: String): RequestParameter[Long] = new RequestParameter[Long](name, location, true) {
-    override def unapply(str: String): Option[Long] = fp.Long.unapply(str)
+    override def unapply(str: String): Option[Long] = path.Long.unapply(str)
   }
 
   def int(name: String): RequestParameter[Int] = new RequestParameter[Int](name, location, true) {
-    override def unapply(str: String): Option[Int] = fp.Integer.unapply(str)
+    override def unapply(str: String): Option[Int] = path.Integer.unapply(str)
   }
 
   def integer(name: String): RequestParameter[Integer] = new RequestParameter[Integer](name, location, true) {
-    override def unapply(str: String): Option[Integer] = fp.Integer.unapply(str).map(new Integer(_))
+    override def unapply(str: String): Option[Integer] = path.Integer.unapply(str).map(new Integer(_))
   }
 }
 
 object Parameters {
-  val Header = new Parameters(Locations.HeaderLocation)
-  val Path = new Parameters(Locations.PathLocation)
-  val Query = new Parameters(Locations.QueryLocation)
+  val Header = new Parameters(HeaderLocation)
+  val Path = new Parameters(PathLocation)
+  val Query = new Parameters(QueryLocation)
 }
