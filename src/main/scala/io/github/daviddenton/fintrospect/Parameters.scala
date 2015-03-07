@@ -5,24 +5,35 @@ import io.github.daviddenton.fintrospect.Locations._
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat._
 
+import scala.reflect.ClassTag
 import scala.util.Try
 
-class Parameters private(location: Location) {
-  def dateTime(name: String): RequestParameter[DateTime] = new RequestParameter[DateTime](name, location, true, str => Try(dateTimeNoMillis().parseDateTime(str)).toOption)
+abstract class Parameters[P[_] <: Parameter[_]] {
+  def dateTime(name: String): P[DateTime] = create(name, required = true, str => Try(dateTimeNoMillis().parseDateTime(str)).toOption)
 
-  def boolean(name: String): RequestParameter[Boolean] = new RequestParameter[Boolean](name, location, true, str => Try(str.toBoolean).toOption)
+  def boolean(name: String): P[Boolean] = create(name, required = true, str => Try(str.toBoolean).toOption)
 
-  def string(name: String): RequestParameter[String] = new RequestParameter[String](name, location, true, Option(_))
+  def string(name: String): P[String] = create(name, required = true, Option(_))
 
-  def long(name: String): RequestParameter[Long] = new RequestParameter[Long](name, location, true, str => path.Long.unapply(str))
+  def long(name: String): P[Long] = create(name, required = true, str => path.Long.unapply(str))
 
-  def int(name: String): RequestParameter[Int] = new RequestParameter[Int](name, location, true, str => path.Integer.unapply(str))
+  def int(name: String): P[Int] = create(name, required = true, str => path.Integer.unapply(str))
 
-  def integer(name: String): RequestParameter[Integer] = new RequestParameter[Integer](name, location, true, str => path.Integer.unapply(str).map(new Integer(_)))
+  def integer(name: String): P[Integer] = create(name, required = true, str => path.Integer.unapply(str).map(new Integer(_)))
+
+  def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]): P[T]
 }
 
 object Parameters {
-  val Header = new Parameters(HeaderLocation)
-  val Path = new Parameters(PathLocation)
-  val Query = new Parameters(QueryLocation)
+  val Header = new Parameters[RequestParameter] {
+    def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, HeaderLocation, required, parse)
+  }
+
+  val Path = new Parameters[RequestParameter] {
+    def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, PathLocation, required, parse)
+  }
+
+  val Query = new Parameters[RequestParameter] {
+    def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, QueryLocation, required, parse)
+  }
 }
