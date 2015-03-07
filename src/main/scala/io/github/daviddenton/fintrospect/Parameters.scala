@@ -7,15 +7,27 @@ import org.joda.time.format.ISODateTimeFormat._
 import scala.util.Try
 
 object Parameters {
-  def dateTime(location: Location, name: String): RequestParameter[DateTime] = new RequestParameter(name, location, true, s => Try(dateTimeNoMillis().parseDateTime(s)).toOption)
+  def dateTime(location: Location, name: String): RequestParameter[DateTime] = new RequestParameter[DateTime](name, location, true) {
+    override def unapply(str: String): Option[DateTime] = Try(dateTimeNoMillis().parseDateTime(str)).toOption
+  }
 
-  def boolean(location: Location, name: String): RequestParameter[Boolean] = new RequestParameter(name, location, true, s => Try(s.toBoolean).toOption)
+  def boolean(location: Location, name: String): RequestParameter[Boolean] = new RequestParameter[Boolean](name, location, true) {
+    override def unapply(str: String): Option[Boolean] = Try(str.toBoolean).toOption
+  }
 
-  def string(location: Location, name: String): RequestParameter[String] = new RequestParameter(name, location, true, Some(_))
+  def string(location: Location, name: String): RequestParameter[String] = new RequestParameter[String](name, location, true) {
+    override def unapply(str: String): Option[String] = Option(str)
+  }
 
-  def long(location: Location, name: String): RequestParameter[Long] = new RequestParameter(name, location, true, s => fp.Long.unapply(s))
+  def long(location: Location, name: String): RequestParameter[Long] = new RequestParameter[Long](name, location, true) {
+    override def unapply(str: String): Option[Long] = fp.Long.unapply(str)
+  }
 
-  def int(location: Location, name: String): RequestParameter[Int] = new RequestParameter(name, location, true, s => fp.Integer.unapply(s))
+  def int(location: Location, name: String): RequestParameter[Int] = new RequestParameter[Int](name, location, true) {
+    override def unapply(str: String): Option[Int] = fp.Integer.unapply(str)
+  }
 
-  def integer(location: Location, name: String): RequestParameter[Integer] = new RequestParameter(name, location, true, s => fp.Integer.unapply(s).map(new Integer(_)))
+  def integer(location: Location, name: String): RequestParameter[Integer] = new RequestParameter[Integer](name, location, true) {
+    override def unapply(str: String): Option[Integer] = fp.Integer.unapply(str).map(new Integer(_))
+  }
 }
