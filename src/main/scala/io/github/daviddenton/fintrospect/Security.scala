@@ -7,7 +7,7 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 case class Security(private val name: String, private val definition: JsonNode) {
   def toPathSecurity: (String, JsonNode) = name -> obj()
 
- def toJsonDefinition: (String, JsonNode) = name -> definition
+  def toJsonDefinition: (String, JsonNode) = name -> definition
 }
 
 object Security {
