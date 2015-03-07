@@ -29,8 +29,8 @@ object Parameters {
     def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, HeaderLocation, required, parse)
   }
 
-  val Path = new Parameters[RequestParameter] {
-    def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, PathLocation, required, parse)
+  val Path = new Parameters[PathParameter] {
+    def create[T](name: String, required: Boolean, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new PathParameter[T](name, parse)
   }
 
   val Query = new Parameters[RequestParameter] {
