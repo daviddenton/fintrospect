@@ -7,7 +7,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
-import io.github.daviddenton.fintrospect.parameters.SegmentMatcher
+import io.github.daviddenton.fintrospect.parameters.PathParameter
 import io.github.daviddenton.fintrospect.util.ArgoUtil.pretty
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpMethod
@@ -20,7 +20,7 @@ object FintrospectModule {
   type Renderer = (Seq[ModuleRoute] => JsonRootNode)
   private type Svc = Service[Request, Response]
   private type Binding = PartialFunction[(HttpMethod, Path), Svc]
-  private type SM[P] = SegmentMatcher[P]
+  private type PP[T] = PathParameter[T]
 
   def toService(binding: Binding): Svc = RoutingService.byMethodAndPathObject(binding)
 
@@ -50,8 +50,8 @@ class FintrospectModule private(private val rootPath: Path, private val defaultR
     withRoute(Description("Description route", GET, identity), () => RoutesContent(pretty(defaultRender(moduleRoutes))))
   }
 
-  private def withDescribedRoute(description: Description, sm: SM[_]*)(bindFn: Identify => Binding): FintrospectModule = {
-    val moduleRoute = new ModuleRoute(description, rootPath, sm)
+  private def withDescribedRoute(description: Description, PP: PP[_]*)(bindFn: Identify => Binding): FintrospectModule = {
+    val moduleRoute = new ModuleRoute(description, rootPath, PP)
     new FintrospectModule(rootPath, defaultRender, moduleRoute :: moduleRoutes, userRoutes.orElse(bindFn(Identify(moduleRoute))))
   }
 
@@ -61,39 +61,39 @@ class FintrospectModule private(private val rootPath: Path, private val defaultR
     }
   }
 
-  def withRoute[A](description: Description, sm0: SM[A], fn: A => Svc) = withDescribedRoute(description, sm0) {
+  def withRoute[A](description: Description, PP0: PP[A], fn: A => Svc) = withDescribedRoute(description, PP0) {
     identify => {
-      case method -> path / sm0(s0) if description.matches(method, rootPath, path) => identify.andThen(fn(s0))
+      case method -> path / PP0(s0) if description.matches(method, rootPath, path) => identify.andThen(fn(s0))
     }
   }
 
-  def withRoute[A, B](description: Description, sm0: SM[A], sm1: SM[B], fn: (A, B) => Svc) = withDescribedRoute(description, sm0, sm1) {
+  def withRoute[A, B](description: Description, PP0: PP[A], PP1: PP[B], fn: (A, B) => Svc) = withDescribedRoute(description, PP0, PP1) {
     identify => {
-      case method -> path / sm0(s0) / sm1(s1) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1))
+      case method -> path / PP0(s0) / PP1(s1) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1))
     }
   }
 
-  def withRoute[A, B, C](description: Description, sm0: SM[A], sm1: SM[B], sm2: SM[C], fn: (A, B, C) => Svc) = withDescribedRoute(description, sm0, sm1, sm2) {
+  def withRoute[A, B, C](description: Description, PP0: PP[A], PP1: PP[B], PP2: PP[C], fn: (A, B, C) => Svc) = withDescribedRoute(description, PP0, PP1, PP2) {
     identify => {
-      case method -> path / sm0(s0) / sm1(s1) / sm2(s2) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1, s2))
+      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1, s2))
     }
   }
 
-  def withRoute[A, B, C, D](description: Description, sm0: SM[A], sm1: SM[B], sm2: SM[C], sm3: SM[D], fn: (A, B, C, D) => Svc) = withDescribedRoute(description, sm0, sm1, sm2, sm3) {
+  def withRoute[A, B, C, D](description: Description, PP0: PP[A], PP1: PP[B], PP2: PP[C], PP3: PP[D], fn: (A, B, C, D) => Svc) = withDescribedRoute(description, PP0, PP1, PP2, PP3) {
     identify => {
-      case method -> path / sm0(s0) / sm1(s1) / sm2(s2) / sm3(s3) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1, s2, s3))
+      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) / PP3(s3) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1, s2, s3))
     }
   }
 
-  def withRoute[A, B, C, D, E](description: Description, sm0: SM[A], sm1: SM[B], sm2: SM[C], sm3: SM[D], sm4: SM[E], fn: (A, B, C, D, E) => Svc) = withDescribedRoute(description, sm0, sm1, sm2, sm3, sm4) {
+  def withRoute[A, B, C, D, E](description: Description, PP0: PP[A], PP1: PP[B], PP2: PP[C], PP3: PP[D], PP4: PP[E], fn: (A, B, C, D, E) => Svc) = withDescribedRoute(description, PP0, PP1, PP2, PP3, PP4) {
     identify => {
-      case method -> path / sm0(s0) / sm1(s1) / sm2(s2) / sm3(s3) / sm4(s4) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1, s2, s3, s4))
+      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) / PP3(s3) / PP4(s4) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1, s2, s3, s4))
     }
   }
 
-  def withRoute[A, B, C, D, E, F](description: Description, sm0: SM[A], sm1: SM[B], sm2: SM[C], sm3: SM[D], sm4: SM[E], sm5: SM[F], fn: (A, B, C, D, E, F) => Svc) = withDescribedRoute(description, sm0, sm1, sm2, sm3, sm4, sm5) {
+  def withRoute[A, B, C, D, E, F](description: Description, PP0: PP[A], PP1: PP[B], PP2: PP[C], PP3: PP[D], PP4: PP[E], PP5: PP[F], fn: (A, B, C, D, E, F) => Svc) = withDescribedRoute(description, PP0, PP1, PP2, PP3, PP4, PP5) {
     identify => {
-      case method -> path / sm0(s0) / sm1(s1) / sm2(s2) / sm3(s3) / sm4(s4) / sm5(s5) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1, s2, s3, s4, s5))
+      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) / PP3(s3) / PP4(s4) / PP5(s5) if description.matches(method, rootPath, path) => identify.andThen(fn(s0, s1, s2, s3, s4, s5))
     }
   }
 
