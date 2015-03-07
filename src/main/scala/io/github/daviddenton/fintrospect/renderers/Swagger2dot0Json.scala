@@ -7,6 +7,7 @@ import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Parameter
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod
+import org.jboss.netty.handler.codec.http.HttpResponseStatus.OK
 
 object Swagger2dot0Json {
 
@@ -24,7 +25,7 @@ object Swagger2dot0Json {
       "summary" -> string(r.description.value),
       "produces" -> array(string("application/json")),
       "parameters" -> array(r.params.map(render): _*),
-      "responses" -> obj(Seq(PathResponse(200, "")).map(r => r.code.toString -> obj("description" -> string(r.description)))),
+      "responses" -> obj(Seq(PathResponse(OK, "")).map(r => r.code.getCode.toString -> obj("description" -> string(r.description)))),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
   }
