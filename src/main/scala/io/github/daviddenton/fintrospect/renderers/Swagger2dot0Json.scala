@@ -12,7 +12,7 @@ object Swagger2dot0Json {
   private case class PathMethod(method: HttpMethod, summary: String, params: Seq[Parameter[_]], responses: Seq[PathResponse], securities: Seq[Security])
 
   private def render(p: Parameter[_]): JsonNode = obj(
-    "in" -> string(p.location.toString),
+    "in" -> string(p.where.toString),
     "name" -> string(p.name),
     "required" -> booleanNode(p.required),
     "type" -> string(p.paramType)

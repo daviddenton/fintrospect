@@ -14,18 +14,6 @@
           ],
           "parameters": [
             {
-              "name": "firstName",
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
-            {
-              "name": "secondName",
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
-            {
               "name": "query",
               "paramType": "query",
               "required": true,
@@ -48,14 +36,8 @@
           ],
           "parameters": [
             {
-              "name": "message",
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
-            {
-              "name": "bodyParam",
-              "paramType": "body",
+              "name": "query",
+              "paramType": "query",
               "required": true,
               "dataType": "int"
             }
@@ -70,12 +52,6 @@
             "application/json"
           ],
           "parameters": [
-            {
-              "name": "message",
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
             {
               "name": "header",
               "paramType": "header",

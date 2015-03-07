@@ -1,13 +1,21 @@
 package io.github.daviddenton.fintrospect
 
-import scala.reflect.ClassTag
+import com.twitter.finagle.http.{path => fp}
+import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat._
+
+import scala.util.Try
 
 object Parameters {
-  def path[T](name: String)(implicit ct: ClassTag[T]) = new Parameter[T](name, "path", true)
+  def dateTime(location: Location, name: String): RequestParameter[DateTime] = new RequestParameter(name, location, true, s => Try(dateTimeNoMillis().parseDateTime(s)).toOption)
 
-  def body[T](name: String)(implicit ct: ClassTag[T]) = new RequestParameter[T](name, "body", true) {}
+  def boolean(location: Location, name: String): RequestParameter[Boolean] = new RequestParameter(name, location, true, s => Try(s.toBoolean).toOption)
 
-  def query[T](name: String)(implicit ct: ClassTag[T]) = new RequestParameter[T](name, "query", true) {}
+  def string(location: Location, name: String): RequestParameter[String] = new RequestParameter(name, location, true, Some(_))
 
-  def header[T](name: String)(implicit ct: ClassTag[T]) = new RequestParameter[T](name, "header", true) {}
+  def long(location: Location, name: String): RequestParameter[Long] = new RequestParameter(name, location, true, s => fp.Long.unapply(s))
+
+  def int(location: Location, name: String): RequestParameter[Int] = new RequestParameter(name, location, true, s => fp.Integer.unapply(s))
+
+  def integer(location: Location, name: String): RequestParameter[Integer] = new RequestParameter(name, location, true, s => fp.Integer.unapply(s).map(new Integer(_)))
 }

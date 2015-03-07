@@ -1,40 +1,23 @@
 package io.github.daviddenton.fintrospect
 
-import com.twitter.finagle.http.{path => fp}
+import io.github.daviddenton.fintrospect.Locations.Path
 import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat.dateTimeNoMillis
-
-import scala.util.Try
 
 object SegmentMatchers {
 
   def fixed(value: String): SegmentMatcher[String] = new SegmentMatcher[String] {
     override def unapply(str: String): Option[String] = if (str == value) Some(str) else None
-
     override def toString: String = value
   }
 
-  def dateTime(name: String): SegmentMatcher[DateTime] = new NamedArgSegmentMatcher[DateTime](name) {
-    override def unapply(str: String): Option[DateTime] = Some(dateTimeNoMillis().parseDateTime(str))
-  }
+  def dateTime(name: String): SegmentMatcher[DateTime] = new NamedArgSegmentMatcher(Parameters.dateTime(Path, name))
 
-  def boolean(name: String): SegmentMatcher[Boolean] = new NamedArgSegmentMatcher[Boolean](name) {
-    override def unapply(str: String): Option[Boolean] = Try(str.toBoolean).toOption
-  }
+  def boolean(name: String): SegmentMatcher[Boolean] = new NamedArgSegmentMatcher(Parameters.boolean(Path, name))
 
-  def string(name: String): SegmentMatcher[String] = new NamedArgSegmentMatcher[String](name) {
-    override def unapply(str: String): Option[String] = Some(str)
-  }
+  def string(name: String): SegmentMatcher[String] = new NamedArgSegmentMatcher(Parameters.string(Path, name))
 
-  def long(name: String): SegmentMatcher[Long] = new NamedArgSegmentMatcher[Long](name) {
-    override def unapply(str: String): Option[Long] = fp.Long.unapply(str)
-  }
+  def long(name: String): SegmentMatcher[Long] = new NamedArgSegmentMatcher(Parameters.long(Path, name))
 
-  def int(name: String): SegmentMatcher[Int] = new NamedArgSegmentMatcher[Int](name) {
-    override def unapply(str: String): Option[Int] = fp.Integer.unapply(str)
-  }
+  def int(name: String): SegmentMatcher[Int] = new NamedArgSegmentMatcher(Parameters.int(Path, name))
 
-  def integer(name: String): SegmentMatcher[Integer] = new NamedArgSegmentMatcher[Integer](name) {
-    override def unapply(str: String): Option[Integer] = fp.Integer.unapply(str).map(new Integer(_))
-  }
-}
+  def integer(name: String): SegmentMatcher[Integer] = new NamedArgSegmentMatcher(Parameters.integer(Path, name))}
