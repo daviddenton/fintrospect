@@ -83,7 +83,12 @@
               "dataType": "string"
             }
           ],
-          "errorResponses": []
+          "errorResponses": [
+            {
+              "code": 403,
+              "description": "no way jose"
+            }
+          ]
         }
       ]
     }

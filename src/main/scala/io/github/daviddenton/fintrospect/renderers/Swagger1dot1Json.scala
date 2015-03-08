@@ -19,13 +19,14 @@ object Swagger1dot1Json {
   )
 
   private def render(r: ModuleRoute): (String, JsonNode) = {
+
     r.description.method.getName.toLowerCase -> obj(
       "httpMethod" -> string(r.description.method.getName),
       "nickname" -> string(r.description.value),
       "summary" -> string(r.description.value),
       "produces" -> array(string("application/json")),
-      "parameters" -> array(r.params.map(render): _*),
-      "errorResponses" -> array(Seq[PathResponse]().map(r => obj("code" -> number(r.code.getCode), "description" -> string(r.description))))
+      "parameters" -> array(r.allParams.map(render): _*),
+      "errorResponses" -> array(r.allResponses.filterKeys(_.getCode > 399).map { case (code, desc) => obj("code" -> number(code.getCode), "description" -> string(desc))}.toSeq)
     )
   }
 
