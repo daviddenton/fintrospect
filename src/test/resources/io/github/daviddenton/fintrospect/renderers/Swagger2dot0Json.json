@@ -32,11 +32,7 @@
             "type": "boolean"
           }
         ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "security": [
           {}
         ]
@@ -62,11 +58,7 @@
             "type": "int"
           }
         ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "security": [
           {}
         ]
@@ -92,7 +84,10 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "peachy"
+          },
+          "403": {
+            "description": "no way jose"
           }
         },
         "security": [
