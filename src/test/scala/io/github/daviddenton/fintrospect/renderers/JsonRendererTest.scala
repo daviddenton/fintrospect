@@ -25,8 +25,14 @@ abstract class JsonRendererTest(name: String, renderer: FintrospectModule.Render
             .returning(OK -> "peachy")
             .returning(FORBIDDEN -> "no way jose"),
           On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
-        .withRoute(Description("a post endpoint").requiring(Query.int("query")), On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
-        .withRoute(Description("a friendly endpoint").requiring(Query.boolean("query")), On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
+        .withRoute(
+          Description("a post endpoint")
+            .requiring(Query.int("query")),
+          On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
+        .withRoute(
+          Description("a friendly endpoint")
+            .requiring(Query.boolean("query")),
+          On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
 
       val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
       val actual = Await.result(module.toService(Request("/"))).content.toString(Utf8)
