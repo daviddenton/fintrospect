@@ -6,11 +6,8 @@ import io.github.daviddenton.fintrospect.FintrospectModule.Renderer
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Parameter
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import org.jboss.netty.handler.codec.http.HttpMethod
 
 object Swagger2dot0Json {
-
-  private case class PathMethod(method: HttpMethod, summary: String, params: Seq[Parameter[_]], responses: Seq[PathResponse], securities: Seq[Security])
 
   private def render(p: Parameter[_]): JsonNode = obj(
     "in" -> string(p.where.toString),

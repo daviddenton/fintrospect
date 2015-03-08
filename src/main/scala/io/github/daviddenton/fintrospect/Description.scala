@@ -5,7 +5,8 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 case class Description private(value: String, params: List[RequestParameter[_]], responses: Map[HttpResponseStatus, String]) {
   def requiring(rp: RequestParameter[_]) = copy(params = rp :: params)
-  def returning(codeAndDescription: (HttpResponseStatus, String)) = copy(responses = responses + codeAndDescription)
+
+  def returning(codes: (HttpResponseStatus, String)*): Description = copy(responses = responses ++ codes)
 }
 
 object Description {
