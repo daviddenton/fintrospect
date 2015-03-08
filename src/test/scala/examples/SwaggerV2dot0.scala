@@ -8,15 +8,15 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Http, Request, RichHttp}
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.renderers.Swagger2dot0Json
-import io.github.daviddenton.fintrospect.{Description, FintrospectModule}
+import io.github.daviddenton.fintrospect.{On, Description, FintrospectModule}
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import util.Echo
 
 object SwaggerV2dot0 extends App {
   val module = FintrospectModule(Root, Swagger2dot0Json())
-    .withRoute(Description("a get endpoint", GET, _ / "echo"), string("message"), (s: String) => Echo(s))
-    .withRoute(Description("a post endpoint", POST, _ / "echo"), string("message"), (s: String) => Echo(s))
-    .withRoute(Description("a friendly endpoint", GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x))
+    .withRoute(Description("a get endpoint"), On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
+    .withRoute(Description("a post endpoint"), On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
+    .withRoute(Description("a friendly endpoint"), On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x))
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))

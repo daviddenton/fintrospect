@@ -14,9 +14,9 @@ import org.jboss.netty.handler.codec.http.HttpMethod._
 
 object SwaggerV1dot1 extends App {
   val module = FintrospectModule(Root, Swagger1dot1Json())
-    .withRoute(Description("a get endpoint", GET, _ / "echo"), string("message"), (s: String) => Echo(s))
-    .withRoute(Description("a post endpoint", POST, _ / "echo"), string("message"), (s: String) => Echo(s))
-    .withRoute(Description("a friendly endpoint", GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x))
+    .withRoute(Description("a get endpoint"), On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
+    .withRoute(Description("a post endpoint"), On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
+    .withRoute(Description("a friendly endpoint"), On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x))
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))
