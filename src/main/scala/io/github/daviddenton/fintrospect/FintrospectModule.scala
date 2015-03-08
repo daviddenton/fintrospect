@@ -2,7 +2,7 @@ package io.github.daviddenton.fintrospect
 
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.path.{Path, _}
-import com.twitter.finagle.http.service.RoutingService
+import com.twitter.finagle.http.service.RoutingService.byMethodAndPathObject
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
@@ -17,17 +17,14 @@ import org.jboss.netty.util.CharsetUtil._
 object FintrospectModule {
   val IDENTIFY_SVC_HEADER = "descriptionServiceId"
 
-  type Renderer = (Seq[ModuleRoute] => JsonRootNode)
   private type Svc = Service[Request, Response]
   private type Binding = PartialFunction[(HttpMethod, Path), Svc]
   private type PP[T] = PathParameter[T]
 
-  def toService(binding: Binding): Svc = RoutingService.byMethodAndPathObject(binding)
-
-  def apply(basePath: Path, defaultRender: Renderer): FintrospectModule = new FintrospectModule(basePath, defaultRender, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
+  def apply(basePath: Path, renderer: Seq[ModuleRoute] => JsonRootNode): FintrospectModule = new FintrospectModule(basePath, renderer, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
 }
 
-class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
+class FintrospectModule private(basePath: Path, renderer: Seq[ModuleRoute] => JsonRootNode, moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
 
   private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
@@ -96,5 +93,5 @@ class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes
     }
   }
 
-  def toService = FintrospectModule.toService(withDefault().userRoutes)
+  def toService = byMethodAndPathObject(withDefault().userRoutes)
 }
