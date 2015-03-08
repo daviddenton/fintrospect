@@ -7,5 +7,5 @@ class ModuleRoute(val description: Description, val on: On, rootPath: Path, path
   val allParams = pathParams.flatten ++ description.params
   val allResponses = description.responses
 
-  override def toString: String = (on.complete(rootPath).toString :: pathParams.map(_.toString()).toList).mkString("/")
+  override def toString: String = (on.completeRoutePath(rootPath).toString :: pathParams.map(_.toString()).toList).mkString("/")
 }
