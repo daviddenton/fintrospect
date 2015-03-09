@@ -11,5 +11,5 @@ object Query extends Parameters[RequestParameter]() {
     override def from(name: String, request: Request): Option[String] = request.params.get(name)
   }
 
-  protected def create[T](name: String, required: Requirement, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, location, required, parse)
+  protected def create[T](name: String, description: Option[String], required: Requirement, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, description, location, required, parse)
 }

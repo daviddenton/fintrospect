@@ -3,7 +3,7 @@ package io.github.daviddenton.fintrospect.parameters
 import scala.reflect.ClassTag
 
 object Path extends Parameters[PathParameter]() {
-  protected def create[T](name: String, required: Requirement, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new PathParameter[T](name)(ct) {
+  protected def create[T](name: String, description: Option[String], required: Requirement, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new PathParameter[T](name, description)(ct) {
 
     override def toString() = s"{$name}"
 
@@ -12,11 +12,11 @@ object Path extends Parameters[PathParameter]() {
     override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
   }
 
-  def fixed(value: String): PathParameter[String] = new PathParameter[String](value) {
+  def fixed(name: String): PathParameter[String] = new PathParameter[String](name, None) {
 
     override def toString() = name
 
-    override def unapply(str: String): Option[String] = if (str == value) Some(str) else None
+    override def unapply(str: String): Option[String] = if (str == name) Some(str) else None
 
     override def iterator: Iterator[PathParameter[_]] = Nil.iterator
   }

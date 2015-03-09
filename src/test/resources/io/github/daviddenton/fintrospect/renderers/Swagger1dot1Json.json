@@ -14,18 +14,21 @@
           "parameters": [
             {
               "name": "firstName",
+              "description": null,
               "paramType": "path",
               "required": true,
               "dataType": "string"
             },
             {
               "name": "secondName",
+              "description": null,
               "paramType": "path",
               "required": true,
               "dataType": "string"
             },
             {
               "name": "query",
+              "description": "description of the query",
               "paramType": "query",
               "required": true,
               "dataType": "boolean"
@@ -52,12 +55,14 @@
           "parameters": [
             {
               "name": "message",
+              "description": null,
               "paramType": "path",
               "required": true,
               "dataType": "string"
             },
             {
               "name": "query",
+              "description": null,
               "paramType": "query",
               "required": true,
               "dataType": "int"
@@ -76,12 +81,14 @@
           "parameters": [
             {
               "name": "message",
+              "description": null,
               "paramType": "path",
               "required": true,
               "dataType": "string"
             },
             {
               "name": "header",
+              "description": "description of the header",
               "paramType": "header",
               "required": true,
               "dataType": "string"
