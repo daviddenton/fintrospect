@@ -9,9 +9,8 @@
           "httpMethod": "GET",
           "nickname": "a friendly endpoint",
           "summary": "a friendly endpoint",
-          "produces": [
-            "application/json"
-          ],
+          "produces": [],
+          "consumes": [],
           "parameters": [
             {
               "name": "firstName",
@@ -46,6 +45,10 @@
           "produces": [
             "application/json"
           ],
+          "consumes": [
+            "application/atom+xml",
+            "application/svg+xml"
+          ],
           "parameters": [
             {
               "name": "message",
@@ -69,6 +72,7 @@
           "produces": [
             "application/json"
           ],
+          "consumes": [],
           "parameters": [
             {
               "name": "message",

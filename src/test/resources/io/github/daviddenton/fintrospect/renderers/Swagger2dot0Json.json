@@ -9,9 +9,8 @@
     "/welcome/{firstName}/bertrand/{secondName}": {
       "get": {
         "summary": "a friendly endpoint",
-        "produces": [
-          "application/json"
-        ],
+        "produces": [],
+        "consumes": [],
         "parameters": [
           {
             "in": "path",
@@ -44,6 +43,10 @@
         "produces": [
           "application/json"
         ],
+        "consumes": [
+          "application/atom+xml",
+          "application/svg+xml"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -68,6 +71,7 @@
         "produces": [
           "application/json"
         ],
+        "consumes": [],
         "parameters": [
           {
             "in": "path",
