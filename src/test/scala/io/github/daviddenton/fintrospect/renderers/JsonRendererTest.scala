@@ -5,14 +5,15 @@ import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.path.Root
 import com.twitter.io.Charsets._
 import com.twitter.util.Await
+import io.github.daviddenton.fintrospect.MimeTypes._
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.parameters._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import io.github.daviddenton.fintrospect.{ModuleRoute, On, Description, FintrospectModule}
+import io.github.daviddenton.fintrospect._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
-import util.Echo
+import _root_.util.Echo
 
 import scala.io.Source
 
@@ -22,12 +23,15 @@ abstract class JsonRendererTest(name: String, renderer: Seq[ModuleRoute] => Json
       val module = FintrospectModule(Root, renderer)
         .withRoute(
           Description("a get endpoint")
+            .producing(APPLICATION_JSON)
             .requiring(Header.string("header"))
             .returning(OK -> "peachy")
             .returning(FORBIDDEN -> "no way jose"),
           On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
         .withRoute(
           Description("a post endpoint")
+            .consuming(APPLICATION_ATOM_XML, APPLICATION_SVG_XML)
+            .producing(APPLICATION_JSON)
             .requiring(Query.int("query")),
           On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
         .withRoute(
@@ -37,7 +41,7 @@ abstract class JsonRendererTest(name: String, renderer: Seq[ModuleRoute] => Json
 
       val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
       val actual = Await.result(module.toService(Request("/"))).content.toString(Utf8)
-      //      println(actual)
+//            println(actual)
       parse(actual) should be === expected
     }
   }

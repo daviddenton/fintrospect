@@ -7,6 +7,7 @@ import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.filter.Cors._
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Http, Request, RichHttp}
+import io.github.daviddenton.fintrospect.MimeTypes._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Query, Header}
 import io.github.daviddenton.fintrospect.parameters.Path._
@@ -18,13 +19,15 @@ object SwaggerV1dot1 extends App {
   val module = FintrospectModule(Root, Swagger1dot1Json())
     .withRoute(
       Description("a get endpoint")
+        .producing(APPLICATION_JSON)
         .requiring(Header.string("header"))
         .returning(OK -> "peachy")
         .returning(FORBIDDEN -> "no way jose"),
       On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
-    .withRoute(Description("a post endpoint"), On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
+    .withRoute(Description("a post endpoint").producing(APPLICATION_JSON), On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
     .withRoute(
       Description("a friendly endpoint")
+        .producing(APPLICATION_JSON)
         .requiring(Query.boolean("query")),
       On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
 
