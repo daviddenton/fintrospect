@@ -16,7 +16,7 @@ import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
 object SwaggerV1dot1 extends App {
-  val module = FintrospectModule(Root, Swagger1dot1Json())
+  val module = FintrospectModule(Root / "bob", Swagger1dot1Json())
     .withRoute(
       Description("a get endpoint")
         .producing(APPLICATION_JSON)
