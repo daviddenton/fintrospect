@@ -1,5 +1,6 @@
 package io.github.daviddenton.fintrospect.renderers
 
+import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.path.Root
 import com.twitter.io.Charsets._
@@ -7,7 +8,7 @@ import com.twitter.util.Await
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.parameters._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import io.github.daviddenton.fintrospect.{On, Description, FintrospectModule}
+import io.github.daviddenton.fintrospect.{ModuleRoute, On, Description, FintrospectModule}
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -15,7 +16,7 @@ import util.Echo
 
 import scala.io.Source
 
-abstract class JsonRendererTest(name: String, renderer: FintrospectModule.Renderer) extends FunSpec with ShouldMatchers {
+abstract class JsonRendererTest(name: String, renderer: Seq[ModuleRoute] => JsonRootNode) extends FunSpec with ShouldMatchers {
   describe(name) {
     it("renders as expected") {
       val module = FintrospectModule(Root, renderer)

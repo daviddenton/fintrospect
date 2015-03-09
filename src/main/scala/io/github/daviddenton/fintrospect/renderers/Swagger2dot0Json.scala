@@ -1,8 +1,7 @@
 package io.github.daviddenton.fintrospect.renderers
 
-import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories._
-import io.github.daviddenton.fintrospect.FintrospectModule.Renderer
+import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Parameter
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
@@ -26,7 +25,7 @@ object Swagger2dot0Json {
     )
   }
 
-  def apply(): Renderer =
+  def apply(): Seq[ModuleRoute] => JsonRootNode =
     mr => {
       val paths = mr
         .groupBy(_.toString)
