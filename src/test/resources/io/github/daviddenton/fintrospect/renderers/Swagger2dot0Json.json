@@ -15,18 +15,21 @@
           {
             "in": "path",
             "name": "firstName",
+            "description": null,
             "required": true,
             "type": "string"
           },
           {
             "in": "path",
             "name": "secondName",
+            "description": null,
             "required": true,
             "type": "string"
           },
           {
             "in": "query",
             "name": "query",
+            "description": "description of the query",
             "required": true,
             "type": "boolean"
           }
@@ -51,12 +54,14 @@
           {
             "in": "path",
             "name": "message",
+            "description": null,
             "required": true,
             "type": "string"
           },
           {
             "in": "query",
             "name": "query",
+            "description": null,
             "required": true,
             "type": "int"
           }
@@ -76,12 +81,14 @@
           {
             "in": "path",
             "name": "message",
+            "description": null,
             "required": true,
             "type": "string"
           },
           {
             "in": "header",
             "name": "header",
+            "description": "description of the header",
             "required": true,
             "type": "string"
           }
