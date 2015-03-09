@@ -26,7 +26,7 @@ object Swagger1dot1Json {
       "produces" -> array(r.description.produces.map(string): _*),
       "consumes" -> array(r.description.consumes.map(string): _*),
       "parameters" -> array(r.allParams.map(render): _*),
-      "errorResponses" -> array(r.allResponses.filterKeys(_.getCode > 399).map { case (code, desc) => obj("code" -> number(code.getCode), "description" -> string(desc))}.toSeq)
+      "errorResponses" -> array(r.allResponses.filterKeys(_.getCode > 399).map { case (code, desc) => obj("code" -> number(code.getCode), "reason" -> string(desc))}.toSeq)
     )
   }
 
