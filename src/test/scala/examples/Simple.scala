@@ -20,7 +20,7 @@ object Simple extends App {
     .withRoute(
       Description("a get endpoint")
         .producing(APPLICATION_JSON)
-        .requiring(Header.string("header"))
+        .requiring(Header.string("header", "description of the header"))
         .returning(OK -> "peachy")
         .returning(FORBIDDEN -> "no way jose"),
       On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
@@ -28,7 +28,7 @@ object Simple extends App {
     .withRoute(
       Description("a friendly endpoint")
         .producing(APPLICATION_JSON)
-        .requiring(Query.boolean("query")),
+        .requiring(Query.boolean("query", "description of the query")),
       On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
 
   ServerBuilder()

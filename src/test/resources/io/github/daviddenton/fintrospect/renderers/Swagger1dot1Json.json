@@ -97,7 +97,7 @@
           "errorResponses": [
             {
               "code": 403,
-              "description": "no way jose"
+              "reason": "no way jose"
             }
           ]
         }

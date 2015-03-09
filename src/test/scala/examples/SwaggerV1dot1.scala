@@ -20,16 +20,17 @@ object SwaggerV1dot1 extends App {
     .withRoute(
       Description("a get endpoint")
         .producing(APPLICATION_JSON)
-        .requiring(Header.string("header"))
+        .requiring(Header.string("header", "description of the header"))
         .returning(OK -> "peachy")
         .returning(FORBIDDEN -> "no way jose"),
-      On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
-    .withRoute(Description("a post endpoint").producing(APPLICATION_JSON), On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
+      On(GET, _ / "echo"), string("message", "the message to display"), (s: String) => Echo(s))
+    .withRoute(Description("a post endpoint").producing(APPLICATION_JSON), On(POST, _ / "echo"),
+      string("message", "the message to display"), (s: String) => Echo(s))
     .withRoute(
       Description("a friendly endpoint")
         .producing(APPLICATION_JSON)
         .requiring(Query.boolean("query")),
-      On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
+      On(GET, _ / "welcome"), string("firstName", "my first name"), fixed("bertrand"), string("secondName", "my surname"), (x: String, y: String, z: String) => Echo(x, y, z))
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))
