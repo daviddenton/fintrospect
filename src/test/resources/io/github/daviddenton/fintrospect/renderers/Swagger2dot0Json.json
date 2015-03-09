@@ -8,7 +8,7 @@
   "paths": {
     "/welcome/{firstName}/bertrand/{secondName}": {
       "get": {
-        "summary": "a friendly endpoint",
+        "summary": null,
         "produces": [],
         "consumes": [],
         "parameters": [
@@ -42,7 +42,7 @@
     },
     "/echo/{message}": {
       "post": {
-        "summary": "a post endpoint",
+        "summary": null,
         "produces": [
           "application/json"
         ],
@@ -72,7 +72,7 @@
         ]
       },
       "get": {
-        "summary": "a get endpoint",
+        "summary": "some rambling description of what this thing actually does",
         "produces": [
           "application/json"
         ],
