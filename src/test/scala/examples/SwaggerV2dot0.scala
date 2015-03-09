@@ -18,16 +18,20 @@ import util.Echo
 object SwaggerV2dot0 extends App {
   val module = FintrospectModule(Root, Swagger2dot0Json())
     .withRoute(
-      Description("a get endpoint")
+      Description("a get endpoint", "some rambling description of what this thing actually does")
         .producing(APPLICATION_JSON)
         .requiring(Header.string("header", "description of the header"))
         .returning(OK -> "peachy")
         .returning(FORBIDDEN -> "no way jose"),
       On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
-    .withRoute(Description("a post endpoint").producing(APPLICATION_JSON), On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
     .withRoute(
-      Description("a friendly endpoint")
+      Description("a post endpoint")
+        .consuming(APPLICATION_ATOM_XML, APPLICATION_SVG_XML)
         .producing(APPLICATION_JSON)
+        .requiring(Query.int("query")),
+      On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
+    .withRoute(
+      Description("a friendly endpoint", "this service doesn't really do anything real")
         .requiring(Query.boolean("query", "description of the query")),
       On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
 

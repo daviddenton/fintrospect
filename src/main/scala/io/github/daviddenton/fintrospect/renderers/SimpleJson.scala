@@ -7,7 +7,7 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 object SimpleJson {
   private def render(mr: ModuleRoute): (String, JsonNode) = {
-    mr.on.method + ":" + mr.toString -> string(mr.description.value)
+    mr.on.method + ":" + mr.toString -> string(mr.description.name)
   }
 
   def apply(): Seq[ModuleRoute] => JsonRootNode = mr => obj("resources" -> obj(mr.map(render)))
