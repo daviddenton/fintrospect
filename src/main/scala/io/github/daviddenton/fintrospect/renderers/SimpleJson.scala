@@ -1,8 +1,7 @@
 package io.github.daviddenton.fintrospect.renderers
 
-import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories.string
-import io.github.daviddenton.fintrospect.FintrospectModule._
+import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect.ModuleRoute
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
@@ -11,5 +10,5 @@ object SimpleJson {
     mr.on.method + ":" + mr.toString -> string(mr.description.value)
   }
 
-  def apply(): Renderer = mr => obj("resources" -> obj(mr.map(render)))
+  def apply(): Seq[ModuleRoute] => JsonRootNode = mr => obj("resources" -> obj(mr.map(render)))
 }
