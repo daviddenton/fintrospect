@@ -2,7 +2,7 @@ package io.github.daviddenton.fintrospect
 
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.path.{Path, _}
-import com.twitter.finagle.http.service.RoutingService.byMethodAndPathObject
+import com.twitter.finagle.http.service.RoutingService
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
@@ -20,6 +20,8 @@ object FintrospectModule {
   private type Svc = Service[Request, Response]
   private type Binding = PartialFunction[(HttpMethod, Path), Svc]
   private type PP[T] = PathParameter[T]
+
+  def toService(binding: Binding): Svc = RoutingService.byMethodAndPathObject(binding)
 
   def apply(basePath: Path, renderer: Seq[ModuleRoute] => JsonRootNode): FintrospectModule = new FintrospectModule(basePath, renderer, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
 }
@@ -93,5 +95,6 @@ class FintrospectModule private(basePath: Path, renderer: Seq[ModuleRoute] => Js
     }
   }
 
-  def toService = byMethodAndPathObject(withDefault().userRoutes)
-}
+  def routes = withDefault().userRoutes
+
+  def toService = FintrospectModule.toService(routes)}
