@@ -30,7 +30,8 @@ class FintrospectModule private(basePath: Path, renderer: Seq[ModuleRoute] => Js
 
   private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-      request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + ":" + moduleRoute.toString())
+      val url = if(moduleRoute.toString().length == 0) "/" else moduleRoute.toString()
+      request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + "." + url)
       service(request)
     }
   }
