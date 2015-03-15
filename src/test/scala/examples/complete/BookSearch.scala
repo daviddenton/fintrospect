@@ -16,13 +16,12 @@ class BookSearch(books: Books) extends RouteSpec {
 
   private def search(): Service[Request, Response] = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
-      val r = (for {
+      (for {
         author <- authorQuery.from(request)
         title <- titleQuery.from(request)
       } yield {
         Ok(books.search(author, title).mkString(","))
-      }).getOrElse(Error(BAD_REQUEST, "not all parameters were specified"))
-      r.toFuture
+      }).getOrElse(Error(BAD_REQUEST, "not all parameters were specified")).toFuture
     }
   }
 
