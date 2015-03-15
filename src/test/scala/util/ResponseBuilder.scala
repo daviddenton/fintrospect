@@ -21,14 +21,13 @@ object ResponseBuilder {
 
   def Ok(content: String) = new ResponseBuilder().withCode(HttpResponseStatus.OK).withContent(content)
 
-  def Ok(content: JsonRootNode) = new ResponseBuilder()
-    .withCode(HttpResponseStatus.OK).withContent(content)
+  def Ok(content: JsonRootNode) = new ResponseBuilder().withCode(HttpResponseStatus.OK).withContent(content)
 
-  def Error(status: HttpResponseStatus, error: Throwable) = {
-    new ResponseBuilder().withCode(status).withContent(formatter.format(errorToJson(error)))
-  }
+  def Error(status: HttpResponseStatus, message: String) = new ResponseBuilder().withCode(status).withContent(obj(field("message", string(message))))
 
-  def errorToJson(error: Throwable) = obj(field("message", string(Option(error.getMessage).getOrElse(error.getClass.getName))))
+  def Error(status: HttpResponseStatus, error: Throwable) = new ResponseBuilder().withCode(status).withContent(formatter.format(errorToJson(error)))
+
+  private def errorToJson(error: Throwable) = obj(field("message", string(Option(error.getMessage).getOrElse(error.getClass.getName))))
 }
 
 class ResponseBuilder private() {
