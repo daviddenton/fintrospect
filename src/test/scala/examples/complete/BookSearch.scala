@@ -1,19 +1,18 @@
 package examples.complete
 
+import _root_.util.ResponseBuilder._
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.MimeTypes._
-import io.github.daviddenton.fintrospect.parameters.Query
-import io.github.daviddenton.fintrospect.parameters.Requirement.Mandatory
 import io.github.daviddenton.fintrospect._
+import io.github.daviddenton.fintrospect.parameters.Query
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
-import _root_.util.ResponseBuilder._
 
 class BookSearch(books: Books) extends RouteSpec {
-  private val authorQuery = Query.int("maxPages", "max number of pages in book", Mandatory)
-  private val titleQuery = Query.string("term", "the part of the title to look for", Mandatory)
+  private val authorQuery = Query.int("maxPages", "max number of pages in book")
+  private val titleQuery = Query.string("term", "the part of the title to look for")
 
   private def search(): Service[Request, Response] = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
