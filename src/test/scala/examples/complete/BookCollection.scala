@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.MimeTypes._
 import io.github.daviddenton.fintrospect._
-import org.jboss.netty.handler.codec.http.HttpMethod
+import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
 class BookCollection(books: Books) extends RouteSpec {
@@ -20,7 +20,7 @@ class BookCollection(books: Books) extends RouteSpec {
       Description("show collection")
         .producing(TEXT_PLAIN)
         .returning(OK -> "list of books"),
-      On(HttpMethod.GET, _ / "book"), list)
+      On(GET, _ / "book"), list)
   }
 }
 
