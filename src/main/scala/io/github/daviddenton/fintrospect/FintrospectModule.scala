@@ -54,6 +54,8 @@ class FintrospectModule private(basePath: Path, renderer: Seq[ModuleRoute] => Js
     new FintrospectModule(basePath, renderer, moduleRoute :: moduleRoutes, userRoutes.orElse(bindFn(Identify(moduleRoute))))
   }
 
+  def withRouteSpec(routeSpec: RouteSpec): FintrospectModule = routeSpec.attachTo(this)
+
   def withRoute(description: Description, on: On, fn: () => Svc) = withDescribedRoute(description, on) {
     identify => {
       case method -> path if on.matches(method, basePath, path) => identify.andThen(fn())
