@@ -1,5 +1,3 @@
 package io.github.daviddenton.fintrospect.parameters
 
-class HeaderTest extends ParametersTest(Header) {
-
- }
+class HeaderTest extends ParametersTest(Header)
