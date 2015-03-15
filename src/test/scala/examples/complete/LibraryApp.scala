@@ -2,6 +2,7 @@ package examples.complete
 
 import java.net.InetSocketAddress
 
+import argo.jdom.JsonRootNode
 import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.filter.Cors._
 import com.twitter.finagle.http.path.Root
@@ -11,9 +12,11 @@ import io.github.daviddenton.fintrospect.renderers.Swagger2dot0Json
 
 object LibraryApp extends App {
 
+  private val renderer: (Seq[ModuleRoute]) => JsonRootNode = Swagger2dot0Json() // renderer implementation
+
   private val books = new Books()
 
-  val module = FintrospectModule(Root, Swagger2dot0Json())
+  val module = FintrospectModule(Root, renderer)
     .withRouteSpec(new BookCollection(books))
     .withRouteSpec(new BookLookup(books))
     .withRouteSpec(new BookSearch(books))
