@@ -3,7 +3,7 @@ package io.github.daviddenton.fintrospect.parameters
 import scala.reflect.ClassTag
 
 object Path extends Parameters[PathParameter]() {
-  protected def create[T](name: String, description: Option[String], required: Requirement, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new PathParameter[T](name, description)(ct) {
+  protected def create[T](name: String, description: Option[String], parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new PathParameter[T](name, description)(ct) {
 
     override def toString() = s"{$name}"
 
