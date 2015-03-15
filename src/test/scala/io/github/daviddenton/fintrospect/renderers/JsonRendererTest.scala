@@ -24,7 +24,7 @@ abstract class JsonRendererTest(name: String, renderer: Seq[ModuleRoute] => Json
         .withRoute(
           Description("a get endpoint", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
-            .requiring(Header.string("header", "description of the header"))
+            .optionally(Header.string("header", "description of the header"))
             .returning(OK -> "peachy")
             .returning(FORBIDDEN -> "no way jose"),
           On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))

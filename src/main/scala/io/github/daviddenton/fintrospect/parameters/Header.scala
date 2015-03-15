@@ -12,5 +12,5 @@ object Header extends Parameters[RequestParameter]() {
     override def from(name: String, request: Request): Option[String] = Option(request.headers().get(name))
   }
 
-  protected def create[T](name: String, description: Option[String], required: Requirement, parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, description, location, required, parse)
+  protected def create[T](name: String, description: Option[String], parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, description, location, parse)
 }
