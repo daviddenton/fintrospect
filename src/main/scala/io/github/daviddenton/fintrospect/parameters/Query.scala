@@ -8,7 +8,9 @@ object Query extends Parameters[RequestParameter]() {
   private val location = new Location {
     override def toString = "query"
 
-    override def from(name: String, request: Request): Option[String] = request.params.get(name)
+    override def from(name: String, request: Request): Option[String] = {
+      request.params.get(name)
+    }
   }
 
   protected def create[T](name: String, description: Option[String], parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequestParameter[T](name, description, location, parse)
