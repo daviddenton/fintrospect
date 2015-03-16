@@ -8,7 +8,7 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 object Swagger2dot0Json {
 
-  private def render(rp: (Requirement, Parameter[_])): JsonNode = obj(
+  private def render(rp: (Requirement, Parameter[_, _])): JsonNode = obj(
     "in" -> string(rp._2.where.toString),
     "name" -> string(rp._2.name),
     "description" -> rp._2.description.map(string).getOrElse(nullNode()),

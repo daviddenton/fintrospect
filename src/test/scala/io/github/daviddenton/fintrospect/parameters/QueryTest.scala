@@ -1,3 +1,7 @@
 package io.github.daviddenton.fintrospect.parameters
 
-class QueryTest extends ParametersTest(Query)
+import com.twitter.finagle.http.Request
+
+class QueryTest extends ParametersTest[Request, RequestParameter](Query) {
+  override def embed(param: String): Request = Request(paramName -> param)
+}
