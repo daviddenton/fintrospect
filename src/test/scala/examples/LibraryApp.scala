@@ -1,8 +1,7 @@
-package examples.complete
+package examples
 
 import java.net.InetSocketAddress
 
-import argo.jdom.JsonRootNode
 import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.filter.Cors._
 import com.twitter.finagle.http.path.Root

@@ -1,4 +1,4 @@
-package examples.complete
+package examples
 
 case class Book(title: String, author: String, pages: Int)
 
