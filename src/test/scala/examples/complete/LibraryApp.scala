@@ -12,7 +12,7 @@ import io.github.daviddenton.fintrospect.renderers.Swagger2dot0Json
 
 object LibraryApp extends App {
 
-  private val renderer: (Seq[ModuleRoute]) => JsonRootNode = Swagger2dot0Json() // renderer implementation
+  private val renderer: Renderer = Swagger2dot0Json() // choose your renderer implementation
 
   private val books = new Books()
 

@@ -23,10 +23,10 @@ object FintrospectModule {
 
   def toService(binding: Binding): Svc = RoutingService.byMethodAndPathObject(binding)
 
-  def apply(basePath: Path, renderer: Seq[ModuleRoute] => JsonRootNode): FintrospectModule = new FintrospectModule(basePath, renderer, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
+  def apply(basePath: Path, renderer: Renderer): FintrospectModule = new FintrospectModule(basePath, renderer, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
 }
 
-class FintrospectModule private(basePath: Path, renderer: Seq[ModuleRoute] => JsonRootNode, moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
+class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
 
   private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
