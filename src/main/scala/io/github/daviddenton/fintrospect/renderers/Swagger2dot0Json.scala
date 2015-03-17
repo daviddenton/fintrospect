@@ -6,7 +6,7 @@ import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Requirement, Parameter}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
-object Swagger2dot0Json {
+class Swagger2dot0Json private() extends Renderer {
 
   private def render(rp: (Requirement, Parameter[_])): JsonNode = obj(
     "in" -> string(rp._2.where.toString),
@@ -27,27 +27,31 @@ object Swagger2dot0Json {
     )
   }
 
-  def apply(): Seq[ModuleRoute] => JsonRootNode =
-    mr => {
-      val paths = mr
-        .groupBy(_.toString)
-        .map { case (path, routes) => path -> obj(routes.map(render))}.toSeq
+  def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
+    val paths = mr
+      .groupBy(_.toString)
+      .map { case (path, routes) => path -> obj(routes.map(render))}.toSeq
 
-      obj(
-        "swagger" -> string("2.0"),
-        "info" -> obj("title" -> string("title"), "version" -> string("version")),
-        "basePath" -> string("/"),
-        "paths" -> obj(paths)
-        //    "definitions" -> obj(
-        //      "User" -> obj(
-        //        "properties" -> obj(
-        //          "id" -> obj(
-        //            "type" -> "integer",
-        //            "format" -> "int64"
-        //          )
-        //        )
-        //      )
-        //    )
-      )
-    }
+    obj(
+      "swagger" -> string("2.0"),
+      "info" -> obj("title" -> string("title"), "version" -> string("version")),
+      "basePath" -> string("/"),
+      "paths" -> obj(paths)
+      //    "definitions" -> obj(
+      //      "User" -> obj(
+      //        "properties" -> obj(
+      //          "id" -> obj(
+      //            "type" -> "integer",
+      //            "format" -> "int64"
+      //          )
+      //        )
+      //      )
+      //    )
+    )
+  }
+}
+
+
+object Swagger2dot0Json {
+  def apply(): Renderer = new Swagger2dot0Json()
 }

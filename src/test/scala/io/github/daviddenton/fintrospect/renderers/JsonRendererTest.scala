@@ -17,7 +17,7 @@ import _root_.util.Echo
 
 import scala.io.Source
 
-abstract class JsonRendererTest(name: String, renderer: Seq[ModuleRoute] => JsonRootNode) extends FunSpec with ShouldMatchers {
+abstract class JsonRendererTest(name: String, renderer: Renderer) extends FunSpec with ShouldMatchers {
   describe(name) {
     it("renders as expected") {
       val module = FintrospectModule(Root, renderer)

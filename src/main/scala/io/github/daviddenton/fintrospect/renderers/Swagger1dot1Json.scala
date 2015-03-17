@@ -8,7 +8,7 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
 
-object Swagger1dot1Json {
+class Swagger1dot1Json private() extends Renderer {
 
   private def render(rp: (Requirement, Parameter[_])): JsonNode = obj(
     "name" -> string(rp._2.name),
@@ -32,8 +32,7 @@ object Swagger1dot1Json {
     )
   }
 
-  def apply(): Seq[ModuleRoute] => JsonRootNode =
-    mr => {
+  def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
       val api = mr
         .groupBy(_.toString)
         .map { case (path, routes) => obj("path" -> string(path), "operations" -> array(routes.map(render(_)._2): _*))}
@@ -54,4 +53,8 @@ object Swagger1dot1Json {
         //    )
       )
     }
+}
+
+object Swagger1dot1Json {
+  def apply(): Renderer = new Swagger1dot1Json()
 }
