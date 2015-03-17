@@ -1,4 +1,4 @@
-package examples.complete
+package examples
 
 import _root_.util.ResponseBuilder._
 import com.twitter.finagle.Service
