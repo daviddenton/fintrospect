@@ -16,12 +16,7 @@ class BookSearch(books: Books) extends RouteSpec {
 
   private def search(): Service[Request, Response] = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
-      (for {
-        author <- authorQuery.unapply(request)
-        title <- titleQuery.unapply(request)
-      } yield {
-        Ok(books.search(author, title).mkString(","))
-      }).getOrElse(Error(BAD_REQUEST, "not all parameters were specified")).toFuture
+      Ok(books.search(authorQuery.from(request), titleQuery.from(request)).mkString(","))
     }
   }
 
