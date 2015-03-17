@@ -11,8 +11,8 @@ import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
 class BookSearch(books: Books) extends RouteSpec {
-  private val authorQuery = Query.int("maxPages", "max number of pages in book")
-  private val titleQuery = Query.string("term", "the part of the title to look for")
+  private val authorQuery = Query.required.int("maxPages", "max number of pages in book")
+  private val titleQuery = Query.required.string("term", "the part of the title to look for")
 
   private def search(): Service[Request, Response] = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
@@ -28,8 +28,8 @@ class BookSearch(books: Books) extends RouteSpec {
   def attachTo(module: FintrospectModule): FintrospectModule = {
     module.withRoute(
       Description("search for books")
-        .requiring(authorQuery)
-        .requiring(titleQuery)
+        .taking(authorQuery)
+        .taking(titleQuery)
         .returning(OK -> "results", BAD_REQUEST -> "invalid request")
         .producing(TEXT_PLAIN),
       On(POST, _ / "search"), search)

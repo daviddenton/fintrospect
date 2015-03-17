@@ -10,4 +10,3 @@ abstract class Parameter[T, S] protected[fintrospect](val name: String, val desc
 }
 
 
-
