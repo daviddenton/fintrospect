@@ -1,6 +1,6 @@
 package io.github.daviddenton.fintrospect
 
-import io.github.daviddenton.fintrospect.parameters.{RequestParameters, RequestParameter}
+import io.github.daviddenton.fintrospect.parameters.{OptionalRequestParameter, RequiredRequestParameter, RequestParameters}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 case class Description private(name: String,
@@ -13,8 +13,8 @@ case class Description private(name: String,
 
   def producing(mimeType: MimeType*) = copy(produces = (mimeType ++ produces).toList)
 
-  def requiring(rp: RequestParameter[_]) = copy(requestParams = requestParams.requiring(rp))
-  def optionally(rp: RequestParameter[_]) = copy(requestParams = requestParams.optionally(rp))
+  def taking(rp: RequiredRequestParameter[_]) = copy(requestParams = requestParams.requiring(rp))
+  def taking(rp: OptionalRequestParameter[_]) = copy(requestParams = requestParams.optionally(rp))
 
   def returning(codes: (HttpResponseStatus, String)*): Description = copy(responses = responses ++ codes)
 }

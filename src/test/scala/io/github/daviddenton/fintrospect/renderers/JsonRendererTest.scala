@@ -24,7 +24,7 @@ abstract class JsonRendererTest(name: String, renderer: Seq[ModuleRoute] => Json
         .withRoute(
           Description("a get endpoint", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
-            .optionally(Header.string("header", "description of the header"))
+            .taking(Header.optional.string("header", "description of the header"))
             .returning(OK -> "peachy")
             .returning(FORBIDDEN -> "no way jose"),
           On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
@@ -32,11 +32,11 @@ abstract class JsonRendererTest(name: String, renderer: Seq[ModuleRoute] => Json
           Description("a post endpoint")
             .consuming(APPLICATION_ATOM_XML, APPLICATION_SVG_XML)
             .producing(APPLICATION_JSON)
-            .requiring(Query.int("query")),
+            .taking(Query.required.int("query")),
           On(POST, _ / "echo"), string("message"), (s: String) => Echo(s))
         .withRoute(
           Description("a friendly endpoint")
-            .requiring(Query.boolean("query", "description of the query")),
+            .taking(Query.required.boolean("query", "description of the query")),
           On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
 
       val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
