@@ -19,8 +19,8 @@ object Swagger2dot0Json {
   private def render(r: ModuleRoute): (String, JsonNode) = {
     r.on.method.getName.toLowerCase -> obj(
       "summary" -> r.description.summary.map(string).getOrElse(nullNode()),
-      "produces" -> array(r.description.produces.map(string): _*),
-      "consumes" -> array(r.description.consumes.map(string): _*),
+      "produces" -> array(r.description.produces.map(m => string(m.value)): _*),
+      "consumes" -> array(r.description.consumes.map(m => string(m.value)): _*),
       "parameters" -> array(r.allParams.map(render).toSeq: _*),
       "responses" -> obj(r.allResponses.map { case (code, desc) => code.getCode.toString -> obj("description" -> string(desc))}),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
