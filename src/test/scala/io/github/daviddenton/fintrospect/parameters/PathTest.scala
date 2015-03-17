@@ -1,5 +1,9 @@
 package io.github.daviddenton.fintrospect.parameters
 
-class PathTest extends ParametersTest[String, PathParameter](Path) {
-  override def embed(param: String): String = param
+import com.twitter.finagle.http.Request
+
+class PathTest extends ParametersTest[PathParameter](Path) {
+  override def from[X](param: PathParameter[X], value: String): Option[X] = {
+    param.unapply(value)
+  }
 }

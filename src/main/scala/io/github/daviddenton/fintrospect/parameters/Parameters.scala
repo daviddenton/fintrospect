@@ -7,7 +7,7 @@ import org.joda.time.{DateTime, LocalDate}
 import scala.reflect.ClassTag
 import scala.util.Try
 
-abstract class Parameters[P[_] <: Parameter[_, _]] protected[parameters]() {
+abstract class Parameters[P[_] <: Parameter[_]] protected[parameters]() {
   def localDate(name: String, description: String = null): P[LocalDate] = create(name, Option(description), str => Try(date().parseLocalDate(str)).toOption)
 
   def dateTime(name: String, description: String = null): P[DateTime] = create(name, Option(description), str => Try(dateTimeNoMillis().parseDateTime(str)).toOption)
