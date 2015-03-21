@@ -2,7 +2,8 @@
   "swagger": "2.0",
   "info": {
     "title": "title",
-    "version": "version"
+    "version": "1.2",
+    "description": "module description"
   },
   "basePath": "/",
   "paths": {
