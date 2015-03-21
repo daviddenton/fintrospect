@@ -6,7 +6,7 @@ import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Requirement, Parameter}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
-class Swagger2dot0Json private() extends Renderer {
+class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
 
   private def render(rp: (Requirement, Parameter[_])): JsonNode = obj(
     "in" -> string(rp._2.where.toString),
@@ -34,7 +34,7 @@ class Swagger2dot0Json private() extends Renderer {
 
     obj(
       "swagger" -> string("2.0"),
-      "info" -> obj("title" -> string("title"), "version" -> string("version")),
+      "info" -> obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse(""))),
       "basePath" -> string("/"),
       "paths" -> obj(paths)
       //    "definitions" -> obj(
@@ -53,5 +53,5 @@ class Swagger2dot0Json private() extends Renderer {
 
 
 object Swagger2dot0Json {
-  def apply(): Renderer = new Swagger2dot0Json()
+  def apply(apiInfo: ApiInfo): Renderer = new Swagger2dot0Json(apiInfo)
 }

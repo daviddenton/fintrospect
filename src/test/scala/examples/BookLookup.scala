@@ -24,7 +24,7 @@ class BookLookup(books: Books) extends RouteSpec {
       Description("lookup book by isbn number")
         .producing(MimeTypes.TEXT_PLAIN)
         .returning(OK -> "we found your book", NOT_FOUND -> "no book was found with this ISBN"),
-      On(GET, _ / "book"), Path.string("isbn"), lookupByIsbn)
+      On(GET, _ / "book"), Path.string("isbn", "the isbn of the book"), lookupByIsbn)
   }
 }
 
