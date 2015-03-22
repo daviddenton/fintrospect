@@ -12,7 +12,7 @@ class RequiredRequestParameter[T](name: String, description: Option[String], loc
 }
 
 object RequiredRequestParameter {
-  def builderForLocation(location: Location) = new ParameterBuilder[RequiredRequestParameter]() {
+  def builderFor(location: Location) = new ParameterBuilder[RequiredRequestParameter]() {
     def apply[T](name: String, description: Option[String], parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new RequiredRequestParameter[T](name, description, location, parse)
   }
 }

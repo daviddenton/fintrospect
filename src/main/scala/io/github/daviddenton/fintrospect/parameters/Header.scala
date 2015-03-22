@@ -9,6 +9,6 @@ object Header {
     override def from(name: String, request: Request): Option[String] = Option(request.headers().get(name))
   }
 
-  val required = new Parameters(RequiredRequestParameter.builderForLocation(location))
-  val optional = new Parameters(OptionalRequestParameter.builderForLocation(location))
+  val required = new Parameters(RequiredRequestParameter.builderFor(location))
+  val optional = new Parameters(OptionalRequestParameter.builderFor(location))
 }
