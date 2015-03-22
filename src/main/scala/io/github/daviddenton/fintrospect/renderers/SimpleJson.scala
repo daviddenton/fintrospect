@@ -2,8 +2,8 @@ package io.github.daviddenton.fintrospect.renderers
 
 import argo.jdom.JsonNodeFactories.string
 import argo.jdom.{JsonNode, JsonRootNode}
-import io.github.daviddenton.fintrospect.{Renderer, ModuleRoute}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.{ModuleRoute, Renderer}
 
 class SimpleJson private() extends Renderer {
   private def render(mr: ModuleRoute): (String, JsonNode) = {

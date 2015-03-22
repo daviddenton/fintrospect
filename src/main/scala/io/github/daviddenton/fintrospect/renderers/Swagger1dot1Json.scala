@@ -3,7 +3,7 @@ package io.github.daviddenton.fintrospect.renderers
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect._
-import io.github.daviddenton.fintrospect.parameters.{Requirement, Parameter}
+import io.github.daviddenton.fintrospect.parameters.{Parameter, Requirement}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
