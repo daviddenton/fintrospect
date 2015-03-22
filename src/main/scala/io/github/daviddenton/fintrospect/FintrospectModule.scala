@@ -1,17 +1,17 @@
 package io.github.daviddenton.fintrospect
 
+import _root_.util.ResponseBuilder._
 import com.twitter.finagle.http.path.{Path, _}
 import com.twitter.finagle.http.service.RoutingService
 import com.twitter.finagle.http.{Request, Response}
-import com.twitter.finagle.{Service, SimpleFilter}
+import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.parameters.PathParameter
 import io.github.daviddenton.fintrospect.util.ArgoUtil.pretty
-import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
-import org.jboss.netty.util.CharsetUtil._
+import org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST
 
 object FintrospectModule {
   val IDENTIFY_SVC_HEADER = "descriptionServiceId"
@@ -23,34 +23,37 @@ object FintrospectModule {
   def toService(binding: Binding): Svc = RoutingService.byMethodAndPathObject(binding)
 
   def apply(basePath: Path, renderer: Renderer): FintrospectModule = new FintrospectModule(basePath, renderer, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
-}
 
-class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
+  private case class ValidateParams(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
+    override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
+      val missingParams = moduleRoute.description.required.map(p => p.unapply(request).map(_ => None).getOrElse(Some(p.name))).flatten
+      if (missingParams.isEmpty) service(request) else Error(BAD_REQUEST, "Missing required parameters:" + missingParams.mkString(","))
+    }
+  }
 
   private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-      val url = if(moduleRoute.toString().length == 0) "/" else moduleRoute.toString()
+      val url = if (moduleRoute.toString().length == 0) "/" else moduleRoute.toString()
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + "." + url)
       service(request)
     }
   }
 
   private case class RoutesContent(descriptionContent: String) extends Service[Request, Response]() {
-    override def apply(request: Request): Future[Response] = {
-      val response = Response()
-      response.setStatusCode(200)
-      response.setContent(copiedBuffer(descriptionContent, UTF_8))
-      Future.value(response)
-    }
+    override def apply(request: Request): Future[Response] = Ok(descriptionContent)
   }
+}
+
+class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
 
   private def withDefault() = {
     withRoute(Description("Description route"), On(GET, identity), () => RoutesContent(pretty(renderer(moduleRoutes))))
   }
 
-  private def withDescribedRoute(description: Description, on: On, PP: PP[_]*)(bindFn: Identify => Binding): FintrospectModule = {
+  private def withDescribedRoute(description: Description, on: On, PP: PP[_]*)(bindFn: Filter[Request, Response, Request, Response] => Binding): FintrospectModule = {
     val moduleRoute = new ModuleRoute(description, on, basePath, PP)
-    new FintrospectModule(basePath, renderer, moduleRoute :: moduleRoutes, userRoutes.orElse(bindFn(Identify(moduleRoute))))
+    new FintrospectModule(basePath, renderer, moduleRoute :: moduleRoutes,
+      userRoutes.orElse(bindFn(ValidateParams(moduleRoute).andThen(Identify(moduleRoute)))))
   }
 
   def withRouteSpec(routeSpec: RouteSpec): FintrospectModule = routeSpec.attachTo(this)
@@ -99,4 +102,5 @@ class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes
 
   def routes = withDefault().userRoutes
 
-  def toService = FintrospectModule.toService(routes)}
+  def toService = FintrospectModule.toService(routes)
+}
