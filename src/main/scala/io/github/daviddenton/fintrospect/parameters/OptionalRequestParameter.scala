@@ -11,7 +11,7 @@ class OptionalRequestParameter[T](name: String, description: Option[String], loc
 
 
 object OptionalRequestParameter {
-  def builderForLocation(location: Location) = new ParameterBuilder[OptionalRequestParameter]() {
+  def builderFor(location: Location) = new ParameterBuilder[OptionalRequestParameter]() {
     def apply[T](name: String, description: Option[String], parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new OptionalRequestParameter[T](name, description, location, parse)
   }
 }
