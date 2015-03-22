@@ -3,7 +3,7 @@ package io.github.daviddenton.fintrospect.renderers
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect._
-import io.github.daviddenton.fintrospect.parameters.{Requirement, Parameter}
+import io.github.daviddenton.fintrospect.parameters.{Parameter, Requirement}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
@@ -18,6 +18,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
 
   private def render(r: ModuleRoute): (String, JsonNode) = {
     r.on.method.getName.toLowerCase -> obj(
+      "tags" -> array(Seq(string(r.basePath.toString)): _*),
       "summary" -> r.description.summary.map(string).getOrElse(nullNode()),
       "produces" -> array(r.description.produces.map(m => string(m.value)): _*),
       "consumes" -> array(r.description.consumes.map(m => string(m.value)): _*),

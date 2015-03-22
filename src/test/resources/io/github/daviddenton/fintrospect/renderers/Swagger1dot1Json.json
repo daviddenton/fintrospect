@@ -3,50 +3,7 @@
   "resourcePath": "/",
   "apis": [
     {
-      "path": "/welcome/{firstName}/bertrand/{secondName}",
-      "operations": [
-        {
-          "httpMethod": "GET",
-          "nickname": "a friendly endpoint",
-          "notes": null,
-          "produces": [],
-          "consumes": [],
-          "parameters": [
-            {
-              "name": "query",
-              "description": "description of the query",
-              "paramType": "query",
-              "required": true,
-              "dataType": "boolean"
-            },
-            {
-              "name": "firstName",
-              "description": null,
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
-            {
-              "name": "bertrand",
-              "description": null,
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
-            {
-              "name": "secondName",
-              "description": null,
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            }
-          ],
-          "errorResponses": []
-        }
-      ]
-    },
-    {
-      "path": "/echo/{message}",
+      "path": "/basepath/echo/{message}",
       "operations": [
         {
           "httpMethod": "POST",
@@ -107,6 +64,49 @@
               "reason": "no way jose"
             }
           ]
+        }
+      ]
+    },
+    {
+      "path": "/basepath/welcome/{firstName}/bertrand/{secondName}",
+      "operations": [
+        {
+          "httpMethod": "GET",
+          "nickname": "a friendly endpoint",
+          "notes": null,
+          "produces": [],
+          "consumes": [],
+          "parameters": [
+            {
+              "name": "query",
+              "description": "description of the query",
+              "paramType": "query",
+              "required": true,
+              "dataType": "boolean"
+            },
+            {
+              "name": "firstName",
+              "description": null,
+              "paramType": "path",
+              "required": true,
+              "dataType": "string"
+            },
+            {
+              "name": "bertrand",
+              "description": null,
+              "paramType": "path",
+              "required": true,
+              "dataType": "string"
+            },
+            {
+              "name": "secondName",
+              "description": null,
+              "paramType": "path",
+              "required": true,
+              "dataType": "string"
+            }
+          ],
+          "errorResponses": []
         }
       ]
     }
