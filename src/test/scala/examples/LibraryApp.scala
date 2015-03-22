@@ -16,7 +16,7 @@ object LibraryApp extends App {
 
   private val books = new Books()
 
-  val module = FintrospectModule(Root, renderer)
+  val libraryModule = FintrospectModule(Root / "library", renderer)
     .withRouteSpec(new BookCollection(books))
     .withRouteSpec(new BookLookup(books))
     .withRouteSpec(new BookSearch(books))
@@ -25,8 +25,8 @@ object LibraryApp extends App {
     .codec(RichHttp[Request](Http()))
     .bindTo(new InetSocketAddress(8080))
     .name("")
-    .build(new HttpFilter(UnsafePermissivePolicy).andThen(module.toService))
+    .build(new HttpFilter(UnsafePermissivePolicy).andThen(libraryModule.toService))
 
-  println("See the service description at: http://localhost:8080")
+  println("See the service description at: http://localhost:8080/library")
 }
 

@@ -7,8 +7,83 @@
   },
   "basePath": "/",
   "paths": {
-    "/welcome/{firstName}/bertrand/{secondName}": {
+    "/basepath/echo/{message}": {
+      "post": {
+        "tags": [
+          "/basepath"
+        ],
+        "summary": null,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/atom+xml",
+          "application/svg+xml"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "description": null,
+            "required": true,
+            "type": "int"
+          },
+          {
+            "in": "path",
+            "name": "message",
+            "description": null,
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {}
+        ]
+      },
       "get": {
+        "tags": [
+          "/basepath"
+        ],
+        "summary": "some rambling description of what this thing actually does",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "header",
+            "description": "description of the header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "message",
+            "description": null,
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "peachy"
+          },
+          "403": {
+            "description": "no way jose"
+          }
+        },
+        "security": [
+          {}
+        ]
+      }
+    },
+    "/basepath/welcome/{firstName}/bertrand/{secondName}": {
+      "get": {
+        "tags": [
+          "/basepath"
+        ],
         "summary": null,
         "produces": [],
         "consumes": [],
@@ -43,72 +118,6 @@
           }
         ],
         "responses": {},
-        "security": [
-          {}
-        ]
-      }
-    },
-    "/echo/{message}": {
-      "post": {
-        "summary": null,
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [
-          "application/atom+xml",
-          "application/svg+xml"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "query",
-            "description": null,
-            "required": true,
-            "type": "int"
-          },
-          {
-            "in": "path",
-            "name": "message",
-            "description": null,
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {},
-        "security": [
-          {}
-        ]
-      },
-      "get": {
-        "summary": "some rambling description of what this thing actually does",
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "header",
-            "description": "description of the header",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "path",
-            "name": "message",
-            "description": null,
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "peachy"
-          },
-          "403": {
-            "description": "no way jose"
-          }
-        },
         "security": [
           {}
         ]
