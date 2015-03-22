@@ -1,6 +1,5 @@
 package io.github.daviddenton.fintrospect
 
-import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.path.{Path, _}
 import com.twitter.finagle.http.service.RoutingService
 import com.twitter.finagle.http.{Request, Response}

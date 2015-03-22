@@ -1,6 +1,6 @@
 package io.github.daviddenton.fintrospect
 
-import io.github.daviddenton.fintrospect.parameters.{RequestParameter, Requirement, OptionalRequestParameter, RequiredRequestParameter}
+import io.github.daviddenton.fintrospect.parameters.{OptionalRequestParameter, RequestParameter, RequiredRequestParameter, Requirement}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 case class Description private(name: String,
