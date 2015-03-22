@@ -8,3 +8,10 @@ class OptionalRequestParameter[T](name: String, description: Option[String], loc
   extends RequestParameter[T](name, description, location, parse)(ct) {
   def from(request: Request): Option[T] = location.from(name, request).flatMap(parse)
 }
+
+
+object OptionalRequestParameter {
+  def builderForLocation(location: Location) = new ParameterBuilder[OptionalRequestParameter]() {
+    def apply[T](name: String, description: Option[String], parse: (String => Option[T]))(implicit ct: ClassTag[T]) = new OptionalRequestParameter[T](name, description, location, parse)
+  }
+}
