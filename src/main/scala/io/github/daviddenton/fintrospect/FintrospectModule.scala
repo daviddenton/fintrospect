@@ -59,44 +59,44 @@ class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes
   def withRouteSpec(routeSpec: RouteSpec): FintrospectModule = routeSpec.attachTo(this)
 
   def withRoute(description: Description, on: On, fn: () => Svc) = withDescribedRoute(description, on) {
-    identify => {
-      case method -> path if on.matches(method, basePath, path) => identify.andThen(fn())
+    filtered => {
+      case method -> path if on.matches(method, basePath, path) => filtered.andThen(fn())
     }
   }
 
   def withRoute[A](description: Description, on: On, PP0: PP[A], fn: A => Svc) = withDescribedRoute(description, on, PP0) {
-    identify => {
-      case method -> path / PP0(s0) if on.matches(method, basePath, path) => identify.andThen(fn(s0))
+    filtered => {
+      case method -> path / PP0(s0) if on.matches(method, basePath, path) => filtered.andThen(fn(s0))
     }
   }
 
   def withRoute[A, B](description: Description, on: On, PP0: PP[A], PP1: PP[B], fn: (A, B) => Svc) = withDescribedRoute(description, on, PP0, PP1) {
-    identify => {
-      case method -> path / PP0(s0) / PP1(s1) if on.matches(method, basePath, path) => identify.andThen(fn(s0, s1))
+    filtered => {
+      case method -> path / PP0(s0) / PP1(s1) if on.matches(method, basePath, path) => filtered.andThen(fn(s0, s1))
     }
   }
 
   def withRoute[A, B, C](description: Description, on: On, PP0: PP[A], PP1: PP[B], PP2: PP[C], fn: (A, B, C) => Svc) = withDescribedRoute(description, on, PP0, PP1, PP2) {
-    identify => {
-      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) if on.matches(method, basePath, path) => identify.andThen(fn(s0, s1, s2))
+    filtered => {
+      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) if on.matches(method, basePath, path) => filtered.andThen(fn(s0, s1, s2))
     }
   }
 
   def withRoute[A, B, C, D](description: Description, on: On, PP0: PP[A], PP1: PP[B], PP2: PP[C], PP3: PP[D], fn: (A, B, C, D) => Svc) = withDescribedRoute(description, on, PP0, PP1, PP2, PP3) {
-    identify => {
-      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) / PP3(s3) if on.matches(method, basePath, path) => identify.andThen(fn(s0, s1, s2, s3))
+    filtered => {
+      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) / PP3(s3) if on.matches(method, basePath, path) => filtered.andThen(fn(s0, s1, s2, s3))
     }
   }
 
   def withRoute[A, B, C, D, E](description: Description, on: On, PP0: PP[A], PP1: PP[B], PP2: PP[C], PP3: PP[D], PP4: PP[E], fn: (A, B, C, D, E) => Svc) = withDescribedRoute(description, on, PP0, PP1, PP2, PP3, PP4) {
-    identify => {
-      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) / PP3(s3) / PP4(s4) if on.matches(method, basePath, path) => identify.andThen(fn(s0, s1, s2, s3, s4))
+    filtered => {
+      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) / PP3(s3) / PP4(s4) if on.matches(method, basePath, path) => filtered.andThen(fn(s0, s1, s2, s3, s4))
     }
   }
 
   def withRoute[A, B, C, D, E, F](description: Description, on: On, PP0: PP[A], PP1: PP[B], PP2: PP[C], PP3: PP[D], PP4: PP[E], PP5: PP[F], fn: (A, B, C, D, E, F) => Svc) = withDescribedRoute(description, on, PP0, PP1, PP2, PP3, PP4, PP5) {
-    identify => {
-      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) / PP3(s3) / PP4(s4) / PP5(s5) if on.matches(method, basePath, path) => identify.andThen(fn(s0, s1, s2, s3, s4, s5))
+    filtered => {
+      case method -> path / PP0(s0) / PP1(s1) / PP2(s2) / PP3(s3) / PP4(s4) / PP5(s5) if on.matches(method, basePath, path) => filtered.andThen(fn(s0, s1, s2, s3, s4, s5))
     }
   }
 
