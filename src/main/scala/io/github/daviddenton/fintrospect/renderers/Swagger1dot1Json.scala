@@ -28,7 +28,7 @@ class Swagger1dot1Json private() extends Renderer {
       "parameters" -> {
         array(r.allParams.map(render).toSeq: _*)
       },
-      "errorResponses" -> array(r.allResponses.filterKeys(_.getCode > 399).map { case (code, desc) => obj("code" -> number(code.getCode), "reason" -> string(desc))}.toSeq)
+      "errorResponses" -> array(r.description.responses.filterKeys(_.getCode > 399).map { case (code, desc) => obj("code" -> number(code.getCode), "reason" -> string(desc))}.toSeq)
     )
   }
 

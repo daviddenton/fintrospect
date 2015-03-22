@@ -17,8 +17,6 @@ case class Description private(name: String,
   def taking(rp: OptionalRequestParameter[_]) = copy(optional = rp :: optional)
 
   def returning(codes: (HttpResponseStatus, String)*): Description = copy(responses = responses ++ codes)
-
-  def allParams: Iterable[(Requirement, RequestParameter[_])] = List[(Requirement, RequestParameter[_])]() ++ optional.map(Requirement.Optional -> _) ++ required.map(Requirement.Mandatory -> _)
 }
 
 object Description {

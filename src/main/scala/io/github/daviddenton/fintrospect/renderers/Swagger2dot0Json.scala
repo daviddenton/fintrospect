@@ -23,7 +23,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
       "produces" -> array(r.description.produces.map(m => string(m.value)): _*),
       "consumes" -> array(r.description.consumes.map(m => string(m.value)): _*),
       "parameters" -> array(r.allParams.map(render).toSeq: _*),
-      "responses" -> obj(r.allResponses.map { case (code, desc) => code.getCode.toString -> obj("description" -> string(desc))}),
+      "responses" -> obj(r.description.responses .map { case (code, desc) => code.getCode.toString -> obj("description" -> string(desc))}),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
   }
