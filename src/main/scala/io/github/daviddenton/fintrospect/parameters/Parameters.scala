@@ -4,7 +4,6 @@ import com.twitter.finagle.http.path
 import org.joda.time.format.ISODateTimeFormat._
 import org.joda.time.{DateTime, LocalDate}
 
-import scala.reflect.ClassTag
 import scala.util.Try
 
 class Parameters[P[_]] protected[parameters](builder: ParameterBuilder[P]) {
@@ -23,9 +22,7 @@ class Parameters[P[_]] protected[parameters](builder: ParameterBuilder[P]) {
   def integer(name: String, description: String = null): P[Integer] = builder.apply(name, Option(description), str => path.Integer.unapply(str).map(new Integer(_)))
 }
 
-trait ParameterBuilder[P[_]] {
-  def apply[T](name: String, description: Option[String], parse: (String => Option[T]))(implicit ct: ClassTag[T]): P[T]
-}
+
 
 
 
