@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "aString": {
+      "type": "string"
+    },
+    "aNumber": {
+      "type": "number"
+    },
+    "aBooleanTrue": {
+      "type": "boolean"
+    },
+    "aBooleanFalse": {
+      "type": "boolean"
+    },
+    "array": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
