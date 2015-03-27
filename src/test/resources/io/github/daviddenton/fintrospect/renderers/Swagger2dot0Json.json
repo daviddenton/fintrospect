@@ -68,10 +68,12 @@
         ],
         "responses": {
           "200": {
-            "description": "peachy"
+            "description": "peachy",
+            "schema": null
           },
           "403": {
-            "description": "no way jose"
+            "description": "no way jose",
+            "schema": null
           }
         },
         "security": [
