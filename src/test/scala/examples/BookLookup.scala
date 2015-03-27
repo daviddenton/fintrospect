@@ -14,7 +14,7 @@ class BookLookup(books: Books) extends RouteSpec {
   private def lookupByIsbn(isbn: String): Service[Request, Response] = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] =
       books.lookup(isbn) match {
-        case Some(book) => Ok(book.toString)
+        case Some(book) => Ok(book.toJson)
         case _ => Error(NOT_FOUND, "No book found with isbn")
       }
   }
@@ -22,8 +22,9 @@ class BookLookup(books: Books) extends RouteSpec {
   def attachTo(module: FintrospectModule): FintrospectModule = {
     module.withRoute(
       Description("lookup book by isbn number")
-        .producing(MimeTypes.TEXT_PLAIN)
-        .returning(OK -> "we found your book", NOT_FOUND -> "no book was found with this ISBN"),
+        .producing(MimeTypes.APPLICATION_JSON)
+        .returning(NOT_FOUND -> "no book was found with this ISBN")
+        .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson),
       On(GET, _ / "book"), Path.string("isbn", "the isbn of the book"), lookupByIsbn)
   }
 }

@@ -1,8 +1,8 @@
 package io.github.daviddenton.fintrospect.renderers
 
+import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories.string
 import argo.jdom.JsonNodeType._
-import argo.jdom.{JsonField, JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
@@ -55,7 +55,7 @@ object JsonToJsonSchema {
 
   class IllegalSchemaException(message: String) extends Exception(message)
 
-  def toSchema(input: JsonNode): JsonRootNode = {
+  def toSchema(input: JsonNode): JsonNode = {
     input.getType match {
       case STRING => obj("type" -> string("string"))
       case TRUE => obj("type" -> string("boolean"))
@@ -63,7 +63,7 @@ object JsonToJsonSchema {
       case NUMBER => obj("type" -> string("number"))
       case ARRAY => obj("type" -> string("array"), "items" -> input.getElements.to[Seq].headOption.map(toSchema).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!")))
       case OBJECT => obj("type" -> string("object"), "properties" -> obj(input.getFieldList.to[Seq].map(f => f.getName.getText -> toSchema(f.getValue)): _*))
-      case NULL => throw new IllegalSchemaException("Cannot use a null value for a schema!")
+      case NULL => nullNode()
     }
   }
 }

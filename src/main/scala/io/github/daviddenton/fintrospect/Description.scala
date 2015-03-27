@@ -1,5 +1,6 @@
 package io.github.daviddenton.fintrospect
 
+import argo.jdom.JsonNode
 import io.github.daviddenton.fintrospect.parameters.{OptionalRequestParameter, RequiredRequestParameter}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
@@ -18,9 +19,11 @@ case class Description private(name: String,
 
   def taking(rp: OptionalRequestParameter[_]) = copy(optional = rp :: optional)
 
-  def returning(newResponses: ResponseWithExample): Description = copy(responses = newResponses :: responses)
+  def returning(newResponse: ResponseWithExample): Description = copy(responses = newResponse :: responses)
 
   def returning(codes: (HttpResponseStatus, String)*): Description = copy(responses = responses ++ codes.map(c => ResponseWithExample(c._1, c._2)))
+
+  def returning(code: (HttpResponseStatus, String), example: JsonNode): Description = copy(responses = ResponseWithExample(code._1, code._2, example) :: responses)
 }
 
 object Description {

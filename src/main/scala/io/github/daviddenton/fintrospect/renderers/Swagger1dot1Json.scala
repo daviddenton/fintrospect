@@ -1,6 +1,5 @@
 package io.github.daviddenton.fintrospect.renderers
 
-import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Parameter, Requirement}
@@ -14,7 +13,7 @@ class Swagger1dot1Json private() extends Renderer {
     "name" -> string(rp._2.name),
     "description" -> rp._2.description.map(string).getOrElse(nullNode()),
     "paramType" -> string(rp._2.where.toString),
-    "required" -> booleanNode(rp._1.required),
+    "required" -> boolean(rp._1.required),
     "dataType" -> string(rp._2.paramType)
   )
 

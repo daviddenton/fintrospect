@@ -1,9 +1,9 @@
 package io.github.daviddenton.fintrospect.renderers
 
-import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Parameter, Requirement}
+import io.github.daviddenton.fintrospect.renderers.JsonToJsonSchema.toSchema
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
@@ -12,7 +12,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     "in" -> string(rp._2.where.toString),
     "name" -> string(rp._2.name),
     "description" -> rp._2.description.map(string).getOrElse(nullNode()),
-    "required" -> booleanNode(rp._1.required),
+    "required" -> boolean(rp._1.required),
     "type" -> string(rp._2.paramType)
   )
 
@@ -23,9 +23,17 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
       "produces" -> array(r.description.produces.map(m => string(m.value)): _*),
       "consumes" -> array(r.description.consumes.map(m => string(m.value)): _*),
       "parameters" -> array(r.allParams.map(render).toSeq: _*),
-      "responses" -> obj(r.description.responses.map(resp => resp.status.getCode.toString -> obj("description" -> string(resp.description)))),
+      "responses" -> obj(r.description.responses.map(render)),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
+  }
+
+  private def render(resp: ResponseWithExample): (String, JsonRootNode) = {
+    resp.status.getCode.toString -> obj("description" -> string(resp.description), "schema" -> toSchema(resp.example))
+  }
+
+  private def render(apiInfo: ApiInfo): JsonRootNode = {
+    obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
   }
 
   def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
@@ -35,7 +43,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
 
     obj(
       "swagger" -> string("2.0"),
-      "info" -> obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse(""))),
+      "info" -> render(apiInfo),
       "basePath" -> string("/"),
       "paths" -> obj(paths)
       //    "definitions" -> obj(

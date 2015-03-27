@@ -1,6 +1,5 @@
 package io.github.daviddenton.fintrospect.renderers
 
-import argo.jdom.JsonNodeFactories._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -12,8 +11,8 @@ class JsonToJsonSchemaTest extends FunSpec with ShouldMatchers {
       val model = obj(
         "aString" -> string("aStringValue"),
         "aNumber" -> number(new java.math.BigDecimal(1.9)),
-        "aBooleanTrue" -> booleanNode(true),
-        "aBooleanFalse" -> booleanNode(false),
+        "aBooleanTrue" -> boolean(true),
+        "aBooleanFalse" -> boolean(false),
         "anArray" -> array(string("anotherString")),
         "anObject" -> obj("anotherStringField" -> string("yetAnotherString"))
       )

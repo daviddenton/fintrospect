@@ -7,6 +7,7 @@ import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.MimeTypes._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Query
+import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
@@ -16,7 +17,7 @@ class BookSearch(books: Books) extends RouteSpec {
 
   private def search(): Service[Request, Response] = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
-      Ok(books.search(authorQuery.from(request), titleQuery.from(request)).mkString(","))
+      Ok(array(books.search(authorQuery.from(request), titleQuery.from(request)).map(_.toJson)))
     }
   }
 
@@ -25,6 +26,7 @@ class BookSearch(books: Books) extends RouteSpec {
       Description("search for books")
         .taking(authorQuery)
         .taking(titleQuery)
+        .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
         .returning(OK -> "results", BAD_REQUEST -> "invalid request")
         .producing(TEXT_PLAIN),
       On(POST, _ / "search"), search)

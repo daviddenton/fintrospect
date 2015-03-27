@@ -9,7 +9,7 @@ import io.github.daviddenton.fintrospect.MimeTypes._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.parameters._
-import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.util.ArgoUtil
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -38,10 +38,10 @@ abstract class JsonRendererTest(name: String, renderer: Renderer) extends FunSpe
             .taking(Query.required.boolean("query", "description of the query")),
           On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
 
-      val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
+      val expected = ArgoUtil.parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
       val actual = Await.result(module.toService(Request("/basepath"))).content.toString(Utf8)
-//            println(actual)
-      parse(actual) should be === expected
+            println(actual)
+      ArgoUtil.parse(actual) should be === expected
     }
   }
 
