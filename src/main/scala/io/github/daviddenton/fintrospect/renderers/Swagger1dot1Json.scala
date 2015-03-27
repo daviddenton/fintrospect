@@ -28,31 +28,33 @@ class Swagger1dot1Json private() extends Renderer {
       "parameters" -> {
         array(r.allParams.map(render).toSeq: _*)
       },
-      "errorResponses" -> array(r.description.responses.filterKeys(_.getCode > 399).map { case (code, desc) => obj("code" -> number(code.getCode), "reason" -> string(desc))}.toSeq)
+      "errorResponses" -> array(r.description.responses
+        .filter(_.status.getCode > 399)
+        .map(r => obj("code" -> number(r.status.getCode), "reason" -> string(r.description))).toSeq)
     )
   }
 
   def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
-      val api = mr
-        .groupBy(_.toString)
-        .map { case (path, routes) => obj("path" -> string(path), "operations" -> array(routes.map(render(_)._2): _*))}
+    val api = mr
+      .groupBy(_.toString)
+      .map { case (path, routes) => obj("path" -> string(path), "operations" -> array(routes.map(render(_)._2): _*))}
 
-      obj(
-        "swaggerVersion" -> string("1.1"),
-        "resourcePath" -> string("/"),
-        "apis" -> array(asJavaIterable(api))
-        //    "definitions" -> obj(
-        //      "User" -> obj(
-        //        "properties" -> obj(
-        //          "id" -> obj(
-        //            "type" -> "integer",
-        //            "format" -> "int64"
-        //          )
-        //        )
-        //      )
-        //    )
-      )
-    }
+    obj(
+      "swaggerVersion" -> string("1.1"),
+      "resourcePath" -> string("/"),
+      "apis" -> array(asJavaIterable(api))
+      //    "definitions" -> obj(
+      //      "User" -> obj(
+      //        "properties" -> obj(
+      //          "id" -> obj(
+      //            "type" -> "integer",
+      //            "format" -> "int64"
+      //          )
+      //        )
+      //      )
+      //    )
+    )
+  }
 }
 
 object Swagger1dot1Json {

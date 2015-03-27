@@ -24,7 +24,7 @@ abstract class JsonRendererTest(name: String, renderer: Renderer) extends FunSpe
           Description("a get endpoint", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
             .taking(Header.optional.string("header", "description of the header"))
-            .returning(OK -> "peachy")
+            .returning(ResponseWithExample(OK, "peachy"))
             .returning(FORBIDDEN -> "no way jose"),
           On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
         .withRoute(
