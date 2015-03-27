@@ -16,6 +16,8 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     "type" -> string(rp._2.paramType)
   )
 
+  
+  
   private def render(r: ModuleRoute): (String, JsonNode) = {
     r.on.method.getName.toLowerCase -> obj(
       "tags" -> array(Seq(string(r.basePath.toString)): _*),
