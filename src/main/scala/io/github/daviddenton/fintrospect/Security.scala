@@ -1,7 +1,6 @@
 package io.github.daviddenton.fintrospect
 
 import argo.jdom.JsonNode
-import argo.jdom.JsonNodeFactories._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 case class Security(private val name: String, private val definition: JsonNode) {
