@@ -45,17 +45,8 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
       "swagger" -> string("2.0"),
       "info" -> render(apiInfo),
       "basePath" -> string("/"),
-      "paths" -> obj(paths)
-      //    "definitions" -> obj(
-      //      "User" -> obj(
-      //        "properties" -> obj(
-      //          "id" -> obj(
-      //            "type" -> "integer",
-      //            "format" -> "int64"
-      //          )
-      //        )
-      //      )
-      //    )
+      "paths" -> obj(paths),
+      "definitions" -> obj()
     )
   }
 }
