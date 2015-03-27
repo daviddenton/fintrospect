@@ -51,27 +51,19 @@ import scala.collection.JavaConversions._
 
  */
 
-case class SchemaAndDefinitions(schema: JsonRootNode, definitions: List[JsonField] = Nil)
-
-
 object JsonToJsonSchema {
 
   class IllegalSchemaException(message: String) extends Exception(message)
 
-  private def fieldToSchema(input: JsonNode): JsonNode = {
+  def toSchema(input: JsonNode): JsonRootNode = {
     input.getType match {
       case STRING => obj("type" -> string("string"))
       case TRUE => obj("type" -> string("boolean"))
       case FALSE => obj("type" -> string("boolean"))
       case NUMBER => obj("type" -> string("number"))
-      case ARRAY => obj("type" -> string("array"), "items" -> input.getElements.to[Seq].headOption.map(fieldToSchema).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!")))
-      case OBJECT => obj("type" -> string("object"))
+      case ARRAY => obj("type" -> string("array"), "items" -> input.getElements.to[Seq].headOption.map(toSchema).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!")))
+      case OBJECT => obj("type" -> string("object"), "properties" -> obj(input.getFieldList.to[Seq].map(f => f.getName.getText -> toSchema(f.getValue)): _*))
       case NULL => throw new IllegalSchemaException("Cannot use a null value for a schema!")
     }
-  }
-
-  def toSchema(input: JsonNode): SchemaAndDefinitions = {
-    val schema = obj("properties" -> obj(input.getFieldList.to[Seq].map(f => f.getName.getText -> fieldToSchema(f.getValue)): _*))
-    SchemaAndDefinitions(schema, Nil)
   }
 }

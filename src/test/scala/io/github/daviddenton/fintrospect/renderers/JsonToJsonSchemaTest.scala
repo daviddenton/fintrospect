@@ -14,13 +14,13 @@ class JsonToJsonSchemaTest extends FunSpec with ShouldMatchers {
         "aNumber" -> number(new java.math.BigDecimal(1.9)),
         "aBooleanTrue" -> booleanNode(true),
         "aBooleanFalse" -> booleanNode(false),
-        "array" -> array(string("anotherString"))
+        "anArray" -> array(string("anotherString")),
+        "anObject" -> obj("anotherStringField" -> string("yetAnotherString"))
       )
 
-      val SchemaAndDefinitions(actual, definitions) = JsonToJsonSchema.toSchema(model)
-      println(pretty(actual))
+      val actual = JsonToJsonSchema.toSchema(model)
+//      println(pretty(actual))
       actual should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema.json")).mkString)
-      definitions should be === Nil
     }
   }
 }
