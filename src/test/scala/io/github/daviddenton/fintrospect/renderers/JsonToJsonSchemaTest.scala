@@ -17,9 +17,10 @@ class JsonToJsonSchemaTest extends FunSpec with ShouldMatchers {
         "array" -> array(string("anotherString"))
       )
 
-      val actual = JsonToJsonSchema.toSchema(model)
+      val SchemaAndDefinitions(actual, definitions) = JsonToJsonSchema.toSchema(model)
       println(pretty(actual))
       actual should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema.json")).mkString)
+      definitions should be === Nil
     }
   }
 }
