@@ -2,7 +2,7 @@ package io.github.daviddenton.fintrospect.renderers
 
 import argo.jdom.JsonNodeFactories.string
 import argo.jdom.JsonNodeType._
-import argo.jdom.{JsonNode, JsonRootNode}
+import argo.jdom.{JsonField, JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
@@ -51,6 +51,9 @@ import scala.collection.JavaConversions._
 
  */
 
+case class SchemaAndDefinitions(schema: JsonRootNode, definitions: List[JsonField] = Nil)
+
+
 object JsonToJsonSchema {
 
   class IllegalSchemaException(message: String) extends Exception(message)
@@ -67,7 +70,8 @@ object JsonToJsonSchema {
     }
   }
 
-  def toSchema(input: JsonNode): JsonRootNode = {
-    obj("properties" -> obj(input.getFieldList.to[Seq].map(f => f.getName.getText -> fieldToSchema(f.getValue)): _*))
+  def toSchema(input: JsonNode): SchemaAndDefinitions = {
+    val schema = obj("properties" -> obj(input.getFieldList.to[Seq].map(f => f.getName.getText -> fieldToSchema(f.getValue)): _*))
+    SchemaAndDefinitions(schema, Nil)
   }
 }
