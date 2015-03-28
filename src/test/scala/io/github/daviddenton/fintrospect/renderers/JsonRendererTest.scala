@@ -40,7 +40,6 @@ abstract class JsonRendererTest(name: String, renderer: Renderer) extends FunSpe
 
       val expected = ArgoUtil.parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
       val actual = Await.result(module.toService(Request("/basepath"))).content.toString(Utf8)
-            println(actual)
       ArgoUtil.parse(actual) should be === expected
     }
   }

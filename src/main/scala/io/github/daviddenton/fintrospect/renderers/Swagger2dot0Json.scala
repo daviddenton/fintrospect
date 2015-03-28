@@ -16,8 +16,8 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     "type" -> string(rp._2.paramType)
   )
 
-  
-  
+
+
   private def render(r: ModuleRoute): (String, JsonNode) = {
     r.on.method.getName.toLowerCase -> obj(
       "tags" -> array(Seq(string(r.basePath.toString)): _*),
@@ -31,7 +31,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
   }
 
   private def render(resp: ResponseWithExample): (String, JsonRootNode) = {
-    resp.status.getCode.toString -> obj("description" -> string(resp.description), "schema" -> toSchema(resp.example))
+    resp.status.getCode.toString -> obj("description" -> string(resp.description), "schema" -> Option(resp.example).map(toSchema).getOrElse(nullNode()))
   }
 
   private def render(apiInfo: ApiInfo): JsonRootNode = {

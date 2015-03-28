@@ -69,12 +69,11 @@ object JsonToJsonSchema {
   }
 }
 
-class JsonToJsonSchema(input: JsonNode) {
+class JsonToJsonSchema(input: JsonNode, idGen: () => String) {
 
-  private var id = 0
-  private var definitions: List[JsonField] = Nil
+  private var definitions: List[JsonField] = Nil // ewww - mutability! replace with recursion
 
-  def toSchema(input: JsonNode): JsonRootNode = {
+  private def toSchema(input: JsonNode): JsonRootNode = {
     input.getType match {
       case NULL => throw new IllegalSchemaException("Cannot use a null value in a schema!")
       case STRING => obj("type" -> string("string"))
@@ -87,13 +86,12 @@ class JsonToJsonSchema(input: JsonNode) {
   }
 
   private def objectToSchema(input: JsonNode): JsonRootNode = {
-    val name = "definition" + id
-    id += 1
-    definitions = JsonNodeFactories.field(name, obj("type" -> string("object"), "properties" -> obj(input.getFieldList.to[Seq].map(f => f.getName.getText -> toSchema(f.getValue)): _*))) :: definitions
-    obj("$ref" -> string(s"#/definitions/$name"))
+    val definitionId = idGen()
+    definitions = JsonNodeFactories.field(definitionId, obj("type" -> string("object"), "properties" -> obj(input.getFieldList.to[Seq].map(f => f.getName.getText -> toSchema(f.getValue)): _*))) :: definitions
+    obj("$ref" -> string(s"#/definitions/$definitionId"))
   }
 
-  def toSchemaAndModels(): (JsonRootNode, List[JsonField]) = {
+  def toSchemaAndDefinitions(): (JsonRootNode, List[JsonField]) = {
     (toSchema(input), definitions)
   }
 }
