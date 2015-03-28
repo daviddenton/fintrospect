@@ -48,15 +48,19 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
   }
 
   def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
-    val paths = mr
+    val pathFields: List[Field] = mr
       .groupBy(_.toString)
-      .map { case (path, routes) => path -> obj(routes.map(a => render(a)._1))}.toSeq
+      .foldLeft((List[Field](), List[Field]())) {
+      case ((memoFields, memoDefinitions), (path, routes)) =>
+        val field: Field = path -> obj(routes.map(a => render(a)._1))
+        (field :: memoFields, memoDefinitions)
+    }._1
 
     obj(
       "swagger" -> string("2.0"),
       "info" -> render(apiInfo),
       "basePath" -> string("/"),
-      "paths" -> obj(paths),
+      "paths" -> obj(pathFields),
       "definitions" -> obj()
     )
   }
