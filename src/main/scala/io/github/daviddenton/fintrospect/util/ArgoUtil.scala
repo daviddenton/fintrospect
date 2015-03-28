@@ -8,17 +8,19 @@ import argo.jdom.{JdomParser, JsonNode, JsonNodeFactories, JsonRootNode}
 
 object ArgoUtil {
 
+  type Field = (String, JsonNode)
+
   private val pretty = new PrettyJsonFormatter()
 
   def parse(in: String): JsonRootNode = new JdomParser().parse(in)
 
   def pretty(node: JsonRootNode): String = pretty.format(node)
 
-  def obj(fields: Iterable[(String, JsonNode)]): JsonRootNode = {
+  def obj(fields: Iterable[Field]): JsonRootNode = {
     JsonNodeFactories.`object`(fields.map(f => field(f._1, f._2)).toSeq: _*)
   }
 
-  def obj(fields: (String, JsonNode)*): JsonRootNode = {
+  def obj(fields: Field*): JsonRootNode = {
     JsonNodeFactories.`object`(fields.map(f => field(f._1, f._2)).toSeq: _*)
   }
 

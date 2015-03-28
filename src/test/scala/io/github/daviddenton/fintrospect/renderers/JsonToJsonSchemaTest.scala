@@ -1,6 +1,5 @@
 package io.github.daviddenton.fintrospect.renderers
 
-import argo.jdom.JsonNodeFactories
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -27,9 +26,8 @@ class JsonToJsonSchemaTest extends FunSpec with ShouldMatchers {
       )
 
       val actual = new JsonToJsonSchema(idGen).toSchema(model)
-      //      println(pretty(JsonNodeFactories.`object`(actual._2:_*)))
       actual.node should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_main.json")).mkString)
-      JsonNodeFactories.`object`(actual.fields: _*) should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_definitions.json")).mkString)
+      obj(actual.modelDefinitions: _*) should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_definitions.json")).mkString)
     }
   }
 }
