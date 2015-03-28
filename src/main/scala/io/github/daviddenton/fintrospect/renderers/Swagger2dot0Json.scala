@@ -26,20 +26,19 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
       "produces" -> array(r.description.produces.map(m => string(m.value)): _*),
       "consumes" -> array(r.description.consumes.map(m => string(m.value)): _*),
       "parameters" -> array(r.allParams.map(render).toSeq: _*),
-      "responses" -> obj(renderPaths(r)),
+      "responses" -> obj(renderPaths(r)._1),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
   }
 
   private def renderPaths(r: ModuleRoute) = {
-    val (allFields, allModels) = r.description.responses.foldLeft((List[Field](), List[Field]())) {
+    r.description.responses.foldLeft((List[Field](), List[Field]())) {
       case ((fields, models), nextResp) =>
         val newSchema: Option[Schema] = Option(nextResp.example).map(schemaGenerator.toSchema)
         val schema = newSchema.getOrElse(Schema(nullNode(), Nil))
         val newField = nextResp.status.getCode.toString -> obj("description" -> string(nextResp.description), "schema" -> schema.node)
         (newField :: fields, schema.modelDefinitions ++ models)
     }
-    allFields
   }
 
   private def render(apiInfo: ApiInfo): JsonRootNode = {
