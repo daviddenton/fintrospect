@@ -4,7 +4,7 @@ import argo.jdom.JsonRootNode
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 case class Book(title: String, author: String, pages: Int) {
-  def toJson: JsonRootNode = obj("title" -> string(title), "pages" -> number(pages), "author" -> string(author))
+  def toJson: JsonRootNode = obj("title" -> string(title), "pages" -> number(pages), "author" -> obj("name" -> string(author)))
 }
 
 class Books {
