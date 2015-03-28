@@ -1,0 +1,44 @@
+{
+  "definition0": {
+    "type": "object",
+    "properties": {
+      "aString": {
+        "type": "string"
+      },
+      "aNumber": {
+        "type": "number"
+      },
+      "aBooleanTrue": {
+        "type": "boolean"
+      },
+      "aBooleanFalse": {
+        "type": "boolean"
+      },
+      "anArray": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/definition1"
+        }
+      },
+      "anObject": {
+        "$ref": "#/definitions/definition2"
+      }
+    }
+  },
+  "definition2": {
+    "type": "object",
+    "properties": {
+      "anotherNumber": {
+        "type": "number"
+      }
+    }
+  },
+  "definition1": {
+    "type": "object",
+    "properties": {
+      "anotherString": {
+        "type": "string"
+      }
+    }
+  }
+}
