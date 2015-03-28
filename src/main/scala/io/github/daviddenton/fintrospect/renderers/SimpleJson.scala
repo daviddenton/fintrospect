@@ -1,12 +1,12 @@
 package io.github.daviddenton.fintrospect.renderers
 
 import argo.jdom.JsonNodeFactories.string
-import argo.jdom.{JsonNode, JsonRootNode}
+import argo.jdom.JsonRootNode
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.{ModuleRoute, Renderer}
 
 class SimpleJson private() extends Renderer {
-  private def render(mr: ModuleRoute): (String, JsonNode) = {
+  private def render(mr: ModuleRoute): Field = {
     mr.on.method + ":" + mr.toString -> string(mr.description.name)
   }
 
