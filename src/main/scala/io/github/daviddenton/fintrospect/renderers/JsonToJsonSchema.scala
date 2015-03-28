@@ -1,8 +1,8 @@
 package io.github.daviddenton.fintrospect.renderers
 
-import argo.jdom.JsonNodeFactories.{field, string}
+import argo.jdom.JsonNodeFactories.string
 import argo.jdom.JsonNodeType._
-import argo.jdom.{JsonField, JsonNode, JsonRootNode}
+import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect.renderers.JsonToJsonSchema.IllegalSchemaException
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
@@ -69,37 +69,37 @@ object JsonToJsonSchema {
   }
 }
 
-case class Schema[T <: JsonNode](node: T, fields: List[JsonField])
+case class Schema(node: JsonNode, modelDefinitions: List[Field])
 
 class JsonToJsonSchema(idGen: () => String) {
 
-  private def toSchema(input: Schema[JsonNode]): Schema[JsonRootNode] = {
+  private def toSchema(input: Schema): Schema = {
     input.node.getType match {
       case NULL => throw new IllegalSchemaException("Cannot use a null value in a schema!")
-      case STRING => Schema[JsonRootNode](obj("type" -> string("string")), input.fields)
-      case TRUE => Schema[JsonRootNode](obj("type" -> string("boolean")), input.fields)
-      case FALSE => Schema[JsonRootNode](obj("type" -> string("boolean")), input.fields)
-      case NUMBER => Schema[JsonRootNode](obj("type" -> string("number")), input.fields)
+      case STRING => Schema(obj("type" -> string("string")), input.modelDefinitions)
+      case TRUE => Schema(obj("type" -> string("boolean")), input.modelDefinitions)
+      case FALSE => Schema(obj("type" -> string("boolean")), input.modelDefinitions)
+      case NUMBER => Schema(obj("type" -> string("number")), input.modelDefinitions)
       case ARRAY => {
-        val headItemSchema = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.fields))).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!"))
-        Schema[JsonRootNode](obj("type" -> string("array"), "items" -> headItemSchema.node), headItemSchema.fields)
+        val headItemSchema = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.modelDefinitions))).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!"))
+        Schema(obj("type" -> string("array"), "items" -> headItemSchema.node), headItemSchema.modelDefinitions)
       }
       case OBJECT => objectToSchema(input)
     }
   }
 
-  private def objectToSchema(input: Schema[JsonNode]): Schema[JsonRootNode] = {
+  private def objectToSchema(input: Schema): Schema = {
     val definitionId = idGen()
 
-    val (finalFields, finalDefinitions) = input.node.getFieldList.to[Seq].foldLeft((List[(String, JsonRootNode)](), input.fields)) {
+    val (finalFields, finalDefinitions) = input.node.getFieldList.to[Seq].foldLeft((List[Field](), input.modelDefinitions)) {
       (memo, nextField) =>
-        val next = toSchema(Schema[JsonNode](nextField.getValue, memo._2))
-        (nextField.getName.getText -> next.node :: memo._1, next.fields)
+        val next = toSchema(Schema(nextField.getValue, memo._2))
+        (nextField.getName.getText -> next.node :: memo._1, next.modelDefinitions)
     }
 
-    val finalFinalDefinitions = field(definitionId, obj("type" -> string("object"), "properties" -> obj(finalFields: _*))) :: finalDefinitions
-    Schema[JsonRootNode](obj("$ref" -> string(s"#/definitions/$definitionId")), finalFinalDefinitions)
+    val finalFinalDefinitions = definitionId -> obj("type" -> string("object"), "properties" -> obj(finalFields: _*)) :: finalDefinitions
+    Schema(obj("$ref" -> string(s"#/definitions/$definitionId")), finalFinalDefinitions)
   }
 
-  def toSchema(input: JsonNode): Schema[JsonRootNode] = toSchema(Schema(input, Nil))
+  def toSchema(input: JsonNode): Schema = toSchema(Schema(input, Nil))
 }
