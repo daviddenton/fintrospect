@@ -71,7 +71,7 @@ object JsonToJsonSchema {
 
 case class Schema[T <: JsonNode](node: T, fields: List[JsonField])
 
-class JsonToJsonSchema(input: JsonNode, idGen: () => String) {
+class JsonToJsonSchema(idGen: () => String) {
 
   private def toSchema(input: Schema[JsonNode]): Schema[JsonRootNode] = {
     input.node.getType match {
@@ -101,5 +101,5 @@ class JsonToJsonSchema(input: JsonNode, idGen: () => String) {
     Schema[JsonRootNode](obj("$ref" -> string(s"#/definitions/$definitionId")), finalFinalDefinitions)
   }
 
-  def toSchema(): Schema[JsonRootNode] = toSchema(Schema(input, Nil))
+  def toSchema(input: JsonNode): Schema[JsonRootNode] = toSchema(Schema(input, Nil))
 }
