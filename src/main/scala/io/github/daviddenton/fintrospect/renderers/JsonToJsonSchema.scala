@@ -80,25 +80,27 @@ class JsonToJsonSchema(idGen: () => String) {
       case TRUE => Schema(obj("type" -> string("boolean")), input.modelDefinitions)
       case FALSE => Schema(obj("type" -> string("boolean")), input.modelDefinitions)
       case NUMBER => Schema(obj("type" -> string("number")), input.modelDefinitions)
-      case ARRAY => {
-        val headItemSchema = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.modelDefinitions))).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!"))
-        Schema(obj("type" -> string("array"), "items" -> headItemSchema.node), headItemSchema.modelDefinitions)
-      }
-      case OBJECT => objectToSchema(input)
+      case ARRAY => arraySchema(input)
+      case OBJECT => objectSchema(input)
     }
   }
 
-  private def objectToSchema(input: Schema): Schema = {
+  private def arraySchema(input: Schema): Schema = {
+    val Schema(node, modelDefinitions) = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.modelDefinitions))).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!"))
+    Schema(obj("type" -> string("array"), "items" -> node), modelDefinitions)
+  }
+
+  private def objectSchema(input: Schema): Schema = {
     val definitionId = idGen()
 
-    val (finalFields, finalDefinitions) = input.node.getFieldList.foldLeft((List[Field](), input.modelDefinitions)) {
-      (memo, nextField) =>
-        val next = toSchema(Schema(nextField.getValue, memo._2))
-        (nextField.getName.getText -> next.node :: memo._1, next.modelDefinitions)
+    val (nodeFields, subDefinitions) = input.node.getFieldList.foldLeft((List[Field](), input.modelDefinitions)) {
+      case ((memoFields, memoModels), nextField) =>
+        val next = toSchema(Schema(nextField.getValue, memoModels))
+        (nextField.getName.getText -> next.node :: memoFields, next.modelDefinitions)
     }
 
-    val finalFinalDefinitions = definitionId -> obj("type" -> string("object"), "properties" -> obj(finalFields: _*)) :: finalDefinitions
-    Schema(obj("$ref" -> string(s"#/definitions/$definitionId")), finalFinalDefinitions)
+    val allDefinitions = definitionId -> obj("type" -> string("object"), "properties" -> obj(nodeFields: _*)) :: subDefinitions
+    Schema(obj("$ref" -> string(s"#/definitions/$definitionId")), allDefinitions)
   }
 
   def toSchema(input: JsonNode): Schema = toSchema(Schema(input, Nil))
