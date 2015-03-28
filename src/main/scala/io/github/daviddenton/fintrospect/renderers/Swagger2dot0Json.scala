@@ -10,7 +10,10 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
 
   private case class FieldAndDefinitions(field: Field, definitions: List[Field])
-  private case class FieldsAndDefinitions(fields: List[Field] = Nil, definitions: List[Field] = Nil)
+
+  private case class FieldsAndDefinitions(fields: List[Field] = Nil, definitions: List[Field] = Nil) {
+    def add(newField: Field, newDefinitions: List[Field]) = FieldsAndDefinitions(newField :: fields, newDefinitions ++ definitions)
+  }
 
   private val schemaGenerator = new JsonToJsonSchema(() => UUID.randomUUID().toString)
 
@@ -41,7 +44,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
       case (memo, nextResp) =>
         val newSchema = Option(nextResp.example).map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
         val newField = nextResp.status.getCode.toString -> obj("description" -> string(nextResp.description), "schema" -> newSchema.node)
-        FieldsAndDefinitions(newField :: memo.fields, newSchema.modelDefinitions ++ memo.definitions)
+        memo.add(newField, newSchema.modelDefinitions)
     }
   }
 
@@ -59,7 +62,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
             val routeAndDefinitions: FieldAndDefinitions = renderRoute(mr)
             routeAndDefinitions.field
         })
-        FieldsAndDefinitions(newField :: memo.fields, memo.definitions)
+        memo.add(newField, Nil)
     }
     obj(
       "swagger" -> string("2.0"),
