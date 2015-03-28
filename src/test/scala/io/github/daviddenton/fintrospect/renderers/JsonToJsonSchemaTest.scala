@@ -7,6 +7,14 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 import scala.io.Source.fromInputStream
 
 class JsonToJsonSchemaTest extends FunSpec with ShouldMatchers {
+  var id = 0
+
+  def idGen(): String = {
+    val nextId = "definition" + id
+    id = id + 1
+    nextId
+  }
+
   describe("JsonToJsonSchema") {
     it("renders all different types of json value as expected") {
       val model = obj(
@@ -18,10 +26,9 @@ class JsonToJsonSchemaTest extends FunSpec with ShouldMatchers {
         "anObject" -> obj("anotherNumber" -> number(1))
       )
 
-      val actual = new JsonToJsonSchema(model).toSchemaAndModels()
+      val actual = new JsonToJsonSchema(model, idGen).toSchemaAndDefinitions()
       actual._1 should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_main.json")).mkString)
-      println(pretty(JsonNodeFactories.`object`(actual._2:_*)))
-      JsonNodeFactories.`object`(actual._2:_*) should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_definitions.json")).mkString)
+      JsonNodeFactories.`object`(actual._2: _*) should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_definitions.json")).mkString)
     }
   }
 }
