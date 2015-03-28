@@ -26,7 +26,8 @@ class JsonToJsonSchemaTest extends FunSpec with ShouldMatchers {
         "anObject" -> obj("anotherNumber" -> number(1))
       )
 
-      val actual = new JsonToJsonSchema(model, idGen).toSchemaAndDefinitions()
+      val actual = new JsonToJsonSchema(model, idGen).toSchema()
+      //      println(pretty(JsonNodeFactories.`object`(actual._2:_*)))
       actual._1 should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_main.json")).mkString)
       JsonNodeFactories.`object`(actual._2: _*) should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_definitions.json")).mkString)
     }
