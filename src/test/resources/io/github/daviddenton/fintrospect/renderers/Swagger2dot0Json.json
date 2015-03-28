@@ -7,6 +7,50 @@
   },
   "basePath": "/",
   "paths": {
+    "/basepath/welcome/{firstName}/bertrand/{secondName}": {
+      "get": {
+        "tags": [
+          "/basepath"
+        ],
+        "summary": null,
+        "produces": [],
+        "consumes": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "description": "description of the query",
+            "required": true,
+            "type": "boolean"
+          },
+          {
+            "in": "path",
+            "name": "firstName",
+            "description": null,
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "bertrand",
+            "description": null,
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "secondName",
+            "description": null,
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {}
+        ]
+      }
+    },
     "/basepath/echo/{message}": {
       "post": {
         "tags": [
@@ -76,50 +120,6 @@
             "schema": null
           }
         },
-        "security": [
-          {}
-        ]
-      }
-    },
-    "/basepath/welcome/{firstName}/bertrand/{secondName}": {
-      "get": {
-        "tags": [
-          "/basepath"
-        ],
-        "summary": null,
-        "produces": [],
-        "consumes": [],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "query",
-            "description": "description of the query",
-            "required": true,
-            "type": "boolean"
-          },
-          {
-            "in": "path",
-            "name": "firstName",
-            "description": null,
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "path",
-            "name": "bertrand",
-            "description": null,
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "path",
-            "name": "secondName",
-            "description": null,
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {},
         "security": [
           {}
         ]
