@@ -19,19 +19,21 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     "type" -> string(rp._2.paramType)
   )
 
-  private def render(r: ModuleRoute): Field = {
-    r.on.method.getName.toLowerCase -> obj(
+  private def render(r: ModuleRoute): (Field, List[Field]) = {
+    val (fields, definitions) = renderPaths(r)
+    val route = r.on.method.getName.toLowerCase -> obj(
       "tags" -> array(Seq(string(r.basePath.toString)): _*),
       "summary" -> r.description.summary.map(string).getOrElse(nullNode()),
       "produces" -> array(r.description.produces.map(m => string(m.value)): _*),
       "consumes" -> array(r.description.consumes.map(m => string(m.value)): _*),
       "parameters" -> array(r.allParams.map(render).toSeq: _*),
-      "responses" -> obj(renderPaths(r)._1),
+      "responses" -> obj(fields),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
+    (route, definitions)
   }
 
-  private def renderPaths(r: ModuleRoute) = {
+  private def renderPaths(r: ModuleRoute): (List[Field], List[Field]) = {
     r.description.responses.foldLeft((List[Field](), List[Field]())) {
       case ((fields, models), nextResp) =>
         val newSchema: Option[Schema] = Option(nextResp.example).map(schemaGenerator.toSchema)
@@ -48,7 +50,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
   def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
     val paths = mr
       .groupBy(_.toString)
-      .map { case (path, routes) => path -> obj(routes.map(render))}.toSeq
+      .map { case (path, routes) => path -> obj(routes.map(a => render(a)._1))}.toSeq
 
     obj(
       "swagger" -> string("2.0"),
