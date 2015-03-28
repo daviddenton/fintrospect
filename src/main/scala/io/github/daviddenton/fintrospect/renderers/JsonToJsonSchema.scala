@@ -91,7 +91,7 @@ class JsonToJsonSchema(idGen: () => String) {
   private def objectToSchema(input: Schema): Schema = {
     val definitionId = idGen()
 
-    val (finalFields, finalDefinitions) = input.node.getFieldList.to[Seq].foldLeft((List[Field](), input.modelDefinitions)) {
+    val (finalFields, finalDefinitions) = input.node.getFieldList.foldLeft((List[Field](), input.modelDefinitions)) {
       (memo, nextField) =>
         val next = toSchema(Schema(nextField.getValue, memo._2))
         (nextField.getName.getText -> next.node :: memo._1, next.modelDefinitions)
