@@ -3,6 +3,8 @@ package examples
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
+import io.github.daviddenton.fintrospect.util.ArgoUtil
+import io.github.daviddenton.fintrospect.util.ArgoUtil.obj
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import util.ResponseBuilder._
 import io.github.daviddenton.fintrospect._
@@ -23,7 +25,7 @@ class BookLookup(books: Books) extends RouteSpec {
     module.withRoute(
       Description("lookup book by isbn number")
         .producing(MimeTypes.APPLICATION_JSON)
-        .returning(NOT_FOUND -> "no book was found with this ISBN")
+        .returning(NOT_FOUND -> "no book was found with this ISBN", obj("message" -> ArgoUtil.string("someErrorMessage")))
         .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson),
       On(GET, _ / "book"), Path.string("isbn", "the isbn of the book"), lookupByIsbn)
   }
