@@ -9,63 +9,67 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
 
+  private case class FieldAndDefinitions(field: Field, definitions: List[Field])
+  private case class FieldsAndDefinitions(fields: List[Field] = Nil, definitions: List[Field] = Nil)
+
   private val schemaGenerator = new JsonToJsonSchema(() => UUID.randomUUID().toString)
 
-  private def render(rp: (Requirement, Parameter[_])): JsonNode = obj(
-    "in" -> string(rp._2.where.toString),
-    "name" -> string(rp._2.name),
-    "description" -> rp._2.description.map(string).getOrElse(nullNode()),
-    "required" -> boolean(rp._1.required),
-    "type" -> string(rp._2.paramType)
+  private def render(requirementAndParameter: (Requirement, Parameter[_])): JsonNode = obj(
+    "in" -> string(requirementAndParameter._2.where.toString),
+    "name" -> string(requirementAndParameter._2.name),
+    "description" -> requirementAndParameter._2.description.map(string).getOrElse(nullNode()),
+    "required" -> boolean(requirementAndParameter._1.required),
+    "type" -> string(requirementAndParameter._2.paramType)
   )
 
-  private def render(r: ModuleRoute): (Field, List[Field]) = {
-    val (fields, definitions) = renderPaths(r)
+  private def renderRoute(r: ModuleRoute): FieldAndDefinitions = {
+    val responsesAndDefinitions = renderResponses(r.description.responses)
     val route = r.on.method.getName.toLowerCase -> obj(
-      "tags" -> array(Seq(string(r.basePath.toString)): _*),
+      "tags" -> array(string(r.basePath.toString)),
       "summary" -> r.description.summary.map(string).getOrElse(nullNode()),
-      "produces" -> array(r.description.produces.map(m => string(m.value)): _*),
-      "consumes" -> array(r.description.consumes.map(m => string(m.value)): _*),
-      "parameters" -> array(r.allParams.map(render).toSeq: _*),
-      "responses" -> obj(fields),
+      "produces" -> array(r.description.produces.map(m => string(m.value))),
+      "consumes" -> array(r.description.consumes.map(m => string(m.value))),
+      "parameters" -> array(r.allParams.map(render)),
+      "responses" -> obj(responsesAndDefinitions.fields),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
-    (route, definitions)
+    FieldAndDefinitions(route, responsesAndDefinitions.definitions)
   }
 
-  private def renderPaths(r: ModuleRoute): (List[Field], List[Field]) = {
-    r.description.responses.foldLeft((List[Field](), List[Field]())) {
-      case ((fields, models), nextResp) =>
-        val newSchema: Option[Schema] = Option(nextResp.example).map(schemaGenerator.toSchema)
-        val schema = newSchema.getOrElse(Schema(nullNode(), Nil))
-        val newField = nextResp.status.getCode.toString -> obj("description" -> string(nextResp.description), "schema" -> schema.node)
-        (newField :: fields, schema.modelDefinitions ++ models)
+  private def renderResponses(responses: List[ResponseWithExample]): FieldsAndDefinitions = {
+    responses.foldLeft(FieldsAndDefinitions()) {
+      case (memo, nextResp) =>
+        val newSchema = Option(nextResp.example).map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
+        val newField = nextResp.status.getCode.toString -> obj("description" -> string(nextResp.description), "schema" -> newSchema.node)
+        FieldsAndDefinitions(newField :: memo.fields, newSchema.modelDefinitions ++ memo.definitions)
     }
   }
 
-  private def render(apiInfo: ApiInfo): JsonRootNode = {
+  private def renderApiInfo(apiInfo: ApiInfo): JsonNode = {
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
   }
 
-  def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
-    val pathFields: List[Field] = mr
+  def apply(moduleRoutes: Seq[ModuleRoute]): JsonRootNode = {
+    val pathsAndDefinitions = moduleRoutes
       .groupBy(_.toString)
-      .foldLeft((List[Field](), List[Field]())) {
-      case ((memoFields, memoDefinitions), (path, routes)) =>
-        val field: Field = path -> obj(routes.map(a => render(a)._1))
-        (field :: memoFields, memoDefinitions)
-    }._1
-
+      .foldLeft(FieldsAndDefinitions()) {
+      case (memo, (path, routesForThisPath)) =>
+        val newField = path -> obj(routesForThisPath.map {
+          case mr =>
+            val routeAndDefinitions: FieldAndDefinitions = renderRoute(mr)
+            routeAndDefinitions.field
+        })
+        FieldsAndDefinitions(newField :: memo.fields, memo.definitions)
+    }
     obj(
       "swagger" -> string("2.0"),
-      "info" -> render(apiInfo),
+      "info" -> renderApiInfo(apiInfo),
       "basePath" -> string("/"),
-      "paths" -> obj(pathFields),
-      "definitions" -> obj()
+      "paths" -> obj(pathsAndDefinitions.fields),
+      "definitions" -> obj(pathsAndDefinitions.definitions)
     )
   }
 }
-
 
 object Swagger2dot0Json {
   def apply(apiInfo: ApiInfo): Renderer = new Swagger2dot0Json(apiInfo)
