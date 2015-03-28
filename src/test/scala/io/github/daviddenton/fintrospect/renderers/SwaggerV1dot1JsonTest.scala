@@ -1,3 +1,8 @@
 package io.github.daviddenton.fintrospect.renderers
 
-class SwaggerV1dot1JsonTest extends JsonRendererTest("Swagger1dot1Json", Swagger1dot1Json())
+import io.github.daviddenton.fintrospect.Renderer
+
+class SwaggerV1dot1JsonTest extends JsonRendererTest {
+  override def name: String = "Swagger1dot1Json"
+  override def renderer: Renderer = Swagger1dot1Json()
+}
