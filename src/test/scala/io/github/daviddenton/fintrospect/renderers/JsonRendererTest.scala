@@ -9,14 +9,17 @@ import io.github.daviddenton.fintrospect.MimeTypes._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.parameters._
-import io.github.daviddenton.fintrospect.util.ArgoUtil
+import io.github.daviddenton.fintrospect.util.ArgoUtil.{obj, number, parse}
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.io.Source
 
-abstract class JsonRendererTest(name: String, renderer: Renderer) extends FunSpec with ShouldMatchers {
+abstract class JsonRendererTest() extends FunSpec with ShouldMatchers {
+  def name: String
+  def renderer: Renderer
+
   describe(name) {
     it("renders as expected") {
       val module = FintrospectModule(Root / "basepath", renderer)
@@ -24,7 +27,7 @@ abstract class JsonRendererTest(name: String, renderer: Renderer) extends FunSpe
           Description("a get endpoint", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
             .taking(Header.optional.string("header", "description of the header"))
-            .returning(ResponseWithExample(OK, "peachy"))
+            .returning(ResponseWithExample(OK, "peachy", obj("anObject" -> obj("aStringField" -> number(123)))))
             .returning(FORBIDDEN -> "no way jose"),
           On(GET, _ / "echo"), string("message"), (s: String) => Echo(s))
         .withRoute(
@@ -38,10 +41,10 @@ abstract class JsonRendererTest(name: String, renderer: Renderer) extends FunSpe
             .taking(Query.required.boolean("query", "description of the query")),
           On(GET, _ / "welcome"), string("firstName"), fixed("bertrand"), string("secondName"), (x: String, y: String, z: String) => Echo(x, y, z))
 
-      val expected = ArgoUtil.parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
+      val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
       val actual = Await.result(module.toService(Request("/basepath"))).content.toString(Utf8)
       println(actual)
-      ArgoUtil.parse(actual) should be === expected
+      parse(actual) should be === expected
     }
   }
 

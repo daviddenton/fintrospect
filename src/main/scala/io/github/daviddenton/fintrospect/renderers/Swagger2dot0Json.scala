@@ -7,15 +7,17 @@ import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Parameter, Requirement}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
-class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
+class Swagger2dot0Json private(apiInfo: ApiInfo, idGenerator: () => String) extends Renderer {
+
+  private val schemaGenerator = new JsonToJsonSchema(idGenerator)
 
   private case class FieldAndDefinitions(field: Field, definitions: List[Field])
 
   private case class FieldsAndDefinitions(fields: List[Field] = Nil, definitions: List[Field] = Nil) {
     def add(newField: Field, newDefinitions: List[Field]) = FieldsAndDefinitions(newField :: fields, newDefinitions ++ definitions)
-  }
 
-  private val schemaGenerator = new JsonToJsonSchema(() => UUID.randomUUID().toString)
+    def add(fieldAndDefinitions: FieldAndDefinitions) = FieldsAndDefinitions(fieldAndDefinitions.field :: fields, fieldAndDefinitions.definitions ++ definitions)
+  }
 
   private def render(requirementAndParameter: (Requirement, Parameter[_])): JsonNode = obj(
     "in" -> string(requirementAndParameter._2.where.toString),
@@ -57,12 +59,10 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
       .groupBy(_.toString)
       .foldLeft(FieldsAndDefinitions()) {
       case (memo, (path, routesForThisPath)) =>
-        val newField = path -> obj(routesForThisPath.map {
-          case mr =>
-            val routeAndDefinitions: FieldAndDefinitions = renderRoute(mr)
-            routeAndDefinitions.field
-        })
-        memo.add(newField, Nil)
+        val routeFieldsAndDefinitions = routesForThisPath.foldLeft(FieldsAndDefinitions()) {
+          case (memoFields, mr) => memoFields.add(renderRoute(mr))
+        }
+        memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
     }
     obj(
       "swagger" -> string("2.0"),
@@ -75,5 +75,5 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
 }
 
 object Swagger2dot0Json {
-  def apply(apiInfo: ApiInfo): Renderer = new Swagger2dot0Json(apiInfo)
+  def apply(apiInfo: ApiInfo, idGenerator: () => String = () => UUID.randomUUID().toString): Renderer = new Swagger2dot0Json(apiInfo, idGenerator)
 }
