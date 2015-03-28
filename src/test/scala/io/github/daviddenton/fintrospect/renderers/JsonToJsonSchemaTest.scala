@@ -28,8 +28,8 @@ class JsonToJsonSchemaTest extends FunSpec with ShouldMatchers {
 
       val actual = new JsonToJsonSchema(model, idGen).toSchema()
       //      println(pretty(JsonNodeFactories.`object`(actual._2:_*)))
-      actual._1 should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_main.json")).mkString)
-      JsonNodeFactories.`object`(actual._2: _*) should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_definitions.json")).mkString)
+      actual.node should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_main.json")).mkString)
+      JsonNodeFactories.`object`(actual.fields: _*) should be === parse(fromInputStream(getClass.getResourceAsStream(s"JsonToJsonSchema_definitions.json")).mkString)
     }
   }
 }
