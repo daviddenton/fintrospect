@@ -69,35 +69,37 @@ object JsonToJsonSchema {
   }
 }
 
+case class Schema[T <: JsonNode](node: T, fields: List[JsonField])
+
 class JsonToJsonSchema(input: JsonNode, idGen: () => String) {
 
-  private def toSchema(input: JsonNode, definitions: List[JsonField]): (JsonRootNode, List[JsonField]) = {
-    input.getType match {
+  private def toSchema(input: Schema[JsonNode]): Schema[JsonRootNode] = {
+    input.node.getType match {
       case NULL => throw new IllegalSchemaException("Cannot use a null value in a schema!")
-      case STRING => (obj("type" -> string("string")), definitions)
-      case TRUE => (obj("type" -> string("boolean")), definitions)
-      case FALSE => (obj("type" -> string("boolean")), definitions)
-      case NUMBER => (obj("type" -> string("number")), definitions)
+      case STRING => Schema[JsonRootNode](obj("type" -> string("string")), input.fields)
+      case TRUE => Schema[JsonRootNode](obj("type" -> string("boolean")), input.fields)
+      case FALSE => Schema[JsonRootNode](obj("type" -> string("boolean")), input.fields)
+      case NUMBER => Schema[JsonRootNode](obj("type" -> string("number")), input.fields)
       case ARRAY => {
-        val (itemSchema, newDefinitions) = input.getElements.to[Seq].headOption.map(toSchema(_, definitions)).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!"))
-        (obj("type" -> string("array"), "items" -> itemSchema), newDefinitions)
+        val headItemSchema = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.fields))).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!"))
+        Schema[JsonRootNode](obj("type" -> string("array"), "items" -> headItemSchema.node), headItemSchema.fields)
       }
-      case OBJECT => objectToSchema(input, definitions)
+      case OBJECT => objectToSchema(input)
     }
   }
 
-  private def objectToSchema(input: JsonNode, definitions: List[JsonField]): (JsonRootNode, List[JsonField]) = {
+  private def objectToSchema(input: Schema[JsonNode]): Schema[JsonRootNode] = {
     val definitionId = idGen()
 
-    val (finalFields, finalDefinitions) = input.getFieldList.to[Seq].foldLeft((List[(String, JsonRootNode)](), definitions)) {
+    val (finalFields, finalDefinitions) = input.node.getFieldList.to[Seq].foldLeft((List[(String, JsonRootNode)](), input.fields)) {
       (memo, nextField) =>
-        val next = toSchema(nextField.getValue, memo._2)
-        (nextField.getName.getText -> next._1 :: memo._1, next._2)
+        val next = toSchema(Schema[JsonNode](nextField.getValue, memo._2))
+        (nextField.getName.getText -> next.node :: memo._1, next.fields)
     }
 
     val finalFinalDefinitions = field(definitionId, obj("type" -> string("object"), "properties" -> obj(finalFields: _*))) :: finalDefinitions
-    (obj("$ref" -> string(s"#/definitions/$definitionId")), finalFinalDefinitions)
+    Schema[JsonRootNode](obj("$ref" -> string(s"#/definitions/$definitionId")), finalFinalDefinitions)
   }
 
-  def toSchema(): (JsonRootNode, List[JsonField]) = toSchema(input, Nil)
+  def toSchema(): Schema[JsonRootNode] = toSchema(Schema(input, Nil))
 }
