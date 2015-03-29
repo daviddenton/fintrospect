@@ -41,6 +41,16 @@ abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) e
     }
   }
 
+  describe("bigDecimal") {
+    it("retrieves a valid value") {
+      from(parameters.bigDecimal(paramName), "1.234") should be === Some(BigDecimal("1.234"))
+    }
+
+    it("does not retrieve an invalid value") {
+      from(parameters.bigDecimal(paramName), "notANumber") should be === None
+    }
+  }
+
   describe("boolean") {
     it("retrieves a valid value") {
       from(parameters.boolean(paramName), "true") should be === Some(true)

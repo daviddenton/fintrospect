@@ -17,11 +17,13 @@ class Parameters[P[_]] protected[parameters](builder: ParameterBuilder[P]) {
 
   def string(name: String, description: String = null): P[String] = builder.apply(name, Option(description), StringParamType, Option(_))
 
-  def long(name: String, description: String = null): P[Long] = builder.apply(name, Option(description), NumberParamType, str => path.Long.unapply(str))
+  def bigDecimal(name: String, description: String = null): P[BigDecimal] = builder.apply(name, Option(description), NumberParamType, str => Try(BigDecimal(str)).toOption)
 
-  def int(name: String, description: String = null): P[Int] = builder.apply(name, Option(description), NumberParamType, str => path.Integer.unapply(str))
+  def long(name: String, description: String = null): P[Long] = builder.apply(name, Option(description), IntegerParamType, str => path.Long.unapply(str))
 
-  def integer(name: String, description: String = null): P[Integer] = builder.apply(name, Option(description), NumberParamType, str => path.Integer.unapply(str).map(new Integer(_)))
+  def int(name: String, description: String = null): P[Int] = builder.apply(name, Option(description), IntegerParamType, str => path.Integer.unapply(str))
+
+  def integer(name: String, description: String = null): P[Integer] = builder.apply(name, Option(description), IntegerParamType, str => path.Integer.unapply(str).map(new Integer(_)))
 
   def json(name: String, description: String = null): P[JsonNode] = builder.apply(name, Option(description), ObjectParamType, str => Try(ArgoUtil.parse(str)).toOption)
 }
