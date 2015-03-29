@@ -1,8 +1,8 @@
 package io.github.daviddenton.fintrospect.parameters
 
 object Path extends Parameters[PathParameter](PathParameter.builder) {
-  
-  def fixed(name: String): PathParameter[String] = new PathParameter[String](name, None) {
+
+  def fixed(name: String): PathParameter[String] = new PathParameter[String](name, None, StringParamType) {
     override def toString() = name
 
     override def unapply(str: String): Option[String] = if (str == name) Some(str) else None

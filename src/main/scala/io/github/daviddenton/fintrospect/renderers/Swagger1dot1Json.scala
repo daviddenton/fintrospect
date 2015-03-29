@@ -14,7 +14,7 @@ class Swagger1dot1Json private() extends Renderer {
     "description" -> requirementAndParameter._2.description.map(string).getOrElse(nullNode()),
     "paramType" -> string(requirementAndParameter._2.where.toString),
     "required" -> boolean(requirementAndParameter._1.required),
-    "dataType" -> string(requirementAndParameter._2.paramType)
+    "dataType" -> string(requirementAndParameter._2.paramType.name)
   )
 
   private def render(r: ModuleRoute): Field = r.on.method.getName.toLowerCase -> obj(
