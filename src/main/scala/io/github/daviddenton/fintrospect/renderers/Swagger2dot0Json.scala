@@ -24,7 +24,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo, idGenerator: () => String) exte
     "name" -> string(requirementAndParameter._2.name),
     "description" -> requirementAndParameter._2.description.map(string).getOrElse(nullNode()),
     "required" -> boolean(requirementAndParameter._1.required),
-    "type" -> string(requirementAndParameter._2.paramType)
+    "type" -> string(requirementAndParameter._2.paramType.name)
   )
 
   private def renderRoute(r: ModuleRoute): FieldAndDefinitions = {

@@ -22,7 +22,7 @@
               "description": null,
               "paramType": "query",
               "required": true,
-              "dataType": "int"
+              "dataType": "number"
             },
             {
               "name": "message",
