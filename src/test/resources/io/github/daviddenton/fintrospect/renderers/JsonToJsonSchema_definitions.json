@@ -28,8 +28,8 @@
   "definition2": {
     "type": "object",
     "properties": {
-      "anotherNumber": {
-        "type": "number"
+      "anInteger": {
+        "type": "integer"
       }
     }
   },

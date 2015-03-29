@@ -141,7 +141,7 @@
       "type": "object",
       "properties": {
         "aStringField": {
-          "type": "number"
+          "type": "integer"
         }
       }
     }
