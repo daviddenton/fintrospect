@@ -3,13 +3,16 @@ package io.github.daviddenton.fintrospect.renderers
 import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories.string
 import argo.jdom.JsonNodeType._
+import io.github.daviddenton.fintrospect.parameters._
 import io.github.daviddenton.fintrospect.renderers.JsonToJsonSchema.IllegalSchemaException
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
 
 object JsonToJsonSchema {
+
   class IllegalSchemaException(message: String) extends Exception(message)
+
 }
 
 case class Schema(node: JsonNode, modelDefinitions: List[Field])
@@ -19,13 +22,19 @@ class JsonToJsonSchema(idGen: () => String) {
   private def toSchema(input: Schema): Schema = {
     input.node.getType match {
       case NULL => throw new IllegalSchemaException("Cannot use a null value in a schema!")
-      case STRING => Schema(obj("type" -> string("string")), input.modelDefinitions)
-      case TRUE => Schema(obj("type" -> string("boolean")), input.modelDefinitions)
-      case FALSE => Schema(obj("type" -> string("boolean")), input.modelDefinitions)
-      case NUMBER => Schema(obj("type" -> string("number")), input.modelDefinitions)
+      case STRING => Schema(paramTypeSchema(StringParamType), input.modelDefinitions)
+      case TRUE => Schema(paramTypeSchema(BooleanParamType), input.modelDefinitions)
+      case FALSE => Schema(paramTypeSchema(BooleanParamType), input.modelDefinitions)
+      case NUMBER => numberSchema(input)
       case ARRAY => arraySchema(input)
       case OBJECT => objectSchema(input)
     }
+  }
+
+  private def paramTypeSchema(paramType: ParamType): JsonNode = obj("type" -> string(paramType.name))
+
+  private def numberSchema(input: Schema): Schema = {
+    Schema(paramTypeSchema(if (input.node.getText.contains(".")) NumberParamType else IntegerParamType), input.modelDefinitions)
   }
 
   private def arraySchema(input: Schema): Schema = {
