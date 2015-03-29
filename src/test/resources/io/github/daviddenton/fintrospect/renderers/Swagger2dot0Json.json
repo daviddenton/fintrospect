@@ -111,7 +111,7 @@
             "name": "query",
             "description": null,
             "required": true,
-            "type": "number"
+            "type": "integer"
           },
           {
             "in": "path",
