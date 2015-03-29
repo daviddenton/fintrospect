@@ -1,6 +1,8 @@
 package io.github.daviddenton.fintrospect.parameters
 
+import argo.jdom.JsonNode
 import com.twitter.finagle.http.path
+import io.github.daviddenton.fintrospect.util.ArgoUtil
 import org.joda.time.format.ISODateTimeFormat._
 import org.joda.time.{DateTime, LocalDate}
 
@@ -20,6 +22,8 @@ class Parameters[P[_]] protected[parameters](builder: ParameterBuilder[P]) {
   def int(name: String, description: String = null): P[Int] = builder.apply(name, Option(description), str => path.Integer.unapply(str))
 
   def integer(name: String, description: String = null): P[Integer] = builder.apply(name, Option(description), str => path.Integer.unapply(str).map(new Integer(_)))
+
+  def json(name: String, description: String = null): P[JsonNode] = builder.apply(name, Option(description), str => Try(ArgoUtil.parse(str)).toOption)
 }
 
 

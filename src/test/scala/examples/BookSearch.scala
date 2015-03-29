@@ -4,7 +4,7 @@ import _root_.util.ResponseBuilder._
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
-import io.github.daviddenton.fintrospect.MimeTypes._
+import io.github.daviddenton.fintrospect.MimeTypes.APPLICATION_JSON
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Query
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
@@ -28,7 +28,7 @@ class BookSearch(books: Books) extends RouteSpec {
         .taking(titleQuery)
         .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
         .returning(OK -> "results", BAD_REQUEST -> "invalid request")
-        .producing(TEXT_PLAIN),
+        .producing(APPLICATION_JSON),
       On(POST, _ / "search"), search)
   }
 }

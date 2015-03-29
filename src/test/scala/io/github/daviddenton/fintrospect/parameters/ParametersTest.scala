@@ -1,6 +1,7 @@
 
 package io.github.daviddenton.fintrospect.parameters
 
+import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.joda.time.{DateTime, LocalDate}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -75,4 +76,16 @@ abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) e
       from(parameters.localDate(paramName), "notADate") should be === None
     }
   }
+
+  describe("json") {
+    it("retrieves a valid value") {
+      val expected = obj("field" -> string("value"))
+      from(parameters.json(paramName), compact(expected)) should be === Some(expected)
+    }
+
+    it("does not retrieve an invalid value") {
+      from(parameters.json(paramName), "notJson") should be === None
+    }
+  }
+
 }
