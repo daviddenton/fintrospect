@@ -15,16 +15,16 @@ object JsonToJsonSchema {
 
 }
 
-case class Schema(node: JsonNode, modelDefinitions: List[Field])
+case class Schema(node: JsonNode, definitions: List[Field])
 
 class JsonToJsonSchema(idGen: () => String) {
 
   private def toSchema(input: Schema): Schema = {
     input.node.getType match {
       case NULL => throw new IllegalSchemaException("Cannot use a null value in a schema!")
-      case STRING => Schema(paramTypeSchema(StringParamType), input.modelDefinitions)
-      case TRUE => Schema(paramTypeSchema(BooleanParamType), input.modelDefinitions)
-      case FALSE => Schema(paramTypeSchema(BooleanParamType), input.modelDefinitions)
+      case STRING => Schema(paramTypeSchema(StringParamType), input.definitions)
+      case TRUE => Schema(paramTypeSchema(BooleanParamType), input.definitions)
+      case FALSE => Schema(paramTypeSchema(BooleanParamType), input.definitions)
       case NUMBER => numberSchema(input)
       case ARRAY => arraySchema(input)
       case OBJECT => objectSchema(input)
@@ -34,21 +34,21 @@ class JsonToJsonSchema(idGen: () => String) {
   private def paramTypeSchema(paramType: ParamType): JsonNode = obj("type" -> string(paramType.name))
 
   private def numberSchema(input: Schema): Schema = {
-    Schema(paramTypeSchema(if (input.node.getText.contains(".")) NumberParamType else IntegerParamType), input.modelDefinitions)
+    Schema(paramTypeSchema(if (input.node.getText.contains(".")) NumberParamType else IntegerParamType), input.definitions)
   }
 
   private def arraySchema(input: Schema): Schema = {
-    val Schema(node, modelDefinitions) = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.modelDefinitions))).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!"))
+    val Schema(node, modelDefinitions) = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.definitions))).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!"))
     Schema(obj("type" -> string("array"), "items" -> node), modelDefinitions)
   }
 
   private def objectSchema(input: Schema): Schema = {
     val definitionId = idGen()
 
-    val (nodeFields, subDefinitions) = input.node.getFieldList.foldLeft((List[Field](), input.modelDefinitions)) {
+    val (nodeFields, subDefinitions) = input.node.getFieldList.foldLeft((List[Field](), input.definitions)) {
       case ((memoFields, memoModels), nextField) =>
         val next = toSchema(Schema(nextField.getValue, memoModels))
-        (nextField.getName.getText -> next.node :: memoFields, next.modelDefinitions)
+        (nextField.getName.getText -> next.node :: memoFields, next.definitions)
     }
 
     val allDefinitions = definitionId -> obj("type" -> string("object"), "properties" -> obj(nodeFields: _*)) :: subDefinitions

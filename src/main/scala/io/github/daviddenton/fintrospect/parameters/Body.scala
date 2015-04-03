@@ -1,16 +1,16 @@
 package io.github.daviddenton.fintrospect.parameters
 
+import argo.jdom.JsonNode
 import com.twitter.finagle.http.Request
+import io.github.daviddenton.fintrospect.util.ArgoUtil
+
+import scala.util.Try
+
+class Body private(description: Option[String], paramType: ParamType, val example: JsonNode, parse: (String => Option[JsonNode]))
+  extends Parameter[JsonNode]("body", description, "body", paramType) {
+  def from(request: Request): JsonNode = parse(request.contentString).get
+}
 
 object Body {
-  private val location = new Location {
-    override def toString = "body"
-
-    override def from(name: String, request: Request): Option[String] = {
-      Some(request.contentString)
-    }
-  }
-
-  val required = new Parameters(RequiredRequestParameter.builderFor(location))
-  val optional = new Parameters(OptionalRequestParameter.builderFor(location))
+  def json(description: Option[String], example: JsonNode) = new Body(description, ObjectParamType, example, s => Try(ArgoUtil.parse(s)).toOption)
 }

@@ -1,6 +1,6 @@
 package io.github.daviddenton.fintrospect
 
-case class MimeType(value: String) extends AnyVal
+case class MimeType(value: String)
 
 object MimeTypes {
 
@@ -11,7 +11,6 @@ object MimeTypes {
   val APPLICATION_SVG_XML = MimeType("application/svg+xml")
   val APPLICATION_XHTML_XML = MimeType("application/xhtml+xml")
   val APPLICATION_XML = MimeType("application/xml")
-  val MULTIPART_FORM_DATA = MimeType("multipart/form-data")
   val TEXT_HTML = MimeType("text/html")
   val TEXT_PLAIN = MimeType("text/plain")
   val TEXT_XML = MimeType("text/xml")
