@@ -1,7 +1,9 @@
 package io.github.daviddenton.fintrospect
 
+import _root_.util.ResponseBuilder
 import argo.jdom.JsonNode
 import io.github.daviddenton.fintrospect.parameters.{Body, OptionalRequestParameter, RequiredRequestParameter}
+import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 case class Description private(name: String,
@@ -25,6 +27,11 @@ case class Description private(name: String,
   def returning(newResponse: ResponseWithExample): Description = copy(responses = newResponse :: responses)
 
   def returning(codes: (HttpResponseStatus, String)*): Description = copy(responses = responses ++ codes.map(c => ResponseWithExample(c._1, c._2)))
+
+  def returning(responseBuilder: ResponseBuilder): Description = {
+    val response = responseBuilder.build
+    returning(ResponseWithExample(response.getStatus(), response.getStatus().getReasonPhrase, parse(response.contentString)))
+  }
 
   def returning(code: (HttpResponseStatus, String), example: JsonNode): Description = copy(responses = ResponseWithExample(code._1, code._2, example) :: responses)
 }

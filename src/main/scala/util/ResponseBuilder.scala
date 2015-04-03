@@ -49,7 +49,7 @@ class ResponseBuilder private() {
     this
   }
 
-  def toFuture: Future[Response] = Future.value(response)
+  def toFuture: Future[Response] = Future.value(build)
 
   def build = response
 }
