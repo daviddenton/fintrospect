@@ -28,17 +28,20 @@ class Swagger2dot0Json private(apiInfo: ApiInfo, idGenerator: () => String) exte
   )
 
   private def renderRoute(r: ModuleRoute): FieldAndDefinitions = {
-    val responsesAndDefinitions = renderResponses(r.description.responses)
+    val FieldsAndDefinitions(responses, responseDefinitions) = renderResponses(r.description.responses)
+
+    val bodyDefinitions = r.description.body.toList.flatMap(b => schemaGenerator.toSchema(b.example).definitions)
+
     val route = r.on.method.getName.toLowerCase -> obj(
       "tags" -> array(string(r.basePath.toString)),
       "summary" -> r.description.summary.map(string).getOrElse(nullNode()),
       "produces" -> array(r.description.produces.map(m => string(m.value))),
       "consumes" -> array(r.description.consumes.map(m => string(m.value))),
       "parameters" -> array(r.allParams.map(render)),
-      "responses" -> obj(responsesAndDefinitions.fields),
+      "responses" -> obj(responses),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
-    FieldAndDefinitions(route, responsesAndDefinitions.definitions)
+    FieldAndDefinitions(route, responseDefinitions ++ bodyDefinitions)
   }
 
   private def renderResponses(responses: List[ResponseWithExample]): FieldsAndDefinitions = {
@@ -46,7 +49,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo, idGenerator: () => String) exte
       case (memo, nextResp) =>
         val newSchema = Option(nextResp.example).map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
         val newField = nextResp.status.getCode.toString -> obj("description" -> string(nextResp.description), "schema" -> newSchema.node)
-        memo.add(newField, newSchema.modelDefinitions)
+        memo.add(newField, newSchema.definitions)
     }
   }
 
