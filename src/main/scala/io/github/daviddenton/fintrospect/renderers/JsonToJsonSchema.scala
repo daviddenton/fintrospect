@@ -46,8 +46,8 @@ class JsonToJsonSchema(idGen: () => String) {
     val definitionId = idGen()
 
     val (nodeFields, subDefinitions) = input.node.getFieldList.foldLeft((List[Field](), input.definitions)) {
-      case ((memoFields, memoModels), nextField) =>
-        val next = toSchema(Schema(nextField.getValue, memoModels))
+      case ((memoFields, memoDefinitions), nextField) =>
+        val next = toSchema(Schema(nextField.getValue, memoDefinitions))
         (nextField.getName.getText -> next.node :: memoFields, next.definitions)
     }
 
