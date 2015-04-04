@@ -85,7 +85,7 @@
           "200": {
             "description": "peachy",
             "schema": {
-              "$ref": "#/definitions/definition0"
+              "$ref": "#/definitions/object-1852275137"
             }
           }
         },
@@ -129,15 +129,15 @@
     }
   },
   "definitions": {
-    "definition0": {
+    "object-1852275137": {
       "type": "object",
       "properties": {
         "anObject": {
-          "$ref": "#/definitions/definition1"
+          "$ref": "#/definitions/object-1920275720"
         }
       }
     },
-    "definition1": {
+    "object-1920275720": {
       "type": "object",
       "properties": {
         "aStringField": {

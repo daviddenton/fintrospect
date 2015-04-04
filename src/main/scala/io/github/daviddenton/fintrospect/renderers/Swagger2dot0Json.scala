@@ -7,9 +7,9 @@ import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Parameter, Requirement}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
-class Swagger2dot0Json private(apiInfo: ApiInfo, idGenerator: () => String) extends Renderer {
+class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
 
-  private val schemaGenerator = new JsonToJsonSchema(idGenerator)
+  private val schemaGenerator = new JsonToJsonSchema()
 
   private case class FieldAndDefinitions(field: Field, definitions: List[Field])
 
@@ -87,5 +87,5 @@ class Swagger2dot0Json private(apiInfo: ApiInfo, idGenerator: () => String) exte
 }
 
 object Swagger2dot0Json {
-  def apply(apiInfo: ApiInfo, idGenerator: () => String = () => UUID.randomUUID().toString): Renderer = new Swagger2dot0Json(apiInfo, idGenerator)
+  def apply(apiInfo: ApiInfo): Renderer = new Swagger2dot0Json(apiInfo)
 }
