@@ -1,7 +1,5 @@
 package io.github.daviddenton.fintrospect.renderers
 
-import java.util.UUID
-
 import argo.jdom.{JsonNode, JsonRootNode}
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Parameter, Requirement}

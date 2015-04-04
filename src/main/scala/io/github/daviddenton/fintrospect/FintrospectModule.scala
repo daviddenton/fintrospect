@@ -7,7 +7,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
-import io.github.daviddenton.fintrospect.parameters.{Requirement, PathParameter}
+import io.github.daviddenton.fintrospect.parameters.{PathParameter, Requirement}
 import io.github.daviddenton.fintrospect.util.ArgoUtil.pretty
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
