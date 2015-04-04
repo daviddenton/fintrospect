@@ -6,6 +6,7 @@ import argo.jdom.JsonNodeType._
 import io.github.daviddenton.fintrospect.parameters._
 import io.github.daviddenton.fintrospect.renderers.JsonToJsonSchema.IllegalSchemaException
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode
 
 import scala.collection.JavaConversions._
 
@@ -17,7 +18,7 @@ object JsonToJsonSchema {
 
 case class Schema(node: JsonNode, definitions: List[Field])
 
-class JsonToJsonSchema(idGen: () => String) {
+class JsonToJsonSchema() {
 
   private def toSchema(input: Schema): Schema = {
     input.node.getType match {
@@ -43,7 +44,6 @@ class JsonToJsonSchema(idGen: () => String) {
   }
 
   private def objectSchema(input: Schema): Schema = {
-    val definitionId = idGen()
 
     val (nodeFields, subDefinitions) = input.node.getFieldList.foldLeft((List[Field](), input.definitions)) {
       case ((memoFields, memoDefinitions), nextField) =>
@@ -51,7 +51,9 @@ class JsonToJsonSchema(idGen: () => String) {
         (nextField.getName.getText -> next.node :: memoFields, next.definitions)
     }
 
-    val allDefinitions = definitionId -> obj("type" -> string("object"), "properties" -> obj(nodeFields: _*)) :: subDefinitions
+    val newDefinition = obj("type" -> string("object"), "properties" -> obj(nodeFields: _*))
+    val definitionId = "object" + reflectionHashCode(newDefinition)
+    val allDefinitions = definitionId -> newDefinition :: subDefinitions
     Schema(obj("$ref" -> string(s"#/definitions/$definitionId")), allDefinitions)
   }
 

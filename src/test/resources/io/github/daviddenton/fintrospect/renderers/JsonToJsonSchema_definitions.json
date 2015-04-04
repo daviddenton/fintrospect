@@ -1,14 +1,14 @@
 {
-  "definition0": {
+  "object-1377408998": {
     "type": "object",
     "properties": {
       "anObject": {
-        "$ref": "#/definitions/definition2"
+        "$ref": "#/definitions/object-1591148529"
       },
       "anArray": {
         "type": "array",
         "items": {
-          "$ref": "#/definitions/definition1"
+          "$ref": "#/definitions/object1566645919"
         }
       },
       "aBooleanFalse": {
@@ -25,7 +25,7 @@
       }
     }
   },
-  "definition2": {
+  "object-1591148529": {
     "type": "object",
     "properties": {
       "anInteger": {
@@ -33,7 +33,7 @@
       }
     }
   },
-  "definition1": {
+  "object1566645919": {
     "type": "object",
     "properties": {
       "anotherString": {
