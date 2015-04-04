@@ -7,7 +7,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
-import io.github.daviddenton.fintrospect.parameters.PathParameter
+import io.github.daviddenton.fintrospect.parameters.{Requirement, PathParameter}
 import io.github.daviddenton.fintrospect.util.ArgoUtil.pretty
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
@@ -26,7 +26,7 @@ object FintrospectModule {
 
   private case class ValidateParams(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-      val missingParams = moduleRoute.description.required.map(p => p.unapply(request).map(_ => None).getOrElse(Some(s"${p.name} (${p.paramType})"))).flatten
+      val missingParams = moduleRoute.description.params.filter(_.requirement == Requirement.Mandatory).map(p => p.unapply(request).map(_ => None).getOrElse(Some(s"${p.name} (${p.paramType})"))).flatten
       if (missingParams.isEmpty) service(request) else Error(BAD_REQUEST, "Missing required parameters: " + missingParams.mkString(","))
     }
   }

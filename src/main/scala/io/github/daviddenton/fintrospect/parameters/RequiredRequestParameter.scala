@@ -4,9 +4,9 @@ import com.twitter.finagle.http.Request
 
 class RequiredRequestParameter[T](name: String, description: Option[String], location: Location, paramType: ParamType, parse: (String => Option[T]))
   extends RequestParameter[T](name, description, location, paramType, parse) {
-  def from(request: Request): T = unapply(request).get
+  override val requirement = Requirement.Mandatory
 
-  def unapply(request: Request): Option[T] = location.from(name, request).flatMap(parse)
+  def from(request: Request): T = unapply(request).get
 }
 
 object RequiredRequestParameter {
