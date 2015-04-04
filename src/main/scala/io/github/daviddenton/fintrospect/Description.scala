@@ -2,7 +2,7 @@ package io.github.daviddenton.fintrospect
 
 import _root_.util.ResponseBuilder
 import argo.jdom.JsonNode
-import io.github.daviddenton.fintrospect.parameters.{Body, OptionalRequestParameter, RequiredRequestParameter}
+import io.github.daviddenton.fintrospect.parameters.{Body, RequestParameter}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
@@ -11,16 +11,13 @@ case class Description private(name: String,
                                produces: List[MimeType],
                                consumes: List[MimeType],
                                body: Option[Body],
-                               optional: List[OptionalRequestParameter[_]],
-                               required: List[RequiredRequestParameter[_]],
+                               params: List[RequestParameter[_]],
                                responses: List[ResponseWithExample]) {
   def consuming(mimeType: MimeType*) = copy(consumes = (mimeType ++ produces).toList)
 
   def producing(mimeType: MimeType*) = copy(produces = (mimeType ++ produces).toList)
 
-  def taking(rp: RequiredRequestParameter[_]) = copy(required = rp :: required)
-
-  def taking(rp: OptionalRequestParameter[_]) = copy(optional = rp :: optional)
+  def taking(rp: RequestParameter[_]) = copy(params = rp :: params)
 
   def taking(bp: Body) = copy(body = Some(bp))
 
@@ -37,5 +34,5 @@ case class Description private(name: String,
 }
 
 object Description {
-  def apply(name: String, summary: String = null): Description = Description(name, Option(summary), Nil, Nil, None, Nil, Nil, Nil)
+  def apply(name: String, summary: String = null): Description = Description(name, Option(summary), Nil, Nil, None, Nil, Nil)
 }

@@ -8,6 +8,8 @@ import scala.util.Try
 
 class Body private(description: Option[String], paramType: ParamType, val example: JsonNode, parse: (String => Option[JsonNode]))
   extends Parameter[JsonNode]("body", description, "body", paramType) {
+  val requirement = Requirement.Mandatory
+
   def from(request: Request): JsonNode = parse(request.contentString).get
 }
 
