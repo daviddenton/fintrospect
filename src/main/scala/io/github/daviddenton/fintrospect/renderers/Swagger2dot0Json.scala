@@ -30,7 +30,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo, idGenerator: () => String) exte
   private def renderRoute(r: ModuleRoute): FieldAndDefinitions = {
     val FieldsAndDefinitions(responses, responseDefinitions) = renderResponses(r.description.responses)
 
-    val bodyDefinitions = r.description.body.toList.flatMap(b => schemaGenerator.toSchema(b.example).definitions)
+    val bodySchema = r.description.body.map(b => schemaGenerator.toSchema(b.example))
 
     val route = r.on.method.getName.toLowerCase -> obj(
       "tags" -> array(string(r.basePath.toString)),
@@ -41,7 +41,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo, idGenerator: () => String) exte
       "responses" -> obj(responses),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
-    FieldAndDefinitions(route, responseDefinitions ++ bodyDefinitions)
+    FieldAndDefinitions(route, responseDefinitions ++ bodySchema.toList.flatMap(_.definitions))
   }
 
   private def renderResponses(responses: List[ResponseWithExample]): FieldsAndDefinitions = {
