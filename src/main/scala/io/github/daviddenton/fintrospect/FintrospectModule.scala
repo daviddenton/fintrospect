@@ -26,7 +26,7 @@ object FintrospectModule {
 
   private case class ValidateParams(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-      val missingParams = moduleRoute.description.params.filter(_.requirement == Requirement.Mandatory).map(p => p.unapply(request).map(_ => None).getOrElse(Some(s"${p.name} (${p.paramType})"))).flatten
+      val missingParams = moduleRoute.description.params.filter(_.requirement == Requirement.Mandatory).map(p => p.unapply(request).map(_ => None).getOrElse(Some(s"${p.name} (${p.paramType.name})"))).flatten
       if (missingParams.isEmpty) service(request) else Error(BAD_REQUEST, "Missing required parameters: " + missingParams.mkString(","))
     }
   }
