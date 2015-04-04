@@ -12,10 +12,8 @@ case class Book(title: String, author: String, pages: Int) {
 }
 
 object Book {
-  def unapply(input: JsonNode): Option[Book] = Try(Book(
-    input.getStringValue("title"),
-    input.getStringValue("author", "name"),
-    parseInt(input.getNumberValue("title")))).toOption
+  def unapply(input: JsonNode): Option[Book] = Try(
+    Book(input.getStringValue("title"), input.getStringValue("author", "name"), parseInt(input.getNumberValue("pages")))).toOption
 }
 
 class Books {
@@ -34,4 +32,9 @@ class Books {
   def search(maxPages: Int, titleSearch: String): Iterable[Book] = list().filter {
     case book => book.title.contains(titleSearch) && book.pages <= maxPages
   }
+}
+
+object Boo extends App {
+  println(Book.unapply(parse("""{ "author": {"name": "string"}, "pages": 0, "title": "string"}""")))
+
 }
