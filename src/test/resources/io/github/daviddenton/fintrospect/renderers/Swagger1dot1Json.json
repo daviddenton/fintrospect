@@ -32,7 +32,12 @@
               "dataType": "string"
             }
           ],
-          "errorResponses": []
+          "errorResponses": [
+            {
+              "code": 403,
+              "reason": "no way jose"
+            }
+          ]
         },
         {
           "httpMethod": "GET",

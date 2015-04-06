@@ -1,5 +1,5 @@
 package io.github.daviddenton.fintrospect
 
-trait RouteSpec {
+trait Route {
   def attachTo(module: FintrospectModule): FintrospectModule
 }

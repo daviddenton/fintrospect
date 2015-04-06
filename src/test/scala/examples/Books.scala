@@ -33,8 +33,3 @@ class Books {
     case book => book.title.contains(titleSearch) && book.pages <= maxPages
   }
 }
-
-object Boo extends App {
-  println(Book.unapply(parse("""{ "author": {"name": "string"}, "pages": 0, "title": "string"}""")))
-
-}

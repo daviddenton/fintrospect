@@ -1,9 +1,9 @@
 package io.github.daviddenton.fintrospect
 
-import _root_.util.ResponseBuilder
 import argo.jdom.JsonNode
 import io.github.daviddenton.fintrospect.parameters.{Body, RequestParameter}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 case class Description private(name: String,
