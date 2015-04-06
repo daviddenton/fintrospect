@@ -5,7 +5,7 @@ import io.github.daviddenton.fintrospect.parameters.{Parameter, PathParameter, R
 
 class ModuleRoute(val description: Description, val on: On, val basePath: Path, pathParams: Seq[PathParameter[_]]) {
   val allParams: List[(Requirement, Parameter[_])] = {
-    (description.params ++ pathParams.flatMap(_.iterator.toList)).map(p => p.requirement -> p)
+    (description.params ++ pathParams.flatMap(identity)).map(p => p.requirement -> p)
   }
 
   override def toString: String = (on.completeRoutePath(basePath).toString :: pathParams.map(_.toString()).toList).mkString("/")

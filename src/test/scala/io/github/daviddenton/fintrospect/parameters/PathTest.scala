@@ -19,9 +19,9 @@ class PathTest extends ParametersTest[PathParameter](Path) {
     }
   }
 
-  describe("non path parameter") {
+  describe("non fixed parameter") {
     it("does contain a param to describe") {
-      Path.string("a path piece").iterator.next().name should be === "a path piece"
+      Path.string("a path piece").map(_.name) should be === List("a path piece")
     }
   }
 
