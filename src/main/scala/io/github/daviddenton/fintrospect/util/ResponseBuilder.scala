@@ -5,6 +5,7 @@ import argo.jdom.JsonNodeFactories.{`object` => obj, _}
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Response
 import com.twitter.util.Future
+import io.github.daviddenton.fintrospect.ContentType
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
@@ -42,6 +43,11 @@ class ResponseBuilder private() {
   def withContent(jsonContent: JsonRootNode): ResponseBuilder = {
     response.setContentTypeJson()
     withContent(formatter.format(jsonContent))
+  }
+
+  def withContentType(contentType: ContentType): ResponseBuilder = {
+    response.setContentType(contentType.value, UTF_8.name())
+    this
   }
 
   def withContent(content: String): ResponseBuilder = {

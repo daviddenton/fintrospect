@@ -3,7 +3,7 @@ package examples
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
-import io.github.daviddenton.fintrospect.MimeTypes._
+import io.github.daviddenton.fintrospect.ContentTypes._
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import ResponseBuilder._

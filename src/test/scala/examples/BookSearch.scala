@@ -5,7 +5,7 @@ import ResponseBuilder._
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
-import io.github.daviddenton.fintrospect.MimeTypes.APPLICATION_JSON
+import io.github.daviddenton.fintrospect.ContentTypes.APPLICATION_JSON
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Query
 import io.github.daviddenton.fintrospect.util.ArgoUtil._

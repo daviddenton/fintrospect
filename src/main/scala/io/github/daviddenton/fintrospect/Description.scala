@@ -13,21 +13,21 @@ import scala.util.Try
  */
 case class Description private(name: String,
                                summary: Option[String],
-                               produces: List[MimeType],
-                               consumes: List[MimeType],
+                               produces: List[ContentType],
+                               consumes: List[ContentType],
                                body: Option[Body],
                                params: List[RequestParameter[_]],
                                responses: List[ResponseWithExample]) {
 
   /**
-   * Register mime types which the route will consume. This is informational only and is NOT currently enforced.
+   * Register content types which the route will consume. This is informational only and is NOT currently enforced.
    */
-  def consuming(mimeType: MimeType*) = copy(consumes = (mimeType ++ produces).toList)
+  def consuming(contentTypes: ContentType*) = copy(consumes = (contentTypes ++ produces).toList)
 
   /**
-   * Register mime types which thus route will produce. This is informational only and not currently enforced.
+   * Register content types which thus route will produce. This is informational only and not currently enforced.
    */
-  def producing(mimeType: MimeType*) = copy(produces = (mimeType ++ produces).toList)
+  def producing(contentTypes: ContentType*) = copy(produces = (contentTypes ++ produces).toList)
 
   /**
    * Register a request parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
