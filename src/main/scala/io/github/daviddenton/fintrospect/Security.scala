@@ -6,10 +6,8 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 /**
  * Represents the security model of a Route.
  */
-case class Security(private val name: String, private val definition: JsonNode) {
-  def toPathSecurity: (String, JsonNode) = name -> obj()
-
-  def toJsonDefinition: (String, JsonNode) = name -> definition
+case class Security private(name: String, definition: JsonNode) {
+  def toPathSecurity: (String, JsonNode) = name -> definition
 }
 
 object Security {
