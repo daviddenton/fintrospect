@@ -6,6 +6,8 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
+import scala.util.Try
+
 case class Description private(name: String,
                                summary: Option[String],
                                produces: List[MimeType],
@@ -27,7 +29,7 @@ case class Description private(name: String,
 
   def returning(responseBuilder: ResponseBuilder): Description = {
     val response = responseBuilder.build
-    returning(ResponseWithExample(response.getStatus(), response.getStatus().getReasonPhrase, parse(response.contentString)))
+    returning(ResponseWithExample(response.getStatus(), response.getStatus().getReasonPhrase, Try(parse(response.contentString)).getOrElse(nullNode())))
   }
 
   def returning(code: (HttpResponseStatus, String), example: JsonNode): Description = copy(responses = ResponseWithExample(code._1, code._2, example) :: responses)
