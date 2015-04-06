@@ -2,6 +2,9 @@ package io.github.daviddenton.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
 
+/**
+ * Builder for parameters that are encoded in the HTTP query.
+ */
 object Query {
   private val location = new Location {
     override def toString = "query"

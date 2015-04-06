@@ -8,6 +8,9 @@ import org.joda.time.{DateTime, LocalDate}
 
 import scala.util.Try
 
+/**
+ * Prototype functions for creating parameters of various types.
+ */
 class Parameters[P[_]] protected[parameters](builder: ParameterBuilder[P]) {
   def localDate(name: String, description: String = null): P[LocalDate] = builder.apply(name, Option(description), StringParamType, str => Try(date().parseLocalDate(str)).toOption)
 

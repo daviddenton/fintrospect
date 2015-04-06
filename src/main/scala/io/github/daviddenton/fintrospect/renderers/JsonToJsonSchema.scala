@@ -11,15 +11,20 @@ import org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode
 import scala.collection.JavaConversions._
 
 object JsonToJsonSchema {
-
   class IllegalSchemaException(message: String) extends Exception(message)
-
 }
 
+/**
+ * A post-reified and flattened JSON schema model.
+ * @param node the main schema node (first level only).
+ * @param definitions named, flattened JSON schema definitions of all models involved in the reification.
+ */
 case class Schema(node: JsonNode, definitions: List[Field])
 
+/**
+ * Given a JSON node, converts it to a flattened JSON Schema.
+ */
 class JsonToJsonSchema() {
-
   private def toSchema(input: Schema): Schema = {
     input.node.getType match {
       case NULL => throw new IllegalSchemaException("Cannot use a null value in a schema!")
@@ -44,7 +49,6 @@ class JsonToJsonSchema() {
   }
 
   private def objectSchema(input: Schema): Schema = {
-
     val (nodeFields, subDefinitions) = input.node.getFieldList.foldLeft((List[Field](), input.definitions)) {
       case ((memoFields, memoDefinitions), nextField) =>
         val next = toSchema(Schema(nextField.getValue, memoDefinitions))
