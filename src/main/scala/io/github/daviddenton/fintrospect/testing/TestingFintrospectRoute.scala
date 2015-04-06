@@ -11,7 +11,7 @@ import io.github.daviddenton.fintrospect.{FintrospectModule, Route}
 import scala.concurrent.duration.Duration
 
 /**
- * Mixin this and provide the route under test
+ * Mixin this and provide the route under test.
  */
 trait TestingFintrospectRoute {
   val route: Route

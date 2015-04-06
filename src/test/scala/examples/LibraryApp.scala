@@ -9,6 +9,11 @@ import com.twitter.finagle.http.{Http, Request, RichHttp}
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.renderers.Swagger2dot0Json
 
+/**
+ * This example shows the intended method for implementing a simple app using Fintrospect routes and modules, using
+ * a Swagger 2.0 renderer. The Swagger API endpoint lives at the root of the module (in this case /library) instead
+ * of /api-docs. Note the use of the CORS policy filter to allow the endpoints to be called by the Swagger UI.
+ */
 object LibraryApp extends App {
 
   private val apiInfo = ApiInfo("Library Example", "1.0", Some("A simple example of how to construct a Fintrospect module"))
