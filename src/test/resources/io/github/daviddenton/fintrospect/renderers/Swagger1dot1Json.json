@@ -97,13 +97,6 @@
               "dataType": "string"
             },
             {
-              "name": "bertrand",
-              "description": null,
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
-            {
               "name": "secondName",
               "description": null,
               "paramType": "path",

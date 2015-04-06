@@ -32,13 +32,6 @@
           },
           {
             "in": "path",
-            "name": "bertrand",
-            "description": null,
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "path",
             "name": "secondName",
             "description": null,
             "required": true,
