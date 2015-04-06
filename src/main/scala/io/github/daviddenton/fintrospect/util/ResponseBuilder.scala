@@ -1,14 +1,14 @@
-package util
+package io.github.daviddenton.fintrospect.util
 
 import argo.format.PrettyJsonFormatter
 import argo.jdom.JsonNodeFactories.{`object` => obj, _}
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Response
 import com.twitter.util.Future
+import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.jboss.netty.util.CharsetUtil._
-import util.ResponseBuilder.formatter
 
 object ResponseBuilder {
   implicit def toFuture(builder: ResponseBuilder): Future[Response] = builder.toFuture

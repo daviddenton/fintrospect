@@ -1,6 +1,7 @@
 package examples
 
-import _root_.util.ResponseBuilder._
+import io.github.daviddenton.fintrospect.util.ResponseBuilder
+import ResponseBuilder._
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
@@ -11,7 +12,7 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
-class BookSearch(books: Books) extends RouteSpec {
+class BookSearch(books: Books) extends Route {
   private val authorQuery = Query.required.int("maxPages", "max number of pages in book")
   private val titleQuery = Query.required.string("term", "the part of the title to look for")
 

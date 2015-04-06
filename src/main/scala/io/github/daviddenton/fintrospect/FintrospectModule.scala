@@ -1,6 +1,7 @@
 package io.github.daviddenton.fintrospect
 
-import _root_.util.ResponseBuilder._
+import io.github.daviddenton.fintrospect.util.ResponseBuilder
+import ResponseBuilder._
 import com.twitter.finagle.http.path.{Path, _}
 import com.twitter.finagle.http.service.RoutingService
 import com.twitter.finagle.http.{Request, Response}
@@ -56,7 +57,7 @@ class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes
       userRoutes.orElse(bindFn(ValidateParams(moduleRoute).andThen(Identify(moduleRoute)))))
   }
 
-  def withRouteSpec(routeSpec: RouteSpec): FintrospectModule = routeSpec.attachTo(this)
+  def withRoute(route: Route): FintrospectModule = route.attachTo(this)
 
   def withRoute(description: Description, on: On, fn: () => Svc) = withDescribedRoute(description, on) {
     filtered => {

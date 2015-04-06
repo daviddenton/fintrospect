@@ -1,16 +1,16 @@
 package examples
 
-import _root_.util.ResponseBuilder
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
+import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
-import util.ResponseBuilder._
+import ResponseBuilder._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Path}
 
-class BookAdd(books: Books) extends RouteSpec {
+class BookAdd(books: Books) extends Route {
   private val exampleBook = Book("the title", "the author", 666)
   private val bookExistsResponse = Error(CONFLICT, "Book with that ISBN exists")
   private val body = Body.json(Some("book content"), exampleBook.toJson)

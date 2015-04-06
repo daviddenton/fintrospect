@@ -4,13 +4,14 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.MimeTypes._
+import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod._
-import util.ResponseBuilder._
+import ResponseBuilder._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
-class BookLookup(books: Books) extends RouteSpec {
+class BookLookup(books: Books) extends Route {
 
   private def lookupByIsbn(isbn: String): Service[Request, Response] = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] =

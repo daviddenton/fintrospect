@@ -119,9 +119,25 @@
             "description": null,
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "the body of the message",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/object-1852275137"
+            }
           }
         ],
-        "responses": {},
+        "responses": {
+          "403": {
+            "description": "no way jose",
+            "schema": {
+              "$ref": "#/definitions/object-610697343"
+            }
+          }
+        },
         "security": [
           {}
         ]
@@ -129,6 +145,30 @@
     }
   },
   "definitions": {
+    "object-1852275137": {
+      "type": "object",
+      "properties": {
+        "anObject": {
+          "$ref": "#/definitions/object-1920275720"
+        }
+      }
+    },
+    "object-1920275720": {
+      "type": "object",
+      "properties": {
+        "aStringField": {
+          "type": "integer"
+        }
+      }
+    },
+    "object-610697343": {
+      "type": "object",
+      "properties": {
+        "aString": {
+          "type": "string"
+        }
+      }
+    },
     "object-1852275137": {
       "type": "object",
       "properties": {
