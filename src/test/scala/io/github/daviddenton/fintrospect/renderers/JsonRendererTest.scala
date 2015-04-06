@@ -5,7 +5,7 @@ import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.path.Root
 import com.twitter.io.Charsets._
 import com.twitter.util.Await
-import io.github.daviddenton.fintrospect.MimeTypes._
+import io.github.daviddenton.fintrospect.ContentTypes._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.parameters._
