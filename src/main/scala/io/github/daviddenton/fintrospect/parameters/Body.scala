@@ -14,5 +14,11 @@ class Body private(description: Option[String], paramType: ParamType, val exampl
 }
 
 object Body {
+
+  /**
+   * Defines the JSON body of a request.
+   * @param description
+   * @param example
+   */
   def json(description: Option[String], example: JsonNode) = new Body(description, ObjectParamType, example, s => Try(ArgoUtil.parse(s)).toOption)
 }

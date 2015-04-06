@@ -6,6 +6,9 @@ import argo.format.{CompactJsonFormatter, PrettyJsonFormatter}
 import argo.jdom.JsonNodeFactories._
 import argo.jdom.{JdomParser, JsonNode, JsonNodeFactories, JsonRootNode}
 
+/**
+ * Utility functions for dealing with Argo JSON nodes (creating/parsing/printing)
+ */
 object ArgoUtil {
 
   type Field = (String, JsonNode)

@@ -2,6 +2,9 @@ package io.github.daviddenton.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
 
+/**
+ * Builder for parameters that are encoded as HTTP headers.
+ */
 object Header {
 
   private val location = new Location {
