@@ -58,10 +58,10 @@ class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes
   /**
    * Attach described Route to the module.
    */
-  def withRoute(completePath: CompletePath): FintrospectModule = {
-    val moduleRoute = new ModuleRoute(completePath, basePath)
+  def withRoute(route: Route): FintrospectModule = {
+    val moduleRoute = new ModuleRoute(route, basePath)
     new FintrospectModule(basePath, renderer, moduleRoute :: moduleRoutes,
-      userRoutes.orElse(completePath.toPf(basePath)(ValidateParams(moduleRoute).andThen(Identify(moduleRoute)))))
+      userRoutes.orElse(route.toPf(basePath)(ValidateParams(moduleRoute).andThen(Identify(moduleRoute)))))
   }
 
   /**

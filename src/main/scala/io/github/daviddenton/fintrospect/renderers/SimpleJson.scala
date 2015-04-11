@@ -7,7 +7,7 @@ import io.github.daviddenton.fintrospect.{ModuleRoute, Renderer}
 
 class SimpleJson private() extends Renderer {
   private def render(mr: ModuleRoute): Field = {
-    mr.completedPath.method + ":" + mr.toString -> string(mr.description.name)
+    mr.route.method + ":" + mr.toString -> string(mr.description.name)
   }
 
   def apply(mr: Seq[ModuleRoute]): JsonRootNode = obj("resources" -> obj(mr.map(render)))

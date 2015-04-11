@@ -17,8 +17,8 @@ class Swagger1dot1Json private() extends Renderer {
     "dataType" -> string(requirementAndParameter._2.paramType.name)
   )
 
-  private def render(r: ModuleRoute): Field = r.completedPath.method.getName.toLowerCase -> obj(
-    "httpMethod" -> string(r.completedPath.method.getName),
+  private def render(r: ModuleRoute): Field = r.route.method.getName.toLowerCase -> obj(
+    "httpMethod" -> string(r.route.method.getName),
     "nickname" -> string(r.description.name),
     "notes" -> r.description.summary.map(string).getOrElse(nullNode()),
     "produces" -> array(r.description.produces.map(m => string(m.value))),

@@ -39,7 +39,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     val bodySchema = r.description.body.map(b => schemaGenerator.toSchema(b.example))
     val bodyParameters = bodySchema.toList.flatMap(s => Seq(render(r.description.body.get, s)))
 
-    val route = r.completedPath.method.getName.toLowerCase -> obj(
+    val route = r.route.method.getName.toLowerCase -> obj(
       "tags" -> array(string(r.basePath.toString)),
       "summary" -> r.description.summary.map(string).getOrElse(nullNode()),
       "produces" -> array(r.description.produces.map(m => string(m.value))),
