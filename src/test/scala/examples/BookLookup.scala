@@ -20,7 +20,7 @@ class BookLookup(books: Books) extends Route {
       }
   }
 
-  def attachTo(module: FintrospectModule2): FintrospectModule2 = {
+  def attachTo(module: FintrospectModule): FintrospectModule = {
     module.withRoute(
       Description("lookup book by isbn number")
         .producing(APPLICATION_JSON)

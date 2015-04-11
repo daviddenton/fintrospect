@@ -12,7 +12,7 @@ import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-class FintrospectModule2Test extends FunSpec with ShouldMatchers {
+class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
   case class AService(segments: Seq[String]) extends Service[Request, Response] {
     def apply(request: Request): Future[Response] = {
@@ -25,7 +25,7 @@ class FintrospectModule2Test extends FunSpec with ShouldMatchers {
 
   describe("FintrospectModule") {
     describe("when a route path can be found") {
-      val m = FintrospectModule2(Root, SimpleJson())
+      val m = FintrospectModule(Root, SimpleJson())
       val d = Description("")
 
       it("with 0 segment") {
@@ -38,13 +38,13 @@ class FintrospectModule2Test extends FunSpec with ShouldMatchers {
 
     describe("when a route path cannot be found") {
       it("returns a 404") {
-        val result = Await.result(FintrospectModule2(Root, SimpleJson()).toService.apply(Request("/svc/noSuchRoute")))
+        val result = Await.result(FintrospectModule(Root, SimpleJson()).toService.apply(Request("/svc/noSuchRoute")))
         result.status.getCode should be === 404
       }
     }
 
     describe("Routes valid requests by path") {
-      val m = FintrospectModule2(Root, SimpleJson())
+      val m = FintrospectModule(Root, SimpleJson())
       val d = Description("")
 
       it("with 0 segment") {
@@ -57,7 +57,7 @@ class FintrospectModule2Test extends FunSpec with ShouldMatchers {
 
     describe("when a valid path does not contain all required parameters") {
       val d = Description("").taking(Header.required.int("aNumberHeader"))
-      val m = FintrospectModule2(Root, SimpleJson()).withRoute(d.at(GET) / "svc" then (() => AService(Seq())))
+      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" then (() => AService(Seq())))
 
       it("it returns a 400 when the param is missing") {
         val request = Request("/svc")
@@ -74,7 +74,7 @@ class FintrospectModule2Test extends FunSpec with ShouldMatchers {
     }
   }
 
-  def assertOkResponse(module: FintrospectModule2, segments: Seq[String]): Unit = {
+  def assertOkResponse(module: FintrospectModule, segments: Seq[String]): Unit = {
     val result = Await.result(module.toService.apply(Request("/svc/" + segments.mkString("/"))))
     result.status.getCode should be === 200
     result.content.toString(Utf8) should be === segments.mkString(",")

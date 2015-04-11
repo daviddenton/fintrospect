@@ -22,7 +22,7 @@ class BookSearch(books: Books) extends Route {
     }
   }
 
-  def attachTo(module: FintrospectModule2): FintrospectModule2 = {
+  def attachTo(module: FintrospectModule): FintrospectModule = {
     module.withRoute(
       Description("search for books")
         .taking(authorQuery)

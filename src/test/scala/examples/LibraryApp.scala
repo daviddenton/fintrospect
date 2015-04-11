@@ -21,7 +21,7 @@ object LibraryApp extends App {
 
   private val books = new Books()
 
-  val libraryModule = FintrospectModule2(Root / "library", renderer)
+  val libraryModule = FintrospectModule(Root / "library", renderer)
     .withRoute(new BookAdd(books))
     .withRoute(new BookCollection(books))
     .withRoute(new BookLookup(books))
