@@ -24,7 +24,7 @@ abstract class JsonRendererTest() extends FunSpec with ShouldMatchers {
 
   describe(name) {
     it("renders as expected") {
-      val module = FintrospectModule2(Root / "basepath", renderer)
+      val module = FintrospectModule(Root / "basepath", renderer)
         .withRoute(
           Description("a get endpoint", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)

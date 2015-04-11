@@ -28,7 +28,7 @@ class BookAdd(books: Books) extends Route {
       }
   }
 
-  def attachTo(module: FintrospectModule2): FintrospectModule2 = {
+  def attachTo(module: FintrospectModule): FintrospectModule = {
     module.withRoute(
       Description("add book by isbn number")
         .taking(body)

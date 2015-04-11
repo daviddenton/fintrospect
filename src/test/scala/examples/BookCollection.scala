@@ -17,7 +17,7 @@ class BookCollection(books: Books) extends Route {
     override def apply(request: Request): Future[Response] = Ok(array(books.list().map(_.toJson)))
   }
 
-  def attachTo(module: FintrospectModule2): FintrospectModule2 = {
+  def attachTo(module: FintrospectModule): FintrospectModule = {
     module.withRoute(
       Description("show collection")
         .producing(APPLICATION_JSON)

@@ -33,7 +33,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     "schema" -> schema.node
   )
 
-  private def renderRoute(r: ModuleRoute2): FieldAndDefinitions = {
+  private def renderRoute(r: ModuleRoute): FieldAndDefinitions = {
     val FieldsAndDefinitions(responses, responseDefinitions) = renderResponses(r.description.responses)
 
     val bodySchema = r.description.body.map(b => schemaGenerator.toSchema(b.example))
@@ -64,7 +64,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
   }
 
-  def apply(moduleRoutes: Seq[ModuleRoute2]): JsonRootNode = {
+  def apply(moduleRoutes: Seq[ModuleRoute]): JsonRootNode = {
     val pathsAndDefinitions = moduleRoutes
       .groupBy(_.toString)
       .foldLeft(FieldsAndDefinitions()) {

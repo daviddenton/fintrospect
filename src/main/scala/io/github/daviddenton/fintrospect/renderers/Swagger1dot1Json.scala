@@ -17,7 +17,7 @@ class Swagger1dot1Json private() extends Renderer {
     "dataType" -> string(requirementAndParameter._2.paramType.name)
   )
 
-  private def render(r: ModuleRoute2): Field = r.completedPath.method.getName.toLowerCase -> obj(
+  private def render(r: ModuleRoute): Field = r.completedPath.method.getName.toLowerCase -> obj(
     "httpMethod" -> string(r.completedPath.method.getName),
     "nickname" -> string(r.description.name),
     "notes" -> r.description.summary.map(string).getOrElse(nullNode()),
@@ -29,7 +29,7 @@ class Swagger1dot1Json private() extends Renderer {
       .map(r => obj("code" -> number(r.status.getCode), "reason" -> string(r.description))).toSeq)
   )
 
-  def apply(mr: Seq[ModuleRoute2]): JsonRootNode = {
+  def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
     val api = mr
       .groupBy(_.toString)
       .map { case (path, routes) => obj("path" -> string(path), "operations" -> array(routes.map(render(_)._2)))}

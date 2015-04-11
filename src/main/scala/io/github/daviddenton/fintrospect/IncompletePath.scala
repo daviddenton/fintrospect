@@ -1,7 +1,7 @@
 package io.github.daviddenton.fintrospect
 
 import com.twitter.finagle.http.path.{->, /, Path}
-import io.github.daviddenton.fintrospect.FintrospectModule2.{FF, Svc}
+import io.github.daviddenton.fintrospect.FintrospectModule.{FF, Svc}
 import io.github.daviddenton.fintrospect.parameters.{Path => Fp, Parameter, Requirement, PathParameter}
 import org.jboss.netty.handler.codec.http.HttpMethod
 
