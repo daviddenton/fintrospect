@@ -46,7 +46,6 @@ object FintrospectModule2 {
   private case class RoutesContent(descriptionContent: String) extends Service[Request, Response]() {
     override def apply(request: Request): Future[Response] = Ok(descriptionContent)
   }
-
 }
 
 /**
@@ -54,12 +53,10 @@ object FintrospectModule2 {
  */
 class FintrospectModule2 private(basePath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute2], private val userRoutes: Binding) {
 
-  private def withDefault() = {
-    withRoute(Description("Description route"), PathWrapper(GET), () => RoutesContent(pretty(null)))
-  }
+  private def withDefault() = withRoute(Description("Description route"), PathWrapper(GET).then(() => RoutesContent(pretty(null))))
 
-  private def withDescribedRoute(description: Description, pw: PathWrapper)(bindFn: FF => Binding): FintrospectModule2 = {
-    val moduleRoute = new ModuleRoute2(description, pw, basePath)
+  private def withDescribedRoute(description: Description, completePath: CompletePath)(bindFn: FF => Binding): FintrospectModule2 = {
+    val moduleRoute = new ModuleRoute2(description, completePath.wrapper, basePath)
     new FintrospectModule2(basePath, renderer, moduleRoute :: moduleRoutes,
       userRoutes.orElse(bindFn(ValidateParams(moduleRoute).andThen(Identify(moduleRoute)))))
   }
@@ -72,7 +69,7 @@ class FintrospectModule2 private(basePath: Path, renderer: Renderer, moduleRoute
   /**
    * Attach described Route to the module.
    */
-  def withRoute(description: Description, pw: PathWrapper, fn: () => Svc) = withDescribedRoute(description, pw)(pw.toPf(basePath, fn))
+  def withRoute(description: Description, cp: CompletePath) = withDescribedRoute(description, cp)(cp.toPf(basePath))
 
   /**
    * Finaliser for the module builder to convert itself to a Partial Function which matches incoming requests.
