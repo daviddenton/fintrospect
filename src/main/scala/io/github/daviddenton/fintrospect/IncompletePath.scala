@@ -9,22 +9,23 @@ object IncompletePath {
   def apply(description: Description, method: HttpMethod): IncompletePath0 = IncompletePath0(description, method, identity)
 }
 
-abstract class CompletePath(val description: Description, val method: HttpMethod, completePathFn: Path => Path, val pathParams: PathParameter[_]*) {
+abstract class CompletePath(val description: Description, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
 
   val allParams: List[(Requirement, Parameter[_])] = {
     (description.params ++ pathParams.flatMap(identity)).map(p => p.requirement -> p)
   }
 
+  def matches(actualMethod: HttpMethod, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
+
   def toPf(basePath: Path): (FF) => PartialFunction[(HttpMethod, Path), Svc]
 
-  def describeFor(basePath: Path): String = (completePathFn(basePath).toString :: pathParams.map(_.toString()).toList).mkString("/")
+  def describeFor(basePath: Path): String = (pathFn(basePath).toString :: pathParams.map(_.toString()).toList).mkString("/")
 }
 
 trait IncompletePath {
   val description: Description
   val method: HttpMethod
   val pathFn: Path => Path
-  def matches(actualMethod: HttpMethod, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
 }
 
 case class IncompletePath0(description: Description, method: HttpMethod, pathFn: Path => Path) extends IncompletePath {
