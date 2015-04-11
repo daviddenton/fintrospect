@@ -28,13 +28,13 @@ class BookAdd(books: Books) extends Route {
       }
   }
 
-  def attachTo(module: FintrospectModule): FintrospectModule = {
+  def attachTo(module: FintrospectModule2): FintrospectModule2 = {
     module.withRoute(
       Description("add book by isbn number")
         .taking(body)
         .returning(ResponseWithExample(CREATED, "we added your book", exampleBook.toJson))
-        .returning(bookExistsResponse),
-      On(POST, _ / "book"), Path.string("isbn", "the isbn of the book"), addBook)
+        .returning(bookExistsResponse)
+        .at(POST) / "book" / Path.string("isbn", "the isbn of the book") then addBook)
   }
 }
 

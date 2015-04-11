@@ -22,14 +22,14 @@ class BookSearch(books: Books) extends Route {
     }
   }
 
-  def attachTo(module: FintrospectModule): FintrospectModule = {
+  def attachTo(module: FintrospectModule2): FintrospectModule2 = {
     module.withRoute(
       Description("search for books")
         .taking(authorQuery)
         .taking(titleQuery)
         .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
         .returning(OK -> "results", BAD_REQUEST -> "invalid request")
-        .producing(APPLICATION_JSON),
-      On(POST, _ / "search"), search)
+        .producing(APPLICATION_JSON)
+        .at(POST) / "search" then search)
   }
 }

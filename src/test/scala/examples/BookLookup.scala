@@ -4,12 +4,10 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.ContentTypes._
-import io.github.daviddenton.fintrospect.util.ResponseBuilder
-import org.jboss.netty.handler.codec.http.HttpMethod
-import org.jboss.netty.handler.codec.http.HttpMethod._
-import ResponseBuilder._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path
+import io.github.daviddenton.fintrospect.util.ResponseBuilder._
+import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
 class BookLookup(books: Books) extends Route {
@@ -22,19 +20,13 @@ class BookLookup(books: Books) extends Route {
       }
   }
 
-  Description("lookup book by isbn number")
-    .producing(APPLICATION_JSON)
-    .returning(NOT_FOUND -> "no book was found with this ISBN", ResponseWithExample.ERROR_EXAMPLE)
-    .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson)
-    .at(HttpMethod.GET) / "hello" / "bob" / Path.int("bob2")
-
-  def attachTo(module: FintrospectModule): FintrospectModule = {
+  def attachTo(module: FintrospectModule2): FintrospectModule2 = {
     module.withRoute(
       Description("lookup book by isbn number")
         .producing(APPLICATION_JSON)
         .returning(NOT_FOUND -> "no book was found with this ISBN", ResponseWithExample.ERROR_EXAMPLE)
-        .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson),
-      On(GET, _ / "book"), Path.string("isbn", "the isbn of the book"), lookupByIsbn)
+        .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson)
+        .at(GET) / "book" / Path.string("isbn", "the isbn of the book") then lookupByIsbn)
   }
 }
 

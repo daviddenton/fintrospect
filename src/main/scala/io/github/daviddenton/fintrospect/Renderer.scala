@@ -6,5 +6,5 @@ import argo.jdom.JsonRootNode
  * Contract trait for the pluggable Renderers (Swagger etc..)
  */
 trait Renderer {
-  def apply(routes: Seq[ModuleRoute]): JsonRootNode
+  def apply(routes: Seq[ModuleRoute2]): JsonRootNode
 }

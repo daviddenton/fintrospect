@@ -53,12 +53,12 @@ object FintrospectModule2 {
  */
 class FintrospectModule2 private(basePath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute2], private val userRoutes: Binding) {
 
-  private def withDefault() = withRoute(Description("Description route").at(GET).then(() => RoutesContent(pretty(null))))
+  private def withDefault() = withRoute(Description("Description route").at(GET).then(() => RoutesContent(pretty(renderer(moduleRoutes)))))
 
   /**
    * Calls back to the Route to attach itself to the Module.
    */
-  def withRoute(route: Route2): FintrospectModule2 = route.attachTo(this)
+  def withRoute(route: Route): FintrospectModule2 = route.attachTo(this)
 
   /**
    * Attach described Route to the module.
