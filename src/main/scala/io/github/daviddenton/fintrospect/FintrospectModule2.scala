@@ -55,7 +55,7 @@ object FintrospectModule2 {
 class FintrospectModule2 private(basePath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute2], private val userRoutes: Binding) {
 
   private def withDefault() = {
-    withRoute(Description("Description route"), PathWrapper(GET, identity), () => RoutesContent(pretty(null)))
+    withRoute(Description("Description route"), PathWrapper(GET), () => RoutesContent(pretty(null)))
   }
 
   private def withDescribedRoute(description: Description, pw: PathWrapper)(bindFn: FF => Binding): FintrospectModule2 = {

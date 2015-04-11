@@ -5,6 +5,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.ContentTypes._
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
+import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import ResponseBuilder._
 import io.github.daviddenton.fintrospect._
@@ -20,6 +21,8 @@ class BookLookup(books: Books) extends Route {
         case _ => Error(NOT_FOUND, "No book found with isbn")
       }
   }
+
+  PathWrapper(HttpMethod.GET) / "hello" / "bob" / Path.int("bob2")
 
   def attachTo(module: FintrospectModule): FintrospectModule = {
     module.withRoute(
