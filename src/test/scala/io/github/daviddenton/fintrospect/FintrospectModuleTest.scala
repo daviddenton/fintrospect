@@ -34,24 +34,25 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       it("with 1 segments") {
         assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") then ((_1: String) => AService(Seq(_1)))), Seq("a"))
       }
+      it("with 2 segments") {
+        assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") / string("s2") then ((_1: String, _2: String) => AService(Seq(_1, _2)))), Seq("a", "b"))
+      }
+      it("with 3 segments") {
+        assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") / string("s2") / string("s3") then ((_1: String, _2: String, _3: String) => AService(Seq(_1, _2, _3)))), Seq("a", "b", "c"))
+      }
+      it("with 4 segments") {
+        assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") / string("s2") / string("s3") / string("s4") then ((_1: String, _2: String, _3: String, _4: String) => AService(Seq(_1, _2, _3, _4)))), Seq("a", "b", "c", "d"))
+      }
+      it("with 5 segments") {
+        assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") / string("s2") / string("s3") / string("s4") / string("s5") then ((_1: String, _2: String, _3: String, _4: String, _5: String) => AService(Seq(_1, _2, _3, _4, _5)))), Seq("a", "b",
+          "c", "d", "e"))
+      }
     }
 
     describe("when a route path cannot be found") {
       it("returns a 404") {
         val result = Await.result(FintrospectModule(Root, SimpleJson()).toService.apply(Request("/svc/noSuchRoute")))
         result.status.getCode should be === 404
-      }
-    }
-
-    describe("Routes valid requests by path") {
-      val m = FintrospectModule(Root, SimpleJson())
-      val d = Description("")
-
-      it("with 0 segment") {
-        assertOkResponse(m.withRoute(d.at(GET) / "svc" then (() => AService(Seq()))), Seq())
-      }
-      it("with 1 segments") {
-        assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") then ((_1: String) => AService(Seq(_1)))), Seq("a"))
       }
     }
 
