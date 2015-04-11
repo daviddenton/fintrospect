@@ -17,16 +17,16 @@ class Swagger1dot1Json private() extends Renderer {
     "dataType" -> string(requirementAndParameter._2.paramType.name)
   )
 
-  private def render(r: ModuleRoute): Field = r.route.method.getName.toLowerCase -> obj(
-    "httpMethod" -> string(r.route.method.getName),
-    "nickname" -> string(r.description.name),
-    "notes" -> r.description.summary.map(string).getOrElse(nullNode()),
-    "produces" -> array(r.description.produces.map(m => string(m.value))),
-    "consumes" -> array(r.description.consumes.map(m => string(m.value))),
-    "parameters" -> array(r.allParams.map(render)),
-    "errorResponses" -> array(r.description.responses
+  private def render(mr: ModuleRoute): Field = mr.route.method.getName.toLowerCase -> obj(
+    "httpMethod" -> string(mr.route.method.getName),
+    "nickname" -> string(mr.route.description.name),
+    "notes" -> mr.route.description.summary.map(string).getOrElse(nullNode()),
+    "produces" -> array(mr.route.description.produces.map(m => string(m.value))),
+    "consumes" -> array(mr.route.description.consumes.map(m => string(m.value))),
+    "parameters" -> array(mr.route.allParams.map(render)),
+    "errorResponses" -> array(mr.route.description.responses
       .filter(_.status.getCode > 399)
-      .map(r => obj("code" -> number(r.status.getCode), "reason" -> string(r.description))).toSeq)
+      .map(resp => obj("code" -> number(resp.status.getCode), "reason" -> string(resp.description))).toSeq)
   )
 
   def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
