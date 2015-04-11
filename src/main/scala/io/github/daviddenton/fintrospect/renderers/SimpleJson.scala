@@ -2,15 +2,16 @@ package io.github.daviddenton.fintrospect.renderers
 
 import argo.jdom.JsonNodeFactories.string
 import argo.jdom.JsonRootNode
+import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import io.github.daviddenton.fintrospect.{ModuleRoute, Renderer}
+import io.github.daviddenton.fintrospect.{Renderer, Route}
 
 class SimpleJson private() extends Renderer {
-  private def render(mr: ModuleRoute): Field = {
-    mr.on.method + ":" + mr.toString -> string(mr.description.name)
+  private def render(basePath: Path, route: Route): Field = {
+    route.method + ":" + route.describeFor(basePath) -> string(route.description.name)
   }
 
-  def apply(mr: Seq[ModuleRoute]): JsonRootNode = obj("resources" -> obj(mr.map(render)))
+  def apply(basePath: Path, routes: Seq[Route]): JsonRootNode = obj("resources" -> obj(routes.map(r => render(basePath, r))))
 }
 
 /**

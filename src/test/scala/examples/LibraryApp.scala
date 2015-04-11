@@ -22,10 +22,10 @@ object LibraryApp extends App {
   private val books = new Books()
 
   val libraryModule = FintrospectModule(Root / "library", renderer)
-    .withRoute(new BookAdd(books))
-    .withRoute(new BookCollection(books))
-    .withRoute(new BookLookup(books))
-    .withRoute(new BookSearch(books))
+    .withRoute(new BookAdd(books).route)
+    .withRoute(new BookCollection(books).route)
+    .withRoute(new BookLookup(books).route)
+    .withRoute(new BookSearch(books).route)
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))
