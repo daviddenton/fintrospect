@@ -51,24 +51,23 @@ object FintrospectModule {
 /**
  * Self-describing module builder (uses the immutable builder pattern).
  */
-class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute], private val userRoutes: Binding) {
+class FintrospectModule private(basePath: Path, renderer: Renderer, theRoutes: List[Route], private val binding: Binding) {
 
-  private def withDefault() = withRoute(Description("Description route").at(GET).then(() => RoutesContent(pretty(renderer(moduleRoutes)))))
+  private def withDefault() = withRoute(Description("Description route").at(GET).then(() => RoutesContent(pretty(renderer(basePath, theRoutes)))))
 
   /**
    * Attach described Route to the module.
    */
   def withRoute(route: Route): FintrospectModule = {
-    val moduleRoute = new ModuleRoute(route, basePath)
-    new FintrospectModule(basePath, renderer, moduleRoute :: moduleRoutes,
-      userRoutes.orElse(route.toPf(basePath)(ValidateParams(route).andThen(Identify(route, basePath)))))
+    new FintrospectModule(basePath, renderer, route :: theRoutes,
+      binding.orElse(route.toPf(basePath)(ValidateParams(route).andThen(Identify(route, basePath)))))
   }
 
   /**
    * Finaliser for the module builder to convert itself to a Partial Function which matches incoming requests.
    * Use this function when combining many modules together in an app.
    */
-  def routes = withDefault().userRoutes
+  def routes = withDefault().binding
 
   /**
    * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.

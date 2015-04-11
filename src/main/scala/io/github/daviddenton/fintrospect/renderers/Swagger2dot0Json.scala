@@ -1,6 +1,7 @@
 package io.github.daviddenton.fintrospect.renderers
 
 import argo.jdom.{JsonNode, JsonRootNode}
+import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Parameter, Requirement}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
@@ -33,25 +34,25 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     "schema" -> schema.node
   )
 
-  private def renderRoute(mr: ModuleRoute): FieldAndDefinitions = {
-    val FieldsAndDefinitions(responses, responseDefinitions) = renderResponses(mr.route.description.responses)
+  private def render(basePath: Path, route: Route): FieldAndDefinitions = {
+    val FieldsAndDefinitions(responses, responseDefinitions) = render(route.description.responses)
 
-    val bodySchema = mr.route.description.body.map(b => schemaGenerator.toSchema(b.example))
-    val bodyParameters = bodySchema.toList.flatMap(s => Seq(render(mr.route.description.body.get, s)))
+    val bodySchema = route.description.body.map(b => schemaGenerator.toSchema(b.example))
+    val bodyParameters = bodySchema.toList.flatMap(s => Seq(render(route.description.body.get, s)))
 
-    val route = mr.route.method.getName.toLowerCase -> obj(
-      "tags" -> array(string(mr.basePath.toString)),
-      "summary" -> mr.route.description.summary.map(string).getOrElse(nullNode()),
-      "produces" -> array(mr.route.description.produces.map(m => string(m.value))),
-      "consumes" -> array(mr.route.description.consumes.map(m => string(m.value))),
-      "parameters" -> array(mr.route.allParams.map(render) ++ bodyParameters),
+    val route2 = route.method.getName.toLowerCase -> obj(
+      "tags" -> array(string(basePath.toString)),
+      "summary" -> route.description.summary.map(string).getOrElse(nullNode()),
+      "produces" -> array(route.description.produces.map(m => string(m.value))),
+      "consumes" -> array(route.description.consumes.map(m => string(m.value))),
+      "parameters" -> array(route.allParams.map(render) ++ bodyParameters),
       "responses" -> obj(responses),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
-    FieldAndDefinitions(route, responseDefinitions ++ bodySchema.toList.flatMap(_.definitions))
+    FieldAndDefinitions(route2, responseDefinitions ++ bodySchema.toList.flatMap(_.definitions))
   }
 
-  private def renderResponses(responses: List[ResponseWithExample]): FieldsAndDefinitions = {
+  private def render(responses: List[ResponseWithExample]): FieldsAndDefinitions = {
     responses.foldLeft(FieldsAndDefinitions()) {
       case (memo, nextResp) =>
         val newSchema = Option(nextResp.example).map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
@@ -60,23 +61,23 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     }
   }
 
-  private def renderApiInfo(apiInfo: ApiInfo): JsonNode = {
+  private def render(apiInfo: ApiInfo): JsonNode = {
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
   }
 
-  def apply(moduleRoutes: Seq[ModuleRoute]): JsonRootNode = {
-    val pathsAndDefinitions = moduleRoutes
-      .groupBy(_.toString)
+  def apply(basePath: Path, routes: Seq[Route]): JsonRootNode = {
+    val pathsAndDefinitions = routes
+      .groupBy(_.describeFor(basePath))
       .foldLeft(FieldsAndDefinitions()) {
       case (memo, (path, routesForThisPath)) =>
         val routeFieldsAndDefinitions = routesForThisPath.foldLeft(FieldsAndDefinitions()) {
-          case (memoFields, mr) => memoFields.add(renderRoute(mr))
+          case (memoFields, route) => memoFields.add(render(basePath, route))
         }
         memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
     }
     obj(
       "swagger" -> string("2.0"),
-      "info" -> renderApiInfo(apiInfo),
+      "info" -> render(apiInfo),
       "basePath" -> string("/"),
       "paths" -> obj(pathsAndDefinitions.fields),
       "definitions" -> obj(pathsAndDefinitions.definitions)
