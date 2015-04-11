@@ -10,7 +10,7 @@ import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
-class BookLookup(books: Books) extends Route {
+class BookLookup(books: Books) {
 
   private def lookupByIsbn(isbn: String): Service[Request, Response] = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] =
@@ -20,13 +20,10 @@ class BookLookup(books: Books) extends Route {
       }
   }
 
-  def attachTo(module: FintrospectModule): FintrospectModule = {
-    module.withRoute(
-      Description("lookup book by isbn number")
-        .producing(APPLICATION_JSON)
-        .returning(NOT_FOUND -> "no book was found with this ISBN", ResponseWithExample.ERROR_EXAMPLE)
-        .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson)
-        .at(GET) / "book" / Path.string("isbn", "the isbn of the book") then lookupByIsbn)
-  }
+  val route = Description("lookup book by isbn number")
+    .producing(APPLICATION_JSON)
+    .returning(NOT_FOUND -> "no book was found with this ISBN", ResponseWithExample.ERROR_EXAMPLE)
+    .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson)
+    .at(GET) / "book" / Path.string("isbn", "the isbn of the book") then lookupByIsbn
 }
 
