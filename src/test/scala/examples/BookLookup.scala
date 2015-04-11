@@ -22,7 +22,11 @@ class BookLookup(books: Books) extends Route {
       }
   }
 
-  IncompletePath(HttpMethod.GET) / "hello" / "bob" / Path.int("bob2")
+  Description("lookup book by isbn number")
+    .producing(APPLICATION_JSON)
+    .returning(NOT_FOUND -> "no book was found with this ISBN", ResponseWithExample.ERROR_EXAMPLE)
+    .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson)
+    .at(HttpMethod.GET) / "hello" / "bob" / Path.int("bob2")
 
   def attachTo(module: FintrospectModule): FintrospectModule = {
     module.withRoute(

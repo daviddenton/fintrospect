@@ -53,7 +53,7 @@ object FintrospectModule2 {
  */
 class FintrospectModule2 private(basePath: Path, renderer: Renderer, moduleRoutes: List[ModuleRoute2], private val userRoutes: Binding) {
 
-  private def withDefault() = withRoute(Description("Description route"), IncompletePath(GET).then(() => RoutesContent(pretty(null))))
+  private def withDefault() = withRoute(Description("Description route").at(GET).then(() => RoutesContent(pretty(null))))
 
   /**
    * Calls back to the Route to attach itself to the Module.
@@ -63,8 +63,8 @@ class FintrospectModule2 private(basePath: Path, renderer: Renderer, moduleRoute
   /**
    * Attach described Route to the module.
    */
-  def withRoute(description: Description, completePath: CompletePath): FintrospectModule2 = {
-    val moduleRoute = new ModuleRoute2(description, completePath, basePath)
+  def withRoute(completePath: CompletePath): FintrospectModule2 = {
+    val moduleRoute = new ModuleRoute2(completePath, basePath)
     new FintrospectModule2(basePath, renderer, moduleRoute :: moduleRoutes,
       userRoutes.orElse(completePath.toPf(basePath)(ValidateParams(moduleRoute).andThen(Identify(moduleRoute)))))
   }

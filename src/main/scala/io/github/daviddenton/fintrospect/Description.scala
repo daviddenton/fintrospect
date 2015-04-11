@@ -4,7 +4,7 @@ import argo.jdom.JsonNode
 import io.github.daviddenton.fintrospect.parameters.{Body, RequestParameter}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
-import org.jboss.netty.handler.codec.http.HttpResponseStatus
+import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponseStatus}
 
 import scala.util.Try
 
@@ -61,6 +61,8 @@ case class Description private(name: String,
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
   def returning(code: (HttpResponseStatus, String), example: JsonNode): Description = copy(responses = ResponseWithExample(code._1, code._2, example) :: responses)
+
+  def at(method: HttpMethod) = IncompletePath(this, method)
 }
 
 object Description {
