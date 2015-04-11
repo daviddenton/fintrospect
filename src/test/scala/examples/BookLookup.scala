@@ -22,7 +22,7 @@ class BookLookup(books: Books) extends Route {
       }
   }
 
-  PathWrapper(HttpMethod.GET) / "hello" / "bob" / Path.int("bob2")
+  IncompletePath(HttpMethod.GET) / "hello" / "bob" / Path.int("bob2")
 
   def attachTo(module: FintrospectModule): FintrospectModule = {
     module.withRoute(
