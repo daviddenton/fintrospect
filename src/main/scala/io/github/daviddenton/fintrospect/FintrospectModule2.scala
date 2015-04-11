@@ -55,12 +55,6 @@ class FintrospectModule2 private(basePath: Path, renderer: Renderer, moduleRoute
 
   private def withDefault() = withRoute(Description("Description route"), PathWrapper(GET).then(() => RoutesContent(pretty(null))))
 
-  private def withDescribedRoute(description: Description, completePath: CompletePath)(bindFn: FF => Binding): FintrospectModule2 = {
-    val moduleRoute = new ModuleRoute2(description, completePath.wrapper, basePath)
-    new FintrospectModule2(basePath, renderer, moduleRoute :: moduleRoutes,
-      userRoutes.orElse(bindFn(ValidateParams(moduleRoute).andThen(Identify(moduleRoute)))))
-  }
-
   /**
    * Calls back to the Route to attach itself to the Module.
    */
@@ -69,7 +63,11 @@ class FintrospectModule2 private(basePath: Path, renderer: Renderer, moduleRoute
   /**
    * Attach described Route to the module.
    */
-  def withRoute(description: Description, cp: CompletePath) = withDescribedRoute(description, cp)(cp.toPf(basePath))
+  def withRoute(description: Description, completePath: CompletePath): FintrospectModule2 = {
+    val moduleRoute = new ModuleRoute2(description, completePath, basePath)
+    new FintrospectModule2(basePath, renderer, moduleRoute :: moduleRoutes,
+      userRoutes.orElse(completePath.toPf(basePath)(ValidateParams(moduleRoute).andThen(Identify(moduleRoute)))))
+  }
 
   /**
    * Finaliser for the module builder to convert itself to a Partial Function which matches incoming requests.
