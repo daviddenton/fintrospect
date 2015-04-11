@@ -28,16 +28,16 @@ object FintrospectModule {
    */
   def apply(basePath: Path, renderer: Renderer): FintrospectModule = new FintrospectModule(basePath, renderer, Nil, PartialFunction.empty[(HttpMethod, Path), Svc])
 
-  private case class ValidateParams(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
+  private case class ValidateParams(route: Route) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-      val missingParams = moduleRoute.route.description.params.filter(_.requirement == Requirement.Mandatory).map(p => p.unapply(request).map(_ => None).getOrElse(Some(s"${p.name} (${p.paramType.name})"))).flatten
+      val missingParams = route.description.params.filter(_.requirement == Requirement.Mandatory).map(p => p.unapply(request).map(_ => None).getOrElse(Some(s"${p.name} (${p.paramType.name})"))).flatten
       if (missingParams.isEmpty) service(request) else Error(BAD_REQUEST, "Missing required parameters: " + missingParams.mkString(","))
     }
   }
 
-  private case class Identify(moduleRoute: ModuleRoute) extends SimpleFilter[Request, Response]() {
+  private case class Identify(route: Route, basePath: Path) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-      val url = if (moduleRoute.toString().length == 0) "/" else moduleRoute.toString()
+      val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod() + "." + url)
       service(request)
     }
@@ -61,7 +61,7 @@ class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes
   def withRoute(route: Route): FintrospectModule = {
     val moduleRoute = new ModuleRoute(route, basePath)
     new FintrospectModule(basePath, renderer, moduleRoute :: moduleRoutes,
-      userRoutes.orElse(route.toPf(basePath)(ValidateParams(moduleRoute).andThen(Identify(moduleRoute)))))
+      userRoutes.orElse(route.toPf(basePath)(ValidateParams(route).andThen(Identify(route, basePath)))))
   }
 
   /**
