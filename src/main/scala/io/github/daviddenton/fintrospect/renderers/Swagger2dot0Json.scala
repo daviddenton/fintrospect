@@ -33,18 +33,18 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
     "schema" -> schema.node
   )
 
-  private def renderRoute(r: ModuleRoute): FieldAndDefinitions = {
-    val FieldsAndDefinitions(responses, responseDefinitions) = renderResponses(r.description.responses)
+  private def renderRoute(mr: ModuleRoute): FieldAndDefinitions = {
+    val FieldsAndDefinitions(responses, responseDefinitions) = renderResponses(mr.route.description.responses)
 
-    val bodySchema = r.description.body.map(b => schemaGenerator.toSchema(b.example))
-    val bodyParameters = bodySchema.toList.flatMap(s => Seq(render(r.description.body.get, s)))
+    val bodySchema = mr.route.description.body.map(b => schemaGenerator.toSchema(b.example))
+    val bodyParameters = bodySchema.toList.flatMap(s => Seq(render(mr.route.description.body.get, s)))
 
-    val route = r.route.method.getName.toLowerCase -> obj(
-      "tags" -> array(string(r.basePath.toString)),
-      "summary" -> r.description.summary.map(string).getOrElse(nullNode()),
-      "produces" -> array(r.description.produces.map(m => string(m.value))),
-      "consumes" -> array(r.description.consumes.map(m => string(m.value))),
-      "parameters" -> array(r.allParams.map(render) ++ bodyParameters),
+    val route = mr.route.method.getName.toLowerCase -> obj(
+      "tags" -> array(string(mr.basePath.toString)),
+      "summary" -> mr.route.description.summary.map(string).getOrElse(nullNode()),
+      "produces" -> array(mr.route.description.produces.map(m => string(m.value))),
+      "consumes" -> array(mr.route.description.consumes.map(m => string(m.value))),
+      "parameters" -> array(mr.route.allParams.map(render) ++ bodyParameters),
       "responses" -> obj(responses),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
