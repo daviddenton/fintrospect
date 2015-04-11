@@ -10,7 +10,7 @@ import org.scalatest.{FunSpec, ShouldMatchers}
  */
 class BookLookupTest extends FunSpec with ShouldMatchers with TestingFintrospectRoute {
 
-  override val route = new BookLookup(new Books())
+  override val route = new BookLookup(new Books()).route
 
   describe("Book Lookup") {
     it("can lookup an existing book") {

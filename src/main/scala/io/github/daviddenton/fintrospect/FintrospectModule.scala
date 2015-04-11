@@ -56,11 +56,6 @@ class FintrospectModule private(basePath: Path, renderer: Renderer, moduleRoutes
   private def withDefault() = withRoute(Description("Description route").at(GET).then(() => RoutesContent(pretty(renderer(moduleRoutes)))))
 
   /**
-   * Calls back to the Route to attach itself to the Module.
-   */
-  def withRoute(route: Route): FintrospectModule = route.attachTo(this)
-
-  /**
    * Attach described Route to the module.
    */
   def withRoute(completePath: CompletePath): FintrospectModule = {
