@@ -1,6 +1,7 @@
 package io.github.daviddenton.fintrospect.renderers
 
 import argo.jdom.{JsonNode, JsonRootNode}
+import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Parameter, Requirement}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
@@ -17,22 +18,22 @@ class Swagger1dot1Json private() extends Renderer {
     "dataType" -> string(requirementAndParameter._2.paramType.name)
   )
 
-  private def render(r: ModuleRoute): Field = r.on.method.getName.toLowerCase -> obj(
-    "httpMethod" -> string(r.on.method.getName),
-    "nickname" -> string(r.description.name),
-    "notes" -> r.description.summary.map(string).getOrElse(nullNode()),
-    "produces" -> array(r.description.produces.map(m => string(m.value))),
-    "consumes" -> array(r.description.consumes.map(m => string(m.value))),
-    "parameters" -> array(r.allParams.map(render)),
-    "errorResponses" -> array(r.description.responses
+  private def render(route: Route): Field = route.method.getName.toLowerCase -> obj(
+    "httpMethod" -> string(route.method.getName),
+    "nickname" -> string(route.description.name),
+    "notes" -> route.description.summary.map(string).getOrElse(nullNode()),
+    "produces" -> array(route.description.produces.map(m => string(m.value))),
+    "consumes" -> array(route.description.consumes.map(m => string(m.value))),
+    "parameters" -> array(route.allParams.map(render)),
+    "errorResponses" -> array(route.description.responses
       .filter(_.status.getCode > 399)
-      .map(r => obj("code" -> number(r.status.getCode), "reason" -> string(r.description))).toSeq)
+      .map(resp => obj("code" -> number(resp.status.getCode), "reason" -> string(resp.description))).toSeq)
   )
 
-  def apply(mr: Seq[ModuleRoute]): JsonRootNode = {
-    val api = mr
-      .groupBy(_.toString)
-      .map { case (path, routes) => obj("path" -> string(path), "operations" -> array(routes.map(render(_)._2)))}
+  def apply(basePath: Path, routes: Seq[Route]): JsonRootNode = {
+    val api = routes
+      .groupBy(_.describeFor(basePath))
+      .map { case (path, routesForPath) => obj("path" -> string(path), "operations" -> array(routesForPath.map(render(_)._2)))}
 
     obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api)))
   }

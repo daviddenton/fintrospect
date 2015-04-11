@@ -10,7 +10,7 @@ import ResponseBuilder._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Path}
 
-class BookAdd(books: Books) extends Route {
+class BookAdd(books: Books) {
   private val exampleBook = Book("the title", "the author", 666)
   private val bookExistsResponse = Error(CONFLICT, "Book with that ISBN exists")
   private val body = Body.json(Some("book content"), exampleBook.toJson)
@@ -28,13 +28,10 @@ class BookAdd(books: Books) extends Route {
       }
   }
 
-  def attachTo(module: FintrospectModule): FintrospectModule = {
-    module.withRoute(
-      Description("add book by isbn number")
-        .taking(body)
-        .returning(ResponseWithExample(CREATED, "we added your book", exampleBook.toJson))
-        .returning(bookExistsResponse),
-      On(POST, _ / "book"), Path.string("isbn", "the isbn of the book"), addBook)
-  }
+  val route = Description("add book by isbn number")
+    .taking(body)
+    .returning(ResponseWithExample(CREATED, "we added your book", exampleBook.toJson))
+    .returning(bookExistsResponse)
+    .at(POST) / "book" / Path.string("isbn", "the isbn of the book") then addBook
 }
 
