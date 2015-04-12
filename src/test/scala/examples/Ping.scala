@@ -12,5 +12,5 @@ class Ping {
     override def apply(request: Request): Future[Response] = Ok("pong")
   }
 
-  val route = DescribedRoute("Uptime monitor").at(GET) / "ping" then pong
+  val route = DescribedRoute("Uptime monitor").at(GET) / "ping" bindTo pong
 }

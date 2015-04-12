@@ -24,6 +24,6 @@ class BookLookup(books: Books) {
     .producing(APPLICATION_JSON)
     .returning(NOT_FOUND -> "no book was found with this ISBN", ResponseWithExample.ERROR_EXAMPLE)
     .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson)
-    .at(GET) / "book" / Path.string("isbn", "the isbn of the book") then lookupByIsbn
+    .at(GET) / "book" / Path.string("isbn", "the isbn of the book") bindTo lookupByIsbn
 }
 

@@ -13,13 +13,13 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
 class BookCollection(books: Books) {
 
-  private def list(): Service[Request, Response] = new Service[Request, Response] {
+  private def listBooks(): Service[Request, Response] = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = Ok(array(books.list().map(_.toJson)))
   }
 
   val route = DescribedRoute("show collection")
     .producing(APPLICATION_JSON)
     .returning(OK -> "list of books", array(Book("a book", "authorName", 99).toJson))
-    .at(GET) / "book" then list
+    .at(GET) / "book" bindTo listBooks
 }
 
