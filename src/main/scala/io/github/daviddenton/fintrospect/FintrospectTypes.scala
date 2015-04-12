@@ -8,5 +8,5 @@ object FintrospectTypes {
   type Response = com.twitter.finagle.http.Response
   type Service = com.twitter.finagle.Service[Request, Response]
   type Filter = com.twitter.finagle.Filter[Request, Response, Request, Response]
-  type PF = PartialFunction[(HttpMethod, Path), Service]
+  type Binding = PartialFunction[(HttpMethod, Path), Service]
 }

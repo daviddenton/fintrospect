@@ -16,7 +16,7 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST
 object FintrospectModule {
   val IDENTIFY_SVC_HEADER = "descriptionServiceId"
 
-  def toService(binding: PF): Service = RoutingService.byMethodAndPathObject(binding)
+  def toService(binding: Binding): Service = RoutingService.byMethodAndPathObject(binding)
 
   /**
    * Create a module using the given base-path and description renderer.
@@ -47,7 +47,7 @@ object FintrospectModule {
 /**
  * Self-describing module builder (uses the immutable builder pattern).
  */
-class FintrospectModule private(basePath: Path, renderer: Renderer, theRoutes: List[Route], private val currentBinding: PartialFunction[(HttpMethod, Path), Service]) {
+class FintrospectModule private(basePath: Path, renderer: Renderer, theRoutes: List[Route], private val currentBinding: Binding) {
 
   private def withDefault() = withRoute(DescribedRoute("Description route").at(GET).then(() => RoutesContent(pretty(renderer(basePath, theRoutes)))))
 
@@ -64,7 +64,7 @@ class FintrospectModule private(basePath: Path, renderer: Renderer, theRoutes: L
   /**
    * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
    */
-  def combine(that: FintrospectModule): PartialFunction[(HttpMethod, Path), Service] = totalBinding.orElse(that.totalBinding)
+  def combine(that: FintrospectModule): Binding = totalBinding.orElse(that.totalBinding)
 
   /**
    * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.
