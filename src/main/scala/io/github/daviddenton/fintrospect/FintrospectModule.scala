@@ -47,26 +47,27 @@ object FintrospectModule {
 /**
  * Self-describing module builder (uses the immutable builder pattern).
  */
-class FintrospectModule private(basePath: Path, renderer: Renderer, theRoutes: List[Route], private val binding: PartialFunction[(HttpMethod, Path), Service]) {
+class FintrospectModule private(basePath: Path, renderer: Renderer, theRoutes: List[Route], private val currentBinding: PartialFunction[(HttpMethod, Path), Service]) {
 
   private def withDefault() = withRoute(DescribedRoute("Description route").at(GET).then(() => RoutesContent(pretty(renderer(basePath, theRoutes)))))
+
+  private def totalBinding = withDefault().currentBinding
 
   /**
    * Attach described Route to the module.
    */
   def withRoute(route: Route): FintrospectModule = {
     new FintrospectModule(basePath, renderer, route :: theRoutes,
-      binding.orElse(route.toPf(basePath)(ValidateParams(route).andThen(Identify(route, basePath)))))
+      currentBinding.orElse(route.toPf(basePath)(ValidateParams(route).andThen(Identify(route, basePath)))))
   }
 
   /**
-   * Finaliser for the module builder to convert itself to a Partial Function which matches incoming requests.
-   * Use this function when combining many modules together in an app.
+   * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
    */
-  def routes: PartialFunction[(HttpMethod, Path), Service] = withDefault().binding
+  def combine(that: FintrospectModule): PartialFunction[(HttpMethod, Path), Service] = totalBinding.orElse(that.totalBinding)
 
   /**
    * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.
    */
-  def toService: Service = FintrospectModule.toService(routes)
+  def toService: Service = FintrospectModule.toService(totalBinding)
 }
