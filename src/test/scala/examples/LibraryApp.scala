@@ -7,7 +7,7 @@ import com.twitter.finagle.http.filter.Cors._
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Http, Request, RichHttp}
 import io.github.daviddenton.fintrospect._
-import io.github.daviddenton.fintrospect.renderers.Swagger2dot0Json
+import io.github.daviddenton.fintrospect.renderers.{SimpleJson, Swagger2dot0Json}
 
 /**
  * This example shows the intended method for implementing a simple app using Fintrospect routes and modules, using
@@ -27,14 +27,16 @@ object LibraryApp extends App {
     .withRoute(new BookLookup(books).route)
     .withRoute(new BookSearch(books).route)
 
-  val statusModule = FintrospectModule(Root / "internal", renderer)
+  val statusModule = FintrospectModule(Root / "internal", SimpleJson())
     .withRoute(new Ping().route)
+
+  val service = FintrospectModule.toService(libraryModule combine statusModule)
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))
     .bindTo(new InetSocketAddress(8080))
     .name("")
-    .build(new HttpFilter(UnsafePermissivePolicy).andThen(libraryModule.toService))
+    .build(new HttpFilter(UnsafePermissivePolicy).andThen(service))
 
   println("See the service description at: http://localhost:8080/library")
 }
