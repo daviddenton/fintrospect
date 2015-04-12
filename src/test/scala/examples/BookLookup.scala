@@ -20,7 +20,7 @@ class BookLookup(books: Books) {
       }
   }
 
-  val route = Description("lookup book by isbn number")
+  val route = DescribedRoute("lookup book by isbn number")
     .producing(APPLICATION_JSON)
     .returning(NOT_FOUND -> "no book was found with this ISBN", ResponseWithExample.ERROR_EXAMPLE)
     .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson)

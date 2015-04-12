@@ -11,7 +11,7 @@ import scala.util.Try
 /**
  * Encapsulates the description of a route.
  */
-case class Description private(name: String,
+case class DescribedRoute private(name: String,
                                summary: Option[String],
                                produces: List[ContentType],
                                consumes: List[ContentType],
@@ -42,17 +42,17 @@ case class Description private(name: String,
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(newResponse: ResponseWithExample): Description = copy(responses = newResponse :: responses)
+  def returning(newResponse: ResponseWithExample): DescribedRoute = copy(responses = newResponse :: responses)
 
   /**
    * Register one or more possible responses which could be produced by this route.
    */
-  def returning(codes: (HttpResponseStatus, String)*): Description = copy(responses = responses ++ codes.map(c => ResponseWithExample(c._1, c._2)))
+  def returning(codes: (HttpResponseStatus, String)*): DescribedRoute = copy(responses = responses ++ codes.map(c => ResponseWithExample(c._1, c._2)))
 
   /**
    * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
    */
-  def returning(responseBuilder: ResponseBuilder): Description = {
+  def returning(responseBuilder: ResponseBuilder): DescribedRoute = {
     val response = responseBuilder.build
     returning(ResponseWithExample(response.getStatus(), response.getStatus().getReasonPhrase, Try(parse(response.contentString)).getOrElse(nullNode())))
   }
@@ -60,11 +60,11 @@ case class Description private(name: String,
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(code: (HttpResponseStatus, String), example: JsonNode): Description = copy(responses = ResponseWithExample(code._1, code._2, example) :: responses)
+  def returning(code: (HttpResponseStatus, String), example: JsonNode): DescribedRoute = copy(responses = ResponseWithExample(code._1, code._2, example) :: responses)
 
   def at(method: HttpMethod) = IncompletePath(this, method)
 }
 
-object Description {
-  def apply(name: String, summary: String = null): Description = Description(name, Option(summary), Nil, Nil, None, Nil, Nil)
+object DescribedRoute {
+  def apply(name: String, summary: String = null): DescribedRoute = DescribedRoute(name, Option(summary), Nil, Nil, None, Nil, Nil)
 }

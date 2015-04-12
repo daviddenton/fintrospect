@@ -22,7 +22,7 @@ class BookSearch(books: Books) {
     }
   }
 
-  val route = Description("search for books")
+  val route = DescribedRoute("search for books")
     .taking(authorQuery)
     .taking(titleQuery)
     .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
