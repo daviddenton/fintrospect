@@ -28,5 +28,5 @@ class BookSearch(books: Books) {
     .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
     .returning(OK -> "results", BAD_REQUEST -> "invalid request")
     .producing(APPLICATION_JSON)
-    .at(POST) / "search" then search
+    .at(POST) / "search" bindTo search
 }

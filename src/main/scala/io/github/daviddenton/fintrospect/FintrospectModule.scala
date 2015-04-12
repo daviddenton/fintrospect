@@ -1,27 +1,29 @@
 package io.github.daviddenton.fintrospect
 
+import com.twitter.finagle.SimpleFilter
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.service.RoutingService
-import com.twitter.finagle.SimpleFilter
 import com.twitter.util.Future
+import io.github.daviddenton.fintrospect.FinagleTypeAliases._
 import io.github.daviddenton.fintrospect.FintrospectModule._
-import io.github.daviddenton.fintrospect.FintrospectTypes._
 import io.github.daviddenton.fintrospect.parameters.Requirement
 import io.github.daviddenton.fintrospect.util.ArgoUtil.pretty
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
-import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST
 
 object FintrospectModule {
   val IDENTIFY_SVC_HEADER = "descriptionServiceId"
 
+  /**
+   * Convert a Binding to a Finagle Service
+   */
   def toService(binding: Binding): Service = RoutingService.byMethodAndPathObject(binding)
 
   /**
    * Create a module using the given base-path and description renderer.
    */
-  def apply(basePath: Path, renderer: Renderer): FintrospectModule = new FintrospectModule(basePath, renderer, Nil, PartialFunction.empty[(HttpMethod, Path), Service])
+  def apply(basePath: Path, renderer: Renderer): FintrospectModule = new FintrospectModule(basePath, renderer, Nil, EmptyBinding)
 
   private case class ValidateParams(route: Route) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service): Future[Response] = {
@@ -41,7 +43,6 @@ object FintrospectModule {
   private case class RoutesContent(descriptionContent: String) extends Service() {
     override def apply(request: Request): Future[Response] = Ok(descriptionContent)
   }
-
 }
 
 /**
@@ -49,7 +50,7 @@ object FintrospectModule {
  */
 class FintrospectModule private(basePath: Path, renderer: Renderer, theRoutes: List[Route], private val currentBinding: Binding) {
 
-  private def withDefault() = withRoute(DescribedRoute("Description route").at(GET).then(() => RoutesContent(pretty(renderer(basePath, theRoutes)))))
+  private def withDefault() = withRoute(DescribedRoute("Description route").at(GET).bindTo(() => RoutesContent(pretty(renderer(basePath, theRoutes)))))
 
   private def totalBinding = withDefault().currentBinding
 

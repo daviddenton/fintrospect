@@ -17,7 +17,6 @@ class BookAdd(books: Books) {
 
   private def addBook(isbn: String) = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] =
-
       books.lookup(isbn) match {
         case Some(_) => bookExistsResponse
         case None => {
@@ -32,6 +31,6 @@ class BookAdd(books: Books) {
     .taking(body)
     .returning(ResponseWithExample(CREATED, "we added your book", exampleBook.toJson))
     .returning(bookExistsResponse)
-    .at(POST) / "book" / Path.string("isbn", "the isbn of the book") then addBook
+    .at(POST) / "book" / Path.string("isbn", "the isbn of the book") bindTo addBook
 }
 
