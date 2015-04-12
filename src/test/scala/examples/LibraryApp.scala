@@ -27,6 +27,9 @@ object LibraryApp extends App {
     .withRoute(new BookLookup(books).route)
     .withRoute(new BookSearch(books).route)
 
+  val statusModule = FintrospectModule(Root / "internal", renderer)
+    .withRoute(new Ping().route)
+
   ServerBuilder()
     .codec(RichHttp[Request](Http()))
     .bindTo(new InetSocketAddress(8080))

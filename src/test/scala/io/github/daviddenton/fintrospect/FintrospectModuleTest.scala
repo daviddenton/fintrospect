@@ -26,7 +26,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
   describe("FintrospectModule") {
     describe("when a route path can be found") {
       val m = FintrospectModule(Root, SimpleJson())
-      val d = Description("")
+      val d = DescribedRoute("")
 
       it("with 0 segment") {
         assertOkResponse(m.withRoute(d.at(GET) / "svc" then (() => AService(Seq()))), Seq())
@@ -57,7 +57,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     }
 
     describe("when a valid path does not contain all required parameters") {
-      val d = Description("").taking(Header.required.int("aNumberHeader"))
+      val d = DescribedRoute("").taking(Header.required.int("aNumberHeader"))
       val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" then (() => AService(Seq())))
 
       it("it returns a 400 when the param is missing") {
