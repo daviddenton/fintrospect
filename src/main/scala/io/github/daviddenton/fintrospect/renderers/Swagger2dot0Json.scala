@@ -35,16 +35,16 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
   )
 
   private def render(basePath: Path, route: Route): FieldAndDefinitions = {
-    val FieldsAndDefinitions(responses, responseDefinitions) = render(route.description.responses)
+    val FieldsAndDefinitions(responses, responseDefinitions) = render(route.describedRoute.responses)
 
-    val bodySchema = route.description.body.map(b => schemaGenerator.toSchema(b.example))
-    val bodyParameters = bodySchema.toList.flatMap(s => Seq(render(route.description.body.get, s)))
+    val bodySchema = route.describedRoute.body.map(b => schemaGenerator.toSchema(b.example))
+    val bodyParameters = bodySchema.toList.flatMap(s => Seq(render(route.describedRoute.body.get, s)))
 
     val route2 = route.method.getName.toLowerCase -> obj(
       "tags" -> array(string(basePath.toString)),
-      "summary" -> route.description.summary.map(string).getOrElse(nullNode()),
-      "produces" -> array(route.description.produces.map(m => string(m.value))),
-      "consumes" -> array(route.description.consumes.map(m => string(m.value))),
+      "summary" -> route.describedRoute.summary.map(string).getOrElse(nullNode()),
+      "produces" -> array(route.describedRoute.produces.map(m => string(m.value))),
+      "consumes" -> array(route.describedRoute.consumes.map(m => string(m.value))),
       "parameters" -> array(route.allParams.map(render) ++ bodyParameters),
       "responses" -> obj(responses),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))

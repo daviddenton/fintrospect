@@ -5,10 +5,10 @@ import io.github.daviddenton.fintrospect.FinagleTypeAliases.{Filter, Binding}
 import io.github.daviddenton.fintrospect.parameters.{Parameter, PathParameter, Requirement}
 import org.jboss.netty.handler.codec.http.HttpMethod
 
-abstract class Route(val description: DescribedRoute, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
+abstract class Route(val describedRoute: DescribedRoute, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
 
   val allParams: List[(Requirement, Parameter[_])] = {
-    (description.params ++ pathParams.flatMap(identity)).map(p => p.requirement -> p)
+    (describedRoute.params ++ pathParams.flatMap(identity)).map(p => p.requirement -> p)
   }
 
   def matches(actualMethod: HttpMethod, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
