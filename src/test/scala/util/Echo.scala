@@ -11,7 +11,7 @@ import ResponseBuilder._
 case class Echo(parts: String*) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     Ok(obj(
-      "headers" -> string(request.getHeaders().toString),
+      "headers" -> string(request.headerMap.toString()),
       "params" -> string(request.getParams().toString),
       "message" -> string(parts.mkString(" "))))
   }

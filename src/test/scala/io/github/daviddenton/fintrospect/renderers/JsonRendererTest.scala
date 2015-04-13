@@ -48,7 +48,7 @@ abstract class JsonRendererTest() extends FunSpec with ShouldMatchers {
       val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
       val actual = Await.result(module.toService(Request("/basepath"))).content.toString(Utf8)
       //      println(actual)
-      parse(actual) should be === expected
+      parse(actual) shouldEqual expected
     }
   }
 

@@ -52,7 +52,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     describe("when a route path cannot be found") {
       it("returns a 404") {
         val result = Await.result(FintrospectModule(Root, SimpleJson()).toService.apply(Request("/svc/noSuchRoute")))
-        result.status.getCode should be === 404
+        result.status.getCode shouldEqual 404
       }
     }
 
@@ -63,21 +63,21 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       it("it returns a 400 when the param is missing") {
         val request = Request("/svc")
         val result = Await.result(m.toService.apply(request))
-        result.status.getCode should be === 400
+        result.status.getCode shouldEqual 400
       }
 
       it("it returns a 400 when the param is not the correct type") {
         val request = Request("/svc")
         request.headers().add("aNumberHeader", "notANumber")
         val result = Await.result(m.toService.apply(request))
-        result.status.getCode should be === 400
+        result.status.getCode shouldEqual 400
       }
     }
   }
 
   def assertOkResponse(module: FintrospectModule, segments: Seq[String]): Unit = {
     val result = Await.result(module.toService.apply(Request("/svc/" + segments.mkString("/"))))
-    result.status.getCode should be === 200
-    result.content.toString(Utf8) should be === segments.mkString(",")
+    result.status.getCode shouldEqual 200
+    result.content.toString(Utf8) shouldEqual segments.mkString(",")
   }
 }

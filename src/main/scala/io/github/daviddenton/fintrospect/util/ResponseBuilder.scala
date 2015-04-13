@@ -11,6 +11,8 @@ import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.jboss.netty.util.CharsetUtil._
 
+import scala.language.implicitConversions
+
 object ResponseBuilder {
   implicit def toFuture(builder: ResponseBuilder): Future[Response] = builder.toFuture
 

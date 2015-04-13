@@ -7,6 +7,7 @@ import org.joda.time.format.ISODateTimeFormat._
 import org.joda.time.{DateTime, LocalDate}
 
 import scala.util.Try
+import scala.language.higherKinds
 
 /**
  * Prototype functions for creating parameters of various types.
