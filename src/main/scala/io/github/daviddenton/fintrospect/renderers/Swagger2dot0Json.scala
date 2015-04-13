@@ -42,7 +42,7 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
 
     val route2 = route.method.getName.toLowerCase -> obj(
       "tags" -> array(string(basePath.toString)),
-      "summary" -> route.describedRoute.summary.map(string).getOrElse(nullNode()),
+      "summary" -> string(route.describedRoute.summary),
       "produces" -> array(route.describedRoute.produces.map(m => string(m.value))),
       "consumes" -> array(route.describedRoute.consumes.map(m => string(m.value))),
       "parameters" -> array(route.allParams.map(render) ++ bodyParameters),

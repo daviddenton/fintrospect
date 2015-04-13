@@ -26,7 +26,7 @@ abstract class JsonRendererTest() extends FunSpec with ShouldMatchers {
     it("renders as expected") {
       val module = FintrospectModule(Root / "basepath", renderer)
         .withRoute(
-          DescribedRoute("a get endpoint", "some rambling description of what this thing actually does")
+          DescribedRoute("some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
             .taking(Header.optional.string("header", "description of the header"))
             .returning(ResponseWithExample(OK, "peachy", obj("anObject" -> obj("aStringField" -> number(123)))))
@@ -47,7 +47,7 @@ abstract class JsonRendererTest() extends FunSpec with ShouldMatchers {
 
       val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
       val actual = Await.result(module.toService(Request("/basepath"))).content.toString(Utf8)
-      //      println(actual)
+//            println(actual)
       parse(actual) shouldEqual expected
     }
   }
