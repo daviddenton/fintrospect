@@ -11,7 +11,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val bodyJson = obj("field" -> string("value"))
       val request = Request("/")
       request.write(pretty(bodyJson))
-      Body.json(Some("description"), obj("field" -> string("value"))).from(request) should be === bodyJson
+      Body.json(Some("description"), obj("field" -> string("value"))).from(request) shouldEqual bodyJson
     }
   }
 

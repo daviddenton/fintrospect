@@ -13,6 +13,10 @@ scalaVersion := "2.11.5"
 
 crossScalaVersions := Seq("2.10.4", "2.11.5")
 
+scalacOptions += "-deprecation"
+
+scalacOptions += "-feature"
+
 libraryDependencies ++= Seq(
   "net.sourceforge.argo" % "argo" % "3.12",
   "joda-time" % "joda-time" % "2.7",

@@ -5,6 +5,9 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.joda.time.{DateTime, LocalDate}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
+import scala.language.implicitConversions
+import scala.language.higherKinds
+
 abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) extends FunSpec with ShouldMatchers {
 
   val paramName = "name"
@@ -13,88 +16,88 @@ abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) e
 
   describe("int") {
     it("retrieves a valid value") {
-      from(parameters.int(paramName), "123") should be === Some(123)
+      from(parameters.int(paramName), "123") shouldEqual Some(123)
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.int(paramName), "notANumber") should be === None
+      from(parameters.int(paramName), "notANumber") shouldEqual None
     }
   }
 
   describe("integer") {
     it("retrieves a valid value") {
-      from(parameters.integer(paramName), "123") should be === Some(123)
+      from(parameters.integer(paramName), "123") shouldEqual Some(123)
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.integer(paramName), "notANumber") should be === None
+      from(parameters.integer(paramName), "notANumber") shouldEqual None
     }
   }
 
   describe("long") {
     it("retrieves a valid value") {
-      from(parameters.long(paramName), "123") should be === Some(123L)
+      from(parameters.long(paramName), "123") shouldEqual Some(123L)
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.long(paramName), "notANumber") should be === None
+      from(parameters.long(paramName), "notANumber") shouldEqual None
     }
   }
 
   describe("bigDecimal") {
     it("retrieves a valid value") {
-      from(parameters.bigDecimal(paramName), "1.234") should be === Some(BigDecimal("1.234"))
+      from(parameters.bigDecimal(paramName), "1.234") shouldEqual Some(BigDecimal("1.234"))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.bigDecimal(paramName), "notANumber") should be === None
+      from(parameters.bigDecimal(paramName), "notANumber") shouldEqual None
     }
   }
 
   describe("boolean") {
     it("retrieves a valid value") {
-      from(parameters.boolean(paramName), "true") should be === Some(true)
+      from(parameters.boolean(paramName), "true") shouldEqual Some(true)
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.boolean(paramName), "notABoolean") should be === None
+      from(parameters.boolean(paramName), "notABoolean") shouldEqual None
     }
   }
 
   describe("string") {
     it("retrieves a valid value") {
-      from(parameters.string(paramName), "123") should be === Some("123")
+      from(parameters.string(paramName), "123") shouldEqual Some("123")
     }
   }
 
   describe("dateTime") {
     it("retrieves a valid value") {
-      from(parameters.dateTime(paramName), "1970-01-01T00:00:00+00:00") should be === Some(new DateTime(0))
+      from(parameters.dateTime(paramName), "1970-01-01T00:00:00+00:00") shouldEqual Some(new DateTime(0))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.dateTime(paramName), "notADateTime") should be === None
+      from(parameters.dateTime(paramName), "notADateTime") shouldEqual None
     }
   }
 
   describe("date") {
     it("retrieves a valid value") {
-      from(parameters.localDate(paramName), "1970-01-01") should be === Some(new LocalDate(1970, 1, 1))
+      from(parameters.localDate(paramName), "1970-01-01") shouldEqual Some(new LocalDate(1970, 1, 1))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.localDate(paramName), "notADate") should be === None
+      from(parameters.localDate(paramName), "notADate") shouldEqual None
     }
   }
 
   describe("json") {
     it("retrieves a valid value") {
       val expected = obj("field" -> string("value"))
-      from(parameters.json(paramName), compact(expected)) should be === Some(expected)
+      from(parameters.json(paramName), compact(expected)) shouldEqual Some(expected)
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.json(paramName), "notJson") should be === None
+      from(parameters.json(paramName), "notJson") shouldEqual None
     }
   }
 
