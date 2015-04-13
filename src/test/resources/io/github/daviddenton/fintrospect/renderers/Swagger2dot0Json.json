@@ -12,7 +12,7 @@
         "tags": [
           "/basepath"
         ],
-        "summary": null,
+        "summary": "a friendly endpoint",
         "produces": [],
         "consumes": [],
         "parameters": [
@@ -90,7 +90,7 @@
         "tags": [
           "/basepath"
         ],
-        "summary": null,
+        "summary": "a post endpoint",
         "produces": [
           "application/json"
         ],

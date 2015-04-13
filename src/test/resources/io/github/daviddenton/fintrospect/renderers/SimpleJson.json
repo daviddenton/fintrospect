@@ -2,6 +2,6 @@
   "resources": {
     "GET:/basepath/welcome/{firstName}/bertrand/{secondName}": "a friendly endpoint",
     "POST:/basepath/echo/{message}": "a post endpoint",
-    "GET:/basepath/echo/{message}": "a get endpoint"
+    "GET:/basepath/echo/{message}": "some rambling description of what this thing actually does"
   }
 }

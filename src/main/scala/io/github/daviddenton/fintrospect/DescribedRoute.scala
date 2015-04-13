@@ -11,8 +11,7 @@ import scala.util.Try
 /**
  * Encapsulates the description of a route.
  */
-case class DescribedRoute private(name: String,
-                               summary: Option[String],
+case class DescribedRoute private(summary: String,
                                produces: List[ContentType],
                                consumes: List[ContentType],
                                body: Option[Body],
@@ -66,5 +65,5 @@ case class DescribedRoute private(name: String,
 }
 
 object DescribedRoute {
-  def apply(name: String, summary: String = null): DescribedRoute = DescribedRoute(name, Option(summary), Nil, Nil, None, Nil, Nil)
+  def apply(summary: String): DescribedRoute = DescribedRoute(summary, Nil, Nil, None, Nil, Nil)
 }

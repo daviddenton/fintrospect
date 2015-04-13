@@ -8,7 +8,7 @@
         {
           "httpMethod": "POST",
           "nickname": "a post endpoint",
-          "notes": null,
+          "notes": "a post endpoint",
           "produces": [
             "application/json"
           ],
@@ -41,7 +41,7 @@
         },
         {
           "httpMethod": "GET",
-          "nickname": "a get endpoint",
+          "nickname": "some rambling description of what this thing actually does",
           "notes": "some rambling description of what this thing actually does",
           "produces": [
             "application/json"
@@ -78,7 +78,7 @@
         {
           "httpMethod": "GET",
           "nickname": "a friendly endpoint",
-          "notes": null,
+          "notes": "a friendly endpoint",
           "produces": [],
           "consumes": [],
           "parameters": [
