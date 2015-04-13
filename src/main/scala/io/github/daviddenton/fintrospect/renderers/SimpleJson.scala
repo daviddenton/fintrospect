@@ -8,7 +8,7 @@ import io.github.daviddenton.fintrospect.{Renderer, Route}
 
 class SimpleJson private() extends Renderer {
   private def render(basePath: Path, route: Route): Field = {
-    route.method + ":" + route.describeFor(basePath) -> string(route.description.name)
+    route.method + ":" + route.describeFor(basePath) -> string(route.describedRoute.name)
   }
 
   def apply(basePath: Path, routes: Seq[Route]): JsonRootNode = obj("resources" -> obj(routes.map(r => render(basePath, r))))

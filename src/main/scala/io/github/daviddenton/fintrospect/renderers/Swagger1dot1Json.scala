@@ -20,12 +20,12 @@ class Swagger1dot1Json private() extends Renderer {
 
   private def render(route: Route): Field = route.method.getName.toLowerCase -> obj(
     "httpMethod" -> string(route.method.getName),
-    "nickname" -> string(route.description.name),
-    "notes" -> route.description.summary.map(string).getOrElse(nullNode()),
-    "produces" -> array(route.description.produces.map(m => string(m.value))),
-    "consumes" -> array(route.description.consumes.map(m => string(m.value))),
+    "nickname" -> string(route.describedRoute.name),
+    "notes" -> route.describedRoute.summary.map(string).getOrElse(nullNode()),
+    "produces" -> array(route.describedRoute.produces.map(m => string(m.value))),
+    "consumes" -> array(route.describedRoute.consumes.map(m => string(m.value))),
     "parameters" -> array(route.allParams.map(render)),
-    "errorResponses" -> array(route.description.responses
+    "errorResponses" -> array(route.describedRoute.responses
       .filter(_.status.getCode > 399)
       .map(resp => obj("code" -> number(resp.status.getCode), "reason" -> string(resp.description))).toSeq)
   )
