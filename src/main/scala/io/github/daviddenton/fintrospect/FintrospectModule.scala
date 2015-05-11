@@ -16,6 +16,11 @@ object FintrospectModule {
   val IDENTIFY_SVC_HEADER = "descriptionServiceId"
 
   /**
+   * Combines many modules
+   */
+  def combine(modules: FintrospectModule*): Binding = modules.map(_.totalBinding).reduce(_.orElse(_))
+
+  /**
    * Convert a Binding to a Finagle Service
    */
   def toService(binding: Binding): Service = RoutingService.byMethodAndPathObject(binding)

@@ -5,9 +5,11 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.io.Charsets._
 import com.twitter.util.{Await, Future}
+import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.parameters.Header
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.renderers.SimpleJson
+import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -46,6 +48,21 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       it("with 5 segments") {
         assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") / string("s2") / string("s3") / string("s4") / string("s5") bindTo ((_1: String, _2: String, _3: String, _4: String, _5: String) => AService(Seq(_1, _2, _3, _4, _5)))), Seq("a", "b",
           "c", "d", "e"))
+      }
+    }
+
+    describe("can combine more than 2 modules") {
+      it("can get to all routes") {
+        def module(path: String) = {
+          FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) bindTo (() => new Service[Request, Response]() {
+            def apply(request: Request): Future[Response] = ResponseBuilder.Ok(path)
+          }))
+        }
+        val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))
+
+        Await.result(totalService.apply(Request("/rita"))).content.toString(Utf8) shouldEqual "rita"
+        Await.result(totalService.apply(Request("/bob"))).content.toString(Utf8) shouldEqual "bob"
+        Await.result(totalService.apply(Request("/sue"))).content.toString(Utf8) shouldEqual "sue"
       }
     }
 
