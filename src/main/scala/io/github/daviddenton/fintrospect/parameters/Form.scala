@@ -4,9 +4,9 @@ import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
 import io.github.daviddenton.fintrospect.RequestParams
 
 /**
- * Builder for parameters that are encoded in the HTTP query.
+ * Builder for parameters that are encoded in the HTTP form.
  */
-object Query {
+object Form {
   private val location = new Location {
     override def toString = "query"
 
