@@ -1,6 +1,7 @@
 package examples
 
 import com.twitter.finagle.Http
+import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.renderers.{SimpleJson, Swagger2dot0Json}
@@ -28,8 +29,10 @@ object LibraryApp extends App {
 
   val service = FintrospectModule.toService(libraryModule combine statusModule)
 
-  Http.serve(":8080", service)
+  Http.serve(":8080", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service))
 
   println("See the service description at: http://localhost:8080/library")
+
+  Thread.currentThread().join()
 }
 

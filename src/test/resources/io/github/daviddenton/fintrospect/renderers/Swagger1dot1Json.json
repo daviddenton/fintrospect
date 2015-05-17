@@ -83,6 +83,13 @@
           "consumes": [],
           "parameters": [
             {
+              "name": "form",
+              "description": "description of the form",
+              "paramType": "form",
+              "required": true,
+              "dataType": "integer"
+            },
+            {
               "name": "query",
               "description": "description of the query",
               "paramType": "query",
