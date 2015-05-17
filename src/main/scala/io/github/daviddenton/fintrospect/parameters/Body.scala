@@ -1,7 +1,8 @@
 package io.github.daviddenton.fintrospect.parameters
 
 import argo.jdom.JsonNode
-import com.twitter.finagle.http.Request
+import com.twitter.io.Charsets
+import io.github.daviddenton.fintrospect.FinagleTypeAliases
 import io.github.daviddenton.fintrospect.util.ArgoUtil
 
 import scala.util.Try
@@ -10,7 +11,7 @@ class Body private(description: Option[String], paramType: ParamType, val exampl
   extends Parameter[JsonNode]("body", description, "body", paramType) {
   val requirement = Requirement.Mandatory
 
-  def from(request: Request): JsonNode = parse(request.contentString).get
+  def from(request: FinagleTypeAliases.Request): JsonNode = parse(request.getContent.toString(Charsets.Utf8)).get
 }
 
 object Body {
