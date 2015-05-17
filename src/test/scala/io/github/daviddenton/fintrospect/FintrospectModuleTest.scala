@@ -1,27 +1,24 @@
 package io.github.daviddenton.fintrospect
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.path.Root
 import com.twitter.io.Charsets._
 import com.twitter.util.{Await, Future}
+import io.github.daviddenton.fintrospect.FinagleTypeAliases._
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.parameters.Header
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.renderers.SimpleJson
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
-import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpMethod._
+import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
-  case class AService(segments: Seq[String]) extends Service[Request, Response] {
+  case class AService(segments: Seq[String]) extends FinagleTypeAliases.Service {
     def apply(request: Request): Future[Response] = {
-      val response = Response()
-      response.setStatusCode(200)
-      response.setContent(copiedBuffer(segments.mkString(","), Utf8))
-      Future.value(response)
+      ResponseBuilder.Ok(segments.mkString(","))
     }
   }
 
@@ -54,22 +51,22 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     describe("can combine more than 2 modules") {
       it("can get to all routes") {
         def module(path: String) = {
-          FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) bindTo (() => new Service[Request, Response]() {
+          FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) bindTo (() => new Service() {
             def apply(request: Request): Future[Response] = ResponseBuilder.Ok(path)
           }))
         }
         val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))
 
-        Await.result(totalService.apply(Request("/rita"))).content.toString(Utf8) shouldEqual "rita"
-        Await.result(totalService.apply(Request("/bob"))).content.toString(Utf8) shouldEqual "bob"
-        Await.result(totalService.apply(Request("/sue"))).content.toString(Utf8) shouldEqual "sue"
+        Await.result(totalService.apply(Request("/rita"))).getContent.toString(Utf8) shouldEqual "rita"
+        Await.result(totalService.apply(Request("/bob"))).getContent.toString(Utf8) shouldEqual "bob"
+        Await.result(totalService.apply(Request("/sue"))).getContent.toString(Utf8) shouldEqual "sue"
       }
     }
 
     describe("when a route path cannot be found") {
       it("returns a 404") {
         val result = Await.result(FintrospectModule(Root, SimpleJson()).toService.apply(Request("/svc/noSuchRoute")))
-        result.status.getCode shouldEqual 404
+        result.getStatus shouldEqual HttpResponseStatus.NOT_FOUND
       }
     }
 
@@ -79,22 +76,20 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
       it("it returns a 400 when the param is missing") {
         val request = Request("/svc")
-        val result = Await.result(m.toService.apply(request))
-        result.status.getCode shouldEqual 400
+        Await.result(m.toService.apply(request)).getStatus shouldEqual HttpResponseStatus.BAD_REQUEST
       }
 
       it("it returns a 400 when the param is not the correct type") {
         val request = Request("/svc")
         request.headers().add("aNumberHeader", "notANumber")
-        val result = Await.result(m.toService.apply(request))
-        result.status.getCode shouldEqual 400
+        Await.result(m.toService.apply(request)).getStatus shouldEqual HttpResponseStatus.BAD_REQUEST
       }
     }
   }
 
   def assertOkResponse(module: FintrospectModule, segments: Seq[String]): Unit = {
     val result = Await.result(module.toService.apply(Request("/svc/" + segments.mkString("/"))))
-    result.status.getCode shouldEqual 200
-    result.content.toString(Utf8) shouldEqual segments.mkString(",")
+    result.getStatus shouldEqual HttpResponseStatus.OK
+    result.getContent.toString(Utf8) shouldEqual segments.mkString(",")
   }
 }

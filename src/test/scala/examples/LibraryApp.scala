@@ -30,7 +30,7 @@ object LibraryApp extends App {
   val statusModule = FintrospectModule(Root / "internal", SimpleJson())
     .withRoute(new Ping().route)
 
-  val service = FintrospectModule.toService(libraryModule combine statusModule)
+  val service: FinagleTypeAliases.Service = FintrospectModule.toService(libraryModule combine statusModule)
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))

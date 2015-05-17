@@ -3,10 +3,10 @@ package io.github.daviddenton.fintrospect.testing
 import java.util.concurrent.TimeUnit
 
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Await
+import io.github.daviddenton.fintrospect.FinagleTypeAliases.{Request, Response}
 import io.github.daviddenton.fintrospect.renderers.SimpleJson
-import io.github.daviddenton.fintrospect.{Route, FintrospectModule}
+import io.github.daviddenton.fintrospect.{FintrospectModule, Route}
 
 import scala.concurrent.duration.Duration
 

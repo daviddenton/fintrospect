@@ -1,8 +1,7 @@
 package examples
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
+import io.github.daviddenton.fintrospect.FinagleTypeAliases.{Response, Request, Service}
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Path}
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
@@ -15,7 +14,7 @@ class BookAdd(books: Books) {
   private val bookExistsResponse = Error(CONFLICT, "Book with that ISBN exists")
   private val body = Body.json(Some("book content"), exampleBook.toJson)
 
-  private def addBook(isbn: String) = new Service[Request, Response] {
+  private def addBook(isbn: String) = new Service {
     override def apply(request: Request): Future[Response] =
       books.lookup(isbn) match {
         case Some(_) => bookExistsResponse

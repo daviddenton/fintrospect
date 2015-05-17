@@ -1,8 +1,10 @@
 package examples
 
 import com.twitter.finagle.http.Request
+import com.twitter.io.Charsets
 import io.github.daviddenton.fintrospect.testing.TestingFintrospectRoute
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 /*
@@ -14,11 +16,11 @@ class BookLookupTest extends FunSpec with ShouldMatchers with TestingFintrospect
 
   describe("Book Lookup") {
     it("can lookup an existing book") {
-      parse(responseFor(Request("/book/hp1")).contentString) shouldEqual Book("hairy porker", "j.k oinking", 799).toJson
+      parse(responseFor(Request("/book/hp1")).getContent.toString(Charsets.Utf8)) shouldEqual Book("hairy porker", "j.k oinking", 799).toJson
     }
   }
 
   it("non-existing book") {
-    responseFor(Request("/book/hp8")).getStatusCode() shouldEqual 404
+    responseFor(Request("/book/hp8")).getStatus shouldEqual HttpResponseStatus.NOT_FOUND
   }
 }
