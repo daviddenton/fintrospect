@@ -43,6 +43,7 @@ abstract class JsonRendererTest() extends FunSpec with ShouldMatchers {
         .withRoute(
           DescribedRoute("a friendly endpoint")
             .taking(Query.required.boolean("query", "description of the query"))
+            .taking(Form.required.int("form", "description of the form"))
             .at(GET) / "welcome" / string("firstName") / fixed("bertrand") / string("secondName") bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
 
       val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)

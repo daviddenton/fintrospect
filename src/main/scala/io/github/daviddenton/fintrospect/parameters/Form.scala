@@ -1,8 +1,6 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import java.util.{List => JList}
-
-import com.twitter.io.Charsets
+import com.twitter.io.Charsets._
 import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
 import org.jboss.netty.handler.codec.http.QueryStringDecoder
 
@@ -16,8 +14,7 @@ object Form {
     override def toString = "form"
 
     override def from(name: String, request: FTRequest): Option[String] = {
-      val params = Try(new QueryStringDecoder("?" + request.getContent.toString(Charsets.Utf8)).getParameters).toOption.getOrElse(new java.util.HashMap[String, JList[String]])
-      Option(params.get(name)).map(_.get(0))
+      Try(new QueryStringDecoder("?" + request.getContent.toString(Utf8)).getParameters.get(name).get(0)).toOption
     }
   }
 
