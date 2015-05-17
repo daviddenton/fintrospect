@@ -1,6 +1,6 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import com.twitter.finagle.http.Request
+import io.github.daviddenton.fintrospect.FinagleTypeAliases.Request
 
 /**
  * Builder for parameters that are encoded in the HTTP query.
