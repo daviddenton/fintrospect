@@ -46,7 +46,7 @@ abstract class JsonRendererTest() extends FunSpec with ShouldMatchers {
             .at(GET) / "welcome" / string("firstName") / fixed("bertrand") / string("secondName") bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
 
       val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
-      val actual = Await.result(module.toService(Request("/basepath"))).content.toString(Utf8)
+      val actual = Await.result(module.toService(Request("/basepath"))).getContent.toString(Utf8)
 //            println(actual)
       parse(actual) shouldEqual expected
     }

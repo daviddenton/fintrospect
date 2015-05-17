@@ -1,10 +1,10 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.Request
+import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
 
 class OptionalRequestParameter[T](name: String, description: Option[String], location: Location, paramType: ParamType, parse: (String => Option[T]))
   extends RequestParameter[T](name, description, location, paramType, parse) {
-  def from(request: Request): Option[T] = unapply(request)
+  def from(request: FTRequest): Option[T] = unapply(request)
   override val requirement = Requirement.Optional
 }
 

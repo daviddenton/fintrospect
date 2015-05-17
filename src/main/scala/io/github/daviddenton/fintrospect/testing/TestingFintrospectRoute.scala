@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.{Request, Response}
+import io.github.daviddenton.fintrospect.FinagleTypeAliases.{FTRequest, FTResponse}
 import io.github.daviddenton.fintrospect.renderers.SimpleJson
 import io.github.daviddenton.fintrospect.{FintrospectModule, Route}
 
@@ -22,7 +22,7 @@ trait TestingFintrospectRoute {
    * @param timeout defaults to 1s.
    * @return response
    */
-  def responseFor(request: Request, timeout: Duration = Duration(1, TimeUnit.SECONDS)): Response = {
+  def responseFor(request: FTRequest, timeout: Duration = Duration(1, TimeUnit.SECONDS)): FTResponse = {
     Await.result(FintrospectModule(Root, SimpleJson()).withRoute(route).toService.apply(request))
   }
 }
