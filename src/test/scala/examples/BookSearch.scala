@@ -1,9 +1,9 @@
 package examples
 
+import io.github.daviddenton.fintrospect.FinagleTypeAliases.{Response, Request}
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import ResponseBuilder._
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.ContentTypes.APPLICATION_JSON
 import io.github.daviddenton.fintrospect._
