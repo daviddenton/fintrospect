@@ -1,9 +1,10 @@
 package io.github.daviddenton.fintrospect
 
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request => FRq}
 import com.twitter.finagle.http.path.Root
 import com.twitter.io.Charsets._
 import com.twitter.util.{Await, Future}
+import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
 import io.github.daviddenton.fintrospect.FinagleTypeAliases._
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.parameters.Header
@@ -16,8 +17,8 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
-  case class AService(segments: Seq[String]) extends FinagleTypeAliases.Service {
-    def apply(request: Request): Future[Response] = {
+  case class AService(segments: Seq[String]) extends FinagleTypeAliases.FTService {
+    def apply(request: FTRequest): Future[FTResponse] = {
       ResponseBuilder.Ok(segments.mkString(","))
     }
   }
@@ -51,21 +52,21 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     describe("can combine more than 2 modules") {
       it("can get to all routes") {
         def module(path: String) = {
-          FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) bindTo (() => new Service() {
-            def apply(request: Request): Future[Response] = ResponseBuilder.Ok(path)
+          FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) bindTo (() => new FTService {
+            def apply(request: FTRequest): Future[FTResponse] = ResponseBuilder.Ok(path)
           }))
         }
         val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))
 
-        Await.result(totalService.apply(Request("/rita"))).getContent.toString(Utf8) shouldEqual "rita"
-        Await.result(totalService.apply(Request("/bob"))).getContent.toString(Utf8) shouldEqual "bob"
-        Await.result(totalService.apply(Request("/sue"))).getContent.toString(Utf8) shouldEqual "sue"
+        Await.result(totalService.apply(FRq("/rita"))).getContent.toString(Utf8) shouldEqual "rita"
+        Await.result(totalService.apply(FRq("/bob"))).getContent.toString(Utf8) shouldEqual "bob"
+        Await.result(totalService.apply(FRq("/sue"))).getContent.toString(Utf8) shouldEqual "sue"
       }
     }
 
     describe("when a route path cannot be found") {
       it("returns a 404") {
-        val result = Await.result(FintrospectModule(Root, SimpleJson()).toService.apply(Request("/svc/noSuchRoute")))
+        val result = Await.result(FintrospectModule(Root, SimpleJson()).toService.apply(FRq("/svc/noSuchRoute")))
         result.getStatus shouldEqual HttpResponseStatus.NOT_FOUND
       }
     }
@@ -75,12 +76,12 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
 
       it("it returns a 400 when the param is missing") {
-        val request = Request("/svc")
+        val request = FRq("/svc")
         Await.result(m.toService.apply(request)).getStatus shouldEqual HttpResponseStatus.BAD_REQUEST
       }
 
       it("it returns a 400 when the param is not the correct type") {
-        val request = Request("/svc")
+        val request = FRq("/svc")
         request.headers().add("aNumberHeader", "notANumber")
         Await.result(m.toService.apply(request)).getStatus shouldEqual HttpResponseStatus.BAD_REQUEST
       }
@@ -88,7 +89,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
   }
 
   def assertOkResponse(module: FintrospectModule, segments: Seq[String]): Unit = {
-    val result = Await.result(module.toService.apply(Request("/svc/" + segments.mkString("/"))))
+    val result = Await.result(module.toService.apply(FRq("/svc/" + segments.mkString("/"))))
     result.getStatus shouldEqual HttpResponseStatus.OK
     result.getContent.toString(Utf8) shouldEqual segments.mkString(",")
   }

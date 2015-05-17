@@ -1,11 +1,7 @@
 package examples
 
-import java.net.InetSocketAddress
-
-import com.twitter.finagle.builder.ServerBuilder
-import com.twitter.finagle.http.filter.Cors._
+import com.twitter.finagle.Http
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Http, Request, RichHttp}
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.renderers.{SimpleJson, Swagger2dot0Json}
 
@@ -30,13 +26,9 @@ object LibraryApp extends App {
   val statusModule = FintrospectModule(Root / "internal", SimpleJson())
     .withRoute(new Ping().route)
 
-  val service: FinagleTypeAliases.Service = FintrospectModule.toService(libraryModule combine statusModule)
+  val service = FintrospectModule.toService(libraryModule combine statusModule)
 
-  ServerBuilder()
-    .codec(RichHttp[Request](Http()))
-    .bindTo(new InetSocketAddress(8080))
-    .name("")
-    .build(new HttpFilter(UnsafePermissivePolicy).andThen(service))
+  Http.serve(":8080", service)
 
   println("See the service description at: http://localhost:8080/library")
 }

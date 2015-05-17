@@ -11,7 +11,7 @@ class Body private(description: Option[String], paramType: ParamType, val exampl
   extends Parameter[JsonNode]("body", description, "body", paramType) {
   val requirement = Requirement.Mandatory
 
-  def from(request: FinagleTypeAliases.Request): JsonNode = parse(request.getContent.toString(Charsets.Utf8)).get
+  def from(request: FinagleTypeAliases.FTRequest): JsonNode = parse(request.getContent.toString(Charsets.Utf8)).get
 }
 
 object Body {

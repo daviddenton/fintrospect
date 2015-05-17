@@ -1,14 +1,12 @@
 package examples
 
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.{Response, Request}
-import io.github.daviddenton.fintrospect.util.ResponseBuilder
-import ResponseBuilder._
-import com.twitter.finagle.Service
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.ContentTypes.APPLICATION_JSON
+import io.github.daviddenton.fintrospect.FinagleTypeAliases.{FTRequest, FTResponse, FTService}
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Query
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
@@ -16,8 +14,8 @@ class BookSearch(books: Books) {
   private val authorQuery = Query.required.int("maxPages", "max number of pages in book")
   private val titleQuery = Query.required.string("term", "the part of the title to look for")
 
-  private def search(): Service[Request, Response] = new Service[Request, Response] {
-    override def apply(request: Request): Future[Response] = {
+  private def search() = new FTService {
+    override def apply(request: FTRequest): Future[FTResponse] = {
       Ok(array(books.search(authorQuery.from(request), titleQuery.from(request)).map(_.toJson)))
     }
   }
