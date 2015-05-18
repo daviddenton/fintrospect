@@ -4,9 +4,10 @@ import java.net.URI
 
 import scala.util.Try
 
-abstract class PathParameter[T](name: String, description: Option[String], paramType: ParamType)
-  extends Parameter[T](name, description, "path", paramType, Requirement.Mandatory)
-  with Iterable[PathParameter[_]] {
+abstract class PathParameter[T](val name: String, val description: Option[String], val paramType: ParamType) extends Parameter[T] with Iterable[PathParameter[_]] {
+  override val where = "path"
+  override val requirement = Requirement.Mandatory
+
   def unapply(str: String): Option[T]
 }
 
