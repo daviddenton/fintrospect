@@ -5,9 +5,8 @@ import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FinagleTypeAliases._
 import io.github.daviddenton.fintrospect.util.ResponseBuilder.Error
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
-import org.jboss.netty.handler.codec.http._
 
-class RoutingService private(routes: PartialFunction[FTRequest, FTService]) extends FTService {
+class Routing private(routes: PartialFunction[FTRequest, FTService]) extends FTService {
   private val notFoundPf: PartialFunction[FTRequest, FTService] = {
     case _ => new FTService {
       def apply(request: FTRequest): Future[FTResponse] = Error(NOT_FOUND, "No such route")
@@ -15,17 +14,18 @@ class RoutingService private(routes: PartialFunction[FTRequest, FTService]) exte
   }
   private val requestToService = routes orElse notFoundPf
 
-  def apply(request: FTRequest): Future[FTResponse] = {
-    requestToService(request)(request)
-  }
+  def apply(request: FTRequest): Future[FTResponse] = requestToService(request)(request)
 }
 
-object RoutingService {
-  def fromMethodAndPath(routes: PartialFunction[(HttpMethod, Path), FTService]) =
-    new RoutingService(
+object Routing {
+  def fromBinding(binding: Binding) =
+    new Routing(
       new PartialFunction[FTRequest, FTService] {
-        def apply(request: FTRequest) = routes((request.getMethod, Path(request.getUri)))
-        def isDefinedAt(request: FTRequest) = routes.isDefinedAt((request.getMethod, Path(pathFrom(request))))
+        def apply(request: FTRequest) = {
+          binding((request.getMethod, Path(pathFrom(request))))
+        }
+
+        def isDefinedAt(request: FTRequest) = binding.isDefinedAt((request.getMethod, Path(pathFrom(request))))
       })
 
   private def pathFrom(req: FTRequest) = {
