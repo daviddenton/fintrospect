@@ -4,9 +4,8 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 
 class OptionalRequestParameter[T](name: String, description: Option[String], location: Location, paramType: ParamType, parse: (String => Option[T]))
-  extends RequestParameter[T](name, description, location, paramType, parse) {
+  extends RequestParameter[T](name, description, location, paramType, parse, Requirement.Optional) {
   def from(request: HttpRequest): Option[T] = unapply(request)
-  override val requirement = Requirement.Optional
 }
 
 

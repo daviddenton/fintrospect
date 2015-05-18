@@ -8,8 +8,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 import scala.util.Try
 
 class Body private(description: Option[String], paramType: ParamType, val example: JsonNode, parse: (String => Option[JsonNode]))
-  extends Parameter[JsonNode]("body", description, "body", paramType) {
-  val requirement = Requirement.Mandatory
+  extends Parameter[JsonNode]("body", description, "body", paramType, Requirement.Mandatory) {
 
   def from(request: HttpRequest): JsonNode = parse(request.getContent.toString(Charsets.Utf8)).get
 }
