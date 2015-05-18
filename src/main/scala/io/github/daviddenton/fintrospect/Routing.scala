@@ -1,34 +1,38 @@
 package io.github.daviddenton.fintrospect
 
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.path.Path
 import com.twitter.util.Future
-import io.github.daviddenton.fintrospect.FinagleTypeAliases._
 import io.github.daviddenton.fintrospect.util.ResponseBuilder.Error
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
+import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
-class Routing private(routes: PartialFunction[FTRequest, FTService]) extends FTService {
-  private val notFoundPf: PartialFunction[FTRequest, FTService] = {
-    case _ => new FTService {
-      def apply(request: FTRequest): Future[FTResponse] = Error(NOT_FOUND, "No such route")
+class Routing private(routes: PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]]) extends Service[HttpRequest, HttpResponse] {
+  private val notFoundPf: PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]] = {
+    case _ => new Service[HttpRequest, HttpResponse] {
+      def apply(request: HttpRequest): Future[HttpResponse] = Error(NOT_FOUND, "No such route")
     }
   }
   private val requestToService = routes orElse notFoundPf
 
-  def apply(request: FTRequest): Future[FTResponse] = requestToService(request)(request)
+  def apply(request: HttpRequest): Future[HttpResponse] = requestToService(request)(request)
 }
 
 object Routing {
+
+  private[fintrospect] type Binding = PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]
+
   def fromBinding(binding: Binding) =
     new Routing(
-      new PartialFunction[FTRequest, FTService] {
-        def apply(request: FTRequest) = {
+      new PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]] {
+        def apply(request: HttpRequest) = {
           binding((request.getMethod, Path(pathFrom(request))))
         }
 
-        def isDefinedAt(request: FTRequest) = binding.isDefinedAt((request.getMethod, Path(pathFrom(request))))
+        def isDefinedAt(request: HttpRequest) = binding.isDefinedAt((request.getMethod, Path(pathFrom(request))))
       })
 
-  private def pathFrom(req: FTRequest) = {
+  private def pathFrom(req: HttpRequest) = {
     val u = req.getUri
     u.indexOf('?') match {
       case -1 => u

@@ -1,10 +1,11 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
+import org.jboss.netty.handler.codec.http.HttpRequest
+
 
 class OptionalRequestParameter[T](name: String, description: Option[String], location: Location, paramType: ParamType, parse: (String => Option[T]))
   extends RequestParameter[T](name, description, location, paramType, parse) {
-  def from(request: FTRequest): Option[T] = unapply(request)
+  def from(request: HttpRequest): Option[T] = unapply(request)
   override val requirement = Requirement.Optional
 }
 

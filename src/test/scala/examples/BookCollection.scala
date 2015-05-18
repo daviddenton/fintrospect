@@ -1,19 +1,19 @@
 package examples
 
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.{FTService, FTResponse, FTRequest}
-import io.github.daviddenton.fintrospect.util.ResponseBuilder
-import ResponseBuilder._
+import com.twitter.finagle.Service
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.ContentTypes._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
+import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 class BookCollection(books: Books) {
 
-  private def listBooks(): FTService = new FTService {
-    override def apply(request: FTRequest): Future[FTResponse] = Ok(array(books.list().map(_.toJson)))
+  private def listBooks(): Service[HttpRequest, HttpResponse] = new Service[HttpRequest, HttpResponse] {
+    override def apply(request: HttpRequest): Future[HttpResponse] = Ok(array(books.list().map(_.toJson)))
   }
 
   val route = DescribedRoute("show collection")

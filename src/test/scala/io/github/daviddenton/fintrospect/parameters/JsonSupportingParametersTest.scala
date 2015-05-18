@@ -1,9 +1,6 @@
-
 package io.github.daviddenton.fintrospect.parameters
 
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import org.joda.time.{DateTime, LocalDate}
-import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.language.{higherKinds, implicitConversions}
 

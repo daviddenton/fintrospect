@@ -5,14 +5,13 @@ import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.io.Charsets
 import com.twitter.util.{Await, Duration}
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.{FTRequest, FTResponse}
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponseStatus}
+import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FlatSpec, MustMatchers}
 
 class CorsFilterTest extends FlatSpec with MustMatchers {
   val TRAP = new HttpMethod("TRAP")
-  val underlying = Service.mk[FTRequest, FTResponse] { request =>
+  val underlying = Service.mk[HttpRequest, HttpResponse] { request =>
     if (request.getMethod == TRAP) Ok("#guwop") else Error(HttpResponseStatus.METHOD_NOT_ALLOWED, "")
   }
 

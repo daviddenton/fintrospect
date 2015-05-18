@@ -2,8 +2,7 @@ package io.github.daviddenton.fintrospect.parameters
 
 import java.util.{List => JList}
 
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
-import org.jboss.netty.handler.codec.http.QueryStringDecoder
+import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
 import scala.util.Try
 
@@ -14,7 +13,7 @@ object Query {
   private val location = new Location {
     override def toString = "query"
 
-    override def from(name: String, request: FTRequest): Option[String] = {
+    override def from(name: String, request: HttpRequest): Option[String] = {
       Option(parseParams(request.getUri).get(name)).map(_.get(0))
     }
 

@@ -1,24 +1,23 @@
 package io.github.daviddenton.fintrospect
 
-import com.twitter.finagle.http.{Request => FRq}
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.path.Root
+import com.twitter.finagle.http.{Request => FRq}
 import com.twitter.io.Charsets._
 import com.twitter.util.{Await, Future}
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
-import io.github.daviddenton.fintrospect.FinagleTypeAliases._
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.parameters.Header
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.renderers.SimpleJson
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod._
-import org.jboss.netty.handler.codec.http.HttpResponseStatus
+import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
-  case class AService(segments: Seq[String]) extends FinagleTypeAliases.FTService {
-    def apply(request: FTRequest): Future[FTResponse] = {
+  case class AService(segments: Seq[String]) extends Service[HttpRequest, HttpResponse] {
+    def apply(request: HttpRequest): Future[HttpResponse] = {
       ResponseBuilder.Ok(segments.mkString(","))
     }
   }
@@ -52,8 +51,8 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     describe("can combine more than 2 modules") {
       it("can get to all routes") {
         def module(path: String) = {
-          FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) bindTo (() => new FTService {
-            def apply(request: FTRequest): Future[FTResponse] = ResponseBuilder.Ok(path)
+          FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) bindTo (() => new Service[HttpRequest, HttpResponse] {
+            def apply(request: HttpRequest): Future[HttpResponse] = ResponseBuilder.Ok(path)
           }))
         }
         val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))

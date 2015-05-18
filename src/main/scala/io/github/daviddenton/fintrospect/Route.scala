@@ -1,9 +1,9 @@
 package io.github.daviddenton.fintrospect
 
 import com.twitter.finagle.http.path.Path
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.{FTFilter, Binding}
+import com.twitter.finagle.{Filter, Service}
 import io.github.daviddenton.fintrospect.parameters.{Parameter, PathParameter, Requirement}
-import org.jboss.netty.handler.codec.http.HttpMethod
+import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
 abstract class Route(val describedRoute: DescribedRoute, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
 
@@ -13,7 +13,7 @@ abstract class Route(val describedRoute: DescribedRoute, val method: HttpMethod,
 
   def matches(actualMethod: HttpMethod, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
 
-  def toPf(basePath: Path): FTFilter => Binding
+  def toPf(basePath: Path): Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse] => PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]
 
   def describeFor(basePath: Path): String = (pathFn(basePath).toString :: pathParams.map(_.toString()).toList).mkString("/")
 }

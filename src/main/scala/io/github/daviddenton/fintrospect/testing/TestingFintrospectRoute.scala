@@ -4,9 +4,9 @@ import java.util.concurrent.TimeUnit
 
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.{FTRequest, FTResponse}
 import io.github.daviddenton.fintrospect.renderers.SimpleJson
 import io.github.daviddenton.fintrospect.{FintrospectModule, Route}
+import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 import scala.concurrent.duration.Duration
 
@@ -22,7 +22,7 @@ trait TestingFintrospectRoute {
    * @param timeout defaults to 1s.
    * @return response
    */
-  def responseFor(request: FTRequest, timeout: Duration = Duration(1, TimeUnit.SECONDS)): FTResponse = {
+  def responseFor(request: HttpRequest, timeout: Duration = Duration(1, TimeUnit.SECONDS)): HttpResponse = {
     Await.result(FintrospectModule(Root, SimpleJson()).withRoute(route).toService.apply(request))
   }
 }

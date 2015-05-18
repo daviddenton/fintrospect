@@ -1,12 +1,12 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
+import org.jboss.netty.handler.codec.http.HttpRequest
 
 class RequiredRequestParameter[T](name: String, description: Option[String], location: Location, paramType: ParamType, parse: (String => Option[T]))
   extends RequestParameter[T](name, description, location, paramType, parse) {
   override val requirement = Requirement.Mandatory
 
-  def from(request: FTRequest): T = unapply(request).get
+  def from(request: HttpRequest): T = unapply(request).get
 }
 
 object RequiredRequestParameter {

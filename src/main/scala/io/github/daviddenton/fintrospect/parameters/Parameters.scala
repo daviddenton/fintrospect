@@ -6,8 +6,8 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil
 import org.joda.time.format.ISODateTimeFormat._
 import org.joda.time.{DateTime, LocalDate}
 
-import scala.util.Try
 import scala.language.higherKinds
+import scala.util.Try
 
 /**
  * Prototype functions for creating parameters of various types.
