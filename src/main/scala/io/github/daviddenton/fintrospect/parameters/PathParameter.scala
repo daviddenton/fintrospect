@@ -5,9 +5,8 @@ import java.net.URI
 import scala.util.Try
 
 abstract class PathParameter[T](name: String, description: Option[String], paramType: ParamType)
-  extends Parameter[T](name, description, "path", paramType)
+  extends Parameter[T](name, description, "path", paramType, Requirement.Mandatory)
   with Iterable[PathParameter[_]] {
-  val requirement = Requirement.Mandatory
   def unapply(str: String): Option[T]
 }
 
