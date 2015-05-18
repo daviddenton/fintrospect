@@ -1,4 +1,3 @@
-
 package io.github.daviddenton.fintrospect.parameters
 
 import org.joda.time.{DateTime, LocalDate}

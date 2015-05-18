@@ -1,6 +1,7 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
+import org.jboss.netty.handler.codec.http.HttpRequest
+
 
 abstract class RequestParameter[T](name: String,
                                    description: Option[String],
@@ -8,5 +9,5 @@ abstract class RequestParameter[T](name: String,
                                    paramType: ParamType,
                                    parse: (String => Option[T]))
   extends Parameter[T](name, description, location.toString, paramType) {
-  def unapply(request: FTRequest): Option[T] = location.from(name, request).flatMap(parse)
+  def unapply(request: HttpRequest): Option[T] = location.from(name, request).flatMap(parse)
 }

@@ -1,18 +1,19 @@
 package examples
 
+import com.twitter.finagle.Service
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.ContentTypes._
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.{FTRequest, FTResponse, FTService}
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
+import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 class BookLookup(books: Books) {
 
-  private def lookupByIsbn(isbn: String) = new FTService {
-    override def apply(request: FTRequest): Future[FTResponse] =
+  private def lookupByIsbn(isbn: String) = new Service[HttpRequest, HttpResponse] {
+    override def apply(request: HttpRequest): Future[HttpResponse] =
       books.lookup(isbn) match {
         case Some(book) => Ok(book.toJson)
         case _ => Error(NOT_FOUND, "No book found with isbn")

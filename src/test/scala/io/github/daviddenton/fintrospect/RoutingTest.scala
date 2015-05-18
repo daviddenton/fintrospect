@@ -1,14 +1,14 @@
 package io.github.daviddenton.fintrospect
 
 import _root_.util.Echo
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.path.Path
 import com.twitter.io.Charsets
 import com.twitter.util.Await
-import io.github.daviddenton.fintrospect.FinagleTypeAliases._
-import org.jboss.netty.handler.codec.http.{HttpVersion, DefaultHttpRequest, HttpMethod}
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
+import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class RoutingTest extends FunSpec with ShouldMatchers {
@@ -26,10 +26,10 @@ class RoutingTest extends FunSpec with ShouldMatchers {
   }
 
   private def routingWhichMatches(methodAndPath: (HttpMethod, Path)): Routing = {
-    Routing.fromBinding(new Binding {
+    Routing.fromBinding(new PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]] {
       override def isDefinedAt(x: (HttpMethod, Path)): Boolean = x === methodAndPath
 
-      override def apply(v1: (HttpMethod, Path)): FTService = Echo()
+      override def apply(v1: (HttpMethod, Path)): Service[HttpRequest, HttpResponse] = Echo()
     })
   }
 }

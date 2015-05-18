@@ -1,7 +1,7 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import io.github.daviddenton.fintrospect.FinagleTypeAliases.FTRequest
+import org.jboss.netty.handler.codec.http.HttpRequest
 
 trait Location {
-  def from(name: String, request: FTRequest): Option[String]
+  def from(name: String, request: HttpRequest): Option[String]
 }
