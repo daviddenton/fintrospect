@@ -29,4 +29,5 @@ was different between the 2). The only things that should have to change in your
   - How servers are created - the new method is simpler (see the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
   - The signature of routes is now ```Service[HttpRequest,HttpResponse]```. Since the Twitter Request/Response classes
    extends these interfaces, usages of the ResponseBuilder remain the same.
+  - Form-based parameters are now defined with the ```Form``` object, and not the ```Query``` object (which now just retrieves Query String parameters from the URL).
 
