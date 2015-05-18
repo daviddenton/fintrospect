@@ -5,6 +5,7 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FinagleTypeAliases._
 import io.github.daviddenton.fintrospect.FintrospectModule._
+import io.github.daviddenton.fintrospect.Routing.fromBinding
 import io.github.daviddenton.fintrospect.parameters.Requirement
 import io.github.daviddenton.fintrospect.util.ArgoUtil.pretty
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
@@ -25,7 +26,7 @@ object FintrospectModule {
   /**
    * Convert a Binding to a Finagle Service
    */
-  def toService(binding: Binding): FTService = RoutingService.fromMethodAndPath(binding)
+  def toService(binding: Binding): FTService = fromBinding(binding)
 
   /**
    * Create a module using the given base-path and description renderer.

@@ -3,7 +3,7 @@ package io.github.daviddenton.fintrospect
 import com.twitter.finagle.http.filter.Cors.Policy
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FinagleTypeAliases.{FTFilter, FTRequest, FTResponse, FTService}
-import io.github.daviddenton.fintrospect.util.ResponseBuilder
+import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod
 
 /**
@@ -37,17 +37,12 @@ class CorsFilter(policy: Policy) extends FTFilter {
     response
   }
 
-  /** http://www.w3.org/TR/cors/#resource-requests */
   private def handleSimple(request: FTRequest, response: FTResponse): FTResponse =
     getOrigin(request) map {
       setOriginAndCredentials(response, _)
     } map {
       addExposedHeaders
     } getOrElse response
-
-  /*
-   * Preflight (OPTIONS) requests
-   */
 
   private object Preflight {
     def unapply(request: FTRequest): Boolean =
@@ -88,12 +83,7 @@ class CorsFilter(policy: Policy) extends FTFilter {
         val headers = getHeaders(request)
         policy.allowsMethods(method) flatMap { allowedMethods =>
           policy.allowsHeaders(headers) map { allowedHeaders =>
-            setHeaders(
-              setMethod(
-                setMaxAge(
-                  setOriginAndCredentials(ResponseBuilder.Ok.build, origin)),
-                allowedMethods),
-              allowedHeaders)
+            setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Ok.build, origin)), allowedMethods), allowedHeaders)
           }
         }
       }
@@ -102,7 +92,7 @@ class CorsFilter(policy: Policy) extends FTFilter {
   def apply(request: FTRequest, service: FTService): Future[FTResponse] = {
     val response = request match {
       case Preflight() => Future {
-        handlePreflight(request) getOrElse ResponseBuilder.Ok.build
+        handlePreflight(request) getOrElse Ok.build
       }
       case _ => service(request) map {
         handleSimple(request, _)
