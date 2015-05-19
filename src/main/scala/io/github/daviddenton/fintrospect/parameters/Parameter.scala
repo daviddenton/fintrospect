@@ -1,6 +1,6 @@
 package io.github.daviddenton.fintrospect.parameters
 
-abstract class Parameter[T] protected[fintrospect] {
+trait Parameter[T] {
   val name: String
   val description: Option[String]
   val where: String
