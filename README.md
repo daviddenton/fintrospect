@@ -53,8 +53,8 @@ class BookSearch(books: Books) {
     .taking(maxPages)
     .taking(minPages)
     .taking(titleTerm)
-    .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
-    .returning(OK -> "results", BAD_REQUEST -> "invalid request")
+    .returning(OK -> "search results", array(Book("a book", "authorName", 99).toJson))
+    .returning(BAD_REQUEST -> "invalid request")
     .producing(APPLICATION_JSON)
     .at(POST) / "search" / TITLE_TERM bindTo search
 }
