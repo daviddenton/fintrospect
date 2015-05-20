@@ -16,7 +16,7 @@ object PathParameter {
     override def apply[T](aName: String,
                           aDescription: Option[String],
                           aParamType: ParamType,
-                          parse: (String => Option[T])) = new PathParameter[T] {
+                          parse: (String => Try[T])) = new PathParameter[T] {
       override val name = aName
       override val description = aDescription
       override val paramType = aParamType
@@ -24,7 +24,7 @@ object PathParameter {
       override def toString() = s"{$name}"
 
       override def unapply(str: String): Option[T] = {
-        Try(new URI("http://localhost/" + str).getPath.substring(1)).toOption.flatMap(parse)
+        Try(new URI("http://localhost/" + str).getPath.substring(1)).toOption.flatMap(parse(_).toOption)
       }
 
       override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
