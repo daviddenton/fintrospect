@@ -29,7 +29,7 @@ class Books {
 
   def lookup(isbn: String): Option[Book] = knownBooks.get(isbn)
 
-  def search(maxPages: Int, titleSearch: String): Iterable[Book] = list().filter {
-    case book => book.title.contains(titleSearch) && book.pages <= maxPages
+  def search(minPages: Int, maxPages: Int, titleSearch: String): Iterable[Book] = list().filter {
+    case book => book.title.contains(titleSearch) && book.pages >= minPages && book.pages <= maxPages
   }
 }
