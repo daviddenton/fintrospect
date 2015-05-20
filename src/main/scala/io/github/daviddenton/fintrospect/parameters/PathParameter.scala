@@ -23,9 +23,7 @@ object PathParameter {
 
       override def toString() = s"{$name}"
 
-      override def unapply(str: String): Option[T] = {
-        Try(new URI("http://localhost/" + str).getPath.substring(1)).toOption.flatMap(parse(_).toOption)
-      }
+      override def unapply(str: String): Option[T] = Option(str).flatMap(s => { parse(new URI("http://localhost/" + s).getPath.substring(1)).toOption})
 
       override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
     }
