@@ -39,9 +39,9 @@ object FintrospectModule {
 
   private case class ValidateParams(route: Route) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
-      val allMandatoryParams = route.describedRoute.params.filter(_.requirement == Mandatory)
-      val parsedParamResults = allMandatoryParams.map(p => (p, p.parseFrom(request)))
-      val missingOrFailed = parsedParamResults.filterNot(pr => pr._2.isDefined && pr._2.get.isSuccess)
+      val paramsAndParseResults = route.describedRoute.params.map(p => (p, p.parseFrom(request)))
+      val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => pr._1.requirement == Optional && pr._2.isEmpty)
+      val missingOrFailed = withoutMissingOptionalParams.filterNot(pr => pr._2.isDefined && pr._2.get.isSuccess)
       val messages = missingOrFailed.map(p => Some(s"${p._1.name} (${p._1.paramType.name})"))
       if (messages.isEmpty) service(request) else Error(BAD_REQUEST, "Missing required parameters: " + messages.mkString(","))
     }
