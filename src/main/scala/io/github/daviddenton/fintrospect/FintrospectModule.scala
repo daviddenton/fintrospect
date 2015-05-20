@@ -6,7 +6,8 @@ import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.Routing.fromBinding
 import io.github.daviddenton.fintrospect.parameters.Requirement._
-import io.github.daviddenton.fintrospect.util.ArgoUtil.pretty
+import io.github.daviddenton.fintrospect.util.ArgoUtil.{pretty, _}
+import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST
@@ -42,8 +43,19 @@ object FintrospectModule {
       val paramsAndParseResults = route.describedRoute.params.map(p => (p, p.parseFrom(request)))
       val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => pr._1.requirement == Optional && pr._2.isEmpty)
       val missingOrFailed = withoutMissingOptionalParams.filterNot(pr => pr._2.isDefined && pr._2.get.isSuccess)
-      val messages = missingOrFailed.flatMap(p => Some(s"${p._1.name} (${p._1.paramType.name})"))
-      if (messages.isEmpty) service(request) else Error(BAD_REQUEST, "Missing required parameters: " + messages.mkString(","))
+      if (missingOrFailed.isEmpty) service(request)
+      else {
+        val messages = missingOrFailed.map(p => obj(
+          "name" -> string(p._1.name),
+          "type" -> string(p._1.where),
+          "datatype" -> string(p._1.paramType.name),
+          "required" -> boolean(p._1.requirement.required)
+        ))
+        ResponseBuilder()
+          .withCode(BAD_REQUEST)
+          .withContent(obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages)))
+          .toFuture
+      }
     }
   }
 
