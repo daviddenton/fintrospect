@@ -74,12 +74,28 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       val d = DescribedRoute("").taking(Header.required.int("aNumberHeader"))
       val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
 
-      it("it returns a 400 when the param is missing") {
+      it("it returns a 400 when the required param is missing") {
         val request = FRq("/svc")
         Await.result(m.toService.apply(request)).getStatus shouldEqual HttpResponseStatus.BAD_REQUEST
       }
 
-      it("it returns a 400 when the param is not the correct type") {
+      it("it returns a 400 when the required param is not the correct type") {
+        val request = FRq("/svc")
+        request.headers().add("aNumberHeader", "notANumber")
+        Await.result(m.toService.apply(request)).getStatus shouldEqual HttpResponseStatus.BAD_REQUEST
+      }
+    }
+
+    describe("when a valid path contains illegal values for an optional parameter") {
+      val d = DescribedRoute("").taking(Header.optional.int("aNumberHeader"))
+      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
+
+      it("it returns a 200 when the optional param is missing") {
+        val request = FRq("/svc")
+        Await.result(m.toService.apply(request)).getStatus shouldEqual HttpResponseStatus.OK
+      }
+
+      it("it returns a 400 when the optional param is not the correct type") {
         val request = FRq("/svc")
         request.headers().add("aNumberHeader", "notANumber")
         Await.result(m.toService.apply(request)).getStatus shouldEqual HttpResponseStatus.BAD_REQUEST
