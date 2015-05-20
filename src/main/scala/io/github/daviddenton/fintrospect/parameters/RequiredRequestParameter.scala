@@ -6,7 +6,7 @@ import scala.util.Try
 
 abstract class RequiredRequestParameter[T](location: Location, parse: (String => Try[T]))
   extends RequestParameter[T](Requirement.Mandatory, location, parse) {
-  def from(request: HttpRequest): T = unapply(request).get
+  def from(request: HttpRequest): T = parseFrom(request).flatMap(_.toOption).get
 }
 
 object RequiredRequestParameter {
