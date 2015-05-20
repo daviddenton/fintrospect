@@ -9,11 +9,11 @@ abstract class JsonSupportingParametersTest[T[_] <: Parameter[_]](parameters: Pa
   describe("json") {
     it("retrieves a valid value") {
       val expected = obj("field" -> string("value"))
-      from(parameters.json(paramName), compact(expected)) shouldEqual Some(expected)
+      from(parameters.json, Some(compact(expected))) shouldEqual Some(expected)
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.json(paramName), "notJson") shouldEqual None
+      from(parameters.json, Some("notJson")) shouldEqual None
     }
   }
 }
