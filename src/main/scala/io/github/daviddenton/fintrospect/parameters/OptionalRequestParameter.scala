@@ -7,7 +7,7 @@ import scala.util.Try
 
 abstract class OptionalRequestParameter[T](location: Location, parse: (String => Try[T]))
   extends RequestParameter[T](Requirement.Optional, location, parse) {
-  def from(request: HttpRequest): Option[T] = unapply(request)
+  def from(request: HttpRequest): Option[T] = parseFrom(request).flatMap(_.toOption)
 }
 
 

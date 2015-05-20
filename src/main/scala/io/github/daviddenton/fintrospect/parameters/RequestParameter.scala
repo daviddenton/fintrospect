@@ -8,5 +8,5 @@ import scala.util.Try
 abstract class RequestParameter[T](override val requirement: Requirement, location: Location, parse: (String => Try[T])) extends Parameter[T] {
   override val where = location.toString
 
-  def unapply(request: HttpRequest): Option[T] = location.from(name, request).flatMap(parse(_).toOption)
+  def parseFrom(request: HttpRequest): Option[Try[T]] = location.from(name, request).map(parse)
 }
