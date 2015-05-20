@@ -6,8 +6,8 @@ Fintrospect is a bolt-on library for use with the [Finagle](http://twitter.githu
 Using this library, you can:
 - Automatically generate documentation in a variety of formats (e.g. [Swagger](http://swagger.io/) v1.2 and v2.0). Pluggable architecture for adding your own renderers (currently JSON-based only).
 - Define individual HTTP routes and compose them into sensible context-based modules.
-- Declare both mandatory and optional parameters to be used in the following locations: Path/Header/Query/Form/Body. Retrieval of the parameters is simple and type-safe ([T] for mandatory, Option[T] for optional).
-- Endpoints automatically verify the prescence and validity of both optional and mandatory parameters (apart from the body for obvious reasons). If any parameters are missing or invalid, a BAD_REQUEST response is generated - meaning that no extra validation code is required for these parameters in your controller code.
+- Declare both mandatory and optional parameters to be used in the following locations: ```Path/Header/Query/Form/Body```. Retrieval of the parameters is simple and type-safe (```[T]``` for mandatory, ```Option[T]``` for optional). 
+- Endpoints automatically verify the prescence and validity of both optional and mandatory parameters (apart from the body for obvious reasons). If any parameters are missing or invalid, a ```BAD_REQUEST``` response is generated - meaning that no extra validation code is required for these parameters in your controller code.
 
 ###See it:
 See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples).
