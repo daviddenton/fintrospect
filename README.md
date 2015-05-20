@@ -27,6 +27,7 @@ See the [example code](https://github.com/daviddenton/fintrospect/tree/master/sr
 Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, we'll imagine a Library application (see the example above for the full code) which will be rendering Swagger v2 documentation.
 #####Define a module to live at ```http://<host>:8080/library```
 This module will have a single endpoint ```search```:
+
 ```
 val apiInfo: ApiInfo = ApiInfo("Library Example", "1.0", Some("Simple description"))
 val renderer: Renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
@@ -35,8 +36,10 @@ val libraryModule = FintrospectModule(Root / "library", renderer)
 val service = FintrospectModule.toService(libraryModule)
 Http.serve(":8080", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service)) 
 ```
+
 #####Define the endpoint
 This example is quite contrived (and almost all the code is optional) but shows the kind of thing that can be done. Note the use of the example response object, which will be broken down to provide the JSON model for the Swagger documentation.
+
 ```
 class BookSearch(books: Books) {
   private val MAX_PAGES = Query.optional.int("maxPages", "max number of pages in book")
