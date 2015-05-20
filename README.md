@@ -6,13 +6,11 @@ Fintrospect is a bolt-on library for use with the [Finagle](http://twitter.githu
 Using this library, you can:
 - Automatically generate documentation in a variety of formats (e.g. [Swagger](http://swagger.io/) v1.2 and v2.0). Pluggable architecture for adding your own renderers (currently JSON-based only).
 - Define individual HTTP routes and compose them into sensible context-based modules.
-- Declare both mandatory and optional parameters to be used in the following locations: ```Path/Header/Query/Form/Body```. Retrieval of the parameters is simple and type-safe (```[T]``` for mandatory, ```Option[T]``` for optional). 
-- Endpoints automatically verify the prescence and validity of both optional and mandatory parameters (apart from the body for obvious reasons). If any parameters are missing or invalid, a ```BAD_REQUEST``` response is generated - meaning that no extra validation code is required for these parameters in your controller code.
-
-###See it:
-See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples).
-
-###Get it:
+- Declare both required and optional parameters to be used in the following locations: ```Path/Header/Query/Form/Body```. Retrieval of the parameters is simple and type-safe (```[T]``` for required, ```Option[T]``` for optional). 
+- Endpoints automatically verify the prescence and validity of both optional and required parameters (apart from the body for obvious reasons). If any parameters are missing or invalid, a ```BAD_REQUEST``` response is generated - meaning that no extra validation code is required for these parameters in your controller code.
+- The library provide identification HTTP headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. /search/author/rowling -> /search/author/{name}.
+- 
+###Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,
 and it has only been tested with the version below:
 
@@ -22,9 +20,52 @@ libraryDependencies += "com.twitter" %% "finagle-http" % "6.25.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "X.X.X"
 ```
 
+###See it
+See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples).
+
+###Learn it
+Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, we'll imagine a Library application (see the example above for the full code) which will be rendering Swagger v2 documentation.
+#####Define a module to live at ```http://<host>:8080/library```
+This module will have a single endpoint ```search```:
+```scala
+val apiInfo: ApiInfo = ApiInfo("Library Example", "1.0", Some("Simple description"))
+val renderer: Renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
+val libraryModule = FintrospectModule(Root / "library", renderer)
+    .withRoute(new BookSearch(new BookRepo()).route)
+val service = FintrospectModule.toService(libraryModule)
+Http.serve(":8080", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service)) 
+```
+#####Define the endpoint
+This example is quite contrived (and almost all the code is optional) but shows the kind of thing that can be done. Note the use of the example response object, which will be broken down to provide the JSON model for the Swagger documentation.
+```scala
+class BookSearch(books: Books) {
+  private val MAX_PAGES = Query.optional.int("maxPages", "max number of pages in book")
+  private val MIN_PAGES = Form.required.int("minPages", "min number of pages in book")
+  private val TITLE_TERM = Path.string("term", "the part of the title to look for")
+
+  private def search(titleTerm: String) = new Service[HttpRequest, HttpResponse] {
+    override def apply(request: HttpRequest): Future[HttpResponse] = {
+      Ok(array(books.search(MIN_PAGES.from(request), MAX_PAGES.from(request).getOrElse(Integer.MAX_VALUE), titleTerm).map(_.toJson)))
+    }
+  }
+
+  val route = DescribedRoute("search for books")
+    .taking(maxPages)
+    .taking(minPages)
+    .taking(titleTerm)
+    .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
+    .returning(OK -> "results", BAD_REQUEST -> "invalid request")
+    .producing(APPLICATION_JSON)
+    .at(POST) / "search" / TITLE_TERM bindTo search
+}
+```
+
+#####View the generated documentation
+The auto-generated documenation lives at the root of the module, so point the Swagger UI at ```http://<host>:8080/library``` to see it.
+
 ###Migration Guide
 
-####v2.X -> v3.X
+#####v2.X -> v3.X
 Migrated away from the in-built Twitter HTTP Request package (com.twitter.finagle.http) and onto the Netty HttpRequest
 (org.jboss.netty.handler.codec.http). This is to provide compatibility with the changes to the Finagle APIs in regards
 to creating both servers and clients. It also has the advantage of unifying the client/server interface (previously it
