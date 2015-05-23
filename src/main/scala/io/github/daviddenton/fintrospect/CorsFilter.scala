@@ -83,7 +83,7 @@ class CorsFilter(policy: Policy) extends Filter[HttpRequest, HttpResponse, HttpR
         val headers = getHeaders(request)
         policy.allowsMethods(method) flatMap { allowedMethods =>
           policy.allowsHeaders(headers) map { allowedHeaders =>
-            setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Json.Ok.build, origin)), allowedMethods), allowedHeaders)
+            setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Json.Ok, origin)), allowedMethods), allowedHeaders)
           }
         }
       }
@@ -92,7 +92,7 @@ class CorsFilter(policy: Policy) extends Filter[HttpRequest, HttpResponse, HttpR
   def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
     val response = request match {
       case Preflight() => Future {
-        handlePreflight(request) getOrElse Json.Ok.build
+        handlePreflight(request) getOrElse Json.Ok
       }
       case _ => service(request) map {
         handleSimple(request, _)

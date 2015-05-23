@@ -1,10 +1,10 @@
 package io.github.daviddenton.fintrospect
 
 import argo.jdom.JsonNode
+import com.twitter.io.Charsets
 import io.github.daviddenton.fintrospect.parameters.{Body, RequestParameter}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import io.github.daviddenton.fintrospect.util.ResponseBuilder
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponseStatus}
+import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpResponseStatus}
 
 import scala.util.Try
 
@@ -51,9 +51,8 @@ case class DescribedRoute private(summary: String,
   /**
    * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
    */
-  def returning(responseBuilder: ResponseBuilder[_]): DescribedRoute = {
-    val response = responseBuilder.build
-    returning(ResponseWithExample(response.getStatus, response.getStatus.getReasonPhrase, Try(parse(response.contentString)).getOrElse(nullNode())))
+  def returning(response: HttpResponse): DescribedRoute = {
+    returning(ResponseWithExample(response.getStatus, response.getStatus.getReasonPhrase, Try(parse(response.getContent.toString(Charsets.Utf8))).getOrElse(nullNode())))
   }
 
   /**

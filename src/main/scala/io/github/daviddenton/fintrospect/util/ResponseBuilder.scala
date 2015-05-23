@@ -4,8 +4,9 @@ import argo.format.PrettyJsonFormatter
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Response
 import com.twitter.util.Future
+import io.github.daviddenton.fintrospect.{ContentTypes, ContentType}
+import io.github.daviddenton.fintrospect.parameters.RequestParameter
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import io.github.daviddenton.fintrospect.{ContentType, ContentTypes}
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
 import org.jboss.netty.util.CharsetUtil._
@@ -33,32 +34,51 @@ class ResponseBuilder[T](toFormat: T => String, contentType: ContentType) {
   def toFuture: Future[Response] = Future.value(build)
 }
 
-class TypedRespBuilder[T](toFormat: T => String, msgToError: String => T, exToError: Throwable => T, private val contentType: ContentType) {
+class TypedRespBuilder[T](toFormat: T => String,
+                          msgToError: String => T,
+                          exToError: Throwable => T,
+                          bpToError: List[RequestParameter[_]] => T,
+                          contentType: ContentType) {
 
   def apply(): ResponseBuilder[T] = new ResponseBuilder[T](toFormat, contentType)
 
-  def Ok: ResponseBuilder[T] = apply().withCode(HttpResponseStatus.OK)
+  def Ok: HttpResponse = apply().withCode(HttpResponseStatus.OK).build
 
-  def Ok(content: T): ResponseBuilder[T] = Ok(toFormat(content))
+  def Ok(content: T): HttpResponse = Ok(toFormat(content))
 
-  def Ok(content: String): ResponseBuilder[T] = Ok.withContent(content)
+  def Ok(content: String): HttpResponse = apply().withCode(HttpResponseStatus.OK).withContent(content).build
 
-  def Error(status: HttpResponseStatus, message: String): ResponseBuilder[T] = apply().withCode(status).withContent(toFormat(msgToError(message)))
+  def Error(status: HttpResponseStatus, message: String): HttpResponse = apply().withCode(status).withContent(toFormat(msgToError(message))).build
 
-  def Error(status: HttpResponseStatus, content: T): ResponseBuilder[T] = apply().withCode(status).withContent(toFormat(content))
+  def Error(status: HttpResponseStatus, content: T): HttpResponse = apply().withCode(status).withContent(toFormat(content)).build
 
-  def Error(status: HttpResponseStatus, error: Throwable): ResponseBuilder[T] = apply().withCode(status).withContent(toFormat(exToError(error)))
+  def Error(status: HttpResponseStatus, error: Throwable): HttpResponse = Error(status, exToError(error))
+
+  def BadRequest(badParameters: List[RequestParameter[_]]): HttpResponse = Error(HttpResponseStatus.BAD_REQUEST, bpToError(badParameters))
 }
 
 object ResponseBuilder {
 
   implicit def toFuture(builder: ResponseBuilder[_]): Future[HttpResponse] = builder.toFuture
 
+  implicit def toFuture(response: HttpResponse): Future[HttpResponse] = Future.value(response)
+
   private val jsonFormatter = new PrettyJsonFormatter()
 
   def Json = new TypedRespBuilder[JsonRootNode](
     jsonFormatter.format,
     m => obj("message" -> string(m)),
-    t => obj("message" -> string(Option(t.getMessage).getOrElse(t.getClass.getName))),
+    t => string(Option(t.getMessage).getOrElse(t.getClass.getName)).asInstanceOf[JsonRootNode],
+    bp => {
+      val messages = bp.map(p => obj(
+        "name" -> string(p.name),
+        "type" -> string(p.where),
+        "datatype" -> string(p.paramType.name),
+        "required" -> boolean(p.requirement.required)
+      ))
+
+      ArgoUtil.obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages))
+    },
     ContentTypes.APPLICATION_JSON)
+
 }

@@ -13,5 +13,5 @@ trait Renderer {
 }
 
 object Renderer {
-  def toResponse(jsonRootNode: JsonRootNode): HttpResponse = ResponseBuilder.Json.Ok(jsonRootNode).build
+  def toResponse(jsonRootNode: JsonRootNode): HttpResponse = ResponseBuilder.Json.Ok(jsonRootNode)
 }
