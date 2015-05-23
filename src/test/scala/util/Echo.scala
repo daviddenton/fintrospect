@@ -9,7 +9,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 case class Echo(parts: String*) extends Service[HttpRequest, HttpResponse] {
   def apply(request: HttpRequest): Future[HttpResponse] = {
-    Ok(obj(
+    Json.Ok(obj(
       "headers" -> string(request.headers().toString()),
       "params" -> string(request.toString), // ERROR!
       "message" -> string(parts.mkString(" "))))

@@ -15,8 +15,8 @@ class BookLookup(books: Books) {
   private def lookupByIsbn(isbn: String) = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] =
       books.lookup(isbn) match {
-        case Some(book) => Ok(book.toJson)
-        case _ => Error(NOT_FOUND, "No book found with isbn")
+        case Some(book) => Json.Ok(book.toJson)
+        case _ => Json.Error(NOT_FOUND, "No book found with isbn")
       }
   }
 

@@ -47,4 +47,6 @@ object ArgoUtil {
   def boolean(value: Boolean) = booleanNode(value)
 
   def nullNode() = JsonNodeFactories.nullNode()
+
+  def field(name: String, value: JsonNode) = JsonNodeFactories.field(name, value)
 }

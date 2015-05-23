@@ -9,7 +9,7 @@ import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.parameters.Header
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.renderers.SimpleJson
-import io.github.daviddenton.fintrospect.util.ResponseBuilder
+import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -18,7 +18,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
   case class AService(segments: Seq[String]) extends Service[HttpRequest, HttpResponse] {
     def apply(request: HttpRequest): Future[HttpResponse] = {
-      ResponseBuilder.Ok(segments.mkString(","))
+      Json.Ok(segments.mkString(","))
     }
   }
 
@@ -52,7 +52,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       it("can get to all routes") {
         def module(path: String) = {
           FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) bindTo (() => new Service[HttpRequest, HttpResponse] {
-            def apply(request: HttpRequest): Future[HttpResponse] = ResponseBuilder.Ok(path)
+            def apply(request: HttpRequest): Future[HttpResponse] = Json.Ok(path)
           }))
         }
         val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))

@@ -19,7 +19,7 @@ object ModuleResponseRenderer {
         "datatype" -> string(p.paramType.name),
         "required" -> boolean(p.requirement.required)
       ))
-      ResponseBuilder()
+      ResponseBuilder.Json()
         .withCode(BAD_REQUEST)
         .withContent(obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages)))
         .build

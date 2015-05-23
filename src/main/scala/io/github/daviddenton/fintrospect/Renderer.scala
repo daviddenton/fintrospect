@@ -2,7 +2,6 @@ package io.github.daviddenton.fintrospect
 
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.path.Path
-import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpResponse
 
@@ -14,5 +13,5 @@ trait Renderer {
 }
 
 object Renderer {
-  def toResponse(jsonRootNode: JsonRootNode): HttpResponse = ResponseBuilder.Ok(pretty(jsonRootNode)).build
+  def toResponse(jsonRootNode: JsonRootNode): HttpResponse = ResponseBuilder.Json.Ok(jsonRootNode).build
 }
