@@ -34,7 +34,7 @@ class ResponseBuilder[T](toFormat: T => String, contentType: ContentType) {
   def toFuture: Future[Response] = Future.value(build)
 }
 
-class TypedRespBuilder[T](toFormat: T => String,
+class TypedResponseBuilder[T](toFormat: T => String,
                           msgToError: String => T,
                           exToError: Throwable => T,
                           bpToError: List[RequestParameter[_]] => T,
@@ -65,7 +65,7 @@ object ResponseBuilder {
 
   private val jsonFormatter = new PrettyJsonFormatter()
 
-  def Json = new TypedRespBuilder[JsonRootNode](
+  def Json = new TypedResponseBuilder[JsonRootNode](
     jsonFormatter.format,
     m => obj("message" -> string(m)),
     t => string(Option(t.getMessage).getOrElse(t.getClass.getName)).asInstanceOf[JsonRootNode],

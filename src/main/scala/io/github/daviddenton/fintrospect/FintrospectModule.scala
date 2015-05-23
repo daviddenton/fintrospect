@@ -8,7 +8,7 @@ import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.Routing.fromBinding
 import io.github.daviddenton.fintrospect.parameters.Requirement._
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
-import io.github.daviddenton.fintrospect.util.{ResponseBuilder, TypedRespBuilder}
+import io.github.daviddenton.fintrospect.util.{ResponseBuilder, TypedResponseBuilder}
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
@@ -33,11 +33,11 @@ object FintrospectModule {
   /**
    * Create a module using the given base-path and description descRenderer.
    */
-  def apply(basePath: Path, descRenderer: Renderer, responseRenderer: TypedRespBuilder[JsonRootNode] = ResponseBuilder.Json): FintrospectModule = {
+  def apply(basePath: Path, descRenderer: Renderer, responseRenderer: TypedResponseBuilder[JsonRootNode] = ResponseBuilder.Json): FintrospectModule = {
     new FintrospectModule(basePath, descRenderer, responseRenderer, Nil, empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]])
   }
 
-  private case class ValidateParams(route: Route, responseRenderer: TypedRespBuilder[JsonRootNode]) extends SimpleFilter[HttpRequest, HttpResponse]() {
+  private case class ValidateParams(route: Route, responseRenderer: TypedResponseBuilder[JsonRootNode]) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       val paramsAndParseResults = route.describedRoute.params.map(p => (p, p.parseFrom(request)))
       val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => pr._1.requirement == Optional && pr._2.isEmpty)
@@ -58,7 +58,7 @@ object FintrospectModule {
 /**
  * Self-describing module builder (uses the immutable builder pattern).
  */
-class FintrospectModule private(basePath: Path, descRenderer: Renderer, responseRenderer: TypedRespBuilder[JsonRootNode], theRoutes: List[Route], private val currentBinding: Binding) {
+class FintrospectModule private(basePath: Path, descRenderer: Renderer, responseRenderer: TypedResponseBuilder[JsonRootNode], theRoutes: List[Route], private val currentBinding: Binding) {
   private def withDefault() = withRoute(DescribedRoute("Description route").at(GET).bindTo(() => {
     Service.mk((req) => Renderer.toResponse(descRenderer(basePath, theRoutes)))
   }))
