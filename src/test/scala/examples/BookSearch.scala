@@ -18,7 +18,7 @@ class BookSearch(books: Books) {
 
   private def search() = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
-      Ok(array(books.search(minPages.from(request).getOrElse(Integer.MIN_VALUE), maxPages.from(request).getOrElse(Integer.MAX_VALUE), titleTerm.from(request)).map(_.toJson)))
+      Json.Ok(array(books.search(minPages.from(request).getOrElse(Integer.MIN_VALUE), maxPages.from(request).getOrElse(Integer.MAX_VALUE), titleTerm.from(request)).map(_.toJson)))
     }
   }
 

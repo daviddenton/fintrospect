@@ -1,63 +1,64 @@
 package io.github.daviddenton.fintrospect.util
 
 import argo.format.PrettyJsonFormatter
-import argo.jdom.JsonNodeFactories.{`object` => obj, _}
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Response
 import com.twitter.util.Future
-import io.github.daviddenton.fintrospect.ContentType
-import io.github.daviddenton.fintrospect.util.ResponseBuilder._
+import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.{ContentType, ContentTypes}
 import org.jboss.netty.buffer.ChannelBuffers._
-import org.jboss.netty.handler.codec.http.HttpResponseStatus
+import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
 import org.jboss.netty.util.CharsetUtil._
 
 import scala.language.implicitConversions
 
-object ResponseBuilder {
-  implicit def toFuture(builder: ResponseBuilder): Future[Response] = builder.toFuture
-
-  private val formatter = new PrettyJsonFormatter()
-
-  def apply(): ResponseBuilder = new ResponseBuilder()
-
-  def Ok = new ResponseBuilder().withCode(HttpResponseStatus.OK)
-
-  def Ok(content: String) = new ResponseBuilder().withCode(HttpResponseStatus.OK).withContent(content)
-
-  def Ok(content: JsonRootNode) = new ResponseBuilder().withCode(HttpResponseStatus.OK).withContent(content)
-
-  def Error(status: HttpResponseStatus, message: String) = new ResponseBuilder().withCode(status).withContent(obj(field("message", string(message))))
-
-  def Error(status: HttpResponseStatus, error: Throwable) = new ResponseBuilder().withCode(status).withContent(formatter.format(errorToJson(error)))
-
-  private def errorToJson(error: Throwable) = obj(field("message", string(Option(error.getMessage).getOrElse(error.getClass.getName))))
-}
-
-class ResponseBuilder private() {
-
+class ResponseBuilder[T](toFormat: T => String, contentType: ContentType) {
   private val response = Response()
 
-  def withCode(code: HttpResponseStatus): ResponseBuilder = {
-    response.setStatusCode(code.getCode)
+  def withCode(code: HttpResponseStatus): ResponseBuilder[T] = {
+    response.setStatus(code)
     this
   }
 
-  def withContent(jsonContent: JsonRootNode): ResponseBuilder = {
-    response.setContentTypeJson()
-    withContent(formatter.format(jsonContent))
-  }
+  def withContent(content: T): ResponseBuilder[T] = withContent(toFormat(content))
 
-  def withContentType(contentType: ContentType): ResponseBuilder = {
-    response.setContentType(contentType.value, UTF_8.name())
-    this
-  }
-
-  def withContent(content: String): ResponseBuilder = {
+  def withContent(content: String): ResponseBuilder[T] = {
+    response.setContentType(contentType.value)
     response.setContent(copiedBuffer(content, UTF_8))
     this
   }
 
-  def toFuture: Future[Response] = Future.value(build)
+  def build: Response = response
 
-  def build = response
+  def toFuture: Future[Response] = Future.value(build)
+}
+
+class TypedRespBuilder[T](toFormat: T => String, msgToError: String => T, exToError: Throwable => T, private val contentType: ContentType) {
+
+  def apply(): ResponseBuilder[T] = new ResponseBuilder[T](toFormat, contentType)
+
+  def Ok: ResponseBuilder[T] = apply().withCode(HttpResponseStatus.OK)
+
+  def Ok(content: T): ResponseBuilder[T] = Ok(toFormat(content))
+
+  def Ok(content: String): ResponseBuilder[T] = Ok.withContent(content)
+
+  def Error(status: HttpResponseStatus, message: String): ResponseBuilder[T] = apply().withCode(status).withContent(toFormat(msgToError(message)))
+
+  def Error(status: HttpResponseStatus, content: T): ResponseBuilder[T] = apply().withCode(status).withContent(toFormat(content))
+
+  def Error(status: HttpResponseStatus, error: Throwable): ResponseBuilder[T] = apply().withCode(status).withContent(toFormat(exToError(error)))
+}
+
+object ResponseBuilder {
+
+  implicit def toFuture(builder: ResponseBuilder[_]): Future[HttpResponse] = builder.toFuture
+
+  private val jsonFormatter = new PrettyJsonFormatter()
+
+  def Json = new TypedRespBuilder[JsonRootNode](
+    jsonFormatter.format,
+    m => obj("message" -> string(m)),
+    t => obj("message" -> string(Option(t.getMessage).getOrElse(t.getClass.getName))),
+    ContentTypes.APPLICATION_JSON)
 }

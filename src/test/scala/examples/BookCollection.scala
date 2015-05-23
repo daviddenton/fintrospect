@@ -13,7 +13,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 class BookCollection(books: Books) {
 
   private def listBooks(): Service[HttpRequest, HttpResponse] = new Service[HttpRequest, HttpResponse] {
-    override def apply(request: HttpRequest): Future[HttpResponse] = Ok(array(books.list().map(_.toJson)))
+    override def apply(request: HttpRequest): Future[HttpResponse] = Json.Ok(array(books.list().map(_.toJson)))
   }
 
   val route = DescribedRoute("show collection")

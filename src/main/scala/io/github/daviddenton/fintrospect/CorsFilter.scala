@@ -3,7 +3,7 @@ package io.github.daviddenton.fintrospect
 import com.twitter.finagle.http.filter.Cors.Policy
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
-import io.github.daviddenton.fintrospect.util.ResponseBuilder._
+import io.github.daviddenton.fintrospect.util.ResponseBuilder.Json
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
 /**
@@ -83,7 +83,7 @@ class CorsFilter(policy: Policy) extends Filter[HttpRequest, HttpResponse, HttpR
         val headers = getHeaders(request)
         policy.allowsMethods(method) flatMap { allowedMethods =>
           policy.allowsHeaders(headers) map { allowedHeaders =>
-            setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Ok.build, origin)), allowedMethods), allowedHeaders)
+            setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Json.Ok.build, origin)), allowedMethods), allowedHeaders)
           }
         }
       }
@@ -92,7 +92,7 @@ class CorsFilter(policy: Policy) extends Filter[HttpRequest, HttpResponse, HttpR
   def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
     val response = request match {
       case Preflight() => Future {
-        handlePreflight(request) getOrElse Ok.build
+        handlePreflight(request) getOrElse Json.Ok.build
       }
       case _ => service(request) map {
         handleSimple(request, _)

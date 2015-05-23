@@ -12,7 +12,7 @@ import org.scalatest.{FlatSpec, MustMatchers}
 class CorsFilterTest extends FlatSpec with MustMatchers {
   val TRAP = new HttpMethod("TRAP")
   val underlying = Service.mk[HttpRequest, HttpResponse] { request =>
-    if (request.getMethod == TRAP) Ok("#guwop") else Error(HttpResponseStatus.METHOD_NOT_ALLOWED, "")
+    if (request.getMethod == TRAP) Json.Ok("#guwop") else Json.Error(HttpResponseStatus.METHOD_NOT_ALLOWED, "")
   }
 
   val policy = Cors.Policy(

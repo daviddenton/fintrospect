@@ -51,9 +51,9 @@ case class DescribedRoute private(summary: String,
   /**
    * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
    */
-  def returning(responseBuilder: ResponseBuilder): DescribedRoute = {
+  def returning(responseBuilder: ResponseBuilder[_]): DescribedRoute = {
     val response = responseBuilder.build
-    returning(ResponseWithExample(response.getStatus(), response.getStatus().getReasonPhrase, Try(parse(response.contentString)).getOrElse(nullNode())))
+    returning(ResponseWithExample(response.getStatus, response.getStatus.getReasonPhrase, Try(parse(response.contentString)).getOrElse(nullNode())))
   }
 
   /**
