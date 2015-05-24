@@ -4,9 +4,8 @@ import argo.format.PrettyJsonFormatter
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Response
 import com.twitter.util.Future
-import io.github.daviddenton.fintrospect.{ContentTypes, ContentType}
-import io.github.daviddenton.fintrospect.parameters.RequestParameter
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.{ContentType, ContentTypes}
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
 import org.jboss.netty.util.CharsetUtil._
@@ -34,29 +33,6 @@ class ResponseBuilder[T](toFormat: T => String, contentType: ContentType) {
   def toFuture: Future[Response] = Future.value(build)
 }
 
-class TypedResponseBuilder[T](toFormat: T => String,
-                          msgToError: String => T,
-                          exToError: Throwable => T,
-                          bpToError: List[RequestParameter[_]] => T,
-                          contentType: ContentType) {
-
-  def apply(): ResponseBuilder[T] = new ResponseBuilder[T](toFormat, contentType)
-
-  def Ok: HttpResponse = apply().withCode(HttpResponseStatus.OK).build
-
-  def Ok(content: T): HttpResponse = Ok(toFormat(content))
-
-  def Ok(content: String): HttpResponse = apply().withCode(HttpResponseStatus.OK).withContent(content).build
-
-  def Error(status: HttpResponseStatus, message: String): HttpResponse = apply().withCode(status).withContent(toFormat(msgToError(message))).build
-
-  def Error(status: HttpResponseStatus, content: T): HttpResponse = apply().withCode(status).withContent(toFormat(content)).build
-
-  def Error(status: HttpResponseStatus, error: Throwable): HttpResponse = Error(status, exToError(error))
-
-  def BadRequest(badParameters: List[RequestParameter[_]]): HttpResponse = Error(HttpResponseStatus.BAD_REQUEST, bpToError(badParameters))
-}
-
 object ResponseBuilder {
 
   implicit def toFuture(builder: ResponseBuilder[_]): Future[HttpResponse] = builder.toFuture
@@ -65,6 +41,7 @@ object ResponseBuilder {
 
   def Json = new TypedResponseBuilder[JsonRootNode](
     new PrettyJsonFormatter().format,
+    ContentTypes.APPLICATION_JSON,
     errorMessage => obj("message" -> string(errorMessage)),
     throwable => string(Option(throwable.getMessage).getOrElse(throwable.getClass.getName)).asInstanceOf[JsonRootNode],
     badParameters => {
@@ -76,7 +53,6 @@ object ResponseBuilder {
       ))
 
       ArgoUtil.obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages))
-    },
-    ContentTypes.APPLICATION_JSON)
+    })
 
 }
