@@ -1,9 +1,10 @@
-package io.github.daviddenton.fintrospect.renderers
+package io.github.daviddenton.fintrospect.renderers.swagger1dot1
 
 import argo.jdom.{JsonNode, JsonRootNode}
 import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Parameter, Requirement}
+import io.github.daviddenton.fintrospect.renderers.JsonModuleRenderer
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._

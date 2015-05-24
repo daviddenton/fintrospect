@@ -5,7 +5,9 @@ import com.twitter.finagle.Http
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import io.github.daviddenton.fintrospect._
-import io.github.daviddenton.fintrospect.renderers.{SimpleJson, Swagger2dot0Json, ModuleRenderer}
+import io.github.daviddenton.fintrospect.renderers.simplejson.SimpleJson
+import io.github.daviddenton.fintrospect.renderers.ModuleRenderer
+import io.github.daviddenton.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 
 /**
  * This example shows the intended method for implementing a simple app using Fintrospect routes and modules, using

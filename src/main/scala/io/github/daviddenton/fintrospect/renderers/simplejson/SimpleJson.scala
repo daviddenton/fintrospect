@@ -1,8 +1,9 @@
-package io.github.daviddenton.fintrospect.renderers
+package io.github.daviddenton.fintrospect.renderers.simplejson
 
 import argo.jdom.JsonNodeFactories.string
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.path.Path
+import io.github.daviddenton.fintrospect.renderers.JsonModuleRenderer
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.{DescriptionRenderer, Route}
 
