@@ -1,4 +1,4 @@
-package examples
+package examples.extended
 
 import java.lang.Integer.parseInt
 

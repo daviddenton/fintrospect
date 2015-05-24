@@ -4,7 +4,7 @@ import argo.jdom.{JsonNode, JsonRootNode}
 import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Parameter, Requirement}
-import io.github.daviddenton.fintrospect.renderers.JsonModuleRenderer
+import io.github.daviddenton.fintrospect.renderers.{ModuleRenderer, JsonModuleRenderer}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
@@ -44,5 +44,5 @@ class Swagger1dot1Json private() extends DescriptionRenderer[JsonRootNode] {
  * Renderer that provides basic Swagger v1.1 support. No support for bodies or schemas.
  */
 object Swagger1dot1Json {
-  def apply() = new JsonModuleRenderer(new Swagger1dot1Json())
+  def apply(): ModuleRenderer[JsonRootNode] = new JsonModuleRenderer(new Swagger1dot1Json())
 }

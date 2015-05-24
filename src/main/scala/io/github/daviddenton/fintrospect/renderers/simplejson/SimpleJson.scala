@@ -3,7 +3,7 @@ package io.github.daviddenton.fintrospect.renderers.simplejson
 import argo.jdom.JsonNodeFactories.string
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.path.Path
-import io.github.daviddenton.fintrospect.renderers.JsonModuleRenderer
+import io.github.daviddenton.fintrospect.renderers.{ModuleRenderer, JsonModuleRenderer}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.{DescriptionRenderer, Route}
 
@@ -20,5 +20,5 @@ class SimpleJson private() extends DescriptionRenderer[JsonRootNode] {
  * Ultra-basic Renderer implementation that only supports the route paths and the main descriptions of each.
  */
 object SimpleJson {
-  def apply() = new JsonModuleRenderer(new SimpleJson())
+  def apply(): ModuleRenderer[JsonRootNode] = new JsonModuleRenderer(new SimpleJson())
 }

@@ -7,6 +7,10 @@ import io.github.daviddenton.fintrospect.util.JsonResponseBuilder
 
 import scala.language.implicitConversions
 
+/**
+ * Module rendering providing an Argo JSON format
+ * @param descriptionRenderer converts the module routes into a format which can be rendered
+ */
 class JsonModuleRenderer(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends ModuleRenderer[JsonRootNode](
   JsonResponseBuilder.Response,
   descriptionRenderer,

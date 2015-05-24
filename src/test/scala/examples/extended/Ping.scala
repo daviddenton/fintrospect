@@ -1,4 +1,4 @@
-package examples
+package examples.extended
 
 import com.twitter.finagle.Service
 import com.twitter.util.Future
