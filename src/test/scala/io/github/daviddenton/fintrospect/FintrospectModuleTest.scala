@@ -103,7 +103,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  def assertOkResponse(module: FintrospectModule, segments: Seq[String]): Unit = {
+  def assertOkResponse(module: FintrospectModule[_], segments: Seq[String]): Unit = {
     val result = Await.result(module.toService.apply(FRq("/svc/" + segments.mkString("/"))))
     result.getStatus shouldEqual HttpResponseStatus.OK
     result.getContent.toString(Utf8) shouldEqual segments.mkString(",")

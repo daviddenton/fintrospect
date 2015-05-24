@@ -63,14 +63,12 @@ object ResponseBuilder {
 
   implicit def toFuture(response: HttpResponse): Future[HttpResponse] = Future.value(response)
 
-  private val jsonFormatter = new PrettyJsonFormatter()
-
   def Json = new TypedResponseBuilder[JsonRootNode](
-    jsonFormatter.format,
-    m => obj("message" -> string(m)),
-    t => string(Option(t.getMessage).getOrElse(t.getClass.getName)).asInstanceOf[JsonRootNode],
-    bp => {
-      val messages = bp.map(p => obj(
+    new PrettyJsonFormatter().format,
+    errorMessage => obj("message" -> string(errorMessage)),
+    throwable => string(Option(throwable.getMessage).getOrElse(throwable.getClass.getName)).asInstanceOf[JsonRootNode],
+    badParameters => {
+      val messages = badParameters.map(p => obj(
         "name" -> string(p.name),
         "type" -> string(p.where),
         "datatype" -> string(p.paramType.name),
