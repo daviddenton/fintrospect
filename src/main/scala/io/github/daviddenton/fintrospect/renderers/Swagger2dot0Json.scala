@@ -6,7 +6,7 @@ import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Parameter, Requirement}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
-class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
+class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer[JsonRootNode] {
 
   private val schemaGenerator = new JsonToJsonSchema()
 
@@ -89,5 +89,5 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends Renderer {
  * Renderer that provides Swagger v2.0 support
  */
 object Swagger2dot0Json {
-  def apply(apiInfo: ApiInfo): Renderer = new Swagger2dot0Json(apiInfo)
+  def apply(apiInfo: ApiInfo): Renderer[JsonRootNode] = new Swagger2dot0Json(apiInfo)
 }

@@ -6,7 +6,7 @@ import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.{Renderer, Route}
 
-class SimpleJson private() extends Renderer {
+class SimpleJson private() extends Renderer[JsonRootNode] {
   private def render(basePath: Path, route: Route): Field = {
     route.method + ":" + route.describeFor(basePath) -> string(route.describedRoute.summary)
   }
@@ -18,5 +18,5 @@ class SimpleJson private() extends Renderer {
  * Ultra-basic Renderer implementation that only supports the route paths and the main descriptions of each.
  */
 object SimpleJson {
-  def apply(): Renderer = new SimpleJson()
+  def apply(): Renderer[JsonRootNode] = new SimpleJson()
 }
