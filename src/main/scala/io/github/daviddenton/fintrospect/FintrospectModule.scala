@@ -33,7 +33,7 @@ object FintrospectModule {
   /**
    * Create a module using the given base-path and description descRenderer.
    */
-  def apply(basePath: Path, descRenderer: Renderer, responseRenderer: TypedResponseBuilder[JsonRootNode] = ResponseBuilder.Json): FintrospectModule = {
+  def apply(basePath: Path, descRenderer: Renderer[JsonRootNode], responseRenderer: TypedResponseBuilder[JsonRootNode] = ResponseBuilder.Json): FintrospectModule = {
     new FintrospectModule(basePath, descRenderer, responseRenderer, Nil, empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]])
   }
 
@@ -58,9 +58,9 @@ object FintrospectModule {
 /**
  * Self-describing module builder (uses the immutable builder pattern).
  */
-class FintrospectModule private(basePath: Path, descRenderer: Renderer, responseRenderer: TypedResponseBuilder[JsonRootNode], theRoutes: List[Route], private val currentBinding: Binding) {
+class FintrospectModule private(basePath: Path, descRenderer: Renderer[JsonRootNode], responseRenderer: TypedResponseBuilder[JsonRootNode], theRoutes: List[Route], private val currentBinding: Binding) {
   private def withDefault() = withRoute(DescribedRoute("Description route").at(GET).bindTo(() => {
-    Service.mk((req) => Renderer.toResponse(descRenderer(basePath, theRoutes)))
+    Service.mk((req) => responseRenderer.Ok(descRenderer(basePath, theRoutes)))
   }))
 
   private def totalBinding = withDefault().currentBinding
