@@ -17,10 +17,10 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.io.Source
 
-abstract class JsonDescriptionRendererTest() extends FunSpec with ShouldMatchers {
+abstract class JsonModuleRendererTest() extends FunSpec with ShouldMatchers {
   def name: String = this.getClass.getSimpleName
 
-  def renderer: ArgoJsonResponseBuilder
+  def renderer: JsonModuleRenderer
 
   describe(name) {
     it("renders as expected") {

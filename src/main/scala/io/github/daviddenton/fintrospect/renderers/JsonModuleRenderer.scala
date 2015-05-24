@@ -7,7 +7,7 @@ import io.github.daviddenton.fintrospect.util.JsonResponseBuilder
 
 import scala.language.implicitConversions
 
-class ArgoJsonResponseBuilder(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends TypedResponseBuilder[JsonRootNode](
+class JsonModuleRenderer(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends ModuleRenderer[JsonRootNode](
   JsonResponseBuilder.Response,
   descriptionRenderer,
   badParameters => {

@@ -19,5 +19,5 @@ class SimpleJson private() extends DescriptionRenderer[JsonRootNode] {
  * Ultra-basic Renderer implementation that only supports the route paths and the main descriptions of each.
  */
 object SimpleJson {
-  def apply(): ArgoJsonResponseBuilder = new ArgoJsonResponseBuilder(new SimpleJson())
+  def apply() = new JsonModuleRenderer(new SimpleJson())
 }

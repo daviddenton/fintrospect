@@ -6,7 +6,7 @@ Fintrospect is a bolt-on library for use with the [Finagle](http://twitter.githu
 Using this library, you can:
 - Automatically generate documentation in a variety of formats (e.g. [Swagger](http://swagger.io/) v1.2 and v2.0). Pluggable architecture for adding your own renderers (currently JSON-based only).
 - Define individual HTTP routes and compose them into sensible context-based modules.
-- Declare both required and optional parameters to be used in the following locations: ```Path/Header/Query/Form/Body```. Retrieval of the parameters is simple and type-safe (```[T]``` for required, ```Option[T]``` for optional). 
+- Declare both required and optional parameters to be used in the following locations: ```Path/Header/Query/Form/Body```. Retrieval of the parameters is simple and type-safe (```[T]``` for required, ```Option[T]``` for optional).
 - Endpoints automatically verify the prescence and validity of both optional and required parameters (apart from the body for obvious reasons). If any parameters are missing or invalid, a ```BAD_REQUEST``` response is generated - meaning that no extra validation code is required for these parameters in your controller code.
 - The library provide identification HTTP headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. ```/search/author/rowling -> /search/author/{name}```.
 
@@ -29,12 +29,12 @@ Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, 
 This module will have a single endpoint ```search```:
 
 ```scala
-val apiInfo: ApiInfo = ApiInfo("Library Example", "1.0", Some("Simple description"))
-val renderer: Renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
+val apiInfo = ApiInfo("Library Example", "1.0", Some("Simple description"))
+val renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
 val libraryModule = FintrospectModule(Root / "library", renderer)
     .withRoute(new BookSearch(new BookRepo()).route)
 val service = FintrospectModule.toService(libraryModule)
-Http.serve(":8080", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service)) 
+Http.serve(":8080", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service))
 ```
 
 #####Define the endpoint
