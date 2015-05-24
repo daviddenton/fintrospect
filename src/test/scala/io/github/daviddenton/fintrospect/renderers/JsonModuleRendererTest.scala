@@ -1,6 +1,7 @@
 package io.github.daviddenton.fintrospect.renderers
 
 import _root_.util.Echo
+import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.path.Root
 import com.twitter.io.Charsets._
@@ -20,7 +21,7 @@ import scala.io.Source
 abstract class JsonModuleRendererTest() extends FunSpec with ShouldMatchers {
   def name: String = this.getClass.getSimpleName
 
-  def renderer: JsonModuleRenderer
+  def renderer: ModuleRenderer[JsonRootNode]
 
   describe(name) {
     it("renders as expected") {
