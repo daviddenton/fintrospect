@@ -40,8 +40,7 @@ object ResponseBuilder {
   implicit def toFuture(response: HttpResponse): Future[HttpResponse] = Future.value(response)
 
   def Json = new TypedResponseBuilder[JsonRootNode](
-    new PrettyJsonFormatter().format,
-    ContentTypes.APPLICATION_JSON,
+    () => new ResponseBuilder[JsonRootNode](new PrettyJsonFormatter().format, ContentTypes.APPLICATION_JSON),
     errorMessage => obj("message" -> string(errorMessage)),
     throwable => string(Option(throwable.getMessage).getOrElse(throwable.getClass.getName)).asInstanceOf[JsonRootNode],
     badParameters => {
