@@ -9,8 +9,8 @@ import io.github.daviddenton.fintrospect.ContentTypes._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.parameters._
-import io.github.daviddenton.fintrospect.util.ArgoUtil.{number, obj, parse}
 import io.github.daviddenton.fintrospect.util.ArgoUtil
+import io.github.daviddenton.fintrospect.util.ArgoUtil.{number, obj, parse}
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
