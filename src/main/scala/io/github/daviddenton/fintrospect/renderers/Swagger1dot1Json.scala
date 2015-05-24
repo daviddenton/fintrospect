@@ -4,15 +4,11 @@ import argo.jdom.{JsonNode, JsonRootNode}
 import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Parameter, Requirement}
-import io.github.daviddenton.fintrospect.util.ArgoJsonResponseBuilder
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
 
-/**
- * Renderer that provides basic Swagger v1.1 support. No support for bodies or schemas.
- */
-object Swagger1dot1Json {
+class Swagger1dot1Json private() extends DescriptionRenderer[JsonRootNode] {
 
   private def render(requirementAndParameter: (Requirement, Parameter[_])): JsonNode = obj(
     "name" -> string(requirementAndParameter._2.name),
@@ -34,13 +30,18 @@ object Swagger1dot1Json {
       .map(resp => obj("code" -> number(resp.status.getCode), "reason" -> string(resp.description))).toSeq)
   )
 
-  private def render(basePath: Path, routes: Seq[Route]): JsonRootNode = {
+  def apply(basePath: Path, routes: Seq[Route]): JsonRootNode = {
     val api = routes
       .groupBy(_.describeFor(basePath))
       .map { case (path, routesForPath) => obj("path" -> string(path), "operations" -> array(routesForPath.map(render(_)._2)))}
 
     obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api)))
   }
+}
 
-  def apply(): ArgoJsonResponseBuilder = new ArgoJsonResponseBuilder(render)
+/**
+ * Renderer that provides basic Swagger v1.1 support. No support for bodies or schemas.
+ */
+object Swagger1dot1Json {
+  def apply(): ArgoJsonResponseBuilder = new ArgoJsonResponseBuilder(new Swagger1dot1Json())
 }

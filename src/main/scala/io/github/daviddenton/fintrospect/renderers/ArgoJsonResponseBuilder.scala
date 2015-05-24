@@ -1,15 +1,15 @@
-package io.github.daviddenton.fintrospect.util
+package io.github.daviddenton.fintrospect.renderers
 
 import argo.jdom.JsonRootNode
-import com.twitter.finagle.http.path.Path
-import io.github.daviddenton.fintrospect.Route
+import io.github.daviddenton.fintrospect.DescriptionRenderer
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.util.JsonResponseBuilder
 
 import scala.language.implicitConversions
 
-class ArgoJsonResponseBuilder(descBuilder: (Path, Seq[Route]) => JsonRootNode) extends TypedResponseBuilder[JsonRootNode](
+class ArgoJsonResponseBuilder(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends TypedResponseBuilder[JsonRootNode](
   () => new JsonResponseBuilder,
-  descBuilder,
+  descriptionRenderer,
   badParameters => {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),

@@ -6,8 +6,8 @@ import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.Routing.fromBinding
 import io.github.daviddenton.fintrospect.parameters.Requirement._
+import io.github.daviddenton.fintrospect.renderers.TypedResponseBuilder
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
-import io.github.daviddenton.fintrospect.util.TypedResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 import scala.language.existentials
