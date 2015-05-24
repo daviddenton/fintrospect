@@ -43,5 +43,5 @@ class Swagger1dot1Json private() extends DescriptionRenderer[JsonRootNode] {
  * Renderer that provides basic Swagger v1.1 support. No support for bodies or schemas.
  */
 object Swagger1dot1Json {
-  def apply(): ArgoJsonResponseBuilder = new ArgoJsonResponseBuilder(new Swagger1dot1Json())
+  def apply() = new JsonModuleRenderer(new Swagger1dot1Json())
 }

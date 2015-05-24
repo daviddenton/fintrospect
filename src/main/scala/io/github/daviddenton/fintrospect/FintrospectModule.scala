@@ -6,7 +6,7 @@ import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.Routing.fromBinding
 import io.github.daviddenton.fintrospect.parameters.Requirement._
-import io.github.daviddenton.fintrospect.renderers.TypedResponseBuilder
+import io.github.daviddenton.fintrospect.renderers.ModuleRenderer
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
@@ -33,16 +33,16 @@ object FintrospectModule {
   /**
    * Create a module using the given base-path and description renderer.
    */
-  def apply(basePath: Path, responseRenderer: TypedResponseBuilder[_]): FintrospectModule = {
-    new FintrospectModule(basePath, responseRenderer, Nil, empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]])
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer[_]): FintrospectModule = {
+    new FintrospectModule(basePath, moduleRenderer, Nil, empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]])
   }
 
-  private case class ValidateParams(route: Route, responseRenderer: TypedResponseBuilder[_]) extends SimpleFilter[HttpRequest, HttpResponse]() {
+  private case class ValidateParams(route: Route, moduleRenderer: ModuleRenderer[_]) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       val paramsAndParseResults = route.describedRoute.params.map(p => (p, p.parseFrom(request)))
       val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => pr._1.requirement == Optional && pr._2.isEmpty)
       val missingOrFailed = withoutMissingOptionalParams.filterNot(pr => pr._2.isDefined && pr._2.get.isSuccess).map(_._1)
-      if (missingOrFailed.isEmpty) service(request) else responseRenderer.BadRequest(missingOrFailed)
+      if (missingOrFailed.isEmpty) service(request) else moduleRenderer.badRequest(missingOrFailed)
     }
   }
 
@@ -58,9 +58,9 @@ object FintrospectModule {
 /**
  * Self-describing module builder (uses the immutable builder pattern).
  */
-class FintrospectModule private(basePath: Path, responseRenderer: TypedResponseBuilder[_], theRoutes: List[Route], private val currentBinding: Binding) {
+class FintrospectModule private(basePath: Path, moduleRenderer: ModuleRenderer[_], theRoutes: List[Route], private val currentBinding: Binding) {
   private def withDefault() = withRoute(DescribedRoute("Description route").at(GET).bindTo(() => {
-    Service.mk((req) => responseRenderer.Description(basePath, theRoutes))
+    Service.mk((req) => moduleRenderer.description(basePath, theRoutes))
   }))
 
   private def totalBinding = withDefault().currentBinding
@@ -69,8 +69,8 @@ class FintrospectModule private(basePath: Path, responseRenderer: TypedResponseB
    * Attach described Route to the module.
    */
   def withRoute(route: Route): FintrospectModule = {
-    new FintrospectModule(basePath, responseRenderer, route :: theRoutes,
-      currentBinding.orElse(route.toPf(basePath)(ValidateParams(route, responseRenderer).andThen(Identify(route, basePath)))))
+    new FintrospectModule(basePath, moduleRenderer, route :: theRoutes,
+      currentBinding.orElse(route.toPf(basePath)(ValidateParams(route, moduleRenderer).andThen(Identify(route, basePath)))))
   }
 
   /**

@@ -38,8 +38,8 @@ class ResponseBuilder[T](toFormat: T => String,
 }
 
 object ResponseBuilder {
-
   implicit def toFuture(builder: ResponseBuilder[_]): Future[HttpResponse] = builder.toFuture
 
   implicit def toFuture(response: HttpResponse): Future[HttpResponse] = Future.value(response)
 }
+
