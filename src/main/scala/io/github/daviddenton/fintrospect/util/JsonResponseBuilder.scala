@@ -7,28 +7,26 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
 
-class JsonResponseBuilder extends ResponseBuilder[JsonRootNode](
-  new PrettyJsonFormatter().format,
-  errorMessage => obj("message" -> string(errorMessage)),
-  throwable => string(Option(throwable.getMessage).getOrElse(throwable.getClass.getName)).asInstanceOf[JsonRootNode],
-  ContentTypes.APPLICATION_JSON)
-
 object JsonResponseBuilder {
 
-  def Response() = apply()
+  private val formatJson: JsonRootNode => String = new PrettyJsonFormatter().format
+  private val formatErrorMessage: String => JsonRootNode = errorMessage => obj("message" -> string(errorMessage))
 
-  def Ok: HttpResponse = apply().withCode(OK).build
+  private def formatError: Throwable => JsonRootNode = throwable => string(Option(throwable.getMessage).getOrElse(throwable.getClass.getName)).asInstanceOf[JsonRootNode]
 
-  def Ok(content: JsonRootNode): HttpResponse = apply().withCode(OK).withContent(content).build
+  def Response(): ResponseBuilder[JsonRootNode] = new ResponseBuilder(formatJson, formatErrorMessage, formatError, ContentTypes.APPLICATION_JSON)
 
-  def Ok(content: String): HttpResponse = apply().withCode(OK).withContent(content).build
+  def Response(code: HttpResponseStatus): ResponseBuilder[JsonRootNode] = Response().withCode(code)
 
-  def Error(status: HttpResponseStatus, content: JsonRootNode): HttpResponse = apply().withCode(status).withContent(content).build
+  def Ok: HttpResponse = Response(OK).build
 
-  def Error(status: HttpResponseStatus, message: String): HttpResponse = apply().withCode(status).withErrorMessage(message).build
+  def Ok(content: JsonRootNode): HttpResponse = Response(OK).withContent(content).build
 
-  def Error(status: HttpResponseStatus, error: Throwable): HttpResponse = apply().withCode(status).withError(error).build
+  def Ok(content: String): HttpResponse = Response(OK).withContent(content).build
 
-  // bin?!?!
-  def apply() = new JsonResponseBuilder()
+  def Error(code: HttpResponseStatus, content: JsonRootNode): HttpResponse = Response(code).withContent(content).build
+
+  def Error(code: HttpResponseStatus, message: String): HttpResponse = Response(code).withErrorMessage(message).build
+
+  def Error(code: HttpResponseStatus, error: Throwable): HttpResponse = Response(code).withError(error).build
 }

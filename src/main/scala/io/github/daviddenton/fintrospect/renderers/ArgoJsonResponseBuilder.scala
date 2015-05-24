@@ -8,7 +8,7 @@ import io.github.daviddenton.fintrospect.util.JsonResponseBuilder
 import scala.language.implicitConversions
 
 class ArgoJsonResponseBuilder(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends TypedResponseBuilder[JsonRootNode](
-  () => new JsonResponseBuilder,
+  JsonResponseBuilder.Response,
   descriptionRenderer,
   badParameters => {
     val messages = badParameters.map(p => obj(
