@@ -1,4 +1,4 @@
-package io.github.daviddenton.fintrospect.renderers
+package io.github.daviddenton.fintrospect.renderers.util
 
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.scalatest.{FunSpec, ShouldMatchers}

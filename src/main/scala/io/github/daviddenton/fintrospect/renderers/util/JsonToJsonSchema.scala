@@ -1,10 +1,10 @@
-package io.github.daviddenton.fintrospect.renderers
+package io.github.daviddenton.fintrospect.renderers.util
 
 import argo.jdom.JsonNode
 import argo.jdom.JsonNodeFactories.string
 import argo.jdom.JsonNodeType._
 import io.github.daviddenton.fintrospect.parameters._
-import io.github.daviddenton.fintrospect.renderers.JsonToJsonSchema.IllegalSchemaException
+import io.github.daviddenton.fintrospect.renderers.util.JsonToJsonSchema.IllegalSchemaException
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode
 

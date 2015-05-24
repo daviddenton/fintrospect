@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await
-import io.github.daviddenton.fintrospect.renderers.SimpleJson
+import io.github.daviddenton.fintrospect.renderers.simplejson.SimpleJson
 import io.github.daviddenton.fintrospect.{FintrospectModule, Route}
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 

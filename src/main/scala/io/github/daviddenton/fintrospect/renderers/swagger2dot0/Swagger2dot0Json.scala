@@ -1,9 +1,11 @@
-package io.github.daviddenton.fintrospect.renderers
+package io.github.daviddenton.fintrospect.renderers.swagger2dot0
 
 import argo.jdom.{JsonNode, JsonRootNode}
 import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Parameter, Requirement}
+import io.github.daviddenton.fintrospect.renderers.util.{Schema, JsonToJsonSchema}
+import io.github.daviddenton.fintrospect.renderers.JsonModuleRenderer
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 class Swagger2dot0Json private(apiInfo: ApiInfo) extends DescriptionRenderer[JsonRootNode] {
