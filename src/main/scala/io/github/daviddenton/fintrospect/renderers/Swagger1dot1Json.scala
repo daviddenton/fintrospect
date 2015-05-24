@@ -8,7 +8,7 @@ import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 import scala.collection.JavaConversions._
 
-class Swagger1dot1Json private() extends Renderer[JsonRootNode] {
+class Swagger1dot1Json private() extends DescriptionRenderer[JsonRootNode] {
 
   private def render(requirementAndParameter: (Requirement, Parameter[_])): JsonNode = obj(
     "name" -> string(requirementAndParameter._2.name),
@@ -43,5 +43,5 @@ class Swagger1dot1Json private() extends Renderer[JsonRootNode] {
  * Renderer that provides basic Swagger v1.1 support. No support for bodies or schemas.
  */
 object Swagger1dot1Json {
-  def apply(): Renderer[JsonRootNode] = new Swagger1dot1Json()
+  def apply(): DescriptionRenderer[JsonRootNode] = new Swagger1dot1Json()
 }

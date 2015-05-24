@@ -18,10 +18,10 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.io.Source
 
-abstract class JsonRendererTest() extends FunSpec with ShouldMatchers {
+abstract class JsonDescriptionRendererTest() extends FunSpec with ShouldMatchers {
   def name: String
 
-  def renderer: Renderer[JsonRootNode]
+  def renderer: DescriptionRenderer[JsonRootNode]
 
   describe(name) {
     it("renders as expected") {
