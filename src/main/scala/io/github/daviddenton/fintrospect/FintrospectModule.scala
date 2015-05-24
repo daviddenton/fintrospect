@@ -10,9 +10,9 @@ import io.github.daviddenton.fintrospect.renderers.TypedResponseBuilder
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
-import scala.language.existentials
 
 import scala.PartialFunction._
+import scala.language.existentials
 
 object FintrospectModule {
 

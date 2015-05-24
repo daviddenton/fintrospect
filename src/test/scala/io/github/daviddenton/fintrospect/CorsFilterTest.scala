@@ -5,13 +5,10 @@ import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.io.Charsets
 import com.twitter.util.{Await, Duration}
-import io.github.daviddenton.fintrospect.util.JsonResponseBuilder
 import io.github.daviddenton.fintrospect.util.JsonResponseBuilder.{Error, Ok}
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FlatSpec, MustMatchers}
-
-import scala.Error
 
 class CorsFilterTest extends FlatSpec with MustMatchers {
   val TRAP = new HttpMethod("TRAP")

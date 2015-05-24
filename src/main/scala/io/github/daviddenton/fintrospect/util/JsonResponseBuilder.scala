@@ -4,8 +4,8 @@ import argo.format.PrettyJsonFormatter
 import argo.jdom.JsonRootNode
 import io.github.daviddenton.fintrospect.ContentTypes
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import org.jboss.netty.handler.codec.http.{HttpResponseStatus, HttpResponse}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
+import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
 
 class JsonResponseBuilder extends ResponseBuilder[JsonRootNode](
   new PrettyJsonFormatter().format,
