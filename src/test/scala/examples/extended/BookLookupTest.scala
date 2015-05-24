@@ -1,4 +1,4 @@
-package examples
+package examples.extended
 
 import com.twitter.finagle.http.Request
 import com.twitter.io.Charsets

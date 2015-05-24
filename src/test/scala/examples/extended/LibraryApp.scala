@@ -1,12 +1,10 @@
-package examples
+package examples.extended
 
-import argo.jdom.JsonRootNode
 import com.twitter.finagle.Http
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.renderers.simplejson.SimpleJson
-import io.github.daviddenton.fintrospect.renderers.ModuleRenderer
 import io.github.daviddenton.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 
 /**
@@ -17,7 +15,7 @@ import io.github.daviddenton.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 object LibraryApp extends App {
 
   private val apiInfo = ApiInfo("Library Example", "1.0", Some("A simple example of how to construct a Fintrospect module"))
-  private val renderer: ModuleRenderer[JsonRootNode] = Swagger2dot0Json(apiInfo) // choose your renderer implementation
+  private val renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
 
   private val books = new Books()
 

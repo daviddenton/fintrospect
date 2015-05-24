@@ -5,7 +5,7 @@ import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Parameter, Requirement}
 import io.github.daviddenton.fintrospect.renderers.util.{Schema, JsonToJsonSchema}
-import io.github.daviddenton.fintrospect.renderers.JsonModuleRenderer
+import io.github.daviddenton.fintrospect.renderers.{ModuleRenderer, JsonModuleRenderer}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
 class Swagger2dot0Json private(apiInfo: ApiInfo) extends DescriptionRenderer[JsonRootNode] {
@@ -91,6 +91,6 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends DescriptionRenderer[Jso
  * Renderer that provides Swagger v2.0 support
  */
 object Swagger2dot0Json {
-  def apply(apiInfo: ApiInfo) = new JsonModuleRenderer(new Swagger2dot0Json(apiInfo))
+  def apply(apiInfo: ApiInfo): ModuleRenderer[JsonRootNode] = new JsonModuleRenderer(new Swagger2dot0Json(apiInfo))
 }
 
