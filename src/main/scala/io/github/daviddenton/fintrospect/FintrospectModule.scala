@@ -7,9 +7,10 @@ import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.Routing.fromBinding
 import io.github.daviddenton.fintrospect.parameters.Requirement._
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
-import io.github.daviddenton.fintrospect.util.{ResponseBuilder, TypedResponseBuilder}
+import io.github.daviddenton.fintrospect.util.TypedResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
+import scala.language.existentials
 
 import scala.PartialFunction._
 
@@ -22,7 +23,7 @@ object FintrospectModule {
   /**
    * Combines many modules
    */
-  def combine(modules: FintrospectModule[_]*): Binding = modules.map(_.totalBinding).reduce(_.orElse(_))
+  def combine(modules: FintrospectModule*): Binding = modules.map(_.totalBinding).reduce(_.orElse(_))
 
   /**
    * Convert a Binding to a Finagle Service
@@ -32,11 +33,11 @@ object FintrospectModule {
   /**
    * Create a module using the given base-path and description renderer.
    */
-  def apply[T](basePath: Path, descRenderer: DescriptionRenderer[T], responseRenderer: TypedResponseBuilder[T] = ResponseBuilder.Json): FintrospectModule[T] = {
-    new FintrospectModule[T](basePath, descRenderer, responseRenderer, Nil, empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]])
+  def apply(basePath: Path, responseRenderer: TypedResponseBuilder[_]): FintrospectModule = {
+    new FintrospectModule(basePath, responseRenderer, Nil, empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]])
   }
 
-  private case class ValidateParams[T](route: Route, responseRenderer: TypedResponseBuilder[T]) extends SimpleFilter[HttpRequest, HttpResponse]() {
+  private case class ValidateParams(route: Route, responseRenderer: TypedResponseBuilder[_]) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       val paramsAndParseResults = route.describedRoute.params.map(p => (p, p.parseFrom(request)))
       val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => pr._1.requirement == Optional && pr._2.isEmpty)
@@ -57,9 +58,9 @@ object FintrospectModule {
 /**
  * Self-describing module builder (uses the immutable builder pattern).
  */
-class FintrospectModule[T] private(basePath: Path, descRenderer: DescriptionRenderer[T], responseRenderer: TypedResponseBuilder[T], theRoutes: List[Route], private val currentBinding: Binding) {
+class FintrospectModule private(basePath: Path, responseRenderer: TypedResponseBuilder[_], theRoutes: List[Route], private val currentBinding: Binding) {
   private def withDefault() = withRoute(DescribedRoute("Description route").at(GET).bindTo(() => {
-    Service.mk((req) => responseRenderer.Ok(descRenderer(basePath, theRoutes)))
+    Service.mk((req) => responseRenderer.Description(basePath, theRoutes))
   }))
 
   private def totalBinding = withDefault().currentBinding
@@ -67,15 +68,15 @@ class FintrospectModule[T] private(basePath: Path, descRenderer: DescriptionRend
   /**
    * Attach described Route to the module.
    */
-  def withRoute(route: Route): FintrospectModule[T] = {
-    new FintrospectModule(basePath, descRenderer, responseRenderer, route :: theRoutes,
+  def withRoute(route: Route): FintrospectModule = {
+    new FintrospectModule(basePath, responseRenderer, route :: theRoutes,
       currentBinding.orElse(route.toPf(basePath)(ValidateParams(route, responseRenderer).andThen(Identify(route, basePath)))))
   }
 
   /**
    * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
    */
-  def combine(that: FintrospectModule[_]): Binding = totalBinding.orElse(that.totalBinding)
+  def combine(that: FintrospectModule): Binding = totalBinding.orElse(that.totalBinding)
 
   /**
    * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.

@@ -1,10 +1,10 @@
 package io.github.daviddenton.fintrospect
 
+import com.twitter.finagle.http.Response
 import com.twitter.finagle.http.filter.Cors.Policy
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
-import io.github.daviddenton.fintrospect.util.ResponseBuilder.Json
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
+import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 
 /**
  * This implementation is portef from the Finagle version, in order to add support for the Request type used by
@@ -83,7 +83,7 @@ class CorsFilter(policy: Policy) extends Filter[HttpRequest, HttpResponse, HttpR
         val headers = getHeaders(request)
         policy.allowsMethods(method) flatMap { allowedMethods =>
           policy.allowsHeaders(headers) map { allowedHeaders =>
-            setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Json.Ok, origin)), allowedMethods), allowedHeaders)
+            setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Response(HttpResponseStatus.OK), origin)), allowedMethods), allowedHeaders)
           }
         }
       }
@@ -92,7 +92,7 @@ class CorsFilter(policy: Policy) extends Filter[HttpRequest, HttpResponse, HttpR
   def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
     val response = request match {
       case Preflight() => Future {
-        handlePreflight(request) getOrElse Json.Ok
+        handlePreflight(request) getOrElse Response(HttpResponseStatus.OK)
       }
       case _ => service(request) map {
         handleSimple(request, _)

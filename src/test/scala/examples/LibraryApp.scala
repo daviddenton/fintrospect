@@ -6,6 +6,7 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.renderers.{SimpleJson, Swagger2dot0Json}
+import io.github.daviddenton.fintrospect.util.TypedResponseBuilder
 
 /**
  * This example shows the intended method for implementing a simple app using Fintrospect routes and modules, using
@@ -15,7 +16,7 @@ import io.github.daviddenton.fintrospect.renderers.{SimpleJson, Swagger2dot0Json
 object LibraryApp extends App {
 
   private val apiInfo = ApiInfo("Library Example", "1.0", Some("A simple example of how to construct a Fintrospect module"))
-  private val renderer: DescriptionRenderer[JsonRootNode] = Swagger2dot0Json(apiInfo) // choose your renderer implementation
+  private val renderer: TypedResponseBuilder[JsonRootNode] = Swagger2dot0Json(apiInfo) // choose your renderer implementation
 
   private val books = new Books()
 

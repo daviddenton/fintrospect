@@ -4,9 +4,13 @@ import argo.jdom.{JsonNode, JsonRootNode}
 import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Parameter, Requirement}
+import io.github.daviddenton.fintrospect.util.ArgoJsonResponseBuilder
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 
-class Swagger2dot0Json private(apiInfo: ApiInfo) extends DescriptionRenderer[JsonRootNode] {
+/**
+ * Renderer that provides Swagger v2.0 support
+ */
+object Swagger2dot0Json {
 
   private val schemaGenerator = new JsonToJsonSchema()
 
@@ -65,29 +69,25 @@ class Swagger2dot0Json private(apiInfo: ApiInfo) extends DescriptionRenderer[Jso
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
   }
 
-  def apply(basePath: Path, routes: Seq[Route]): JsonRootNode = {
-    val pathsAndDefinitions = routes
-      .groupBy(_.describeFor(basePath))
-      .foldLeft(FieldsAndDefinitions()) {
-      case (memo, (path, routesForThisPath)) =>
-        val routeFieldsAndDefinitions = routesForThisPath.foldLeft(FieldsAndDefinitions()) {
-          case (memoFields, route) => memoFields.add(render(basePath, route))
-        }
-        memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
-    }
-    obj(
-      "swagger" -> string("2.0"),
-      "info" -> render(apiInfo),
-      "basePath" -> string("/"),
-      "paths" -> obj(pathsAndDefinitions.fields),
-      "definitions" -> obj(pathsAndDefinitions.definitions)
-    )
+  private def rendererFor(apiInfo: ApiInfo): (Path, Seq[Route]) => JsonRootNode = {
+    (basePath: Path, routes: Seq[Route]) =>
+      val pathsAndDefinitions = routes
+        .groupBy(_.describeFor(basePath))
+        .foldLeft(FieldsAndDefinitions()) {
+        case (memo, (path, routesForThisPath)) =>
+          val routeFieldsAndDefinitions = routesForThisPath.foldLeft(FieldsAndDefinitions()) {
+            case (memoFields, route) => memoFields.add(render(basePath, route))
+          }
+          memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
+      }
+      obj(
+        "swagger" -> string("2.0"),
+        "info" -> render(apiInfo),
+        "basePath" -> string("/"),
+        "paths" -> obj(pathsAndDefinitions.fields),
+        "definitions" -> obj(pathsAndDefinitions.definitions)
+      )
   }
-}
 
-/**
- * Renderer that provides Swagger v2.0 support
- */
-object Swagger2dot0Json {
-  def apply(apiInfo: ApiInfo): DescriptionRenderer[JsonRootNode] = new Swagger2dot0Json(apiInfo)
+  def apply(apiInfo: ApiInfo): ArgoJsonResponseBuilder = new ArgoJsonResponseBuilder(rendererFor(apiInfo))
 }
