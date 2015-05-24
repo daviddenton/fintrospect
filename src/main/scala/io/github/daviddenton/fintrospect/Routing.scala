@@ -3,6 +3,7 @@ package io.github.daviddenton.fintrospect
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.path.Path
 import com.twitter.util.Future
+import io.github.daviddenton.fintrospect.util.JsonResponseBuilder.Error
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
@@ -10,7 +11,7 @@ import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse
 class Routing private(routes: PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]]) extends Service[HttpRequest, HttpResponse] {
   private val notFoundPf: PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]] = {
     case _ => new Service[HttpRequest, HttpResponse] {
-      def apply(request: HttpRequest): Future[HttpResponse] = Json.Error(NOT_FOUND, "No such route")
+      def apply(request: HttpRequest): Future[HttpResponse] = Error(NOT_FOUND, "No such route")
     }
   }
   private val requestToService = routes orElse notFoundPf

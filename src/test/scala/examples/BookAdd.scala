@@ -4,6 +4,8 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Path}
+import io.github.daviddenton.fintrospect.util.JsonResponseBuilder
+import io.github.daviddenton.fintrospect.util.JsonResponseBuilder.Error
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
@@ -11,7 +13,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 class BookAdd(books: Books) {
   private val exampleBook = Book("the title", "the author", 666)
-  private val bookExistsResponse = Json.Error(CONFLICT, "Book with that ISBN exists")
+  private val bookExistsResponse = Error(CONFLICT, "Book with that ISBN exists")
   private val body = Body.json(Some("book content"), exampleBook.toJson)
 
   private def addBook(isbn: String) = new Service[HttpRequest, HttpResponse] {
@@ -21,7 +23,7 @@ class BookAdd(books: Books) {
         case None => {
           val book = Book.unapply(body.from(request)).get
           books.add(isbn, book)
-          Json().withCode(CREATED).withContent(book.toJson)
+          JsonResponseBuilder().withCode(CREATED).withContent(book.toJson)
         }
       }
   }

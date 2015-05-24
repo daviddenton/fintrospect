@@ -6,6 +6,7 @@ import io.github.daviddenton.fintrospect.ContentTypes.APPLICATION_JSON
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Form, Query}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.util.JsonResponseBuilder.Ok
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
@@ -18,7 +19,7 @@ class BookSearch(books: Books) {
 
   private def search() = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
-      Json.Ok(array(books.search(minPages.from(request).getOrElse(Integer.MIN_VALUE), maxPages.from(request).getOrElse(Integer.MAX_VALUE), titleTerm.from(request)).map(_.toJson)))
+      Ok(array(books.search(minPages.from(request).getOrElse(Integer.MIN_VALUE), maxPages.from(request).getOrElse(Integer.MAX_VALUE), titleTerm.from(request)).map(_.toJson)))
     }
   }
 

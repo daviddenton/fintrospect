@@ -5,6 +5,7 @@ import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.ContentTypes._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path
+import io.github.daviddenton.fintrospect.util.JsonResponseBuilder.{Error, Ok}
 import io.github.daviddenton.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
@@ -15,8 +16,8 @@ class BookLookup(books: Books) {
   private def lookupByIsbn(isbn: String) = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] =
       books.lookup(isbn) match {
-        case Some(book) => Json.Ok(book.toJson)
-        case _ => Json.Error(NOT_FOUND, "No book found with isbn")
+        case Some(book) => Ok(book.toJson)
+        case _ => Error(NOT_FOUND, "No book found with isbn")
       }
   }
 

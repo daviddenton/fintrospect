@@ -1,7 +1,6 @@
 package io.github.daviddenton.fintrospect.renderers
 
 import _root_.util.Echo
-import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.path.Root
 import com.twitter.io.Charsets._
@@ -10,8 +9,8 @@ import io.github.daviddenton.fintrospect.ContentTypes._
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.Path._
 import io.github.daviddenton.fintrospect.parameters._
-import io.github.daviddenton.fintrospect.util.ArgoUtil
 import io.github.daviddenton.fintrospect.util.ArgoUtil.{number, obj, parse}
+import io.github.daviddenton.fintrospect.util.{ArgoJsonResponseBuilder, ArgoUtil}
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -19,9 +18,9 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 import scala.io.Source
 
 abstract class JsonDescriptionRendererTest() extends FunSpec with ShouldMatchers {
-  def name: String
+  def name: String = this.getClass.getSimpleName
 
-  def renderer: DescriptionRenderer[JsonRootNode]
+  def renderer: ArgoJsonResponseBuilder
 
   describe(name) {
     it("renders as expected") {
@@ -47,7 +46,7 @@ abstract class JsonDescriptionRendererTest() extends FunSpec with ShouldMatchers
             .taking(Form.required.int("form", "description of the form"))
             .at(GET) / "welcome" / string("firstName") / fixed("bertrand") / string("secondName") bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
 
-      val expected = parse(Source.fromInputStream(renderer.getClass.getResourceAsStream(s"$name.json")).mkString)
+      val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
       val actual = Await.result(module.toService(Request("/basepath"))).getContent.toString(Utf8)
 //            println(actual)
       parse(actual) shouldEqual expected
