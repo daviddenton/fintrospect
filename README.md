@@ -70,4 +70,4 @@ The auto-generated documenation lives at the root of the module, so point the Sw
 Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you can mix into your tests in order to validate your routes.
 
 ###Upgrading?
-See the [Release Notes/Migration Guide](https://github.com/daviddenton/fintrospect/RELEASE.md)
+See the [Release Notes/Migration Guide](https://github.com/daviddenton/fintrospect/blob/master/RELEASE.md)
