@@ -11,7 +11,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Added ability to apply filters to all custom routes in a module (apart from the description route, which is NOT affected)
 
 #####v2.X -> v3.X
-˚
+
 Migrated away from the in-built Twitter HTTP Request package (```com.twitter.finagle.http```) and onto the Netty ```
 org.jboss.netty.handler.codec.http.HttpRequest```. This is to provide compatibility with the changes to the Finagle APIs in regards
 to creating both servers and clients. It also has the advantage of unifying the client/server interface (previously it
