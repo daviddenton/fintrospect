@@ -3,14 +3,15 @@ package io.github.daviddenton.fintrospect.renderers
 import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect.parameters.RequestParameter
 import io.github.daviddenton.fintrospect.util.ResponseBuilder
-import io.github.daviddenton.fintrospect.{DescriptionRenderer, Route}
+import io.github.daviddenton.fintrospect.Route
 import org.jboss.netty.handler.codec.http.HttpResponse
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
 import scala.language.implicitConversions
 
 /**
- * This is used by the FintrospectModule to render the various standard responses (bad request/the description route)
+ * This is used by the FintrospectModule to render the various standard responses (bad request/the description route).
+ * Provide one of these to implement a custom format for module responses.
  * @param newBuilder function to supply a new response builder
  * @param descriptionRenderer converts the module routes into a format which can be rendered
  * @param badParametersRenderer in the case of invalid or missing parameters to a route, renders the error response

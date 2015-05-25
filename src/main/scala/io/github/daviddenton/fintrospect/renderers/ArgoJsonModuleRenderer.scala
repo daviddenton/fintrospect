@@ -1,17 +1,16 @@
 package io.github.daviddenton.fintrospect.renderers
 
 import argo.jdom.JsonRootNode
-import io.github.daviddenton.fintrospect.DescriptionRenderer
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
 import io.github.daviddenton.fintrospect.util.JsonResponseBuilder
 
 import scala.language.implicitConversions
 
 /**
- * Module rendering providing an Argo JSON format
+ * ModuleRenderer providing Argo JSON format
  * @param descriptionRenderer converts the module routes into a format which can be rendered
  */
-class JsonModuleRenderer(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends ModuleRenderer[JsonRootNode](
+class ArgoJsonModuleRenderer(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends ModuleRenderer[JsonRootNode](
   JsonResponseBuilder.Response,
   descriptionRenderer,
   badParameters => {

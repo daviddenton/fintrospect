@@ -1,6 +1,7 @@
-package io.github.daviddenton.fintrospect
+package io.github.daviddenton.fintrospect.renderers
 
 import com.twitter.finagle.http.path.Path
+import io.github.daviddenton.fintrospect.Route
 
 /**
  * Contract trait for the pluggable Renderers (Swagger etc..)
