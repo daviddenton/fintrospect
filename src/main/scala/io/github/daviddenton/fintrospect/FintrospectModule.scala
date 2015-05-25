@@ -1,7 +1,7 @@
 package io.github.daviddenton.fintrospect
 
 import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.{Service, SimpleFilter}
+import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.github.daviddenton.fintrospect.FintrospectModule._
 import io.github.daviddenton.fintrospect.Routing.fromBinding
@@ -18,6 +18,7 @@ object FintrospectModule {
 
   private type Binding = PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]
 
+  private type TFilter = Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]
   val IDENTIFY_SVC_HEADER = "X-Fintrospect-Route-Name"
 
   /**
@@ -53,6 +54,7 @@ object FintrospectModule {
       service(request)
     }
   }
+
 }
 
 /**
@@ -69,8 +71,13 @@ class FintrospectModule private(basePath: Path, moduleRenderer: ModuleRenderer[_
    * Attach described Route to the module.
    */
   def withRoute(route: Route): FintrospectModule = {
-    new FintrospectModule(basePath, moduleRenderer, route :: theRoutes,
-      currentBinding.orElse(route.toPf(basePath)(ValidateParams(route, moduleRenderer).andThen(Identify(route, basePath)))))
+    val filter = compositeFilterFor(route)
+    new FintrospectModule(basePath, moduleRenderer, route :: theRoutes, currentBinding.orElse(route.toPf(basePath)(filter)))
+  }
+
+  def compositeFilterFor(route: Route): TFilter = {
+    val filtersToApply = ValidateParams(route, moduleRenderer) :: Identify(route, basePath) :: List[TFilter]()
+    filtersToApply.reduce(_.andThen(_))
   }
 
   /**
