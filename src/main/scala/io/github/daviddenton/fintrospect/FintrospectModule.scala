@@ -76,7 +76,7 @@ class FintrospectModule private(basePath: Path, moduleRenderer: ModuleRenderer[_
   }
 
   def compositeFilterFor(route: Route): TFilter = {
-    val filtersToApply = ValidateParams(route, moduleRenderer) :: Identify(route, basePath) :: List[TFilter]()
+    val filtersToApply = Identify(route, basePath) :: ValidateParams(route, moduleRenderer) :: List[TFilter]()
     filtersToApply.reduce(_.andThen(_))
   }
 
