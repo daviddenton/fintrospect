@@ -7,6 +7,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Addition of custom response rendering formats. See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
   Modules now require a fully configured ```ModuleRenderer``` upon instantiation, which provides not just the rendering of the Documentation (ie. the old ```Renderer``` which is now ```DescriptionRenderer```), but also the format of error messages. Some repackaging of the pluggable renderers has occurred.
 - ```ResponseBuilder``` is now generic superclass of pluggable formats. Json support has moved to ```JsonResponseBuilder```, so changes to your code will be required to support this.
+- Renamed Identification Header to ```X-Fintrospect-Route-Name```
 
 #####v2.X -> v3.X
 
