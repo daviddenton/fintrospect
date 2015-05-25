@@ -18,7 +18,7 @@ import scala.language.implicitConversions
  * @tparam T the configured module renderer
  */
 class ModuleRenderer[T](newBuilder: () => ResponseBuilder[T],
-                        descriptionRenderer: DescriptionRenderer[T],
+                        descriptionRenderer: DescriptionRenderer[String],
                         badParametersRenderer: List[RequestParameter[_]] => T) {
   def badRequest(badParameters: List[RequestParameter[_]]): HttpResponse = newBuilder().withCode(BAD_REQUEST).withContent(badParametersRenderer(badParameters)).build
 
