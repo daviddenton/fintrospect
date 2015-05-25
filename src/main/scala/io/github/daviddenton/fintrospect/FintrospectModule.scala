@@ -34,11 +34,7 @@ object FintrospectModule {
   /**
    * Create a module using the given base-path, renderer.
    */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer[_]): FintrospectModule = {
-    new FintrospectModule(basePath, moduleRenderer, Nil, new SimpleFilter[HttpRequest, HttpResponse] {
-      override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = service(request)
-    })
-  }
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer[_]): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, Nil, Filter.mk((in, svc) => svc(in)))
 
   /**
    * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to this module).
