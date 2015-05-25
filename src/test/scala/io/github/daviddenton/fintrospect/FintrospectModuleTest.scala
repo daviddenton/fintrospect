@@ -52,15 +52,15 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     describe("can combine more than 2 modules") {
       it("can get to all routes") {
         def module(path: String) = {
-          FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) bindTo (() => new Service[HttpRequest, HttpResponse] {
+          FintrospectModule(Root / path, SimpleJson()).withRoute(DescribedRoute("").at(GET) / "echo" bindTo (() => new Service[HttpRequest, HttpResponse] {
             def apply(request: HttpRequest): Future[HttpResponse] = Ok(path)
           }))
         }
         val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))
 
-        Await.result(totalService.apply(FRq("/rita"))).getContent.toString(Utf8) shouldEqual "rita"
-        Await.result(totalService.apply(FRq("/bob"))).getContent.toString(Utf8) shouldEqual "bob"
-        Await.result(totalService.apply(FRq("/sue"))).getContent.toString(Utf8) shouldEqual "sue"
+        Await.result(totalService.apply(FRq("/rita/echo"))).getContent.toString(Utf8) shouldEqual "rita"
+        Await.result(totalService.apply(FRq("/bob/echo"))).getContent.toString(Utf8) shouldEqual "bob"
+        Await.result(totalService.apply(FRq("/sue/echo"))).getContent.toString(Utf8) shouldEqual "sue"
       }
     }
 
