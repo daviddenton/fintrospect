@@ -8,11 +8,11 @@ import scala.language.implicitConversions
 
 /**
  * ModuleRenderer providing Argo JSON format
- * @param descriptionRenderer converts the module routes into a format which can be rendered
+ * @param descriptionRenderer converts the module routes into JSON format which can be rendered
  */
 class ArgoJsonModuleRenderer(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends ModuleRenderer[JsonRootNode](
   JsonResponseBuilder.Response,
-  descriptionRenderer,
+  new ArgoToStringDescriptionRenderer(descriptionRenderer),
   badParameters => {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),
@@ -23,3 +23,5 @@ class ArgoJsonModuleRenderer(descriptionRenderer: DescriptionRenderer[JsonRootNo
 
     obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages))
   })
+
+
