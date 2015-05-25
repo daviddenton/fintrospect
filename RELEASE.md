@@ -1,7 +1,8 @@
 Release Notes/Migration Guide
 -----------------------------
 
-v2.X -> v3.X
+#####v2.X -> v3.X
+
 Migrated away from the in-built Twitter HTTP Request package (com.twitter.finagle.http) and onto the Netty HttpRequest
 (org.jboss.netty.handler.codec.http). This is to provide compatibility with the changes to the Finagle APIs in regards
 to creating both servers and clients. It also has the advantage of unifying the client/server interface (previously it
