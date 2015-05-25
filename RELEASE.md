@@ -1,6 +1,6 @@
 Release Notes/Migration Guide
 -----------------------------
-The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added. 
+The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
 #####v3.X -> v4.X
 
@@ -8,9 +8,10 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
   Modules now require a fully configured ```ModuleRenderer``` upon instantiation, which provides not just the rendering of the Documentation (ie. the old ```Renderer``` which is now ```DescriptionRenderer```), but also the format of error messages. Some repackaging of the pluggable renderers has occurred.
 - ```ResponseBuilder``` is now generic superclass of pluggable formats. Json support has moved to ```JsonResponseBuilder```, so changes to your code will be required to support this.
 - Renamed Identification Header to ```X-Fintrospect-Route-Name```
+- Added ability to apply filters to all custom routes in a module (apart from the description route, which is NOT affected)
 
 #####v2.X -> v3.X
-
+˚
 Migrated away from the in-built Twitter HTTP Request package (```com.twitter.finagle.http```) and onto the Netty ```
 org.jboss.netty.handler.codec.http.HttpRequest```. This is to provide compatibility with the changes to the Finagle APIs in regards
 to creating both servers and clients. It also has the advantage of unifying the client/server interface (previously it
