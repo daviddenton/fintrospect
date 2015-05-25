@@ -1,8 +1,8 @@
 package examples.customformats
 
 import com.twitter.finagle.http.path.Path
-import io.github.daviddenton.fintrospect.renderers.ModuleRenderer
-import io.github.daviddenton.fintrospect.{DescriptionRenderer, Route}
+import io.github.daviddenton.fintrospect.renderers.{DescriptionRenderer, ModuleRenderer}
+import io.github.daviddenton.fintrospect.Route
 
 class Xml private() extends DescriptionRenderer[XmlFormat] {
   private def renderRoute(basePath: Path, route: Route): XmlFormat = XmlFormat( s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")

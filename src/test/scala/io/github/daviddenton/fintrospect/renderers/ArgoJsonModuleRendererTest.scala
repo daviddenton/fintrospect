@@ -18,7 +18,7 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.io.Source
 
-abstract class JsonModuleRendererTest() extends FunSpec with ShouldMatchers {
+abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers {
   def name: String = this.getClass.getSimpleName
 
   def renderer: ModuleRenderer[JsonRootNode]
