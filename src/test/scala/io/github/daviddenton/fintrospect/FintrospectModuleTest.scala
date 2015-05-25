@@ -1,6 +1,6 @@
 package io.github.daviddenton.fintrospect
 
-import com.twitter.finagle.Service
+import com.twitter.finagle.{Filter, Service}
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.Request
 import com.twitter.io.Charsets._
@@ -68,6 +68,22 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       it("returns a 404") {
         val result = Await.result(FintrospectModule(Root, SimpleJson()).toService.apply(Request("/svc/noSuchRoute")))
         result.getStatus shouldEqual HttpResponseStatus.NOT_FOUND
+      }
+    }
+
+    describe("filters") {
+      val module = FintrospectModule(Root, SimpleJson(), Filter.mk((in, svc) => {
+        svc(in).flatMap(resp => {
+          resp.headers().add("MYHEADER", "BOB")
+          resp
+        }) }))
+        .withRoute(DescribedRoute("").at(GET) / "svc" bindTo (() => AService(Seq())))
+
+      it("applies to routes in module") {
+        Await.result(module.toService.apply(Request("/svc"))).headers().get("MYHEADER") shouldEqual "BOB"
+      }
+      it("does not apply to  headers to all routes in module") {
+        Await.result(module.toService.apply(Request("/"))).headers().contains("MYHEADER") shouldEqual false
       }
     }
 
