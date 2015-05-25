@@ -35,7 +35,7 @@ object FintrospectModule {
    * Create a module using the given base-path and description renderer.
    */
   def apply(basePath: Path, moduleRenderer: ModuleRenderer[_]): FintrospectModule = {
-    new FintrospectModule(basePath, moduleRenderer, Nil, empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]])
+    new FintrospectModule(basePath, moduleRenderer, Nil)
   }
 
   private case class ValidateParams(route: Route, moduleRenderer: ModuleRenderer[_]) extends SimpleFilter[HttpRequest, HttpResponse]() {
@@ -60,24 +60,24 @@ object FintrospectModule {
 /**
  * Self-describing module builder (uses the immutable builder pattern).
  */
-class FintrospectModule private(basePath: Path, moduleRenderer: ModuleRenderer[_], theRoutes: List[Route], private val currentBinding: Binding) {
+class FintrospectModule private(basePath: Path, moduleRenderer: ModuleRenderer[_], private val routes: List[Route]) {
   private def withDefault() = withRoute(DescribedRoute("Description route").at(GET).bindTo(() => {
-    Service.mk((req) => moduleRenderer.description(basePath, theRoutes))
+    Service.mk((req) => moduleRenderer.description(basePath, routes))
   }))
 
-  private def totalBinding = withDefault().currentBinding
+  private def totalBinding = {
+    withDefault().routes.foldLeft(empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]) {
+      (currentBinding, route) =>
+        val filters = Identify(route, basePath) :: ValidateParams(route, moduleRenderer) :: List[TFilter]()
+        currentBinding.orElse(route.toPf(basePath)(filters.reduce(_.andThen(_))))
+    }
+  }
 
   /**
    * Attach described Route to the module.
    */
   def withRoute(route: Route): FintrospectModule = {
-    val filter = compositeFilterFor(route)
-    new FintrospectModule(basePath, moduleRenderer, route :: theRoutes, currentBinding.orElse(route.toPf(basePath)(filter)))
-  }
-
-  def compositeFilterFor(route: Route): TFilter = {
-    val filtersToApply = Identify(route, basePath) :: ValidateParams(route, moduleRenderer) :: List[TFilter]()
-    filtersToApply.reduce(_.andThen(_))
+    new FintrospectModule(basePath, moduleRenderer, route :: routes)
   }
 
   /**
