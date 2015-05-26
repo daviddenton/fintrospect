@@ -11,7 +11,7 @@ object JsonResponseBuilder extends ResponseBuilderObject[JsonRootNode] {
 
   private def formatErrorMessage(errorMessage: String): JsonRootNode = obj("message" -> string(errorMessage))
 
-  private def formatError(throwable: Throwable): JsonRootNode = string(Option(throwable.getMessage).getOrElse(throwable.getClass.getName)).asInstanceOf[JsonRootNode]
+  private def formatError(throwable: Throwable): JsonRootNode = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 
   override def Response() = new ResponseBuilder[JsonRootNode](formatJson, formatErrorMessage, formatError, ContentTypes.APPLICATION_JSON)
 }
