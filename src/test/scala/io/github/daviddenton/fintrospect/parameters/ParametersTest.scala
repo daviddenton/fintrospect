@@ -1,6 +1,7 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import org.joda.time.{DateTime, LocalDate}
+import java.time.{LocalDateTime, LocalDate}
+
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.language.{higherKinds, implicitConversions}
@@ -93,7 +94,7 @@ abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) e
 
   describe("dateTime") {
     it("retrieves a valid value") {
-      from(parameters.dateTime, Some("1970-01-01T00:00:00+00:00")) shouldEqual Some(new DateTime(0))
+      from(parameters.dateTime, Some("1970-01-01T00:00:00")) shouldEqual Some(LocalDateTime.of(1970, 1, 1, 0, 0, 0))
     }
 
     it("does not retrieve an invalid value") {
@@ -105,9 +106,23 @@ abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) e
     }
   }
 
+  describe("zonedDateTime") {
+    it("retrieves a valid value") {
+      from(parameters.zonedDateTime, Some("1970-01-01T00:00:00-01:00")).map(_.toEpochSecond) shouldEqual Some(3600)
+    }
+
+    it("does not retrieve an invalid value") {
+      from(parameters.zonedDateTime, Some("notADateTime")) shouldEqual None
+    }
+
+    it("does not retrieve an null dateTime value") {
+      from(parameters.zonedDateTime, None) shouldEqual None
+    }
+  }
+
   describe("date") {
     it("retrieves a valid value") {
-      from(parameters.localDate, Some("1970-01-01")) shouldEqual Some(new LocalDate(1970, 1, 1))
+      from(parameters.localDate, Some("1970-01-01")) shouldEqual Some(LocalDate.of(1970, 1, 1))
     }
 
     it("does not retrieve an invalid value") {
