@@ -10,9 +10,9 @@ import scala.language.implicitConversions
  * ModuleRenderer providing Argo JSON format
  * @param descriptionRenderer converts the module routes into JSON format which can be rendered
  */
-class ArgoJsonModuleRenderer(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends ModuleRenderer[JsonRootNode](
+class ArgoJsonModuleRenderer(descriptionRenderer: DescriptionRenderer) extends ModuleRenderer[JsonRootNode](
   JsonResponseBuilder.Response,
-  new ArgoToHttpResponseDescriptionRenderer(descriptionRenderer),
+  descriptionRenderer,
   badParameters => {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),

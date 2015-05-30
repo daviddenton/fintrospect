@@ -1,17 +1,19 @@
 package io.github.daviddenton.fintrospect.renderers.swagger2dot0
 
-import argo.jdom.{JsonNode, JsonRootNode}
+import argo.jdom.JsonNode
 import com.twitter.finagle.http.path.Path
 import io.github.daviddenton.fintrospect._
 import io.github.daviddenton.fintrospect.parameters.{Body, Parameter, Requirement}
 import io.github.daviddenton.fintrospect.renderers.DescriptionRenderer
 import io.github.daviddenton.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.github.daviddenton.fintrospect.util.JsonResponseBuilder._
+import org.jboss.netty.handler.codec.http.HttpResponse
 
 /**
  * DescriptionRenderer that provides fairly comprehensive Swagger v2.0 support in Argo JSON format
  */
-class Swagger2dot0DescriptionRenderer(apiInfo: ApiInfo) extends DescriptionRenderer[JsonRootNode] {
+class Swagger2dot0DescriptionRenderer(apiInfo: ApiInfo) extends DescriptionRenderer {
 
   private val schemaGenerator = new JsonToJsonSchema()
 
@@ -70,7 +72,7 @@ class Swagger2dot0DescriptionRenderer(apiInfo: ApiInfo) extends DescriptionRende
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
   }
 
-  def apply(basePath: Path, routes: Seq[Route]): JsonRootNode = {
+  def apply(basePath: Path, routes: Seq[Route]): HttpResponse = {
     val pathsAndDefinitions = routes
       .groupBy(_.describeFor(basePath))
       .foldLeft(FieldsAndDefinitions()) {
@@ -80,12 +82,12 @@ class Swagger2dot0DescriptionRenderer(apiInfo: ApiInfo) extends DescriptionRende
         }
         memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
     }
-    obj(
+    Ok(obj(
       "swagger" -> string("2.0"),
       "info" -> render(apiInfo),
       "basePath" -> string("/"),
       "paths" -> obj(pathsAndDefinitions.fields),
       "definitions" -> obj(pathsAndDefinitions.definitions)
-    )
+    ))
   }
 }
