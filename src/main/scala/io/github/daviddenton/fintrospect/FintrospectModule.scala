@@ -34,13 +34,13 @@ object FintrospectModule {
   /**
    * Create a module using the given base-path, renderer.
    */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer[_]): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, Nil, Filter.mk((in, svc) => svc(in)))
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer[_]): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, identity, Nil, Filter.mk((in, svc) => svc(in)))
 
   /**
    * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to this module).
    */
   def apply(basePath: Path, moduleRenderer: ModuleRenderer[_], moduleFilter: Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]): FintrospectModule = {
-    new FintrospectModule(basePath, moduleRenderer, Nil, moduleFilter)
+    new FintrospectModule(basePath, moduleRenderer, identity, Nil, moduleFilter)
   }
 
   private case class ValidateParams(route: Route, moduleRenderer: ModuleRenderer[_]) extends SimpleFilter[HttpRequest, HttpResponse]() {
@@ -67,6 +67,7 @@ object FintrospectModule {
  */
 class FintrospectModule private(basePath: Path,
                                 moduleRenderer: ModuleRenderer[_],
+                                descriptionRoutePath: Path => Path,
                                 routes: List[Route],
                                 moduleFilter: Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]) {
   private def totalBinding = {
@@ -77,8 +78,12 @@ class FintrospectModule private(basePath: Path,
     })
   }
 
+  def withDescriptionPath(newDefaultRoutePath: Path => Path): FintrospectModule = {
+    new FintrospectModule(basePath, moduleRenderer, newDefaultRoutePath, routes, moduleFilter)
+  }
+
   private def withDefault(otherRoutes: PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]) = {
-    val descriptionRoute = DescribedRoute("Description route").at(GET).bindTo(() => {
+    val descriptionRoute = IncompletePath0(DescribedRoute("Description route"), GET, descriptionRoutePath).bindTo(() => {
       Service.mk((req) => moduleRenderer.description(basePath, routes))
     })
 
@@ -88,7 +93,7 @@ class FintrospectModule private(basePath: Path,
   /**
    * Attach described Route to the module.
    */
-  def withRoute(route: Route): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, route :: routes, moduleFilter)
+  def withRoute(route: Route): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, route :: routes, moduleFilter)
 
   /**
    * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
