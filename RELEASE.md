@@ -2,11 +2,11 @@ Release Notes/Migration Guide
 -----------------------------
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
-#####v4.X -> v5.X
+#####v4.X.X -> v5.X.X
 - Upgrade to require Java 8 time API for time parameter support.
 - Removal of Joda-time dependencies since you can now just use ```java.time``` instead.
 
-#####v3.X -> v4.X
+#####v3.X.X -> v4.X.X
 
 - Addition of custom response rendering formats. See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
   Modules now require a fully configured ```ModuleRenderer``` upon instantiation, which provides not just the rendering of the Documentation (ie. the old ```Renderer``` which is now ```DescriptionRenderer```), but also the format of error messages. Some repackaging of the pluggable renderers has occurred.
@@ -14,7 +14,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Renamed Identification Header to ```X-Fintrospect-Route-Name```
 - Added ability to apply filters to all custom routes in a module (apart from the description route, which is NOT affected)
 
-#####v2.X -> v3.X
+#####v2.X.X -> v3.X.X
 
 Migrated away from the in-built Twitter HTTP Request package (```com.twitter.finagle.http```) and onto the Netty ```
 org.jboss.netty.handler.codec.http.HttpRequest```. This is to provide compatibility with the changes to the Finagle APIs in regards
