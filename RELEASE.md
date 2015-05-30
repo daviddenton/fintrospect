@@ -2,6 +2,10 @@ Release Notes/Migration Guide
 -----------------------------
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
+#####v4.X -> v5.X
+- Upgrade to require Java 8 time API for time parameter support.
+- Removal of Joda-time dependencies since you can now just use ```java.time``` instead.
+
 #####v3.X -> v4.X
 
 - Addition of custom response rendering formats. See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
