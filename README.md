@@ -4,7 +4,7 @@ Fintrospect [![Build Status](https://api.travis-ci.org/daviddenton/fintrospect.s
 Fintrospect is a bolt-on library for use with the [Finagle](http://twitter.github.io/finagle/) RPC framework from Twitter. It was developed out of a desire to provide a pleasant API for describing HTTP request routing in combination with statically-typed documentation which could be verified at compile time and auto-generated at runtime (and thus avoiding the stale documentation risk that exists with manually written docs).
 
 Using this library, you can:
-- Automatically generate documentation in a variety of formats (e.g. [Swagger](http://swagger.io/) v1.2 and v2.0). Pluggable architecture for adding your own renderers (currently JSON-based only).
+- Automatically generate documentation in a variety of formats (e.g. [Swagger](http://swagger.io/) v1.2 and v2.0). Pluggable architecture for adding your own format renderers (e.g other JSON, XML).
 - Define individual HTTP routes and compose them into sensible context-based modules.
 - Declare both required and optional parameters to be used in the following locations: ```Path/Header/Query/Form/Body```. Retrieval of the parameters is simple and type-safe (```[T]``` for required, ```Option[T]``` for optional).
 - Endpoints automatically verify the presence and validity of both optional and required parameters (apart from the body for obvious reasons). If any parameters are missing or invalid, a ```BAD_REQUEST``` response is generated - meaning that no extra validation code is required for these parameters in your controller code.
