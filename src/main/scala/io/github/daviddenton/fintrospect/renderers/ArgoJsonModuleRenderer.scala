@@ -12,7 +12,7 @@ import scala.language.implicitConversions
  */
 class ArgoJsonModuleRenderer(descriptionRenderer: DescriptionRenderer[JsonRootNode]) extends ModuleRenderer[JsonRootNode](
   JsonResponseBuilder.Response,
-  new ArgoToStringDescriptionRenderer(descriptionRenderer),
+  new ArgoToHttpResponseDescriptionRenderer(descriptionRenderer),
   badParameters => {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),
