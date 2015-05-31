@@ -5,3 +5,5 @@ scala:
 script:
     - sbt clean coverage test
     - sbt coveralls
+jdk:
+  - oraclejdk8
