@@ -9,7 +9,7 @@ import scala.language.implicitConversions
 
 /**
  * This is used by the FintrospectModule to render the various standard responses (bad request/the description route).
- * Provide one of these to implement a custom format for module responses.
+ * Provide one of these to implement a pluggable custom format for module responses.
  */
 trait ModuleRenderer {
   def badRequest(badParameters: List[RequestParameter[_]]): HttpResponse

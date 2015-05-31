@@ -5,6 +5,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 #####v4.X.X -> v5.X.X
 - Upgrade to require Java 8 time API for time parameter support.
 - Removal of Joda-time dependencies since you can now just use ```java.time``` instead.
+- Collapsed ```DescriptionRenderer``` into ```ModuleRenderer```, so just one trait to implement to provide custom format support.π
 - Ability to override the default location of the description route.
 
 #####v3.X.X -> v4.X.X
