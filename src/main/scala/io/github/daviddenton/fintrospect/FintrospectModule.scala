@@ -34,16 +34,16 @@ object FintrospectModule {
   /**
    * Create a module using the given base-path, renderer.
    */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer[_]): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, identity, Nil, Filter.mk((in, svc) => svc(in)))
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, identity, Nil, Filter.mk((in, svc) => svc(in)))
 
   /**
    * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to this module).
    */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer[_], moduleFilter: Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]): FintrospectModule = {
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]): FintrospectModule = {
     new FintrospectModule(basePath, moduleRenderer, identity, Nil, moduleFilter)
   }
 
-  private case class ValidateParams(route: Route, moduleRenderer: ModuleRenderer[_]) extends SimpleFilter[HttpRequest, HttpResponse]() {
+  private case class ValidateParams(route: Route, moduleRenderer: ModuleRenderer) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       val paramsAndParseResults = route.describedRoute.params.map(p => (p, p.parseFrom(request)))
       val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => pr._1.requirement == Optional && pr._2.isEmpty)
@@ -66,7 +66,7 @@ object FintrospectModule {
  * Self-describing module builder (uses the immutable builder pattern).
  */
 class FintrospectModule private(basePath: Path,
-                                moduleRenderer: ModuleRenderer[_],
+                                moduleRenderer: ModuleRenderer,
                                 descriptionRoutePath: Path => Path,
                                 routes: List[Route],
                                 moduleFilter: Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]) {
