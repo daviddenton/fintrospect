@@ -13,7 +13,7 @@ import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse
 object XmlApp extends App {
   private def aService(): Service[HttpRequest, HttpResponse] = Service.mk((rq) => toFuture(XmlResponseBuilder.Ok))
 
-  val module = FintrospectModule(Root / "xml", Xml())
+  val module = FintrospectModule(Root / "xml", Xml)
     .withRoute(DescribedRoute("an xml endpoint").at(HttpMethod.GET) / "view" bindTo aService)
 
   Http.serve(":8080", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(module.toService))
