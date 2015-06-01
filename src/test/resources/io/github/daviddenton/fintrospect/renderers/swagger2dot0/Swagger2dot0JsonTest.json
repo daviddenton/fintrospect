@@ -1,189 +1,196 @@
 {
-	"swagger": "2.0",
-	"info": {
-		"title": "title",
-		"version": "1.2",
-		"description": "module description"
-	},
-	"basePath": "/",
-	"paths": {
-		"/basepath/welcome/{firstName}/bertrand/{secondName}": {
-			"get": {
-				"tags": [
-					"/basepath"
-				],
-				"summary": "a friendly endpoint",
-				"produces": [],
-				"consumes": [],
-				"parameters": [
-					{
-						"in": "form",
-						"name": "form",
-						"description": "description of the form",
-						"required": true,
-						"type": "integer"
-					},
-					{
-						"in": "query",
-						"name": "query",
-						"description": "description of the query",
-						"required": true,
-						"type": "boolean"
-					},
-					{
-						"in": "path",
-						"name": "firstName",
-						"description": null,
-						"required": true,
-						"type": "string"
-					},
-					{
-						"in": "path",
-						"name": "secondName",
-						"description": null,
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {},
-				"security": [
-					{}
-				]
-			}
-		},
-		"/basepath/echo/{message}": {
-			"get": {
-				"tags": [
-					"/basepath"
-				],
-				"summary": "some rambling description of what this thing actually does",
-				"produces": [
-					"application/json"
-				],
-				"consumes": [],
-				"parameters": [
-					{
-						"in": "header",
-						"name": "header",
-						"description": "description of the header",
-						"required": false,
-						"type": "string"
-					},
-					{
-						"in": "path",
-						"name": "message",
-						"description": null,
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"403": {
-						"description": "no way jose",
-						"schema": null
-					},
-					"200": {
-						"description": "peachy",
-						"schema": {
-							"$ref": "#/definitions/object-1852275137"
-						}
-					}
-				},
-				"security": [
-					{}
-				]
-			},
-			"post": {
-				"tags": [
-					"/basepath"
-				],
-				"summary": "a post endpoint",
-				"produces": [
-					"application/json"
-				],
-				"consumes": [
-					"application/atom+xml",
-					"application/svg+xml"
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "query",
-						"description": null,
-						"required": true,
-						"type": "integer"
-					},
-					{
-						"in": "path",
-						"name": "message",
-						"description": null,
-						"required": true,
-						"type": "string"
-					},
-					{
-						"in": "body",
-						"name": "body",
-						"description": "the body of the message",
-						"required": true,
-						"schema": {
-							"$ref": "#/definitions/object-1852275137"
-						}
-					}
-				],
-				"responses": {
-					"403": {
-						"description": "no way jose",
-						"schema": {
-							"$ref": "#/definitions/object-610697343"
-						}
-					}
-				},
-				"security": [
-					{}
-				]
-			}
-		}
-	},
-	"definitions": {
-		"object-1852275137": {
-			"type": "object",
-			"properties": {
-				"anObject": {
-					"$ref": "#/definitions/object-1920275720"
-				}
-			}
-		},
-		"object-1920275720": {
-			"type": "object",
-			"properties": {
-				"aStringField": {
-					"type": "integer"
-				}
-			}
-		},
-		"object-610697343": {
-			"type": "object",
-			"properties": {
-				"aString": {
-					"type": "string"
-				}
-			}
-		},
-		"object-1852275137": {
-			"type": "object",
-			"properties": {
-				"anObject": {
-					"$ref": "#/definitions/object-1920275720"
-				}
-			}
-		},
-		"object-1920275720": {
-			"type": "object",
-			"properties": {
-				"aStringField": {
-					"type": "integer"
-				}
-			}
-		}
-	}
+  "swagger": "2.0",
+  "info": {
+    "title": "title",
+    "version": "1.2",
+    "description": "module description"
+  },
+  "basePath": "/",
+  "paths": {
+    "/basepath/welcome/{firstName}/bertrand/{secondName}": {
+      "get": {
+        "tags": [
+          "/basepath"
+        ],
+        "summary": "a friendly endpoint",
+        "produces": [],
+        "consumes": [],
+        "parameters": [
+          {
+            "in": "form",
+            "name": "form",
+            "description": "description of the form",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "description": "description of the query",
+            "required": true,
+            "type": "boolean"
+          },
+          {
+            "in": "path",
+            "name": "firstName",
+            "description": null,
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "secondName",
+            "description": null,
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "supportedContentTypes": [],
+        "security": [
+          {}
+        ]
+      }
+    },
+    "/basepath/echo/{message}": {
+      "get": {
+        "tags": [
+          "/basepath"
+        ],
+        "summary": "some rambling description of what this thing actually does",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "header",
+            "description": "description of the header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "message",
+            "description": null,
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "no way jose",
+            "schema": null
+          },
+          "200": {
+            "description": "peachy",
+            "schema": {
+              "$ref": "#/definitions/object-1852275137"
+            }
+          }
+        },
+        "supportedContentTypes": [
+          "application/json"
+        ],
+        "security": [
+          {}
+        ]
+      },
+      "post": {
+        "tags": [
+          "/basepath"
+        ],
+        "summary": "a post endpoint",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/atom+xml",
+          "application/svg+xml"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "description": null,
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "path",
+            "name": "message",
+            "description": null,
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "the body of the message",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/object-1852275137"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "no way jose",
+            "schema": {
+              "$ref": "#/definitions/object-610697343"
+            }
+          }
+        },
+        "supportedContentTypes": [
+          "application/json"
+        ],
+        "security": [
+          {}
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "object-1852275137": {
+      "type": "object",
+      "properties": {
+        "anObject": {
+          "$ref": "#/definitions/object-1920275720"
+        }
+      }
+    },
+    "object-1920275720": {
+      "type": "object",
+      "properties": {
+        "aStringField": {
+          "type": "integer"
+        }
+      }
+    },
+    "object-610697343": {
+      "type": "object",
+      "properties": {
+        "aString": {
+          "type": "string"
+        }
+      }
+    },
+    "object-1852275137": {
+      "type": "object",
+      "properties": {
+        "anObject": {
+          "$ref": "#/definitions/object-1920275720"
+        }
+      }
+    },
+    "object-1920275720": {
+      "type": "object",
+      "properties": {
+        "aStringField": {
+          "type": "integer"
+        }
+      }
+    }
+  }
 }
