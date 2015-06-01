@@ -78,6 +78,9 @@ class FintrospectModule private(basePath: Path,
     })
   }
 
+  /**
+   * Override the path from the root of this module (incoming) where the default module description will live.
+   */
   def withDescriptionPath(newDefaultRoutePath: Path => Path): FintrospectModule = {
     new FintrospectModule(basePath, moduleRenderer, newDefaultRoutePath, routes, moduleFilter)
   }
