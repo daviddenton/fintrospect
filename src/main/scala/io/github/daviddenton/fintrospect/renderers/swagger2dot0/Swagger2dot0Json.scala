@@ -56,6 +56,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "consumes" -> array(route.describedRoute.consumes.map(m => string(m.value))),
       "parameters" -> array(route.allParams.map(render) ++ bodyParameters),
       "responses" -> obj(responses),
+      "supportedContentTypes" -> array(route.describedRoute.produces.map(m => string(m.value))),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
     FieldAndDefinitions(route2, responseDefinitions ++ bodySchema.toList.flatMap(_.definitions))
