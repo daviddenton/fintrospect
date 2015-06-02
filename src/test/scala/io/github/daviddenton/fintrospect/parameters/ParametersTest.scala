@@ -1,10 +1,11 @@
 package io.github.daviddenton.fintrospect.parameters
 
-import java.time.{LocalDateTime, LocalDate}
+import java.time.{LocalDate, LocalDateTime}
 
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.language.{higherKinds, implicitConversions}
+import scala.util.Try
 
 abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) extends FunSpec with ShouldMatchers {
 
@@ -131,6 +132,24 @@ abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) e
 
     it("does not retrieve an null date value") {
       from(parameters.localDate, None) shouldEqual None
+    }
+  }
+
+  case class MyCustomType(value:Int)
+
+  describe("custom") {
+    def myCustomParameter(name: String, unused:String) = parameters.custom(name, s => Try(MyCustomType(s.toInt)))
+
+    it("retrieves a valid value") {
+      from(myCustomParameter, Some("123")) shouldEqual Some(MyCustomType(123))
+    }
+
+    it("does not retrieve an invalid value") {
+      from(myCustomParameter, Some("BOB")) shouldEqual None
+    }
+
+    it("does not retrieve an null date value") {
+      from(myCustomParameter, None) shouldEqual None
     }
   }
 }
