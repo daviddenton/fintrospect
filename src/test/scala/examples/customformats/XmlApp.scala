@@ -3,8 +3,8 @@ package examples.customformats
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
-import io.github.daviddenton.fintrospect.util.ResponseBuilder.toFuture
-import io.github.daviddenton.fintrospect.{CorsFilter, DescribedRoute, FintrospectModule}
+import io.fintrospect.util.ResponseBuilder.toFuture
+import io.fintrospect.{CorsFilter, DescribedRoute, FintrospectModule}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
 /**

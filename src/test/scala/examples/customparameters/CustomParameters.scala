@@ -1,7 +1,7 @@
 package examples.customparameters
 
 import com.twitter.finagle.http.Request
-import io.github.daviddenton.fintrospect.parameters.Query
+import io.fintrospect.parameters.Query
 
 import scala.util.{Failure, Success, Try}
 

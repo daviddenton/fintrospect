@@ -2,9 +2,9 @@ package examples.customformats
 
 import com.twitter.finagle.http.path.Path
 import examples.customformats.XmlResponseBuilder._
-import io.github.daviddenton.fintrospect.Route
-import io.github.daviddenton.fintrospect.parameters.RequestParameter
-import io.github.daviddenton.fintrospect.renderers.ModuleRenderer
+import io.fintrospect.Route
+import io.fintrospect.parameters.RequestParameter
+import io.fintrospect.renderers.ModuleRenderer
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
 
 /**

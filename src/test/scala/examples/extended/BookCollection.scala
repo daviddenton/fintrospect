@@ -2,11 +2,11 @@ package examples.extended
 
 import com.twitter.finagle.Service
 import com.twitter.util.Future
-import io.github.daviddenton.fintrospect.ContentTypes._
-import io.github.daviddenton.fintrospect._
-import io.github.daviddenton.fintrospect.util.ArgoUtil._
-import io.github.daviddenton.fintrospect.util.JsonResponseBuilder.Ok
-import io.github.daviddenton.fintrospect.util.ResponseBuilder._
+import io.fintrospect.ContentTypes._
+import io.fintrospect._
+import io.fintrospect.util.ArgoUtil._
+import io.fintrospect.util.JsonResponseBuilder.Ok
+import io.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}

@@ -2,8 +2,8 @@ package examples.extended
 
 import com.twitter.finagle.http.Request
 import com.twitter.io.Charsets
-import io.github.daviddenton.fintrospect.testing.TestingFintrospectRoute
-import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.fintrospect.testing.TestingFintrospectRoute
+import io.fintrospect.util.ArgoUtil._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.scalatest.{FunSpec, ShouldMatchers}
 
