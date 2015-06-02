@@ -1,7 +1,7 @@
 package examples.customformats
 
-import io.github.daviddenton.fintrospect.ContentTypes
-import io.github.daviddenton.fintrospect.util.{ResponseBuilder, ResponseBuilderObject}
+import io.fintrospect.ContentTypes
+import io.fintrospect.util.{ResponseBuilder, ResponseBuilderObject}
 
 /**
  * Custom response builder for some imaginary XML format.

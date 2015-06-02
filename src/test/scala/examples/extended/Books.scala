@@ -3,7 +3,7 @@ package examples.extended
 import java.lang.Integer.parseInt
 
 import argo.jdom.{JsonNode, JsonRootNode}
-import io.github.daviddenton.fintrospect.util.ArgoUtil._
+import io.fintrospect.util.ArgoUtil._
 
 import scala.util.Try
 

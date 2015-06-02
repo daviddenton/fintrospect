@@ -34,9 +34,9 @@ pomExtra :=
     <developers>
       <developer>
         <name>David Denton</name>
-        <email>mail@daviddenton.github.io</email>
+        <email>dev@fintrospect.io</email>
         <organization>{projectName}</organization>
-        <organizationUrl>http://daviddenton.github.io</organizationUrl>
+        <organizationUrl>http://fintrospect.io</organizationUrl>
       </developer>
     </developers>
 
