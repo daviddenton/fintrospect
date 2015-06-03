@@ -72,3 +72,4 @@ Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you 
 
 ###Upgrading?
 See the [Release Notes/Migration Guide](https://github.com/daviddenton/fintrospect/blob/master/RELEASE.md)
+
