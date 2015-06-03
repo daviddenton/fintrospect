@@ -9,6 +9,7 @@ abstract class PathParameter[T]() extends Parameter[T] with Iterable[PathParamet
   override val requirement = Requirement.Mandatory
 
   def unapply(str: String): Option[T]
+  def apply(t: T): String = ???
 }
 
 object PathParameter {
