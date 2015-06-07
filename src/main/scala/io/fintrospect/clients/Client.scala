@@ -2,7 +2,7 @@ package io.fintrospect.clients
 
 import com.twitter.finagle.Service
 import com.twitter.util.Future
-import io.fintrospect.parameters.{Parameter, PathParameter, RequestParameter, Requirement}
+import io.fintrospect.parameters.{Parameter, PathParameter, RequestParameter}
 import io.fintrospect.util.PlainTextResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http._
@@ -13,7 +13,7 @@ class Client(method: HttpMethod,
              service: Service[HttpRequest, HttpResponse]) {
   private val systemSuppliedParams = pathParams.filter(_.isEmpty).map(p => p -> p.name)
   private val allPossibleParams = pathParams ++ requestParams
-  private val requiredParams = allPossibleParams.filter(_.requirement == Requirement.Mandatory)
+  private val requiredParams = allPossibleParams.filter(_.required)
   private val queryParams = requestParams.filter(_.where == "query")
 
   def apply(userSuppliedParams: (Parameter[_], String)*): Future[HttpResponse] = {

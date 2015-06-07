@@ -9,7 +9,7 @@ trait Parameter[T] {
   val description: Option[String]
   val where: String
   val paramType: ParamType
-  val requirement: Requirement
+  val required: Boolean
   def parseFrom(request: HttpRequest): Option[Try[T]]
 }
 

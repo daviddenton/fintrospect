@@ -3,7 +3,7 @@ package io.fintrospect.renderers.swagger2dot0
 import argo.jdom.JsonNode
 import com.twitter.finagle.http.path.Path
 import io.fintrospect._
-import io.fintrospect.parameters.{Body, Parameter, RequestParameter, Requirement}
+import io.fintrospect.parameters.{Body, Parameter, RequestParameter}
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
 import io.fintrospect.util.ArgoUtil._
@@ -27,12 +27,12 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     def add(fieldAndDefinitions: FieldAndDefinitions) = FieldsAndDefinitions(fieldAndDefinitions.field :: fields, fieldAndDefinitions.definitions ++ definitions)
   }
 
-  private def render(requirementAndParameter: (Requirement, Parameter[_])): JsonNode = obj(
-    "in" -> string(requirementAndParameter._2.where.toString),
-    "name" -> string(requirementAndParameter._2.name),
-    "description" -> requirementAndParameter._2.description.map(string).getOrElse(nullNode()),
-    "required" -> boolean(requirementAndParameter._1.required),
-    "type" -> string(requirementAndParameter._2.paramType.name)
+  private def render(parameter: Parameter[_]): JsonNode = obj(
+    "in" -> string(parameter.where.toString),
+    "name" -> string(parameter.name),
+    "description" -> parameter.description.map(string).getOrElse(nullNode()),
+    "required" -> boolean(parameter.required),
+    "type" -> string(parameter.paramType.name)
   )
 
   private def render(body: Body, schema: Schema): JsonNode = obj(

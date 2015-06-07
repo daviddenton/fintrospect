@@ -3,7 +3,7 @@ package io.fintrospect.renderers.swagger1dot1
 import argo.jdom.JsonNode
 import com.twitter.finagle.http.path.Path
 import io.fintrospect.Route
-import io.fintrospect.parameters.{Parameter, RequestParameter, Requirement}
+import io.fintrospect.parameters.{Parameter, RequestParameter}
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
 import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.JsonResponseBuilder._
@@ -16,12 +16,12 @@ import scala.collection.JavaConversions._
  */
 class Swagger1dot1Json extends ModuleRenderer {
 
-  private def render(requirementAndParameter: (Requirement, Parameter[_])): JsonNode = obj(
-    "name" -> string(requirementAndParameter._2.name),
-    "description" -> requirementAndParameter._2.description.map(string).getOrElse(nullNode()),
-    "paramType" -> string(requirementAndParameter._2.where.toString),
-    "required" -> boolean(requirementAndParameter._1.required),
-    "dataType" -> string(requirementAndParameter._2.paramType.name)
+  private def render(parameter: Parameter[_]): JsonNode = obj(
+    "name" -> string(parameter.name),
+    "description" -> parameter.description.map(string).getOrElse(nullNode()),
+    "paramType" -> string(parameter.where.toString),
+    "required" -> boolean(parameter.required),
+    "dataType" -> string(parameter.paramType.name)
   )
 
   private def render(route: Route): Field = route.method.getName.toLowerCase -> obj(
