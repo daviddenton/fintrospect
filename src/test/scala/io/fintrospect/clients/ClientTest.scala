@@ -2,11 +2,12 @@ package io.fintrospect.clients
 
 import com.twitter.finagle.Service
 import com.twitter.io.Charsets
-import com.twitter.util.Await.result
+import com.twitter.util.Await._
 import com.twitter.util.Future
 import io.fintrospect.parameters.Path
 import io.fintrospect.util.PlainTextResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod._
+import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -23,31 +24,44 @@ class ClientTest extends FunSpec with ShouldMatchers {
 
     describe("invalid parameters") {
       it("missing parameters throw up") {
-        result(clientWithNameAndMaxAge()).getStatus shouldEqual HttpResponseStatus.BAD_REQUEST
+        responseFor(clientWithNameAndMaxAge()) shouldEqual(BAD_REQUEST, "Client: Missing required params passed: List({name}, {maxAge})")
       }
       it("unknown parameters returns bad request") {
-        result(clientWithNoParameters(maxAge -> "7")).getStatus shouldEqual HttpResponseStatus.BAD_REQUEST
-      }
-    }
-    describe("converts the path parameters into the correct url") {
-      it("when there are none") {
-        val response = result(clientWithNoParameters())
-        response.getStatus shouldEqual HttpResponseStatus.OK
-        response.getContent.toString(Charsets.Utf8) shouldEqual "GET,"
-      }
-      it("when there are some") {
-        val response = result(clientWithNameAndMaxAge(maxAge -> "7", name -> "bob"))
-        response.getStatus shouldEqual HttpResponseStatus.OK
-        response.getContent.toString(Charsets.Utf8) shouldEqual "GET,bob/7"
-      }
-      it("ignores fixed") {
-        val clientWithFixedSections = new Client(GET, Nil, List(Path.fixed("prefix"), maxAge, Path.fixed("suffix")), returnsMethodAndUri)
-        val response = result(clientWithFixedSections(maxAge -> "7"))
-        response.getStatus shouldEqual HttpResponseStatus.OK
-        response.getContent.toString(Charsets.Utf8) shouldEqual "GET,prefix/7/suffix"
+        responseFor(clientWithNoParameters(maxAge -> "7")) shouldEqual(BAD_REQUEST, "Client: Illegal params passed: Set({maxAge})")
       }
     }
 
+    describe("converts the path parameters into the correct url") {
+      it("when there are none") {
+        responseFor(clientWithNoParameters()) shouldEqual(OK, "GET,")
+      }
+      it("when there are some") {
+        responseFor(clientWithNameAndMaxAge(maxAge -> "7", name -> "bob")) shouldEqual(OK, "GET,bob/7")
+      }
+      it("ignores fixed") {
+        val clientWithFixedSections = new Client(GET, Nil, List(Path.fixed("prefix"), maxAge, Path.fixed("suffix")), returnsMethodAndUri)
+        responseFor(clientWithFixedSections(maxAge -> "7")) shouldEqual(OK, "GET,prefix/7/suffix")
+      }
+    }
+
+//    describe("converts the query parameters into the correct url format") {
+//      val clientWithNameQuery = new Client(GET,
+//        List(Query.optional.string("name")),
+//        List(Path.fixed("prefix")), returnsMethodAndUri)
+//
+//      it("when there are some") {
+//        responseFor(clientWithNameQuery(name -> "bob")) shouldEqual(OK, "GET,prefix/?name=bob")
+//      }
+//      it("optional query params are ignored if not there") {
+//        responseFor(clientWithNameQuery(name -> "bob")) shouldEqual(OK, "GET,prefix")
+//      }
+//    }
+
+  }
+
+  def responseFor(future: Future[HttpResponse]): (HttpResponseStatus, String) = {
+    val response = result(future)
+    (response.getStatus, response.getContent.toString(Charsets.Utf8))
   }
 
 }
