@@ -16,7 +16,7 @@ class ClientTest extends FunSpec with ShouldMatchers {
     val returnsMethodAndUri = Service.mk[HttpRequest, HttpResponse] { request =>
       Future.value(PlainTextResponseBuilder.Ok(request.getMethod + "," + request.getUri))
     }
-    val name = Path.integer("name")
+    val name = Path.string("name")
     val maxAge = Path.integer("maxAge")
     val clientWithNoParameters = new Client(GET, Nil, Nil, returnsMethodAndUri)
     val clientWithNameAndMaxAge = new Client(GET, Nil, List(name, maxAge), returnsMethodAndUri)
