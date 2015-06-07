@@ -14,7 +14,7 @@ class Body private(val description: Option[String], val paramType: ParamType, va
 
   def from(request: HttpRequest): JsonNode = parse(request.getContent.toString(Charsets.Utf8)).get
 
-  override def parseFrom(request: HttpRequest): Option[Try[JsonNode]] = ???
+  override def parseFrom(request: HttpRequest): Option[Try[JsonNode]] = Some(Try(from(request)))
 }
 
 object Body {
@@ -24,5 +24,6 @@ object Body {
    * @param description
    * @param example
    */
-  def json(description: Option[String], example: JsonNode) = new Body(description, ObjectParamType, example, s => Try(ArgoUtil.parse(s)).toOption)
+  def json(description: Option[String], example: JsonNode) =
+    new Body(description, ObjectParamType, example, s => Try(ArgoUtil.parse(s)).toOption)
 }
