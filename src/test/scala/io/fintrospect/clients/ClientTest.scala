@@ -4,7 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.io.Charsets
 import com.twitter.util.Await._
 import com.twitter.util.Future
-import io.fintrospect.parameters.Path
+import io.fintrospect.parameters.{Path, Query}
 import io.fintrospect.util.PlainTextResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
@@ -44,18 +44,19 @@ class ClientTest extends FunSpec with ShouldMatchers {
       }
     }
 
-//    describe("converts the query parameters into the correct url format") {
-//      val clientWithNameQuery = new Client(GET,
-//        List(Query.optional.string("name")),
-//        List(Path.fixed("prefix")), returnsMethodAndUri)
-//
-//      it("when there are some") {
-//        responseFor(clientWithNameQuery(name -> "bob")) shouldEqual(OK, "GET,prefix/?name=bob")
-//      }
-//      it("optional query params are ignored if not there") {
-//        responseFor(clientWithNameQuery(name -> "bob")) shouldEqual(OK, "GET,prefix")
-//      }
-//    }
+    describe("converts the query parameters into the correct url format") {
+      val nameQuery = Query.optional.string("name")
+      val clientWithNameQuery = new Client(GET,
+        List(nameQuery),
+        List(Path.fixed("prefix")), returnsMethodAndUri)
+
+      it("when there are some") {
+        responseFor(clientWithNameQuery(nameQuery -> "bob")) shouldEqual(OK, "GET,prefix?name=bob")
+      }
+      it("optional query params are ignored if not there") {
+        responseFor(clientWithNameQuery()) shouldEqual(OK, "GET,prefix")
+      }
+    }
 
   }
 
