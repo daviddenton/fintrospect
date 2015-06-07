@@ -7,11 +7,11 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 import scala.language.{higherKinds, implicitConversions}
 import scala.util.Try
 
-abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) extends FunSpec with ShouldMatchers {
+abstract class ParametersTest[T[_] <: Parameter[_], Req[_] <: Require[_]](parameters: Parameters[T, Req]) extends FunSpec with ShouldMatchers {
 
   val paramName = "name"
 
-  def from[X](methodUnderTest: (String, String) => T[X], value: Option[String]): Option[X]
+  def from[X](methodUnderTest: (String, String) => T[X] with Req[X], value: Option[String]): Option[X]
 
   describe("int") {
     it("retrieves a valid value") {

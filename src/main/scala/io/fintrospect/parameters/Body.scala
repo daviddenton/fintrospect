@@ -13,6 +13,8 @@ class Body private(val description: Option[String], val paramType: ParamType, va
   override val requirement = Requirement.Mandatory
 
   def from(request: HttpRequest): JsonNode = parse(request.getContent.toString(Charsets.Utf8)).get
+
+  override def parseFrom(request: HttpRequest): Option[Try[JsonNode]] = ???
 }
 
 object Body {

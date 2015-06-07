@@ -4,7 +4,7 @@ import io.fintrospect.util.ArgoUtil._
 
 import scala.language.{higherKinds, implicitConversions}
 
-abstract class JsonSupportingParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) extends ParametersTest[T](parameters) {
+abstract class JsonSupportingParametersTest[T[_] <: Parameter[_], Req[_] <: Require[_]](parameters: Parameters[T, Req]) extends ParametersTest[T, Req](parameters) {
 
   describe("json") {
     it("retrieves a valid value") {
