@@ -25,22 +25,20 @@ object Path extends Parameters[PathParameter, Mandatory] {
     override def parseFrom(request: HttpRequest): Option[Try[String]] = ???
   }
 
-  override protected def builder(): ParameterBuilder[PathParameter, Mandatory] = new ParameterBuilder[PathParameter, Mandatory]() {
-    override def apply[T](name: String,
-                          description: Option[String],
-                          paramType: ParamType,
-                          parse: (String => Try[T]))
-    = new PathParameter[T](name, description, paramType) with Mandatory[T] {
+  override protected def builder[T](name: String,
+                                    description: Option[String],
+                                    paramType: ParamType,
+                                    parse: (String => Try[T]))
+  = new PathParameter[T](name, description, paramType) with Mandatory[T] {
 
-      override def toString() = s"{$name}"
+    override def toString() = s"{$name}"
 
-      override def unapply(str: String): Option[T] = Option(str).flatMap(s => {
-        parse(new URI("http://localhost/" + s).getPath.substring(1)).toOption
-      })
+    override def unapply(str: String): Option[T] = Option(str).flatMap(s => {
+      parse(new URI("http://localhost/" + s).getPath.substring(1)).toOption
+    })
 
-      override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
+    override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
 
-      override def parseFrom(request: HttpRequest): Option[Try[T]] = ???
-    }
+    override def parseFrom(request: HttpRequest): Option[Try[T]] = ???
   }
 }
