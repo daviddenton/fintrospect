@@ -11,7 +11,9 @@ import scala.util.Try
 /**
  * Prototype functions for creating parameters of various types.
  */
-class Parameters[P[_], Req[_] <: Require[_]] protected[parameters](builder: () => ParameterBuilder[P, Req]) {
+abstract class Parameters[P[_], Req[_] <: Require[_]] {
+
+  protected def builder(): ParameterBuilder[P, Req]
 
   /**
    * Create a parameter of a custom type. This will hook into pre-request validation (in terms of optional/mandatory parameters)
