@@ -17,6 +17,6 @@ object Form {
     }
   }
 
-  val required = new Parameters(RequiredRequestParameter.builderFor(location))
-  val optional = new Parameters(OptionalRequestParameter.builderFor(location))
+  val required = new Parameters(RequiredRequestParameter.builder(location))
+  val optional = new Parameters(OptionalRequestParameter.builder(location))
 }
