@@ -6,7 +6,7 @@ package io.fintrospect.parameters
 object Path extends Parameters[PathParameter](PathParameter.builder) {
 
   /**
-   * A special path segment that is defined, but has no intrinsic value other than for route matching. Usefull when embedded
+   * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
    * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
    */
   def fixed(aName: String): PathParameter[String] = new PathParameter[String] {
