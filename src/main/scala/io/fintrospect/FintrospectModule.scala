@@ -5,7 +5,6 @@ import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.FintrospectModule._
 import io.fintrospect.Routing.fromBinding
-import io.fintrospect.parameters.Requirement._
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
@@ -46,7 +45,7 @@ object FintrospectModule {
   private case class ValidateParams(route: Route, moduleRenderer: ModuleRenderer) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       val paramsAndParseResults = route.describedRoute.params.map(p => (p, p.parseFrom(request)))
-      val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => pr._1.requirement == Optional && pr._2.isEmpty)
+      val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => !pr._1.required && pr._2.isEmpty)
       val missingOrFailed = withoutMissingOptionalParams.filterNot(pr => pr._2.isDefined && pr._2.get.isSuccess).map(_._1)
       if (missingOrFailed.isEmpty) service(request) else moduleRenderer.badRequest(missingOrFailed)
     }

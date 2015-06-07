@@ -11,7 +11,7 @@ object JsonBadRequestRenderer {
       "name" -> string(p.name),
       "type" -> string(p.where),
       "datatype" -> string(p.paramType.name),
-      "required" -> boolean(p.requirement.required)
+      "required" -> boolean(p.required)
     ))
 
     Error(BAD_REQUEST, obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages)))

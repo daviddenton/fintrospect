@@ -7,7 +7,7 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 import scala.language.{higherKinds, implicitConversions}
 import scala.util.Try
 
-abstract class ParametersTest[T[_] <: Parameter[_], Req[_] <: Require[_]](parameters: Parameters[T, Req]) extends FunSpec with ShouldMatchers {
+abstract class ParametersTest[T[_] <: Parameter[_], Req[_] <: Requirement[_]](parameters: Parameters[T, Req]) extends FunSpec with ShouldMatchers {
 
   val paramName = "name"
 

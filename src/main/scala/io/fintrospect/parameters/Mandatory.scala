@@ -2,8 +2,8 @@ package io.fintrospect.parameters
 
 import org.jboss.netty.handler.codec.http.HttpRequest
 
-trait Mandatory[T] extends Require[T] {
+trait Mandatory[T] extends Requirement[T] {
   self: Parameter[T] =>
-  override val requirement = Requirement.Mandatory
+  override val required = true
   def from(request: HttpRequest): T = parseFrom(request).flatMap(_.toOption).get
 }

@@ -1,15 +1,5 @@
 package io.fintrospect.parameters
 
-sealed trait Requirement {
+trait Requirement[T] {
   val required: Boolean
-}
-
-object Requirement {
-  val Mandatory = new Requirement {
-    val required = true
-  }
-
-  val Optional = new Requirement {
-    val required = false
-  }
 }
