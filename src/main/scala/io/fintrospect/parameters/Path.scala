@@ -25,7 +25,7 @@ object Path extends Parameters[PathParameter, Mandatory] {
     override def parseFrom(request: HttpRequest): Option[Try[String]] = ???
   }
 
-  override protected def builder[T](name: String,
+  override protected def parameter[T](name: String,
                                     description: Option[String],
                                     paramType: ParamType,
                                     parse: (String => Try[T]))
