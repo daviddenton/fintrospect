@@ -12,7 +12,7 @@ class Body private(val description: Option[String], val paramType: ParamType, va
 
   override def from(request: HttpRequest): JsonNode = parse(location.from(null, request).get)
 
-  override def parseFrom(request: HttpRequest): Option[Try[JsonNode]] = Some(Try(from(request)))
+  override def attemptToParseFrom(request: HttpRequest): Option[Try[JsonNode]] = Some(Try(from(request)))
 }
 
 object Body {
