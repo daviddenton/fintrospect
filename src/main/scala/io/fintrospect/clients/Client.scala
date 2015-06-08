@@ -10,6 +10,7 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http._
 
 object Client {
+
   private case class Identify(method: HttpMethod, pathParams: List[PathParameter[_]]) extends SimpleFilter[HttpRequest, HttpResponse]() {
     private val description = method + "." + pathParams.map(_.toString()).mkString("/")
 
@@ -20,6 +21,7 @@ object Client {
       }
     }
   }
+
 }
 
 class Client(method: HttpMethod,
@@ -51,7 +53,7 @@ class Client(method: HttpMethod,
   }
 
   def buildUrl(allSuppliedParams: Map[Parameter[_], String]): String = {
-    val baseUrl = pathParams.map(allSuppliedParams(_)).mkString("/")
+    val baseUrl = "/" + pathParams.map(allSuppliedParams(_)).mkString("/")
     val encoder = new QueryStringEncoder(baseUrl)
     allSuppliedParams
       .filter(sp => queryParams.contains(sp._1))
