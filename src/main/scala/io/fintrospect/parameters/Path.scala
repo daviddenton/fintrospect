@@ -22,15 +22,15 @@ object Path extends Parameters[PathParameter] {
   }
 
   override protected def parameter[T](name: String,
-                                    description: Option[String],
-                                    paramType: ParamType,
-                                    parse: (String => Try[T]))
+                                      description: Option[String],
+                                      paramType: ParamType,
+                                      parse: (String => T))
   = new PathParameter[T](name, description, paramType) {
 
     override def toString() = s"{$name}"
 
     override def unapply(str: String): Option[T] = Option(str).flatMap(s => {
-      parse(new URI("http://localhost/" + s).getPath.substring(1)).toOption
+      Try(parse(new URI("http://localhost/" + s).getPath.substring(1))).toOption
     })
 
     override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
