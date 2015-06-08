@@ -2,8 +2,6 @@ package io.fintrospect.parameters
 
 import org.jboss.netty.handler.codec.http.HttpRequest
 
-import scala.util.Try
-
 /**
  * Builder for parameters that are encoded as HTTP headers.
  */
@@ -16,12 +14,12 @@ object Header {
   }
 
   val required = new Parameters[MandatoryRequestParameter] {
-    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => Try[T])) =
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
       new MandatoryRequestParameter[T](name, location, description, paramType, parse)
   }
 
   val optional = new Parameters[OptionalRequestParameter] {
-    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => Try[T])) =
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
       new OptionalRequestParameter[T](name, location, description, paramType, parse)
   }
 }
