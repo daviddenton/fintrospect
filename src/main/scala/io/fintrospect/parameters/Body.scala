@@ -8,7 +8,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 import scala.util.Try
 
 class Body private(val description: Option[String], val paramType: ParamType, val location: Location, val example: JsonNode, parse: (String => Try[JsonNode]))
-  extends RequestParameter[JsonNode, JsonNode](parse) {
+  extends RequestParameter[JsonNode, JsonNode] {
 
   override val required = true
 
