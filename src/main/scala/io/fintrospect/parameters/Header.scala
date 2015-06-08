@@ -13,12 +13,12 @@ object Header {
     override def from(name: String, request: HttpRequest): Option[String] = Option(request.headers().get(name))
   }
 
-  val required = new Parameters[MandatoryRequestParameter] {
+  val required = new Parameters[MandatoryRequestParameter, Mandatory] {
     override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
       new MandatoryRequestParameter[T](name, location, description, paramType, parse)
   }
 
-  val optional = new Parameters[OptionalRequestParameter] {
+  val optional = new Parameters[OptionalRequestParameter, Optional] {
     override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
       new OptionalRequestParameter[T](name, location, description, paramType, parse)
   }

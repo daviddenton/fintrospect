@@ -12,7 +12,7 @@ import scala.language.implicitConversions
  * Provide one of these to implement a pluggable custom format for module responses.
  */
 trait ModuleRenderer {
-  def badRequest(badParameters: List[RequestParameter[_, _]]): HttpResponse
+  def badRequest(badParameters: List[RequestParameter[_]]): HttpResponse
 
   def description(basePath: Path, routes: Seq[Route]): HttpResponse
 }

@@ -7,8 +7,8 @@ object ClientRoute {
   def apply(): ClientRoute = ClientRoute(Nil)
 }
 
-case class ClientRoute private(requestParameters: List[RequestParameter[_, _]]) {
-  def taking(rp: RequestParameter[_, _]) = copy(requestParameters = rp :: requestParameters)
+case class ClientRoute private(requestParameters: List[RequestParameter[_]]) {
+  def taking(rp: RequestParameter[_]) = copy(requestParameters = rp :: requestParameters)
 
   def at(method: HttpMethod) = ClientPath(this, method)
 }
