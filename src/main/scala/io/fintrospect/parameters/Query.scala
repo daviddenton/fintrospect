@@ -10,7 +10,7 @@ import scala.util.Try
  * Builder for parameters that are encoded in the HTTP query.
  */
 object Query {
-  private val location = new Location {
+  private val aLocation = new Location {
     override def toString = "query"
 
     override def from(name: String, request: HttpRequest): Option[String] = {
@@ -22,13 +22,23 @@ object Query {
     }
   }
 
-  val required = new Parameters[NonBodyRequestParameter, Mandatory] {
-    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => Try[T])) =
-      new NonBodyRequestParameter[T](name, description, paramType, location, parse) with Mandatory[T]
+  val required = new Parameters[RequestParameter, Mandatory] {
+    override protected def parameter[T](aName: String, aDescription: Option[String], aParamType: ParamType, parse: (String => Try[T])) =
+      new RequestParameter[T](parse) with Mandatory[T] {
+        val name = aName
+        val location = aLocation
+        val description = aDescription
+        val paramType = aParamType
+      }
   }
 
-  val optional = new Parameters[NonBodyRequestParameter, Optional] {
-    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => Try[T])) =
-      new NonBodyRequestParameter[T](name, description, paramType, location, parse) with Optional[T]
+  val optional = new Parameters[RequestParameter, Optional] {
+    override protected def parameter[T](aName: String, aDescription: Option[String], aParamType: ParamType, parse: (String => Try[T])) =
+      new RequestParameter[T](parse) with Optional[T] {
+        val name = aName
+        val location = aLocation
+        val description = aDescription
+        val paramType = aParamType
+      }
   }
 }
