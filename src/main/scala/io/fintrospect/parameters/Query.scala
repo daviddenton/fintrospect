@@ -10,11 +10,11 @@ import scala.util.Try
  * Builder for parameters that are encoded in the HTTP query.
  */
 object Query {
-  private val location = new Location {
+  private val aLocation = new Location {
     override def toString = "query"
 
     override def from(name: String, request: HttpRequest): Option[String] = {
-      Option(parseParams(request.getUri).get(name)).map(_.get(0))
+      Try(parseParams(request.getUri).get(name)).map(_.get(0)).toOption
     }
 
     private def parseParams(s: String) = {
@@ -22,6 +22,13 @@ object Query {
     }
   }
 
-  val required = new Parameters(RequiredRequestParameter.builderFor(location))
-  val optional = new Parameters(OptionalRequestParameter.builderFor(location))
+  val required = new Parameters[MandatoryRequestParameter] {
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
+      new MandatoryRequestParameter[T](name, aLocation, description, paramType, parse)
+  }
+
+  val optional = new Parameters[OptionalRequestParameter] {
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
+      new OptionalRequestParameter[T](name, aLocation, description, paramType, parse)
+  }
 }

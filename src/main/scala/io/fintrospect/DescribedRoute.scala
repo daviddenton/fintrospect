@@ -1,9 +1,9 @@
 package io.fintrospect
 
 import argo.jdom.JsonNode
-import com.twitter.io.Charsets
 import io.fintrospect.parameters.{Body, RequestParameter}
 import io.fintrospect.util.ArgoUtil._
+import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpResponseStatus}
 
 import scala.util.Try
@@ -12,11 +12,11 @@ import scala.util.Try
  * Encapsulates the description of a route.
  */
 case class DescribedRoute private(summary: String,
-                               produces: List[ContentType],
-                               consumes: List[ContentType],
-                               body: Option[Body],
-                               params: List[RequestParameter[_]],
-                               responses: List[ResponseWithExample]) {
+                                  produces: List[ContentType],
+                                  consumes: List[ContentType],
+                                  body: Option[Body],
+                                  params: List[RequestParameter[_, _]],
+                                  responses: List[ResponseWithExample]) {
 
   /**
    * Register content types which the route will consume. This is informational only and is NOT currently enforced.
@@ -31,7 +31,7 @@ case class DescribedRoute private(summary: String,
   /**
    * Register a request parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: RequestParameter[_]) = copy(params = rp :: params)
+  def taking(rp: RequestParameter[_, _]) = copy(params = rp :: params)
 
   /**
    * Register the expected content of the body. Presence is NOT currently enforced.
@@ -52,7 +52,7 @@ case class DescribedRoute private(summary: String,
    * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
    */
   def returning(response: HttpResponse): DescribedRoute = {
-    returning(ResponseWithExample(response.getStatus, response.getStatus.getReasonPhrase, Try(parse(response.getContent.toString(Charsets.Utf8))).getOrElse(nullNode())))
+    returning(ResponseWithExample(response.getStatus, response.getStatus.getReasonPhrase, Try(parse(contentFrom(response))).getOrElse(nullNode())))
   }
 
   /**

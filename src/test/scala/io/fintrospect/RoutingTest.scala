@@ -4,8 +4,8 @@ import _root_.util.Echo
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.path.Path
-import com.twitter.io.Charsets
-import com.twitter.util.Await
+import com.twitter.util.Await._
+import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
@@ -15,12 +15,12 @@ class RoutingTest extends FunSpec with ShouldMatchers {
 
   describe("Routing") {
     it("when it matches it responds as expected") {
-      val response = Await.result(routingWhichMatches((GET, Path("/someUrl")))(Request("/someUrl?field=hello")))
-      response.getStatus shouldEqual OK
-      response.getContent.toString(Charsets.Utf8) should include("/someUrl?field=hello")
+      val response = statusAndContentFrom(result(routingWhichMatches((GET, Path("/someUrl")))(Request("/someUrl?field=hello"))))
+      response._1 shouldEqual OK
+      response._2 should include("/someUrl?field=hello")
     }
     it("no match responds with default 404") {
-      val response = Await.result(routingWhichMatches((GET, Path("/someUrl")))(Request("/notMyService")))
+      val response = result(routingWhichMatches((GET, Path("/someUrl")))(Request("/notMyService")))
       response.getStatus shouldEqual NOT_FOUND
     }
   }

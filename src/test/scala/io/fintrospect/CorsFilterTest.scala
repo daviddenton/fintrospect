@@ -3,8 +3,8 @@ package io.fintrospect
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.filter.Cors
-import com.twitter.io.Charsets
 import com.twitter.util.{Await, Duration}
+import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import io.fintrospect.util.JsonResponseBuilder.{Error, Ok}
 import io.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
@@ -22,8 +22,8 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
       case origin if origin.endsWith("street") => Some(origin)
       case _ => None
     },
-    allowsMethods = { method => Some(method :: "TRAP" :: Nil)},
-    allowsHeaders = { headers => Some(headers)},
+    allowsMethods = { method => Some(method :: "TRAP" :: Nil) },
+    allowsHeaders = { headers => Some(headers) },
     exposedHeaders = "Icey" :: Nil,
     supportsCredentials = true,
     maxAge = Some(Duration.Top)
@@ -43,9 +43,8 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
     response.headers().get("Access-Control-Allow-Credentials") must be("true")
     response.headers().get("Access-Control-Allow-Methods") must be("BRR, TRAP")
     response.headers().get("Vary") must be("Origin")
-    response.headers().get("Access-Control-Max-Age") must be(
-      Duration.Top.inSeconds.toString)
-    response.getContent.toString(Charsets.Utf8) must be("")
+    response.headers().get("Access-Control-Max-Age") must be(Duration.Top.inSeconds.toString)
+    contentFrom(response) must be("")
   }
 
   it should "respond to invalid preflight requests without CORS headers" in {
@@ -58,7 +57,7 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
     response.headers().get("Access-Control-Allow-Credentials") must be(null)
     response.headers().get("Access-Control-Allow-Methods") must be(null)
     response.headers().get("Vary") must be("Origin")
-    response.getContent.toString(Charsets.Utf8) must be("")
+    contentFrom(response) must be("")
   }
 
   it should "respond to unacceptable cross-origin requests without CORS headers" in {
@@ -72,7 +71,7 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
     response.headers().get("Access-Control-Allow-Credentials") must be(null)
     response.headers().get("Access-Control-Allow-Methods") must be(null)
     response.headers().get("Vary") must be("Origin")
-    response.getContent.toString(Charsets.Utf8) must be("")
+    contentFrom(response) must be("")
   }
 
   it should "handle simple requests" in {
@@ -85,7 +84,7 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
     response.headers().get("Access-Control-Allow-Credentials") must be("true")
     response.headers().get("Access-Control-Expose-Headers") must be("Icey")
     response.headers().get("Vary") must be("Origin")
-    response.getContent.toString(Charsets.Utf8) must be("#guwop")
+    contentFrom(response) must be("#guwop")
   }
 
   it should "not add response headers to simple requests if request headers aren't present" in {
@@ -97,6 +96,6 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
     response.headers().get("Access-Control-Allow-Credentials") must be(null)
     response.headers().get("Access-Control-Expose-Headers") must be(null)
     response.headers().get("Vary") must be("Origin")
-    response.getContent.toString(Charsets.Utf8) must be("#guwop")
+    contentFrom(response) must be("#guwop")
   }
 }

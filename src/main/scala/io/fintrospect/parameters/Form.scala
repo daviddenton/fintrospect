@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import com.twitter.io.Charsets._
+import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
 import scala.util.Try
@@ -9,14 +9,21 @@ import scala.util.Try
  * Builder for parameters that are encoded in the HTTP form.
  */
 object Form {
-  private val location = new Location {
+  private val aLocation = new Location {
     override def toString = "form"
 
     override def from(name: String, request: HttpRequest): Option[String] = {
-      Try(new QueryStringDecoder("?" + request.getContent.toString(Utf8)).getParameters.get(name).get(0)).toOption
+      Try(new QueryStringDecoder("?" + contentFrom(request)).getParameters.get(name).get(0)).toOption
     }
   }
 
-  val required = new Parameters(RequiredRequestParameter.builderFor(location))
-  val optional = new Parameters(OptionalRequestParameter.builderFor(location))
+  val required = new Parameters[MandatoryRequestParameter] {
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
+      new MandatoryRequestParameter[T](name, aLocation, description, paramType, parse)
+  }
+
+  val optional = new Parameters[OptionalRequestParameter] {
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
+      new OptionalRequestParameter[T](name, aLocation, description, paramType, parse)
+  }
 }
