@@ -8,9 +8,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 import scala.util.Try
 
 class Body private(description: Option[String], paramType: ParamType, location: Location, val example: JsonNode, parse: (String => Try[JsonNode]))
-  extends RequestParameter[JsonNode]("body", description, paramType, location, parse) with Mandatory[JsonNode] {
-  override def parseFrom(request: HttpRequest): Option[Try[JsonNode]] = Some(Try(parse(contentFrom(request)).get))
-}
+  extends RequestParameter[JsonNode]("body", description, paramType, location, parse) with Mandatory[JsonNode]
 
 object Body {
   private val location = new Location {
