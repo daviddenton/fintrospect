@@ -1,8 +1,8 @@
 package io.fintrospect.parameters
 
 import argo.jdom.JsonNode
-import com.twitter.io.Charsets
 import io.fintrospect.util.ArgoUtil
+import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
@@ -11,7 +11,7 @@ class Body private(val description: Option[String], val paramType: ParamType, va
   extends Parameter[JsonNode] with Mandatory[JsonNode] {
   override val name = "body"
   override val where = "body"
-  override def parseFrom(request: HttpRequest): Option[Try[JsonNode]] = Some(Try(parse(request.getContent.toString(Charsets.Utf8)).get))
+  override def parseFrom(request: HttpRequest): Option[Try[JsonNode]] = Some(Try(parse(contentFrom(request)).get))
 }
 
 object Body {

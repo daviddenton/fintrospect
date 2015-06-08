@@ -1,10 +1,10 @@
 package io.fintrospect.clients
 
 import com.twitter.finagle.Service
-import com.twitter.io.Charsets
 import com.twitter.util.Await._
 import com.twitter.util.Future
 import io.fintrospect.parameters.{Path, Query}
+import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.util.PlainTextResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
@@ -60,9 +60,6 @@ class ClientTest extends FunSpec with ShouldMatchers {
 
   }
 
-  def responseFor(future: Future[HttpResponse]): (HttpResponseStatus, String) = {
-    val response = result(future)
-    (response.getStatus, response.getContent.toString(Charsets.Utf8))
-  }
+  def responseFor(future: Future[HttpResponse]): (HttpResponseStatus, String) = statusAndContentFrom(result(future))
 
 }
