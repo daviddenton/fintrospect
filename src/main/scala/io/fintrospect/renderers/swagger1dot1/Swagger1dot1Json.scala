@@ -44,7 +44,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     Ok(obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api))))
   }
 
-  override def badRequest(badParameters: List[RequestParameter[_, _]]): HttpResponse = JsonBadRequestRenderer(badParameters)
+  override def badRequest(badParameters: List[RequestParameter[_]]): HttpResponse = JsonBadRequestRenderer(badParameters)
 }
 
 object Swagger1dot1Json {

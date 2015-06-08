@@ -15,7 +15,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse
  */
 case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
 
-  def badRequest(badParameters: List[RequestParameter[_, _]]): HttpResponse = JsonBadRequestRenderer(badParameters)
+  def badRequest(badParameters: List[RequestParameter[_]]): HttpResponse = JsonBadRequestRenderer(badParameters)
 
   private val schemaGenerator = new JsonToJsonSchema()
 

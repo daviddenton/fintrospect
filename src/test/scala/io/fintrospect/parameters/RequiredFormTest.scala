@@ -5,8 +5,8 @@ import org.jboss.netty.handler.codec.http.QueryStringEncoder
 
 import scala.util.Try
 
-class RequiredFormTest extends JsonSupportingParametersTest[MandatoryRequestParameter](Form.required) {
-  override def from[X](method: (String, String) => MandatoryRequestParameter[X], value: Option[String]): Option[X] = {
+class RequiredFormTest extends JsonSupportingParametersTest[MandatoryRequestParameter, Mandatory](Form.required) {
+  override def from[X](method: (String, String) => MandatoryRequestParameter[X] with Mandatory[X], value: Option[String]): Option[X] = {
     val request = Request()
     request.setContentType(MediaType.WwwForm)
     value.foreach({

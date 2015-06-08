@@ -2,12 +2,14 @@ package io.fintrospect.parameters
 
 import java.net.URI
 
+import org.jboss.netty.handler.codec.http.HttpRequest
+
 import scala.util.Try
 
 /**
  * Builder for parameters that are encoded in the HTTP request path.
  */
-object Path extends Parameters[PathParameter] {
+object Path extends Parameters[PathParameter, Mandatory] {
 
   /**
    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
@@ -25,7 +27,7 @@ object Path extends Parameters[PathParameter] {
                                       description: Option[String],
                                       paramType: ParamType,
                                       parse: (String => T))
-  = new PathParameter[T](name, description, paramType) {
+  = new PathParameter[T](name, description, paramType) with Mandatory[T] {
 
     override def toString() = s"{$name}"
 
@@ -34,5 +36,7 @@ object Path extends Parameters[PathParameter] {
     })
 
     override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
+
+    override def from(request: HttpRequest): T = ???
   }
 }
