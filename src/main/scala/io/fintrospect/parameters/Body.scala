@@ -7,12 +7,8 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-class Body private(val description: Option[String], val paramType: ParamType, val location: Location, val example: JsonNode, parse: (String => JsonNode))
-  extends RequestParameter[JsonNode, JsonNode]("body", location, parse, true) {
-
-  override def from(request: HttpRequest): JsonNode = parse(location.from(null, request).get)
-
-  override def attemptToParseFrom(request: HttpRequest): Option[Try[JsonNode]] = Some(Try(from(request)))
+class Body private(description: Option[String], paramType: ParamType, location: Location, val example: JsonNode, parse: (String => JsonNode))
+  extends MandatoryRequestParameter[JsonNode]("body", location, description, paramType, parse) {
 }
 
 object Body {
