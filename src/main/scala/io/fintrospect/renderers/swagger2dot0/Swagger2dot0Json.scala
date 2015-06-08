@@ -36,7 +36,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   )
 
   private def render(body: Body, schema: Schema): JsonNode = obj(
-    "in" -> string(body.location.toString),
+    "in" -> string(body.where),
     "name" -> string(body.name),
     "description" -> body.description.map(string).getOrElse(nullNode()),
     "required" -> boolean(true),
