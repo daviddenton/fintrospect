@@ -5,7 +5,6 @@ import java.time.{LocalDate, LocalDateTime}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.language.{higherKinds, implicitConversions}
-import scala.util.Try
 
 abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) extends FunSpec with ShouldMatchers {
 
@@ -138,7 +137,7 @@ abstract class ParametersTest[T[_] <: Parameter[_]](parameters: Parameters[T]) e
   case class MyCustomType(value:Int)
 
   describe("custom") {
-    def myCustomParameter(name: String, unused:String) = parameters.custom(name, s => Try(MyCustomType(s.toInt)))
+    def myCustomParameter(name: String, unused:String) = parameters.custom(name, s => MyCustomType(s.toInt))
 
     it("retrieves a valid value") {
       from(myCustomParameter, Some("123")) shouldEqual Some(MyCustomType(123))

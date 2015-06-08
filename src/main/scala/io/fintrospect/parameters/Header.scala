@@ -9,9 +9,17 @@ object Header {
 
   private val location = new Location {
     override def toString = "header"
+
     override def from(name: String, request: HttpRequest): Option[String] = Option(request.headers().get(name))
   }
 
-  val required = new Parameters(RequiredRequestParameter.builderFor(location))
-  val optional = new Parameters(OptionalRequestParameter.builderFor(location))
+  val required = new Parameters[MandatoryRequestParameter] {
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
+      new MandatoryRequestParameter[T](name, location, description, paramType, parse)
+  }
+
+  val optional = new Parameters[OptionalRequestParameter] {
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
+      new OptionalRequestParameter[T](name, location, description, paramType, parse)
+  }
 }

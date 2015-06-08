@@ -12,7 +12,7 @@ import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
  */
 object Xml extends ModuleRenderer {
 
-  override def badRequest(badParameters: List[RequestParameter[_]]): HttpResponse =
+  override def badRequest(badParameters: List[RequestParameter[_, _]]): HttpResponse =
     Error(HttpResponseStatus.BAD_REQUEST, badParameters.toString())
 
   private def renderRoute(basePath: Path, route: Route): XmlFormat = XmlFormat(s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")

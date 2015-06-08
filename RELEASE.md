@@ -3,7 +3,7 @@ Release Notes/Migration Guide
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
 #####v5.X.X -> v6.X.X
-- We've got a TLD! So... repackage from ```io.github.daviddenton.fintrospect``` to  ```fintrospect.io```. A global search and replace on your codebase will do it.
+- We've got a domain! So... repackage from ```io.github.daviddenton.fintrospect``` to  ```fintrospect.io```. A global search and replace on your codebase will do it.
 - Added support for custom parameter types. See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
 
 #####v4.X.X -> v5.X.X
