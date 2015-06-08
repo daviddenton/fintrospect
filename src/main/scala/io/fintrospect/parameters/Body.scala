@@ -9,6 +9,9 @@ import scala.util.Try
 
 class Body private(val description: Option[String], val paramType: ParamType, val location: Location, val example: JsonNode, parse: (String => Try[JsonNode]))
   extends RequestParameter[JsonNode, JsonNode](parse) {
+
+  override val required = true
+
   override val name = "body"
   override def from(request: HttpRequest): JsonNode = parse(location.from(null, request).get).get
 
