@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import com.twitter.io.Charsets._
+import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
 import scala.util.Try
@@ -13,7 +13,7 @@ object Form {
     override def toString = "form"
 
     override def from(name: String, request: HttpRequest): Option[String] = {
-      Try(new QueryStringDecoder("?" + request.getContent.toString(Utf8)).getParameters.get(name).get(0)).toOption
+      Try(new QueryStringDecoder("?" + contentFrom(request)).getParameters.get(name).get(0)).toOption
     }
   }
 
