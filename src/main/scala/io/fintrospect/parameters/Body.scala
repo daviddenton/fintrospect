@@ -7,7 +7,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-class Body private(description: Option[String], paramType: ParamType, location: Location, val example: JsonNode, parse: (String => JsonNode))
+class Body private(description: Option[String], paramType: ParamType, location: Location, val example: JsonNode, parse: String => JsonNode)
   extends MandatoryRequestParameter[JsonNode]("body", location, description, paramType, parse) {
 }
 
@@ -24,5 +24,5 @@ object Body {
    * @param example
    */
   def json(description: Option[String], example: JsonNode) =
-    new Body(description, ObjectParamType, location, example, s => ArgoUtil.parse(s))
+    new Body(description, ObjectParamType, location, example, ArgoUtil.parse)
 }
