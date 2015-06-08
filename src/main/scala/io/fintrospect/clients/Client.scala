@@ -14,7 +14,7 @@ class Client(method: HttpMethod,
   private val systemSuppliedParams = pathParams.filter(_.isEmpty).map(p => p -> p.name)
   private val allPossibleParams = pathParams ++ requestParams
   private val requiredParams = allPossibleParams.filter(_.required)
-  private val queryParams = requestParams.filter(_.location.toString == "query")
+  private val queryParams = requestParams.filter(_.where == "query")
 
   def apply(userSuppliedParams: (Parameter[_], String)*): Future[HttpResponse] = {
     val allSuppliedParams = Map(userSuppliedParams: _*) ++ systemSuppliedParams

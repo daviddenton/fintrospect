@@ -9,7 +9,7 @@ object JsonBadRequestRenderer {
   def apply(badParameters: List[RequestParameter[_, _]]): HttpResponse = {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),
-      "type" -> string(p.location.toString),
+      "type" -> string(p.where),
       "datatype" -> string(p.paramType.name),
       "required" -> boolean(p.required)
     ))

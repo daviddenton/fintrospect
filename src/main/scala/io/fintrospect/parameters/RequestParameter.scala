@@ -4,26 +4,28 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-abstract class RequestParameter[T, X](val name: String, parse: (String => X), val required: Boolean) extends Parameter[T] {
+abstract class RequestParameter[T, X](val name: String, location: Location, parse: (String => X), val required: Boolean) extends Parameter[T] {
+  val where = location.toString
+
   def from(request: HttpRequest): T
 
   def parseFrom(request: HttpRequest): Option[Try[X]] = location.from(name, request).map(s => Try(parse(s)))
 }
 
 class OptionalRequestParameter[T](name: String,
-                                  val location: Location,
+                                  location: Location,
                                   val description: Option[String],
                                   val paramType: ParamType,
                                   parse: (String => T))
-  extends RequestParameter[Option[T], T](name, parse, false) {
+  extends RequestParameter[Option[T], T](name, location, parse, false) {
 
   override def from(request: HttpRequest): Option[T] = Try(location.from(name, request).map(parse).get).toOption
 }
 
 class MandatoryRequestParameter[T](name: String,
-                                   val location: Location,
+                                   location: Location,
                                    val description: Option[String],
                                    val paramType: ParamType,
-                                   parse: (String => T)) extends RequestParameter[T, T](name, parse, true) {
+                                   parse: (String => T)) extends RequestParameter[T, T](name, location, parse, true) {
   override def from(request: HttpRequest): T = parseFrom(request).flatMap(_.toOption).get
 }
