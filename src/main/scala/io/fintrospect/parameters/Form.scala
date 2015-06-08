@@ -18,22 +18,12 @@ object Form {
   }
 
   val required = new Parameters[MandatoryRequestParameter] {
-    override protected def parameter[T](aName: String, aDescription: Option[String], aParamType: ParamType, parse: (String => Try[T])) =
-      new MandatoryRequestParameter[T](parse) {
-        val name = aName
-        val location = aLocation
-        val description = aDescription
-        val paramType = aParamType
-      }
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => Try[T])) =
+      new MandatoryRequestParameter[T](name, aLocation, description, paramType, parse)
   }
 
   val optional = new Parameters[OptionalRequestParameter] {
-    override protected def parameter[T](aName: String, aDescription: Option[String], aParamType: ParamType, parse: (String => Try[T])) =
-      new OptionalRequestParameter[T](parse) {
-        val name = aName
-        val location = aLocation
-        val description = aDescription
-        val paramType = aParamType
-      }
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => Try[T])) =
+      new OptionalRequestParameter[T](name, aLocation, description, paramType, parse)
   }
 }
