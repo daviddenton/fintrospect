@@ -19,7 +19,7 @@ class Swagger1dot1Json extends ModuleRenderer {
   private def render(parameter: Parameter[_]): JsonNode = obj(
     "name" -> string(parameter.name),
     "description" -> parameter.description.map(string).getOrElse(nullNode()),
-    "paramType" -> string(parameter.where.toString),
+    "paramType" -> string(parameter.location.toString),
     "required" -> boolean(parameter.required),
     "dataType" -> string(parameter.paramType.name)
   )
