@@ -20,6 +20,8 @@ object Query {
     private def parseParams(s: String) = {
       Try(new QueryStringDecoder(s).getParameters).toOption.getOrElse(new java.util.HashMap[String, JList[String]])
     }
+
+    override def into(name: String, value: String, request: HttpRequest): Unit = ???
   }
 
   val required = new Parameters[MandatoryRequestParameter, Mandatory] {

@@ -15,6 +15,8 @@ object Form {
     override def from(name: String, request: HttpRequest): Option[String] = {
       Try(new QueryStringDecoder("?" + contentFrom(request)).getParameters.get(name).get(0)).toOption
     }
+
+    override def into(name: String, value: String, request: HttpRequest): Unit = ???
   }
 
   val required = new Parameters[MandatoryRequestParameter, Mandatory] {

@@ -15,6 +15,7 @@ class Client(method: HttpMethod,
   private val allPossibleParams = pathParams ++ requestParams
   private val requiredParams = allPossibleParams.filter(_.required)
   private val queryParams = requestParams.filter(_.where == "query")
+  private val headerParams = requestParams.filter(_.where == "header")
 
   def apply(userSuppliedParams: (Parameter[_], String)*): Future[HttpResponse] = {
     val allSuppliedParams = Map(userSuppliedParams: _*) ++ systemSuppliedParams
@@ -27,7 +28,9 @@ class Client(method: HttpMethod,
     if (missingParams.nonEmpty) {
       return Future.value(Error(BAD_REQUEST, "Client: Missing required params passed: " + missingParams))
     }
-    service(new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, buildUrl(allSuppliedParams)))
+    val request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, buildUrl(allSuppliedParams))
+    headerParams.filter(allSuppliedParams.contains).foreach(p => p.into(request, allSuppliedParams(p)))
+    service(request)
   }
 
   def buildUrl(allSuppliedParams: Map[Parameter[_], String]): String = {

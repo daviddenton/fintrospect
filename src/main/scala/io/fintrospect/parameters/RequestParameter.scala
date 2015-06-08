@@ -6,6 +6,8 @@ import scala.util.Try
 
 abstract class RequestParameter[T](val name: String, location: Location, parse: String => T, val required: Boolean)
   extends Parameter[T] {
+  def into(request: HttpRequest, value: String): Unit = location.into(name, value, request)
+
   val where = location.toString
 
   def attemptToParseFrom(request: HttpRequest): Option[Try[T]] = location.from(name, request).map(s => Try(parse(s)))
