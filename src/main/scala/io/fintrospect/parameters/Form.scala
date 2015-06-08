@@ -17,13 +17,13 @@ object Form {
     }
   }
 
-  val required = new Parameters[RequestParameter, Mandatory] {
+  val required = new Parameters[NonBodyRequestParameter, Mandatory] {
     override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => Try[T])) =
-      new RequestParameter[T](name, description, paramType, location, parse) with Mandatory[T]
+      new NonBodyRequestParameter[T](name, description, paramType, location, parse) with Mandatory[T]
   }
 
-  val optional = new Parameters[RequestParameter, Optional] {
+  val optional = new Parameters[NonBodyRequestParameter, Optional] {
     override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => Try[T])) =
-      new RequestParameter[T](name, description, paramType, location, parse) with Optional[T]
+      new NonBodyRequestParameter[T](name, description, paramType, location, parse) with Optional[T]
   }
 }

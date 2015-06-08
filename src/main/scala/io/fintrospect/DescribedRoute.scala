@@ -1,7 +1,7 @@
 package io.fintrospect
 
 import argo.jdom.JsonNode
-import io.fintrospect.parameters.{Body, RequestParameter}
+import io.fintrospect.parameters.{Body, NonBodyRequestParameter}
 import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpResponseStatus}
@@ -15,7 +15,7 @@ case class DescribedRoute private(summary: String,
                                   produces: List[ContentType],
                                   consumes: List[ContentType],
                                   body: Option[Body],
-                                  params: List[RequestParameter[_]],
+                                  params: List[NonBodyRequestParameter[_]],
                                   responses: List[ResponseWithExample]) {
 
   /**
@@ -31,7 +31,7 @@ case class DescribedRoute private(summary: String,
   /**
    * Register a request parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: RequestParameter[_]) = copy(params = rp :: params)
+  def taking(rp: NonBodyRequestParameter[_]) = copy(params = rp :: params)
 
   /**
    * Register the expected content of the body. Presence is NOT currently enforced.
