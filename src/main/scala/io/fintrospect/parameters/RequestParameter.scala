@@ -9,7 +9,7 @@ abstract class RequestParameter[T, X](val name: String, location: Location, pars
 
   def from(request: HttpRequest): T
 
-  def parseFrom(request: HttpRequest): Option[Try[X]] = location.from(name, request).map(s => Try(parse(s)))
+  def attemptToParseFrom(request: HttpRequest): Option[Try[X]] = location.from(name, request).map(s => Try(parse(s)))
 }
 
 class OptionalRequestParameter[T](name: String,
@@ -27,5 +27,5 @@ class MandatoryRequestParameter[T](name: String,
                                    val description: Option[String],
                                    val paramType: ParamType,
                                    parse: (String => T)) extends RequestParameter[T, T](name, location, parse, true) {
-  override def from(request: HttpRequest): T = parseFrom(request).flatMap(_.toOption).get
+  override def from(request: HttpRequest): T = attemptToParseFrom(request).flatMap(_.toOption).get
 }
