@@ -22,9 +22,9 @@ object Query {
     }
   }
 
-  val required = new Parameters[RequestParameter, Mandatory] {
+  val required = new Parameters[MandatoryRequestParameter] {
     override protected def parameter[T](aName: String, aDescription: Option[String], aParamType: ParamType, parse: (String => Try[T])) =
-      new RequestParameter[T](parse) with Mandatory[T] {
+      new MandatoryRequestParameter[T](parse) {
         val name = aName
         val location = aLocation
         val description = aDescription
@@ -32,9 +32,9 @@ object Query {
       }
   }
 
-  val optional = new Parameters[RequestParameter, Optional] {
+  val optional = new Parameters[OptionalRequestParameter] {
     override protected def parameter[T](aName: String, aDescription: Option[String], aParamType: ParamType, parse: (String => Try[T])) =
-      new RequestParameter[T](parse) with Optional[T] {
+      new OptionalRequestParameter[T](parse) {
         val name = aName
         val location = aLocation
         val description = aDescription

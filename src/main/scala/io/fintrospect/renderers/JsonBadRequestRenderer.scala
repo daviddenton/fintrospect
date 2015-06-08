@@ -6,7 +6,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
 object JsonBadRequestRenderer {
-  def apply(badParameters: List[RequestParameter[_]]): HttpResponse = {
+  def apply(badParameters: List[RequestParameter[_, _]]): HttpResponse = {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),
       "type" -> string(p.location.toString),

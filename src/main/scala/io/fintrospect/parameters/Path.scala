@@ -2,34 +2,30 @@ package io.fintrospect.parameters
 
 import java.net.URI
 
-import org.jboss.netty.handler.codec.http.HttpRequest
-
 import scala.util.Try
 
 /**
  * Builder for parameters that are encoded in the HTTP request path.
  */
-object Path extends Parameters[PathParameter, Mandatory] {
+object Path extends Parameters[PathParameter] {
 
   /**
    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
    * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
    */
-  def fixed(aName: String): PathParameter[String] = new PathParameter[String](aName, None, StringParamType) with Mandatory[String] {
+  def fixed(aName: String): PathParameter[String] = new PathParameter[String](aName, None, StringParamType) {
     override def toString() = name
 
     override def unapply(str: String): Option[String] = if (str == name) Some(str) else None
 
     override def iterator: Iterator[PathParameter[_]] = Nil.iterator
-
-    override def parseFrom(request: HttpRequest): Option[Try[String]] = ???
   }
 
   override protected def parameter[T](name: String,
                                     description: Option[String],
                                     paramType: ParamType,
                                     parse: (String => Try[T]))
-  = new PathParameter[T](name, description, paramType) with Mandatory[T] {
+  = new PathParameter[T](name, description, paramType) {
 
     override def toString() = s"{$name}"
 
@@ -38,7 +34,5 @@ object Path extends Parameters[PathParameter, Mandatory] {
     })
 
     override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
-
-    override def parseFrom(request: HttpRequest): Option[Try[T]] = ???
   }
 }
