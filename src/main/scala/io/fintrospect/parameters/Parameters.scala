@@ -11,7 +11,7 @@ import scala.util.Try
 /**
  * Prototype functions for creating parameters of various types.
  */
-abstract class Parameters[P[_]] {
+trait Parameters[P[_]] {
 
   protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => Try[T])): P[T]
 
