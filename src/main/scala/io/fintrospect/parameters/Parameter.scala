@@ -7,7 +7,7 @@ import scala.util.Try
 trait Parameter[T] {
   val name: String
   val description: Option[String]
-  val where: String
+  val location: Location
   val paramType: ParamType
   val required: Boolean
   def parseFrom(request: HttpRequest): Option[Try[T]]
