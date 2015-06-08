@@ -7,14 +7,17 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-class Body private(val description: Option[String], val paramType: ParamType, val example: JsonNode, val parse: (String => Option[JsonNode]))
-  extends Parameter[JsonNode] with Mandatory[JsonNode] {
-  override val name = "body"
-  override val where = "body"
+class Body private(description: Option[String], paramType: ParamType, location: Location, val example: JsonNode, parse: (String => Try[JsonNode]))
+  extends RequestParameter[JsonNode]("body", description, paramType, location, parse) with Mandatory[JsonNode] {
   override def parseFrom(request: HttpRequest): Option[Try[JsonNode]] = Some(Try(parse(contentFrom(request)).get))
 }
 
 object Body {
+  private val location = new Location {
+    override def toString = "body"
+
+    override def from(unused: String, request: HttpRequest): Option[String] = Try(contentFrom(request)).toOption
+  }
 
   /**
    * Defines the JSON body of a request.
@@ -22,5 +25,5 @@ object Body {
    * @param example
    */
   def json(description: Option[String], example: JsonNode) =
-    new Body(description, ObjectParamType, example, s => Try(ArgoUtil.parse(s)).toOption)
+    new Body(description, ObjectParamType, location, example, s => Try(ArgoUtil.parse(s)))
 }
