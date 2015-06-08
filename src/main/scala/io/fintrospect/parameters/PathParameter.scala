@@ -8,5 +8,6 @@ abstract class PathParameter[T](val name: String, val description: Option[String
     override def from(name: String, request: HttpRequest): Option[String] = ???
   }
 
+  override val required = true
   def unapply(str: String): Option[T]
 }

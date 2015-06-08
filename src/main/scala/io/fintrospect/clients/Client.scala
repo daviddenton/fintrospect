@@ -8,7 +8,7 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http._
 
 class Client(method: HttpMethod,
-             requestParams: List[RequestParameter[_]],
+             requestParams: List[RequestParameter[_, _]],
              pathParams: List[PathParameter[_]],
              service: Service[HttpRequest, HttpResponse]) {
   private val systemSuppliedParams = pathParams.filter(_.isEmpty).map(p => p -> p.name)
