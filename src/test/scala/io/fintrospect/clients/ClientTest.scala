@@ -3,13 +3,15 @@ package io.fintrospect.clients
 import com.twitter.finagle.Service
 import com.twitter.util.Await._
 import com.twitter.util.Future
-import io.fintrospect.parameters.{Path, Query}
+import io.fintrospect.parameters.{Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.util.PlainTextResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FunSpec, ShouldMatchers}
+
+import scala.collection.JavaConversions
 
 class ClientTest extends FunSpec with ShouldMatchers {
 
@@ -55,6 +57,25 @@ class ClientTest extends FunSpec with ShouldMatchers {
       }
       it("optional query params are ignored if not there") {
         responseFor(clientWithNameQuery()) shouldEqual(OK, "GET,prefix")
+      }
+    }
+
+    describe("puts the header parameters into the request") {
+      val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request =>
+        val headers = JavaConversions.iterableAsScalaIterable(request.headers())
+        Future.value(PlainTextResponseBuilder.Ok(Map(headers.map(entry => entry.getKey -> entry.getValue).toList: _*).toString()))
+      }
+
+      val nameHeader = Header.optional.string("name")
+      val clientWithNameHeader = new Client(GET,
+        List(nameHeader),
+        List(Path.fixed("prefix")), returnsHeaders)
+
+      it("when there are some") {
+        responseFor(clientWithNameHeader(nameHeader -> "bob")) shouldEqual(OK, "Map(name -> bob)")
+      }
+      it("optional query params are ignored if not there") {
+        responseFor(clientWithNameHeader()) shouldEqual(OK, "Map()")
       }
     }
 
