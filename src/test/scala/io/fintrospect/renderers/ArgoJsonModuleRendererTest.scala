@@ -3,7 +3,6 @@ package io.fintrospect.renderers
 import _root_.util.Echo
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.path.Root
-import com.twitter.io.Charsets._
 import com.twitter.util.Await
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
@@ -11,6 +10,7 @@ import io.fintrospect.parameters.Path._
 import io.fintrospect.parameters._
 import io.fintrospect.util.ArgoUtil
 import io.fintrospect.util.ArgoUtil.{number, obj, parse}
+import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -47,7 +47,8 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
             .at(GET) / "welcome" / string("firstName") / fixed("bertrand") / string("secondName") bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
-      val actual = Await.result(module.toService(Request("/basepath"))).getContent.toString(Utf8)
+
+      val actual = contentFrom(Await.result(module.toService(Request("/basepath"))))
 //            println(actual)
       parse(actual) shouldEqual expected
     }
