@@ -4,6 +4,7 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.FintrospectModule._
+import io.fintrospect.Headers._
 import io.fintrospect.Routing.fromBinding
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.util.ResponseBuilder._
@@ -18,7 +19,6 @@ object FintrospectModule {
   private type Binding = PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]
 
   private type TFilter = Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]
-  val IDENTIFY_SVC_HEADER = "X-Fintrospect-Route-Name"
 
   /**
    * Combines many modules

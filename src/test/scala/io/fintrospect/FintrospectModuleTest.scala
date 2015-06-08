@@ -7,11 +7,12 @@ import com.twitter.io.Charsets._
 import com.twitter.util.Await._
 import com.twitter.util.{Await, Future}
 import io.fintrospect.FintrospectModule._
-import io.fintrospect.parameters.Header
 import io.fintrospect.parameters.Path._
+import io.fintrospect.parameters.{Header, Path}
 import io.fintrospect.renderers.simplejson.SimpleJson
+import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil._
-import io.fintrospect.util.JsonResponseBuilder._
+import io.fintrospect.util.PlainTextResponseBuilder._
 import io.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
@@ -56,12 +57,12 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
       it("at default location at the root of the module") {
         val m = FintrospectModule(Root, SimpleJson())
-        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual (OK, contentFrom(SimpleJson().description(Root, List())))
+        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(OK, contentFrom(SimpleJson().description(Root, List())))
       }
 
       it("at custom location") {
         val m = FintrospectModule(Root, SimpleJson()).withDescriptionPath(_ / "bob")
-        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldEqual (OK, contentFrom(SimpleJson().description(Root, List())))
+        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldEqual(OK, contentFrom(SimpleJson().description(Root, List())))
 
         Await.result(m.toService(Request("/"))).getStatus shouldEqual NOT_FOUND
       }
@@ -75,15 +76,15 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
           }
           val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))
 
-          statusAndContentFrom(result(totalService.apply(Request("/rita/echo")))) shouldEqual (OK, "rita")
-          statusAndContentFrom(result(totalService.apply(Request("/bob/echo")))) shouldEqual (OK, "bob")
-          statusAndContentFrom(result(totalService.apply(Request("/sue/echo")))) shouldEqual (OK, "sue")
+          statusAndContentFrom(result(totalService.apply(Request("/rita/echo")))) shouldEqual(OK, "rita")
+          statusAndContentFrom(result(totalService.apply(Request("/bob/echo")))) shouldEqual(OK, "bob")
+          statusAndContentFrom(result(totalService.apply(Request("/sue/echo")))) shouldEqual(OK, "sue")
         }
       }
 
       describe("when a route path cannot be found") {
         it("returns a 404") {
-          result(FintrospectModule(Root, SimpleJson()).toService.apply(Request("/svc/noSuchRoute"))).getStatus shouldEqual NOT_FOUND
+          result(FintrospectModule(Root, SimpleJson()).toService(Request("/svc/noSuchRoute"))).getStatus shouldEqual NOT_FOUND
         }
       }
 
@@ -97,10 +98,10 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
           .withRoute(DescribedRoute("").at(GET) / "svc" bindTo (() => AService(Seq())))
 
         it("applies to routes in module") {
-          result(module.toService.apply(Request("/svc"))).headers().get("MYHEADER") shouldEqual "BOB"
+          result(module.toService(Request("/svc"))).headers().get("MYHEADER") shouldEqual "BOB"
         }
         it("does not apply to  headers to all routes in module") {
-          result(module.toService.apply(Request("/"))).headers().contains("MYHEADER") shouldEqual false
+          result(module.toService(Request("/"))).headers().contains("MYHEADER") shouldEqual false
         }
       }
 
@@ -110,13 +111,13 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
         it("it returns a 400 when the required param is missing") {
           val request = Request("/svc")
-          result(m.toService.apply(request)).getStatus shouldEqual BAD_REQUEST
+          result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
         }
 
         it("it returns a 400 when the required param is not the correct type") {
           val request = Request("/svc")
           request.headers().add("aNumberHeader", "notANumber")
-          result(m.toService.apply(request)).getStatus shouldEqual BAD_REQUEST
+          result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
         }
       }
 
@@ -126,19 +127,29 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
         it("it returns a 200 when the optional param is missing") {
           val request = Request("/svc")
-          result(m.toService.apply(request)).getStatus shouldEqual OK
+          result(m.toService(request)).getStatus shouldEqual OK
         }
 
         it("it returns a 400 when the optional param is not the correct type") {
           val request = Request("/svc")
           request.headers().add("aNumberHeader", "notANumber")
-          result(m.toService.apply(request)).getStatus shouldEqual BAD_REQUEST
+          result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
         }
       }
+
+      describe("identity") {
+        it("identifies route with anonymised description when called") {
+          def getHeaders(number: Int, aString: String) = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
+          val route = DescribedRoute("").at(GET) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
+          val m = FintrospectModule(Root, SimpleJson()).withRoute(route)
+          HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldEqual(OK, "Map(X-Fintrospect-Route-Name -> GET./svc/{anInt}/fixed)")
+        }
+      }
+
     }
 
     def assertOkResponse(module: FintrospectModule, segments: Seq[String]): Unit = {
-      val result = Await.result(module.toService.apply(Request("/svc/" + segments.mkString("/"))))
+      val result = Await.result(module.toService(Request("/svc/" + segments.mkString("/"))))
       result.getStatus shouldEqual OK
       result.getContent.toString(Utf8) shouldEqual segments.mkString(",")
     }

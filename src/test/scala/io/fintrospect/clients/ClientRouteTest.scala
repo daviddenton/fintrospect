@@ -5,20 +5,18 @@ import com.twitter.util.Await._
 import com.twitter.util.Future
 import io.fintrospect.parameters.Path._
 import io.fintrospect.parameters.{Header, Query}
-import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
-import io.fintrospect.util.PlainTextResponseBuilder
+import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.util.PlainTextResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-import scala.collection.JavaConversions
-
 class ClientRouteTest extends FunSpec with ShouldMatchers {
 
   describe("ClientRoute") {
     val returnsMethodAndUri = Service.mk[HttpRequest, HttpResponse] { request =>
-      Future.value(PlainTextResponseBuilder.Ok(request.getMethod + "," + request.getUri))
+      Future.value(Ok(request.getMethod + "," + request.getUri))
     }
     val name = string("name")
     val maxAge = integer("maxAge")
@@ -43,7 +41,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
         responseFor(clientWithNameAndMaxAge(maxAge -> "7", name -> "bob")) shouldEqual(OK, "GET,bob/7")
       }
       it("ignores fixed") {
-        val clientWithFixedSections = ClientRoute().at(GET) / "prefix"  / maxAge / "suffix" bindTo returnsMethodAndUri
+        val clientWithFixedSections = ClientRoute().at(GET) / "prefix" / maxAge / "suffix" bindTo returnsMethodAndUri
         responseFor(clientWithFixedSections(maxAge -> "7")) shouldEqual(OK, "GET,prefix/7/suffix")
       }
     }
@@ -61,10 +59,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
     }
 
     describe("puts the header parameters into the request") {
-      val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request =>
-        val headers = JavaConversions.iterableAsScalaIterable(request.headers())
-        Future.value(PlainTextResponseBuilder.Ok(Map(headers.map(entry => entry.getKey -> entry.getValue).toList: _*).toString()))
-      }
+      val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
 
       val nameHeader = Header.optional.string("name")
 
