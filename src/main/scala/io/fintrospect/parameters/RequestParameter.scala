@@ -4,36 +4,26 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-abstract class RequestParameter[T, X] extends Parameter[T] {
+abstract class RequestParameter[T, X](val name: String, parse: (String => X), val required: Boolean) extends Parameter[T] {
   def from(request: HttpRequest): T
 
-  def parseFrom(request: HttpRequest): Option[Try[X]]
+  def parseFrom(request: HttpRequest): Option[Try[X]] = location.from(name, request).map(s => Try(parse(s)))
 }
 
-class OptionalRequestParameter[T](val name: String,
+class OptionalRequestParameter[T](name: String,
                                   val location: Location,
                                   val description: Option[String],
                                   val paramType: ParamType,
                                   parse: (String => T))
-  extends RequestParameter[Option[T], T] {
+  extends RequestParameter[Option[T], T](name, parse, false) {
 
-  override val required = false
-
-  override def parseFrom(request: HttpRequest): Option[Try[T]] = location.from(name, request).map(s => Try(parse(s)))
-
-  override def from(request: HttpRequest): Option[T] = {
-    Try(location.from(name, request).map(parse).get).toOption
-  }
+  override def from(request: HttpRequest): Option[T] = Try(location.from(name, request).map(parse).get).toOption
 }
 
-class MandatoryRequestParameter[T](val name: String,
+class MandatoryRequestParameter[T](name: String,
                                    val location: Location,
                                    val description: Option[String],
                                    val paramType: ParamType,
-                                   parse: (String => T)) extends RequestParameter[T, T] {
-  override val required = true
-
+                                   parse: (String => T)) extends RequestParameter[T, T](name, parse, true) {
   override def from(request: HttpRequest): T = parseFrom(request).flatMap(_.toOption).get
-
-  override def parseFrom(request: HttpRequest): Option[Try[T]] = location.from(name, request).map(s => Try(parse(s)))
 }
