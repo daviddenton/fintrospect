@@ -71,7 +71,7 @@ class BookSearch(books: Books) {
 ```
 
 #####View the generated documentation
-The auto-generated documenation lives at the root of the module, so point the Swagger UI at ```http://{host}:8080/library``` to see it.
+The auto-generated documentation lives at the root of the module, so point the Swagger UI at ```http://{host}:8080/library``` to see it.
 
 #####Test it
 Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you can mix into your tests in order to validate your routes.
