@@ -29,15 +29,15 @@ class Client(method: HttpMethod,
              pathParams: List[PathParameter[_]],
              service: Service[HttpRequest, HttpResponse]) {
 
-  private val systemSuppliedParams = pathParams.filter(_.isEmpty).map(parameter => ParamBinding(parameter, parameter.name))
+  private val systemBindings = pathParams.filter(_.isEmpty).map(parameter => ParamBinding(parameter, parameter.name))
   private val allPossibleParams = pathParams ++ requestParams
   private val requiredParams = allPossibleParams.filter(_.required)
   private val queryParams = requestParams.filter(_.where == "query")
   private val headerParams = requestParams.filter(_.where == "header")
   private val identify = Identify(method, pathParams)
 
-  def apply(userSuppliedBindings: ParamBinding[_]*): Future[HttpResponse] = {
-    val allSuppliedParams: Map[Parameter[_], String] = Map((userSuppliedBindings ++ systemSuppliedParams).map(b => (b.parameter, b.value)): _*)
+  def apply(requestBindings: ParamBinding[_]*): Future[HttpResponse] = {
+    val allSuppliedParams: Map[Parameter[_], String] = Map((requestBindings ++ systemBindings).map(b => (b.parameter, b.value)): _*)
     val illegalParams = allSuppliedParams.keys.filterNot(param => allPossibleParams.contains(param))
     if (illegalParams.nonEmpty) {
       return Future.value(Error(BAD_REQUEST, "Client: Illegal params passed: " + illegalParams))
