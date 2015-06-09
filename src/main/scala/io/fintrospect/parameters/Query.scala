@@ -24,15 +24,14 @@ object Query {
     override def into(name: String, value: String, request: HttpRequest): Unit = ???
   }
 
-  val required = new Parameters[MandatoryRequestParameter, Mandatory] {
+  val required = new Parameters[RequestParameter, Mandatory] {
     override protected def parameter[T](name: String, description: Option[String], paramType: ParamType,
                                         deserialize: String => T, serialize: T => String) =
-      new MandatoryRequestParameter[T](name, location, description, paramType, deserialize, serialize)
+      new RequestParameter[T](name, description, paramType, location, deserialize, serialize) with Mandatory[T]
   }
 
-  val optional = new Parameters[OptionalRequestParameter, Optional] {
+  val optional = new Parameters[RequestParameter, Optional] {
     override protected def parameter[T](name: String, description: Option[String], paramType: ParamType,
                                         deserialize: String => T, serialize: T => String) =
-      new OptionalRequestParameter[T](name, location, description, paramType, deserialize, serialize)
-  }
-}
+      new RequestParameter[T](name, description, paramType, location, deserialize, serialize) with Optional[T]
+  }}

@@ -9,7 +9,7 @@ import scala.util.Try
 
 class Body private(description: Option[String], paramType: ParamType, location: Location, val example: JsonRootNode,
                    deserialize: String => JsonRootNode, serialize: JsonRootNode => String)
-  extends MandatoryRequestParameter[JsonRootNode]("body", location, description, paramType, deserialize, serialize) {
+  extends RequestParameter[JsonRootNode]("body", description, paramType, location, deserialize, serialize) with Mandatory[JsonRootNode] {
 }
 
 object Body {
