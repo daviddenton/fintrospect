@@ -1,6 +1,13 @@
-Release Notes/Migration Guide
+Roadmap/Release Notes/Migration Guide
 -----------------------------
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
+
+######Master (in dev...)
+- Improve support for Forms and custom Body types (other than JSON) in both Serverside and Clientside APIs. Drop support for Forms parameters as request params and instead reimplement as a particular Body type, with setting of Content-Type headers. This will involve significant refactoring internally, but *should* result in no visible outward API change if you rely on Scala's type inference.
+- Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
+
+#####v6.1.0
+- EXPERIMENTAL! Ability to define clients using the same style API as the Services. Supports Path/Query/Headers, but not Bodies or Forms as yet.
 
 #####v5.X.X -> v6.X.X
 - We've got a domain! So... repackage from ```io.github.daviddenton.fintrospect``` to  ```fintrospect.io```. A global search and replace on your codebase will do it.
