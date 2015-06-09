@@ -4,6 +4,9 @@ import com.twitter.finagle.http.{MediaType, Request}
 import org.jboss.netty.handler.codec.http.QueryStringEncoder
 
 class OptionalFormTest extends JsonSupportingParametersTest[OptionalRequestParameter, Optional](Form.optional) {
+
+  override def to[X](method: (String, String) => OptionalRequestParameter[X] with Optional[X], value: X): String = { method(paramName, null).apply(value) }
+
   override def from[X](method: (String, String) => OptionalRequestParameter[X] with Optional[X], value: Option[String]): Option[X] = {
     val request = Request()
     request.setContentType(MediaType.WwwForm)
