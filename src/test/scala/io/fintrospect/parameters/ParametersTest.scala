@@ -137,7 +137,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
   case class MyCustomType(value:Int)
 
   describe("custom") {
-    def myCustomParameter(name: String, unused:String) = parameters.custom(name, s => MyCustomType(s.toInt))
+    def myCustomParameter(name: String, unused:String) = parameters.custom[MyCustomType](name, s => MyCustomType(s.toInt), ct => ct.value.toString)
 
     it("retrieves a valid value") {
       from(myCustomParameter, Some("123")) shouldEqual Some(MyCustomType(123))

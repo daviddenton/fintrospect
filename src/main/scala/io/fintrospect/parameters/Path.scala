@@ -15,8 +15,13 @@ object Path extends Parameters[PathParameter, Mandatory] {
    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
    * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
    */
-  def fixed(aName: String): PathParameter[String] = new PathParameter[String](aName, None, StringParamType) {
+  def fixed(name: String): PathParameter[String] = new PathParameter[String](name, None, StringParamType) {
+
+    override val required = true
+
     override def toString() = name
+
+    override def apply(value: String): String = value
 
     override def unapply(str: String): Option[String] = if (str == name) Some(str) else None
 
@@ -26,10 +31,13 @@ object Path extends Parameters[PathParameter, Mandatory] {
   override protected def parameter[T](name: String,
                                       description: Option[String],
                                       paramType: ParamType,
-                                      parse: (String => T))
+                                      parse: String => T,
+                                      format: T => String)
   = new PathParameter[T](name, description, paramType) with Mandatory[T] {
 
     override def toString() = s"{$name}"
+
+    override def apply(value: T): String = format(value)
 
     override def unapply(str: String): Option[T] = Option(str).flatMap(s => {
       Try(parse(new URI("http://localhost/" + s).getPath.substring(1))).toOption
