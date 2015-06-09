@@ -22,7 +22,7 @@ class OptionalRequestParameter[T](name: String,
                                   deserialize: String => T, serialize: T => String)
   extends RequestParameter[T](name, location, deserialize, serialize) with Optional[T] {
 
-  def from(request: HttpRequest): Option[T] = Try(location.from(name, request).map(deserialize).get).toOption
+  def from(request: HttpRequest): Option[T] = Try(attemptToParseFrom(request).get.toOption).toOption.flatMap(identity)
 }
 
 class MandatoryRequestParameter[T](name: String,
