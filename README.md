@@ -1,10 +1,10 @@
 Fintrospect 
+===========
 <a href="https://travis-ci.org/daviddenton/fintrospect" target="_top">
 <img src="https://travis-ci.org/daviddenton/fintrospect.svg?branch=master"/></a> 
 <a href="https://coveralls.io/r/daviddenton/fintrospect?branch=master" target="_top"><img src="https://coveralls.io/repos/daviddenton/fintrospect/badge.svg?branch=master"/></a> 
 <a href="https://bintray.com/daviddenton/maven/fintrospect/_latestVersion" target="_top"><img src="https://api.bintray.com/packages/daviddenton/maven/fintrospect/images/download.svg"/></a> 
 <a href="https://bintray.com/daviddenton/maven/fintrospect/view?source=watch" target="_top"><img src="https://www.bintray.com/docs/images/bintray_badge_color.png"/></a> 
-===========
 
 
 Fintrospect is a bolt-on library for use with the [Finagle](http://twitter.github.io/finagle/) RPC framework from Twitter. It was developed out of a desire to provide a pleasant API for describing HTTP request routing in combination with statically-typed documentation which could be verified at compile time and auto-generated at runtime (and thus avoiding the stale documentation risk that exists with manually written docs).
@@ -77,5 +77,5 @@ The auto-generated documenation lives at the root of the module, so point the Sw
 Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you can mix into your tests in order to validate your routes.
 
 ###Upgrading?
-See the [Release Notes/Migration Guide](https://github.com/daviddenton/fintrospect/blob/master/RELEASE.md)
+See the [Roadmap/Release Notes/Migration Guide](https://github.com/daviddenton/fintrospect/blob/master/RELEASE.md)
 
