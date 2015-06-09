@@ -17,7 +17,7 @@ abstract class JsonSupportingParametersTest[T[_] <: Parameter[_], R[_] <: Retrie
     }
 
     it("serializes json correctly") {
-      to(parameters.json, expected) shouldEqual """{"field":"value"}"""
+      to(parameters.json, expected).value shouldEqual """{"field":"value"}"""
     }
   }
 }

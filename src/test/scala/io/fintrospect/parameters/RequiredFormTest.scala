@@ -7,7 +7,7 @@ import scala.util.Try
 
 class RequiredFormTest extends JsonSupportingParametersTest[MandatoryRequestParameter, Mandatory](Form.required) {
 
-  override def to[X](method: (String, String) => MandatoryRequestParameter[X] with Mandatory[X], value: X): String = { method(paramName, null).apply(value) }
+  override def to[X](method: (String, String) => MandatoryRequestParameter[X] with Mandatory[X], value: X): ParamBinding[X] = method(paramName, null) -> value
 
   override def from[X](method: (String, String) => MandatoryRequestParameter[X] with Mandatory[X], value: Option[String]): Option[X] = {
     val request = Request()

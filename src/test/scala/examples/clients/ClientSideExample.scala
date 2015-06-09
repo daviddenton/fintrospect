@@ -1,5 +1,7 @@
 package examples.clients
 
+import java.time.LocalDate
+
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await._
 import io.fintrospect.clients.ClientRoute
@@ -25,7 +27,7 @@ object ClientSideExample extends App {
 
   val localClient = ClientRoute().taking(theUser).at(GET) / "firstSection" / theDate bindTo localEchoService
 
-  val theCall = localClient(theDate -> "2015-01-01", theUser -> System.getenv("USER"))
+  val theCall = localClient(theDate -> LocalDate.of(2015, 1, 1), theUser -> System.getenv("USER"))
 
   val response = result(theCall)
 

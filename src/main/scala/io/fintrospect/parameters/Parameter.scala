@@ -6,6 +6,10 @@ trait Parameter[T] {
   val where: String
   val paramType: ParamType
   val required: Boolean
-  def apply(value: T): String
+
+  def of(value: T): ParamBinding[T] = ->(value)
+
+  def ->(value: T): ParamBinding[T]
 }
+
 

@@ -21,7 +21,7 @@ object Path extends Parameters[PathParameter, Mandatory] {
 
     override def toString() = name
 
-    override def apply(value: String): String = value
+    override def ->(value: String): ParamBinding[String] = ParamBinding(this, value)
 
     override def unapply(str: String): Option[String] = if (str == name) Some(str) else None
 
@@ -31,16 +31,16 @@ object Path extends Parameters[PathParameter, Mandatory] {
   override protected def parameter[T](name: String,
                                       description: Option[String],
                                       paramType: ParamType,
-                                      parse: String => T,
-                                      format: T => String)
+                                      deserialize: String => T,
+                                      serialize: T => String)
   = new PathParameter[T](name, description, paramType) with Mandatory[T] {
 
     override def toString() = s"{$name}"
 
-    override def apply(value: T): String = format(value)
+    override def ->(value: T): ParamBinding[T] = ParamBinding[T](this.asInstanceOf[Parameter[T]], serialize(value))
 
     override def unapply(str: String): Option[T] = Option(str).flatMap(s => {
-      Try(parse(new URI("http://localhost/" + s).getPath.substring(1))).toOption
+      Try(deserialize(new URI("http://localhost/" + s).getPath.substring(1))).toOption
     })
 
     override def iterator: Iterator[PathParameter[_]] = Some(this).iterator

@@ -8,7 +8,7 @@ abstract class RequestParameter[T](val name: String, location: Location, deseria
   extends Parameter[T] {
   def into(request: HttpRequest, value: String): Unit = location.into(name, value, request)
 
-  override def apply(value: T): String = serialize(value)
+  override def ->(value: T): ParamBinding[T] = ParamBinding(this, serialize(value))
 
   val where = location.toString
 
