@@ -3,7 +3,7 @@ package io.fintrospect.renderers.swagger2dot0
 import argo.jdom.JsonNode
 import com.twitter.finagle.http.path.Path
 import io.fintrospect._
-import io.fintrospect.parameters.{Body, Parameter, RequestParameter}
+import io.fintrospect.parameters.{BodyParameter, Parameter, RequestParameter}
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
 import io.fintrospect.util.ArgoUtil._
@@ -35,7 +35,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     "type" -> string(parameter.paramType.name)
   )
 
-  private def render(body: Body, schema: Schema): JsonNode = obj(
+  private def render(body: BodyParameter[_], schema: Schema): JsonNode = obj(
     "in" -> string(body.where),
     "name" -> string(body.name),
     "description" -> body.description.map(string).getOrElse(nullNode()),

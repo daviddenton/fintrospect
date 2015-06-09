@@ -7,11 +7,6 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-class Body private(description: Option[String], paramType: ParamType, location: Location, val example: JsonRootNode,
-                   deserialize: String => JsonRootNode, serialize: JsonRootNode => String)
-  extends RequestParameter[JsonRootNode]("body", description, paramType, location, deserialize, serialize) with Mandatory[JsonRootNode] {
-}
-
 object Body {
   private val location = new Location {
     override def toString = "body"
@@ -27,5 +22,5 @@ object Body {
    * @param example
    */
   def json(description: Option[String], example: JsonRootNode) =
-    new Body(description, ObjectParamType, location, example, ArgoUtil.parse, ArgoUtil.compact)
+    new BodyParameter[JsonRootNode]("body", description, ObjectParamType, example, location, ArgoUtil.parse, ArgoUtil.compact) with Mandatory[JsonRootNode]
 }
