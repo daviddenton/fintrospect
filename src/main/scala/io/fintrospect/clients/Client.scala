@@ -4,7 +4,7 @@ import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.clients.Client.Identify
-import io.fintrospect.parameters.{Parameter, PathParameter, RequestParameter}
+import io.fintrospect.parameters.{ParamBinding, Parameter, PathParameter, RequestParameter}
 import io.fintrospect.util.PlainTextResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http._
@@ -35,8 +35,10 @@ class Client(method: HttpMethod,
   private val headerParams = requestParams.filter(_.where == "header")
   private val identify = Identify(method, pathParams)
 
-  def apply(userSuppliedParams: (Parameter[_], String)*): Future[HttpResponse] = {
-    val allSuppliedParams = Map(userSuppliedParams: _*) ++ systemSuppliedParams
+  def apply(userSuppliedBindings: ParamBinding[_]*): Future[HttpResponse] = {
+    val userSuppliedParams = userSuppliedBindings.map(b => (b.parameter, b.value))
+
+    val allSuppliedParams: Map[Parameter[_], String] = Map(userSuppliedParams ++ systemSuppliedParams: _*)
     val illegalParams = allSuppliedParams.keys.filterNot(param => allPossibleParams.contains(param))
     if (illegalParams.nonEmpty) {
       return Future.value(Error(BAD_REQUEST, "Client: Illegal params passed: " + illegalParams))

@@ -21,9 +21,9 @@ class Routing private(routes: PartialFunction[HttpRequest, Service[HttpRequest, 
 
 object Routing {
 
-  private[fintrospect] type Binding = PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]
+  private[fintrospect] type RouteBinding = PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]
 
-  def fromBinding(binding: Binding) =
+  def fromBinding(binding: RouteBinding) =
     new Routing(
       new PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]] {
         def apply(request: HttpRequest) = {

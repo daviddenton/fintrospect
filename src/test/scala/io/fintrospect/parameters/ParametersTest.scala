@@ -6,12 +6,13 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.language.{higherKinds, implicitConversions}
 
-abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](parameters: Parameters[T, R]) extends FunSpec with ShouldMatchers {
+abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parameters: Parameters[T, R]) extends FunSpec with ShouldMatchers {
 
   val paramName = "name"
 
   def from[X](methodUnderTest: (String, String) => T[X] with R[X], value: Option[String]): Option[X]
-  def to[X](methodUnderTest: (String, String) => T[X] with R[X], value: X): String
+
+  def to[X](methodUnderTest: (String, String) => T[X] with R[X], value: X): ParamBinding[X]
 
 
   describe("int") {
@@ -28,7 +29,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes an int correctly") {
-      to(parameters.int, 123) shouldEqual "123"
+      to(parameters.int, 123).value shouldEqual "123"
     }
   }
 
@@ -46,7 +47,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes an integer correctly") {
-      to(parameters.integer, new Integer(123)) shouldEqual "123"
+      to(parameters.integer, new Integer(123)).value shouldEqual "123"
     }
   }
 
@@ -64,7 +65,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes a long correctly") {
-      to(parameters.long, 123L) shouldEqual "123"
+      to(parameters.long, 123L).value shouldEqual "123"
     }
   }
 
@@ -82,7 +83,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes a bigDecimal correctly") {
-      to(parameters.bigDecimal, BigDecimal("1.234")) shouldEqual "1.234"
+      to(parameters.bigDecimal, BigDecimal("1.234")).value shouldEqual "1.234"
     }
   }
 
@@ -100,7 +101,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes a boolean correctly") {
-      to(parameters.boolean, true) shouldEqual "true"
+      to(parameters.boolean, true).value shouldEqual "true"
     }
   }
 
@@ -114,7 +115,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes a string correctly") {
-      to(parameters.string, "123") shouldEqual "123"
+      to(parameters.string, "123").value shouldEqual "123"
     }
   }
 
@@ -132,7 +133,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes a dateTime correctly") {
-      to(parameters.dateTime, LocalDateTime.of(1970, 1, 1, 2, 3, 4)) shouldEqual "1970-01-01T02:03:04"
+      to(parameters.dateTime, LocalDateTime.of(1970, 1, 1, 2, 3, 4)).value shouldEqual "1970-01-01T02:03:04"
     }
   }
 
@@ -150,7 +151,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes a zonedDateTime correctly") {
-      to(parameters.zonedDateTime, ZonedDateTime.of(1970, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))) shouldEqual "1970-01-01T00:00:00Z[UTC]"
+      to(parameters.zonedDateTime, ZonedDateTime.of(1970, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))).value shouldEqual "1970-01-01T00:00:00Z[UTC]"
     }
   }
 
@@ -168,14 +169,14 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes a date correctly") {
-      to(parameters.localDate, LocalDate.of(1970, 1, 1)) shouldEqual "1970-01-01"
+      to(parameters.localDate, LocalDate.of(1970, 1, 1)).value shouldEqual "1970-01-01"
     }
   }
 
-  case class MyCustomType(value:Int)
+  case class MyCustomType(value: Int)
 
   describe("custom") {
-    def myCustomParameter(name: String, unused:String) = parameters.custom[MyCustomType](name, s => MyCustomType(s.toInt), ct => ct.value.toString)
+    def myCustomParameter(name: String, unused: String) = parameters.custom[MyCustomType](name, s => MyCustomType(s.toInt), ct => ct.value.toString)
 
     it("retrieves a valid custom value") {
       from(myCustomParameter, Some("123")) shouldEqual Some(MyCustomType(123))
@@ -190,7 +191,7 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     }
 
     it("serializes a custom value correctly") {
-      to(myCustomParameter, MyCustomType(123)) shouldEqual "123"
+      to(myCustomParameter, MyCustomType(123)).value shouldEqual "123"
     }
   }
 }
