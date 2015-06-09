@@ -35,6 +35,8 @@ object Path extends Parameters[PathParameter, Mandatory] {
                                       serialize: T => String)
   = new PathParameter[T](name, description, paramType) with Mandatory[T] {
 
+    def attemptToParseFrom(request: HttpRequest): Option[Try[T]] = ???
+
     override def toString() = s"{$name}"
 
     override def ->(value: T): ParamBinding[T] = ParamBinding[T](this.asInstanceOf[Parameter[T]], serialize(value))
@@ -44,7 +46,5 @@ object Path extends Parameters[PathParameter, Mandatory] {
     })
 
     override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
-
-    override def from(request: HttpRequest): T = ???
   }
 }
