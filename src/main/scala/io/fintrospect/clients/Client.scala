@@ -37,7 +37,7 @@ class Client(method: HttpMethod,
   private val identify = Identify(method, pathParams)
 
   def apply(userSuppliedBindings: ParamBinding[_]*): Future[HttpResponse] = {
-    val allSuppliedParams = Map((userSuppliedBindings ++ systemSuppliedParams).map(b => (b.parameter, b.value)): _*)
+    val allSuppliedParams: Map[Parameter[_], String] = Map((userSuppliedBindings ++ systemSuppliedParams).map(b => (b.parameter, b.value)): _*)
     val illegalParams = allSuppliedParams.keys.filterNot(param => allPossibleParams.contains(param))
     if (illegalParams.nonEmpty) {
       return Future.value(Error(BAD_REQUEST, "Client: Illegal params passed: " + illegalParams))
