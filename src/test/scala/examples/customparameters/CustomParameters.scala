@@ -16,7 +16,9 @@ object CustomParameters extends App {
     emailPattern.findFirstIn(value).map(EmailAddress).get
   }
 
-  val myOptionalEmailParameter = Query.optional.custom("theEmailAddress", emailFrom)
+  def emailTo(email: EmailAddress): String = email.value
+
+  val myOptionalEmailParameter = Query.optional.custom("theEmailAddress", emailFrom, emailTo)
 
   println("missing email: " + myOptionalEmailParameter.from(Request("/")))
   println("invalid email: " + myOptionalEmailParameter.from(Request("/", "theEmailAddress" -> "notARealEmailAddress")))

@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import java.util.{List => JList}
+import java.util.{HashMap => JMap, List => JList}
 
 import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
@@ -18,19 +18,21 @@ object Query {
     }
 
     private def parseParams(s: String) = {
-      Try(new QueryStringDecoder(s).getParameters).toOption.getOrElse(new java.util.HashMap[String, JList[String]])
+      Try(new QueryStringDecoder(s).getParameters).toOption.getOrElse(new JMap[String, JList[String]])
     }
 
     override def into(name: String, value: String, request: HttpRequest): Unit = ???
   }
 
   val required = new Parameters[MandatoryRequestParameter, Mandatory] {
-    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
-      new MandatoryRequestParameter[T](name, location, description, paramType, parse)
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType,
+                                        deserialize: String => T, serialize: T => String) =
+      new MandatoryRequestParameter[T](name, location, description, paramType, deserialize, serialize)
   }
 
   val optional = new Parameters[OptionalRequestParameter, Optional] {
-    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType, parse: (String => T)) =
-      new OptionalRequestParameter[T](name, location, description, paramType, parse)
+    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType,
+                                        deserialize: String => T, serialize: T => String) =
+      new OptionalRequestParameter[T](name, location, description, paramType, deserialize, serialize)
   }
 }

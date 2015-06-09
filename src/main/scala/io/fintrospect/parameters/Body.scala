@@ -1,14 +1,15 @@
 package io.fintrospect.parameters
 
-import argo.jdom.JsonNode
+import argo.jdom.JsonRootNode
 import io.fintrospect.util.ArgoUtil
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-class Body private(description: Option[String], paramType: ParamType, location: Location, val example: JsonNode, parse: String => JsonNode)
-  extends MandatoryRequestParameter[JsonNode]("body", location, description, paramType, parse) {
+class Body private(description: Option[String], paramType: ParamType, location: Location, val example: JsonRootNode,
+                   deserialize: String => JsonRootNode, serialize: JsonRootNode => String)
+  extends MandatoryRequestParameter[JsonRootNode]("body", location, description, paramType, deserialize, serialize) {
 }
 
 object Body {
@@ -25,6 +26,6 @@ object Body {
    * @param description
    * @param example
    */
-  def json(description: Option[String], example: JsonNode) =
-    new Body(description, ObjectParamType, location, example, ArgoUtil.parse)
+  def json(description: Option[String], example: JsonRootNode) =
+    new Body(description, ObjectParamType, location, example, ArgoUtil.parse, ArgoUtil.compact)
 }
