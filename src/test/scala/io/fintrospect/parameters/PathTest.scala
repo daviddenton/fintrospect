@@ -5,6 +5,8 @@ class PathTest extends ParametersTest[PathParameter, Mandatory](Path) {
     method(paramName, null).unapply(value.orNull)
   }
 
+  override def to[X](method: (String, String) => PathParameter[X] with Mandatory[X], value: X): String = { method(paramName, null).apply(value) }
+
   describe("fixed path parameter") {
     it("unapplies when string matches") {
       Path.fixed("a path piece").unapply("a path piece") shouldEqual Some("a path piece")

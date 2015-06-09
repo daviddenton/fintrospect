@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -11,6 +11,8 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
   val paramName = "name"
 
   def from[X](methodUnderTest: (String, String) => T[X] with R[X], value: Option[String]): Option[X]
+  def to[X](methodUnderTest: (String, String) => T[X] with R[X], value: X): String
+
 
   describe("int") {
     it("retrieves a valid value") {
@@ -23,6 +25,10 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
 
     it("does not retrieve an null int value") {
       from(parameters.int, None) shouldEqual None
+    }
+
+    it("serializes an int correctly") {
+      to(parameters.int, 123) shouldEqual "123"
     }
   }
 
@@ -38,6 +44,10 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     it("does not retrieve an null integer value") {
       from(parameters.integer, None) shouldEqual None
     }
+
+    it("serializes an integer correctly") {
+      to(parameters.integer, new Integer(123)) shouldEqual "123"
+    }
   }
 
   describe("long") {
@@ -51,6 +61,10 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
 
     it("does not retrieve an null long value") {
       from(parameters.long, None) shouldEqual None
+    }
+
+    it("serializes a long correctly") {
+      to(parameters.long, 123L) shouldEqual "123"
     }
   }
 
@@ -66,6 +80,10 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     it("does not retrieve an null bigDecimal value") {
       from(parameters.bigDecimal, None) shouldEqual None
     }
+
+    it("serializes a bigDecimal correctly") {
+      to(parameters.bigDecimal, BigDecimal("1.234")) shouldEqual "1.234"
+    }
   }
 
   describe("boolean") {
@@ -80,6 +98,10 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     it("does not retrieve an null boolean value") {
       from(parameters.boolean, None) shouldEqual None
     }
+
+    it("serializes a boolean correctly") {
+      to(parameters.boolean, true) shouldEqual "true"
+    }
   }
 
   describe("string") {
@@ -89,6 +111,10 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
 
     it("does not retrieve an null string value") {
       from(parameters.string, None) shouldEqual None
+    }
+
+    it("serializes a string correctly") {
+      to(parameters.string, "123") shouldEqual "123"
     }
   }
 
@@ -104,6 +130,10 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     it("does not retrieve an null dateTime value") {
       from(parameters.dateTime, None) shouldEqual None
     }
+
+    it("serializes a dateTime correctly") {
+      to(parameters.dateTime, LocalDateTime.of(1970, 1, 1, 2, 3, 4)) shouldEqual "1970-01-01T02:03:04"
+    }
   }
 
   describe("zonedDateTime") {
@@ -115,8 +145,12 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
       from(parameters.zonedDateTime, Some("notADateTime")) shouldEqual None
     }
 
-    it("does not retrieve an null dateTime value") {
+    it("does not retrieve an null zonedDateTime value") {
       from(parameters.zonedDateTime, None) shouldEqual None
+    }
+
+    it("serializes a zonedDateTime correctly") {
+      to(parameters.zonedDateTime, ZonedDateTime.of(1970, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))) shouldEqual "1970-01-01T00:00:00Z[UTC]"
     }
   }
 
@@ -132,6 +166,10 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
     it("does not retrieve an null date value") {
       from(parameters.localDate, None) shouldEqual None
     }
+
+    it("serializes a date correctly") {
+      to(parameters.localDate, LocalDate.of(1970, 1, 1)) shouldEqual "1970-01-01"
+    }
   }
 
   case class MyCustomType(value:Int)
@@ -139,16 +177,20 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <:Retrieval[_]](paramet
   describe("custom") {
     def myCustomParameter(name: String, unused:String) = parameters.custom[MyCustomType](name, s => MyCustomType(s.toInt), ct => ct.value.toString)
 
-    it("retrieves a valid value") {
+    it("retrieves a valid custom value") {
       from(myCustomParameter, Some("123")) shouldEqual Some(MyCustomType(123))
     }
 
-    it("does not retrieve an invalid value") {
+    it("does not retrieve an invalid custom value") {
       from(myCustomParameter, Some("BOB")) shouldEqual None
     }
 
-    it("does not retrieve an null date value") {
+    it("does not retrieve an null custom value") {
       from(myCustomParameter, None) shouldEqual None
+    }
+
+    it("serializes a custom value correctly") {
+      to(myCustomParameter, MyCustomType(123)) shouldEqual "123"
     }
   }
 }

@@ -1,5 +1,6 @@
 package io.fintrospect.parameters
 
+import java.time.format.DateTimeFormatter._
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
 import argo.jdom.JsonRootNode
@@ -38,7 +39,7 @@ trait Parameters[P[_], R[_]] {
    * @return a parameter for retrieving a LocalDate value from the request
    */
   def localDate(name: String, description: String = null): P[LocalDate] with R[LocalDate] =
-    parameter(name, Option(description), StringParamType, LocalDate.parse(_), _.toString)
+    parameter(name, Option(description), StringParamType, LocalDate.parse(_), ISO_LOCAL_DATE.format(_))
 
   /**
    * Create a ZonedDateTime parameter which is constrained by the format  YYYY-MM-DDTHH:mm:SSZ (See DateTimeFormatter.ISO_OFFSET_DATE_TIME)
@@ -47,7 +48,7 @@ trait Parameters[P[_], R[_]] {
    * @return a parameter for retrieving a ZonedDateTime value from the request
    */
   def zonedDateTime(name: String, description: String = null): P[ZonedDateTime] with R[ZonedDateTime] =
-    parameter(name, Option(description), StringParamType, ZonedDateTime.parse(_), _.toString)
+    parameter(name, Option(description), StringParamType, ZonedDateTime.parse(_), ISO_ZONED_DATE_TIME.format(_))
 
   /**
    * Create a LocalDateTime parameter which is constrained by the format YYYY-MM-DDTHH:mm:SS
@@ -56,7 +57,7 @@ trait Parameters[P[_], R[_]] {
    * @return a parameter for retrieving a LocalDateTime value from the request
    */
   def dateTime(name: String, description: String = null): P[LocalDateTime] with R[LocalDateTime] =
-    parameter(name, Option(description), StringParamType, LocalDateTime.parse(_), _.toString)
+    parameter(name, Option(description), StringParamType, LocalDateTime.parse(_), ISO_LOCAL_DATE_TIME.format(_))
 
   /**
    * Create a Boolean parameter which is constrained to boolean values
