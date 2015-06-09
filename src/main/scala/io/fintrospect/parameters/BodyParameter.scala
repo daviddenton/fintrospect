@@ -1,15 +1,17 @@
 package io.fintrospect.parameters
 
+import argo.jdom.JsonRootNode
 import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-abstract class RequestParameter[T](val name: String,
-                                   val description: Option[String],
-                                   val paramType: ParamType,
-                                   location: Location,
-                                   deserialize: String => T,
-                                   serialize: T => String)
+abstract class BodyParameter[T](val name: String,
+                                val description: Option[String],
+                                val paramType: ParamType,
+                                val example: JsonRootNode,
+                                location: Location,
+                                deserialize: String => T,
+                                serialize: T => String)
   extends Parameter[T] {
 
   def into(request: HttpRequest, value: String): Unit = location.into(name, value, request)
