@@ -29,7 +29,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
         responseFor(clientWithNameAndMaxAge()) shouldEqual(BAD_REQUEST, "Client: Missing required params passed: List({name}, {maxAge})")
       }
       it("unknown parameters returns bad request") {
-        responseFor(clientWithNoParameters(maxAge.->(7))) shouldEqual(BAD_REQUEST, "Client: Illegal params passed: Set({maxAge})")
+        responseFor(clientWithNoParameters(maxAge -> 7)) shouldEqual(BAD_REQUEST, "Client: Illegal params passed: Set({maxAge})")
       }
     }
 
@@ -38,11 +38,11 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
         responseFor(clientWithNoParameters()) shouldEqual(OK, "GET,/")
       }
       it("when there are some") {
-        responseFor(clientWithNameAndMaxAge(maxAge.->(7), name.->("bob"))) shouldEqual(OK, "GET,/bob/7")
+        responseFor(clientWithNameAndMaxAge(maxAge -> 7, name.->("bob"))) shouldEqual(OK, "GET,/bob/7")
       }
       it("ignores fixed") {
         val clientWithFixedSections = ClientRoute().at(GET) / "prefix" / maxAge / "suffix" bindTo returnsMethodAndUri
-        responseFor(clientWithFixedSections(maxAge.->(7))) shouldEqual(OK, "GET,/prefix/7/suffix")
+        responseFor(clientWithFixedSections(maxAge -> 7)) shouldEqual(OK, "GET,/prefix/7/suffix")
       }
     }
 
@@ -51,7 +51,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
       val clientWithNameQuery = ClientRoute().taking(nameQuery).at(GET) / "prefix" bindTo returnsMethodAndUri
 
       it("when there are some") {
-        responseFor(clientWithNameQuery(nameQuery.->("bob"))) shouldEqual(OK, "GET,/prefix?name=bob")
+        responseFor(clientWithNameQuery(nameQuery -> "bob")) shouldEqual(OK, "GET,/prefix?name=bob")
       }
       it("optional query params are ignored if not there") {
         responseFor(clientWithNameQuery()) shouldEqual(OK, "GET,/prefix")
@@ -66,10 +66,10 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
       val clientWithNameHeader = ClientRoute().taking(nameHeader).at(GET) bindTo returnsHeaders
 
       it("when there are some, includes them") {
-        responseFor(clientWithNameHeader(nameHeader.->("bob"))) shouldEqual(OK, "Map(name -> bob)")
+        responseFor(clientWithNameHeader(nameHeader -> "bob")) shouldEqual(OK, "Map(name -> bob, X-Fintrospect-Route-Name -> GET.)")
       }
       it("optional query params are ignored if not there") {
-        responseFor(clientWithNameHeader()) shouldEqual(OK, "Map()")
+        responseFor(clientWithNameHeader()) shouldEqual(OK, "Map(X-Fintrospect-Route-Name -> GET.)")
       }
     }
 
@@ -80,13 +80,10 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
 
       val client = ClientRoute().at(GET) / "svc" / intParam / Path.fixed("fixed") bindTo returnsHeaders
 
-      it("identifies called route as a response header") {
-        val response = result(client(intParam.->(55)))
-        response.getStatus shouldEqual OK
-        headersFrom(response).toString shouldBe "Map(Content-Type -> text/plain;charset=utf-8, X-Fintrospect-Route-Name -> GET.svc/{anInt}/fixed)"
+      it("identifies called route as a request header") {
+        responseFor(client(intParam -> 55)) shouldEqual (HttpResponseStatus.OK, "Map(X-Fintrospect-Route-Name -> GET.svc/{anInt}/fixed)")
       }
     }
-
   }
 
   def responseFor(future: Future[HttpResponse]): (HttpResponseStatus, String) = statusAndContentFrom(result(future))
