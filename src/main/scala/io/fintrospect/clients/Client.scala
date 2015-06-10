@@ -27,14 +27,15 @@ object Client {
 class Client(method: HttpMethod,
              requestParams: List[RequestParameter[_]],
              pathParams: List[PathParameter[_]],
-             service: Service[HttpRequest, HttpResponse]) {
+             underlyingService: Service[HttpRequest, HttpResponse]) {
+
 
   private val systemBindings = pathParams.filter(_.isEmpty).map(parameter => ParamBinding(parameter, parameter.name))
   private val allPossibleParams = pathParams ++ requestParams
   private val requiredParams = allPossibleParams.filter(_.required)
   private val queryParams = requestParams.filter(_.where == "query")
   private val headerParams = requestParams.filter(_.where == "header")
-  private val identify = Identify(method, pathParams)
+  private val service = Identify(method, pathParams).andThen(underlyingService)
 
   def apply(requestBindings: ParamBinding[_]*): Future[HttpResponse] = {
     val allSuppliedParams: Map[Parameter[_], String] = Map((requestBindings ++ systemBindings).map(b => (b.parameter, b.value)): _*)
@@ -50,7 +51,7 @@ class Client(method: HttpMethod,
     val request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, buildUrl(allSuppliedParams))
     headerParams.filter(allSuppliedParams.contains).foreach(p => p.into(request, allSuppliedParams(p)))
 
-    identify.apply(request, service)
+    service(request)
   }
 
   def buildUrl(allSuppliedParams: Map[Parameter[_], String]): String = {
