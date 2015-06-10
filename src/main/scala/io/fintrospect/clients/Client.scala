@@ -15,10 +15,8 @@ object Client {
     private val description = method + "." + pathParams.map(_.toString()).mkString("/")
 
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
-      service(request).map { response =>
-        response.headers().set(IDENTIFY_SVC_HEADER, description)
-        response
-      }
+      request.headers().set(IDENTIFY_SVC_HEADER, description)
+      service(request)
     }
   }
 
