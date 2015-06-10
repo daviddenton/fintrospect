@@ -10,6 +10,8 @@ trait Parameter[T] {
   def of(value: T): ParamBinding[T] = ->(value)
 
   def ->(value: T): ParamBinding[T]
+
+  override def toString: String = s"Parameter(name=$name,where=$where,paramType=${paramType.name})"
 }
 
 
