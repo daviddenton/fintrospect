@@ -22,6 +22,13 @@ object Client {
 
 }
 
+/**
+ * Representation of a pre-configured client HTTP call
+ * @param method the HTTP method
+ * @param requestParams the request parameters to use
+ * @param pathParams the path parameters to use
+ * @param underlyingService the underlying service to make the request from
+ */
 class Client(method: HttpMethod,
              requestParams: List[RequestParameter[_]],
              pathParams: List[PathParameter[_]],
@@ -35,6 +42,18 @@ class Client(method: HttpMethod,
   private val headerParams = requestParams.filter(_.where == "header")
   private val service = Identify(method, pathParams).andThen(underlyingService)
 
+  /**
+   * Make a request to this client route using the passed parameter bindings
+   * @param requestBindings the parameter bindings for this request
+   * @return the response Future
+   */
+  def apply(requestBindings: List[ParamBinding[_]]): Future[HttpResponse] = apply(requestBindings:_*)
+
+  /**
+   * Make a request to this client route using the passed parameter bindings
+   * @param requestBindings the parameter bindings for this request
+   * @return the response Future
+   */
   def apply(requestBindings: ParamBinding[_]*): Future[HttpResponse] = {
     val allSuppliedParams: Map[Parameter[_], String] = Map((requestBindings ++ systemBindings).map(b => (b.parameter, b.value)): _*)
     val illegalParams = allSuppliedParams.keys.filterNot(param => allPossibleParams.contains(param))
@@ -52,7 +71,7 @@ class Client(method: HttpMethod,
     service(request)
   }
 
-  def buildUrl(allSuppliedParams: Map[Parameter[_], String]): String = {
+  private def buildUrl(allSuppliedParams: Map[Parameter[_], String]): String = {
     val baseUrl = "/" + pathParams.map(allSuppliedParams(_)).mkString("/")
     val encoder = new QueryStringEncoder(baseUrl)
     allSuppliedParams
