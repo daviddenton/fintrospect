@@ -20,14 +20,12 @@ object Form {
   }
 
   val required = new Parameters[RequestParameter, Mandatory] {
-    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType,
-                                        deserialize: String => T, serialize: T => String) =
-      new RequestParameter[T](name, description, paramType, location, deserialize, serialize) with Mandatory[T]
+    override def apply[T](spec: ParameterSpec[T]) =
+      new RequestParameter[T](spec.name, spec.description, spec.paramType, location, spec.deserialize, spec.serialize) with Mandatory[T]
   }
 
   val optional = new Parameters[RequestParameter, Optional] {
-    override protected def parameter[T](name: String, description: Option[String], paramType: ParamType,
-                                        deserialize: String => T, serialize: T => String) =
-      new RequestParameter[T](name, description, paramType, location, deserialize, serialize) with Optional[T]
+    override def apply[T](spec: ParameterSpec[T]) =
+      new RequestParameter[T](spec.name, spec.description, spec.paramType, location, spec.deserialize, spec.serialize) with Optional[T]
   }
 }
