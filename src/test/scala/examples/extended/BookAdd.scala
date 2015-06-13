@@ -34,3 +34,4 @@ class BookAdd(books: Books) {
     .at(POST) / "book" / Path.string("isbn", "the isbn of the book") bindTo addBook
 }
 
+
