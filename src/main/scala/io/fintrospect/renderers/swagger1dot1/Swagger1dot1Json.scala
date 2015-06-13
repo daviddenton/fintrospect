@@ -25,7 +25,7 @@ class Swagger1dot1Json extends ModuleRenderer {
   )
 
   private def render(route: Route): Field = route.method.getName.toLowerCase -> {
-    val bodyParameters = route.describedRoute.body.toList.flatMap(bp => bp.parameterParts)
+    val bodyParameters = route.describedRoute.body.map(_.parameterParts).getOrElse(Nil)
 
     obj(
       "httpMethod" -> string(route.method.getName),
