@@ -1,31 +1,19 @@
 package io.fintrospect.parameters
 
-import io.fintrospect.util.HttpRequestResponseUtil._
-import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
+import io.fintrospect.{ContentType, ContentTypes}
 
-import scala.util.Try
+case class Form private(private val fields: List[Parameter[_]]) extends Body {
+  override def iterator: Iterator[Parameter[_]] = fields.iterator
+
+  def withField(field: Parameter[_]) = copy(field :: fields)
+
+  override val contentType: ContentType = ContentTypes.APPLICATION_FORM_URLENCODED
+}
+
 
 /**
  * Builder for parameters that are encoded in the HTTP form.
  */
 object Form {
-  private val location = new Location {
-    override def toString = "form"
-
-    override def from(name: String, request: HttpRequest): Option[String] = {
-      Try(new QueryStringDecoder("?" + contentFrom(request)).getParameters.get(name).get(0)).toOption
-    }
-
-    override def into(name: String, value: String, request: HttpRequest): Unit = ???
-  }
-
-  val required = new Parameters[RequestParameter, Mandatory] {
-    override def apply[T](spec: ParameterSpec[T]) =
-      new RequestParameter[T](spec.name, spec.description, spec.paramType, location, spec.deserialize, spec.serialize) with Mandatory[T]
-  }
-
-  val optional = new Parameters[RequestParameter, Optional] {
-    override def apply[T](spec: ParameterSpec[T]) =
-      new RequestParameter[T](spec.name, spec.description, spec.paramType, location, spec.deserialize, spec.serialize) with Optional[T]
-  }
+  def apply(fields: Parameter[_]*): Form = Form(fields.toList)
 }

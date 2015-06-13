@@ -80,7 +80,7 @@
           "nickname": "a friendly endpoint",
           "notes": "a friendly endpoint",
           "produces": [],
-          "consumes": [],
+          "consumes": ["application/x-www-form-urlencoded"],
           "parameters": [
             {
               "name": "form",

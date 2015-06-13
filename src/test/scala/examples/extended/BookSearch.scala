@@ -4,7 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect._
-import io.fintrospect.parameters.{Form, Query}
+import io.fintrospect.parameters.{Form, FormField, Query}
 import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.JsonResponseBuilder.Ok
 import io.fintrospect.util.ResponseBuilder._
@@ -14,8 +14,8 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 class BookSearch(books: Books) {
   private val maxPages = Query.optional.int("maxPages", "max number of pages in book")
-  private val minPages = Form.optional.int("minPages", "min number of pages in book")
-  private val titleTerm = Form.required.string("term", "the part of the title to look for")
+  private val minPages = FormField.optional.int("minPages", "min number of pages in book")
+  private val titleTerm = FormField.required.string("term", "the part of the title to look for")
 
   private def search() = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
@@ -25,8 +25,7 @@ class BookSearch(books: Books) {
 
   val route = DescribedRoute("search for books")
     .taking(maxPages)
-    .taking(minPages)
-    .taking(titleTerm)
+    .body(Form(minPages, titleTerm))
     .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
     .returning(OK -> "results", BAD_REQUEST -> "invalid request")
     .producing(APPLICATION_JSON)
