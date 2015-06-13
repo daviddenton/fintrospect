@@ -3,11 +3,13 @@ Roadmap/Release Notes/Migration Guide
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
 ######Master (in dev...)
-- Improve support for Forms and custom Body types (other than JSON) in both Serverside and Clientside APIs. Drop support for Forms parameters as request params and instead reimplement as a particular Body type, with setting of Content-Type headers. This will involve significant refactoring internally, but *should* result in no visible outward API change if you rely on Scala's type inference.
+- Improve support for Forms and custom Body types (other than JSON) in both Serverside and Clientside APIs.
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
 #####v6.X.X -> v7.X.X
 - Custom parameter support now more modular. Breaking change of ```custom(XXX)``` -> ```apply(XXX)``` in Parameters classes, which requires using ParameterSpec instead of arg list.
+- Improved support for Forms and custom Body types (other than JSON). Dropped support for Forms parameters as request params and reimplemented as a particular Body type, with automatic setting of Content-Type 
+headers. Clients will need to migrate to the new Form format (see examples).
 
 #####v6.1.0
 - EXPERIMENTAL! Ability to define clients using the same style API as the Services. Supports Path/Query/Headers, but not Bodies or Forms as yet.
