@@ -12,7 +12,7 @@ import io.fintrospect.parameters._
 // Custom domain type
 case class EmailAddress(value: String)
 
-// Define how the parameters are serialized from/to a string
+// Define how the parameters are serialized from/to the target Parameter type
 object CustomParameterTypes {
   private def emailFrom(value: String): EmailAddress = {
     val emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$".r
