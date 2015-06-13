@@ -1,7 +1,7 @@
 package io.fintrospect
 
 import argo.jdom.JsonNode
-import io.fintrospect.parameters.{BodyParameter, RequestParameter}
+import io.fintrospect.parameters.{ABody, BodyParameter, RequestParameter}
 import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpResponseStatus}
@@ -14,6 +14,7 @@ import scala.util.Try
 case class DescribedRoute private(summary: String,
                                   produces: List[ContentType],
                                   consumes: List[ContentType],
+                                  aBody: Option[ABody],
                                   body: Option[BodyParameter[_]],
                                   params: List[RequestParameter[_]],
                                   responses: List[ResponseWithExample]) {
@@ -37,6 +38,11 @@ case class DescribedRoute private(summary: String,
    * Register the expected content of the body. Presence is NOT currently enforced.
    */
   def taking(bp: BodyParameter[_]) = copy(body = Some(bp))
+
+  /**
+   * Register the expected content of the body. Presence is NOT currently enforced.
+   */
+  def taking(bp: ABody) = copy(aBody = Some(bp))
 
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
@@ -64,5 +70,5 @@ case class DescribedRoute private(summary: String,
 }
 
 object DescribedRoute {
-  def apply(summary: String): DescribedRoute = DescribedRoute(summary, Nil, Nil, None, Nil, Nil)
+  def apply(summary: String): DescribedRoute = DescribedRoute(summary, Nil, Nil, None, None, Nil, Nil)
 }
