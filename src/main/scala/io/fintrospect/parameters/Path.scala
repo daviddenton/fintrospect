@@ -15,7 +15,7 @@ object Path extends Parameters[PathParameter, Mandatory] {
    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
    * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
    */
-  def fixed(name: String): PathParameter[String] = new PathParameter[String](name, None, StringParamType) {
+  def fixed(name: String): PathParameter[String] = new PathParameter[String](ParameterSpec(name, None, StringParamType, identity, identity)) {
 
     override val required = true
 
@@ -28,8 +28,7 @@ object Path extends Parameters[PathParameter, Mandatory] {
     override def iterator: Iterator[PathParameter[_]] = Nil.iterator
   }
 
-  override def apply[T](spec: ParameterSpec[T])
-  = new PathParameter[T](spec.name, spec.description, spec.paramType) with Mandatory[T] {
+  override def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec) with Mandatory[T] {
 
     def attemptToParseFrom(request: HttpRequest): Option[Try[T]] = ???
 

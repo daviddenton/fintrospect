@@ -19,12 +19,10 @@ object FormField {
   }
 
   val required = new Parameters[FormField, Mandatory] {
-    override def apply[T](spec: ParameterSpec[T]) =
-      new FormField[T](spec) with Mandatory[T] {}
+    override def apply[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Mandatory[T] {}
   }
 
   val optional = new Parameters[FormField, Optional] {
-    override def apply[T](spec: ParameterSpec[T]) =
-      new FormField[T](spec) with Optional[T] {}
+    override def apply[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Optional[T] {}
   }
 }
