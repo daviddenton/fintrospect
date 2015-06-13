@@ -42,7 +42,7 @@ object FintrospectModule {
     new FintrospectModule(basePath, moduleRenderer, identity, Nil, moduleFilter)
   }
 
-  private case class ValidateParams(route: Route, moduleRenderer: ModuleRenderer) extends SimpleFilter[HttpRequest, HttpResponse]() {
+  private class ValidateParams(route: Route, moduleRenderer: ModuleRenderer) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       val paramsAndParseResults = route.describedRoute.params.map(p => (p, p.attemptToParseFrom(request)))
       val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => !pr._1.required && pr._2.isEmpty)
@@ -51,7 +51,7 @@ object FintrospectModule {
     }
   }
 
-  private case class Identify(route: Route, basePath: Path) extends SimpleFilter[HttpRequest, HttpResponse]() {
+  private class Identify(route: Route, basePath: Path) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod + "." + url)
@@ -72,7 +72,7 @@ class FintrospectModule private(basePath: Path,
   private def totalBinding = {
     withDefault(routes.foldLeft(empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]) {
       (currentBinding, route) =>
-        val filters = Identify(route, basePath) :: ValidateParams(route, moduleRenderer) :: moduleFilter :: List[TFilter]()
+        val filters = new Identify(route, basePath) :: new ValidateParams(route, moduleRenderer) :: moduleFilter :: List[TFilter]()
         currentBinding.orElse(route.toPf(basePath)(filters.reduce(_.andThen(_))))
     })
   }
@@ -85,11 +85,11 @@ class FintrospectModule private(basePath: Path,
   }
 
   private def withDefault(otherRoutes: PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]) = {
-    val descriptionRoute = IncompletePath0(DescribedRoute("Description route"), GET, descriptionRoutePath).bindTo(() => {
+    val descriptionRoute = new IncompletePath0(DescribedRoute("Description route"), GET, descriptionRoutePath).bindTo(() => {
       Service.mk((req) => moduleRenderer.description(basePath, routes))
     })
 
-    otherRoutes.orElse(descriptionRoute.toPf(basePath)(Identify(descriptionRoute, basePath)))
+    otherRoutes.orElse(descriptionRoute.toPf(basePath)(new Identify(descriptionRoute, basePath)))
   }
 
   /**
