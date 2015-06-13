@@ -50,7 +50,7 @@ This example is quite contrived (and almost all the code is optional) but shows 
 ```scala
 class BookSearch(books: Books) {
   private val MAX_PAGES = Query.optional.int("maxPages", "max number of pages in book")
-  private val MIN_PAGES = Form.required.int("minPages", "min number of pages in book")
+  private val MIN_PAGES = FormField.required.int("minPages", "min number of pages in book")
   private val TITLE_TERM = Path.string("term", "the part of the title to look for")
 
   private def search(titleTerm: String) = new Service[HttpRequest, HttpResponse] {
@@ -62,7 +62,7 @@ class BookSearch(books: Books) {
   val route = DescribedRoute("search for books")
     .taking(maxPages)
     .taking(minPages)
-    .taking(titleTerm)
+    .body(Form(minPages))
     .returning(OK -> "search results", array(Book("a book", "authorName", 99).toJson))
     .returning(BAD_REQUEST -> "invalid request")
     .producing(APPLICATION_JSON)
