@@ -24,7 +24,7 @@ case class DescribedRoute private(summary: String,
   def consuming(contentTypes: ContentType*): DescribedRoute = copy(consumes = produces ++ contentTypes)
 
   /**
-   * Register content types which thus route will produce. This is informational only and not currently enforced.
+   * Register content types which thus route will produce. This is informational only and NOT currently enforced.
    */
   def producing(contentTypes: ContentType*): DescribedRoute = copy(produces = produces ++ contentTypes)
 
