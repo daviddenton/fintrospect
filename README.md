@@ -62,7 +62,7 @@ class BookSearch(books: Books) {
   val route = DescribedRoute("search for books")
     .taking(maxPages)
     .taking(minPages)
-    .body(Form(minPages))
+    .body(Body.form(minPages))
     .returning(OK -> "search results", array(Book("a book", "authorName", 99).toJson))
     .returning(BAD_REQUEST -> "invalid request")
     .producing(APPLICATION_JSON)
