@@ -5,19 +5,17 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 import scala.language.reflectiveCalls
 import scala.util.Try
 
-sealed trait Retrieval[T] {
-  val required: Boolean
+
+trait Retrieval[T] {
   def from(request: HttpRequest): T
 }
 
-trait Mandatory[T] extends Retrieval[T] {
+trait Mandatory[T] extends Retrieval[T] with ParseableParameter[T] {
   override val required = true
-  def attemptToParseFrom(request: HttpRequest): Option[Try[T]]
   def from(request: HttpRequest): T = attemptToParseFrom(request).flatMap(_.toOption).get
 }
 
-trait Optional[T] extends Retrieval[Option[T]] {
+trait Optional[T] extends Retrieval[Option[T]] with ParseableParameter[T]  {
   override val required = false
-  def attemptToParseFrom(request: HttpRequest): Option[Try[T]]
   def from(request: HttpRequest): Option[T] = Try(attemptToParseFrom(request).get.toOption).toOption.flatMap(identity)
 }
