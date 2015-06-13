@@ -17,11 +17,11 @@ object Header {
 
   val required = new Parameters[RequestParameter, Mandatory] {
     override def apply[T](spec: ParameterSpec[T]) =
-      new RequestParameter[T](spec.name, spec.description, spec.paramType, location, spec.deserialize, spec.serialize) with Mandatory[T]
+      new RequestParameter[T](spec, location) with Mandatory[T]
   }
 
   val optional = new Parameters[RequestParameter, Optional] {
     override def apply[T](spec: ParameterSpec[T]) =
-      new RequestParameter[T](spec.name, spec.description, spec.paramType, location, spec.deserialize, spec.serialize) with Optional[T]
+      new RequestParameter[T](spec, location) with Optional[T]
   }
 }
