@@ -17,12 +17,13 @@ class UniBody[T](val contentType: ContentType,
   private val location = new Location {
 
     override def toString = "body"
+
     override def from(unused: String, request: HttpRequest): Option[String] = Try(contentFrom(request)).toOption
 
     override def into(name: String, value: String, request: HttpRequest): Unit = ???
   }
 
-  private val param = new BodyParameter[T]("body", theDescription, theParamType, example, location, deserialize, serialize) with Mandatory[T]
+  private val param = new BodyParameter[T](ParameterSpec("body", theDescription, theParamType, deserialize, serialize), location, example) with Mandatory[T]
 
   override def parameterParts: Seq[BodyParameter[_]] = Seq(param)
 

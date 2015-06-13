@@ -5,13 +5,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
 import scala.util.Try
 
-abstract class FormField[T](name: String,
-                            description: Option[String],
-                            paramType: ParamType,
-                            deserialize: String => T,
-                            serialize: T => String)
-  extends BodyParameter[T](name, description, paramType, Option.empty, FormField.location, deserialize, serialize) {
-}
+abstract class FormField[T](spec: ParameterSpec[T]) extends BodyParameter[T](spec, FormField.location, Option.empty)
 
 object FormField {
   private val location = new Location {
@@ -26,11 +20,11 @@ object FormField {
 
   val required = new Parameters[FormField, Mandatory] {
     override def apply[T](spec: ParameterSpec[T]) =
-      new FormField[T](spec.name, spec.description, spec.paramType, spec.deserialize, spec.serialize) with Mandatory[T]
+      new FormField[T](spec) with Mandatory[T] {}
   }
 
   val optional = new Parameters[FormField, Optional] {
     override def apply[T](spec: ParameterSpec[T]) =
-      new FormField[T](spec.name, spec.description, spec.paramType, spec.deserialize, spec.serialize) with Optional[T]
+      new FormField[T](spec) with Optional[T] {}
   }
 }
