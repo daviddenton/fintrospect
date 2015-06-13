@@ -77,9 +77,9 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
         }
         val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))
 
-        statusAndContentFrom(result(totalService.apply(Request("/rita/echo")))) shouldEqual(OK, "rita")
-        statusAndContentFrom(result(totalService.apply(Request("/bob/echo")))) shouldEqual(OK, "bob")
-        statusAndContentFrom(result(totalService.apply(Request("/sue/echo")))) shouldEqual(OK, "sue")
+        statusAndContentFrom(result(totalService(Request("/rita/echo")))) shouldEqual(OK, "rita")
+        statusAndContentFrom(result(totalService(Request("/bob/echo")))) shouldEqual(OK, "bob")
+        statusAndContentFrom(result(totalService(Request("/sue/echo")))) shouldEqual(OK, "sue")
       }
     }
 
