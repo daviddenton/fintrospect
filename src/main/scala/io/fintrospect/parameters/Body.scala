@@ -17,13 +17,16 @@ trait Body[T] {
 
 object Body {
 
+  def apply[T](bodySpec: BodySpec[T]): Body[T] =
+    new UniBody[T](bodySpec, StringParamType, None)
+
   /**
    * Defines the JSON body of a request.
    * @param description
    * @param example
    */
   def json(description: Option[String], example: JsonRootNode): Body[JsonRootNode] =
-    new UniBody[JsonRootNode](APPLICATION_JSON, description, ObjectParamType, Some(example), ArgoUtil.parse, ArgoUtil.compact)
+    new UniBody[JsonRootNode](BodySpec(description, APPLICATION_JSON, ArgoUtil.parse, ArgoUtil.compact), ObjectParamType, Some(example))
 
   /**
    * Builder for parameters that are encoded in the HTTP form.

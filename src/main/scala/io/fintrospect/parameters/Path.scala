@@ -28,6 +28,12 @@ object Path extends Parameters[PathParameter, Mandatory] {
     override def iterator: Iterator[PathParameter[_]] = Nil.iterator
   }
 
+  /**
+   * Create a path parameter using the passed specification
+   * @param spec the parameter spec
+   * @tparam T the type of the parameter
+   * @return a parameter for retrieving a value of type [T] from the request
+   */
   override def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec) with Mandatory[T] {
 
     def attemptToParseFrom(request: HttpRequest): Option[Try[T]] = ???
