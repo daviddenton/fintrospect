@@ -15,7 +15,7 @@ case class DescribedRoute private(summary: String,
                                   produces: Set[ContentType],
                                   consumes: Set[ContentType],
                                   body: Option[Body[_]],
-                                  params: List[RequestParameter[_]],
+                                  requestParams: List[RequestParameter[_]],
                                   responses: List[ResponseWithExample]) {
 
   /**
@@ -31,7 +31,7 @@ case class DescribedRoute private(summary: String,
   /**
    * Register a request parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: RequestParameter[_]): DescribedRoute = copy(params = rp :: params)
+  def taking(rp: RequestParameter[_]): DescribedRoute = copy(requestParams = rp :: requestParams)
 
   /**
    * Register the expected content of the body. Presence is NOT currently enforced.

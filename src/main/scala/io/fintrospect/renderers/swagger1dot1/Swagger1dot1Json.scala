@@ -24,17 +24,21 @@ class Swagger1dot1Json extends ModuleRenderer {
     "dataType" -> string(parameter.paramType.name)
   )
 
-  private def render(route: Route): Field = route.method.getName.toLowerCase -> obj(
-    "httpMethod" -> string(route.method.getName),
-    "nickname" -> string(route.describedRoute.summary),
-    "notes" -> string(route.describedRoute.summary),
-    "produces" -> array(route.describedRoute.produces.map(m => string(m.value))),
-    "consumes" -> array(route.describedRoute.consumes.map(m => string(m.value))),
-    "parameters" -> array(route.allParams.map(render)),
-    "errorResponses" -> array(route.describedRoute.responses
-      .filter(_.status.getCode > 399)
-      .map(resp => obj("code" -> number(resp.status.getCode), "reason" -> string(resp.description))).toSeq)
-  )
+  private def render(route: Route): Field = route.method.getName.toLowerCase -> {
+    val bodyParameters = route.describedRoute.body.toList.flatMap(bp => bp.parameterParts)
+
+    obj(
+      "httpMethod" -> string(route.method.getName),
+      "nickname" -> string(route.describedRoute.summary),
+      "notes" -> string(route.describedRoute.summary),
+      "produces" -> array(route.describedRoute.produces.map(m => string(m.value))),
+      "consumes" -> array(route.describedRoute.consumes.map(m => string(m.value))),
+      "parameters" -> array((route.describedRoute.requestParams ++ route.pathParams.flatMap(identity) ++ bodyParameters).map(render)),
+      "errorResponses" -> array(route.describedRoute.responses
+        .filter(_.status.getCode > 399)
+        .map(resp => obj("code" -> number(resp.status.getCode), "reason" -> string(resp.description))).toSeq)
+    )
+  }
 
   override def description(basePath: Path, routes: Seq[Route]): HttpResponse = {
     val api = routes
