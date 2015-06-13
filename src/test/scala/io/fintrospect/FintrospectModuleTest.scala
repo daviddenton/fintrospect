@@ -10,10 +10,10 @@ import io.fintrospect.FintrospectModule._
 import io.fintrospect.parameters.Path._
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil._
 import io.fintrospect.util.PlainTextResponseBuilder._
 import io.fintrospect.util.ResponseBuilder._
+import io.fintrospect.util.{ArgoUtil, HttpRequestResponseUtil}
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
@@ -122,21 +122,37 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       }
     }
 
-//    describe("when a valid path does not contain all required form fields") {
-//      val d = DescribedRoute("").body(Body.form(FormField.required.int("aNumber")))
-//      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
-//
-//      it("it returns a 400 when the required param is missing") {
-//        val request = Request("/svc")
-//        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
-//      }
-//
-//      it("it returns a 400 when the required param is not the correct type") {
-//        val request = Request("/svc")
-//        request.params + ("aNumber" -> "notANumber")
-//        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
-//      }
-//    }
+    describe("when a valid path does not contain all required form fields") {
+      val d = DescribedRoute("").body(Body.form(FormField.required.int("aNumber")))
+      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
+
+      it("it returns a 400 when the required param is missing") {
+        val request = Request("/svc")
+        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+      }
+
+      it("it returns a 400 when the required param is not the correct type") {
+        val request = Request("/svc")
+        request.params + ("aNumber" -> "notANumber")
+        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+      }
+    }
+
+    describe("when a valid path does not contain required body") {
+      val d = DescribedRoute("").body(Body.json(None, ArgoUtil.obj()))
+      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
+
+      it("it returns a 400 when the required body is missing") {
+        val request = Request("/svc")
+        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+      }
+
+      it("it returns a 400 when the required body is not the correct type") {
+        val request = Request("/svc")
+        request.setContentString("notAJsonBlob")
+        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+      }
+    }
 
     describe("when a valid path contains illegal values for an optional parameter") {
       val d = DescribedRoute("").taking(Header.optional.int("aNumberHeader"))

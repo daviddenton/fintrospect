@@ -34,7 +34,7 @@ case class DescribedRoute private(summary: String,
   def taking(rp: RequestParameter[_]): DescribedRoute = copy(requestParams = rp :: requestParams)
 
   /**
-   * Register the expected content of the body. Presence is NOT currently enforced.
+   * Register the expected content of the body.
    */
   def body(bp: Body[_]): DescribedRoute = copy(body = Some(bp), consumes = consumes + bp.contentType)
 

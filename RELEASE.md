@@ -6,12 +6,11 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Improve support for Forms and custom Body types (other than JSON) in both Serverside and Clientside APIs.
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
-#####v6.X.X -> v7.X.X
+#####v6.1.X -> v7.X.X
 - Custom parameter support now more modular. Breaking change of ```custom(XXX)``` -> ```apply(XXX)``` in Parameters classes, which requires using ParameterSpec instead of arg list.
 - Improved support for Forms and custom Body types (other than JSON). Dropped support for Forms parameters as request params and reimplemented as a particular Body type, with automatic setting of Content-Type 
 headers. Clients will need to migrate to the new Form format (see examples).
-
-#####v6.1.0
+- Body parameters are now parsed for validity in the same way as other required parameters.
 - EXPERIMENTAL! Ability to define clients using the same style API as the Services. Supports Path/Query/Headers, but not Bodies or Forms as yet.
 
 #####v5.X.X -> v6.X.X

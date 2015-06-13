@@ -9,7 +9,7 @@ import scala.util.Try
 /**
  * Builder for parameters that are encoded in the HTTP request path.
  */
-object Path extends Parameters[PathParameter, Mandatory] {
+object Path extends Parameters[PathParameter, Retrieval] {
 
   /**
    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
@@ -34,9 +34,9 @@ object Path extends Parameters[PathParameter, Mandatory] {
    * @tparam T the type of the parameter
    * @return a parameter for retrieving a value of type [T] from the request
    */
-  override def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec) with Mandatory[T] {
+  override def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec) with Retrieval[T] {
 
-    def attemptToParseFrom(request: HttpRequest): Option[Try[T]] = ???
+    override val required = true
 
     override def toString() = s"{$name}"
 
@@ -47,5 +47,7 @@ object Path extends Parameters[PathParameter, Mandatory] {
     })
 
     override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
+
+    override def from(request: HttpRequest): T = ???
   }
 }

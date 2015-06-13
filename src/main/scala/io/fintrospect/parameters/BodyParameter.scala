@@ -5,7 +5,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-abstract class BodyParameter[T](spec: ParameterSpec[T], location: Location, val example: Option[JsonRootNode]) extends Parameter[T]  {
+abstract class BodyParameter[T](spec: ParameterSpec[T], location: Location, val example: Option[JsonRootNode]) extends ParseableParameter[T] {
 
   override val name = spec.name
   override val description = spec.description

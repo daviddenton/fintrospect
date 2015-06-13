@@ -4,7 +4,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-abstract class RequestParameter[T](spec: ParameterSpec[T], location: Location) extends Parameter[T]  {
+abstract class RequestParameter[T](spec: ParameterSpec[T], location: Location) extends ParseableParameter[T]  {
 
   override val name = spec.name
   override val description = spec.description
