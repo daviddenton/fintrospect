@@ -25,12 +25,10 @@ object Query {
   }
 
   val required = new Parameters[RequestParameter, Mandatory] {
-    override def apply[T](spec: ParameterSpec[T]) =
-      new RequestParameter[T](spec, location) with Mandatory[T]
+    override def apply[T](spec: ParameterSpec[T]) = new RequestParameter[T](spec, location) with Mandatory[T]
   }
 
   val optional = new Parameters[RequestParameter, Optional] {
-    override def apply[T](spec: ParameterSpec[T]) =
-      new RequestParameter[T](spec, location) with Optional[T]
+    override def apply[T](spec: ParameterSpec[T]) = new RequestParameter[T](spec, location) with Optional[T]
   }
 }

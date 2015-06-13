@@ -22,9 +22,8 @@ object Body {
    * @param description
    * @param example
    */
-  def json(description: Option[String], example: JsonRootNode): Body[JsonRootNode] = {
+  def json(description: Option[String], example: JsonRootNode): Body[JsonRootNode] =
     new UniBody[JsonRootNode](APPLICATION_JSON, description, ObjectParamType, Some(example), ArgoUtil.parse, ArgoUtil.compact)
-  }
 
   /**
    * Builder for parameters that are encoded in the HTTP form.
