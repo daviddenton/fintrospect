@@ -10,7 +10,7 @@ abstract class FormField[T](name: String,
                             paramType: ParamType,
                             deserialize: String => T,
                             serialize: T => String)
-  extends RequestParameter[T](name, description, paramType, FormField.location, deserialize, serialize) {
+  extends BodyParameter[T](name, description, paramType, Option.empty, FormField.location, deserialize, serialize) {
 }
 
 object FormField {

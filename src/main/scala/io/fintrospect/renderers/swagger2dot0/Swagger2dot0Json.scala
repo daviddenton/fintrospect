@@ -27,39 +27,37 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     def add(fieldAndDefinitions: FieldAndDefinitions) = FieldsAndDefinitions(fieldAndDefinitions.field :: fields, fieldAndDefinitions.definitions ++ definitions)
   }
 
-  private def render(parameter: Parameter[_]): JsonNode = obj(
-    "in" -> string(parameter.where),
-    "name" -> string(parameter.name),
-    "description" -> parameter.description.map(string).getOrElse(nullNode()),
-    "required" -> boolean(parameter.required),
-    "type" -> string(parameter.paramType.name)
-  )
-
-  private def render(body: BodyParameter[_], schema: Schema): JsonNode = obj(
-    "in" -> string(body.where),
-    "name" -> string(body.name),
-    "description" -> body.description.map(string).getOrElse(nullNode()),
-    "required" -> boolean(true),
-    "schema" -> schema.node
-  )
+  private def render(parameter: Parameter[_], schema: Option[Schema]): JsonNode = {
+    val typeField = schema.map("schema" -> _.node).getOrElse("type" -> string(parameter.paramType.name))
+    obj(
+      "in" -> string(parameter.where),
+      "name" -> string(parameter.name),
+      "description" -> parameter.description.map(string).getOrElse(nullNode()),
+      "required" -> boolean(parameter.required),
+      typeField
+    )
+  }
 
   private def render(basePath: Path, route: Route): FieldAndDefinitions = {
     val FieldsAndDefinitions(responses, responseDefinitions) = render(route.describedRoute.responses)
 
-    val bodySchema = route.describedRoute.body.map(b => schemaGenerator.toSchema(b.example))
-    val bodyParameters = bodySchema.toList.flatMap(s => Seq(render(route.describedRoute.body.get, s)))
+    val bodyParameters: Iterable[BodyParameter[_]] = route.describedRoute.body.toList.flatMap(bp => bp.parameterParts)
+
+    val bpAndSchemaAndRendered = bodyParameters.map(p => (p, p.example.map(schemaGenerator.toSchema), render(p, p.example.map(schemaGenerator.toSchema))))
+
+    val nonBodyParams = route.allParams.map(render(_, Option.empty))
 
     val route2 = route.method.getName.toLowerCase -> obj(
       "tags" -> array(string(basePath.toString)),
       "summary" -> string(route.describedRoute.summary),
       "produces" -> array(route.describedRoute.produces.map(m => string(m.value))),
       "consumes" -> array(route.describedRoute.consumes.map(m => string(m.value))),
-      "parameters" -> array(route.allParams.map(render) ++ bodyParameters),
+      "parameters" -> array(nonBodyParams ++ bpAndSchemaAndRendered.map(_._3).toList),
       "responses" -> obj(responses),
       "supportedContentTypes" -> array(route.describedRoute.produces.map(m => string(m.value))),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))
     )
-    FieldAndDefinitions(route2, responseDefinitions ++ bodySchema.toList.flatMap(_.definitions))
+    FieldAndDefinitions(route2, responseDefinitions ++ bpAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))
   }
 
   private def render(responses: List[ResponseWithExample]): FieldsAndDefinitions = {
