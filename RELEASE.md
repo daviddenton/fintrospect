@@ -7,7 +7,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
 #####v6.X.X -> v7.X.X
-- Custom parameter support now more modular. Breaking change of ```custom(XXX)``` -> ```apply(XXX)``` in Parameters classes
+- Custom parameter support now more modular. Breaking change of ```custom(XXX)``` -> ```apply(XXX)``` in Parameters classes, which requires using ParameterSpec instead of arg list.
 
 #####v6.1.0
 - EXPERIMENTAL! Ability to define clients using the same style API as the Services. Supports Path/Query/Headers, but not Bodies or Forms as yet.
