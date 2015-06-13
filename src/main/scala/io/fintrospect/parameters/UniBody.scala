@@ -7,12 +7,9 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-class UniBody[T](val contentType: ContentType,
-                 theDescription: Option[String],
-                 theParamType: ParamType,
-                 val example: Option[JsonRootNode],
-                 deserialize: String => T,
-                 serialize: T => String) extends Body[T] {
+class UniBody[T](spec: BodySpec[T],
+                 paramType: ParamType,
+                 val example: Option[JsonRootNode]) extends Body[T] {
 
   private val location = new Location {
 
@@ -23,9 +20,11 @@ class UniBody[T](val contentType: ContentType,
     override def into(name: String, value: String, request: HttpRequest): Unit = ???
   }
 
-  private val param = new BodyParameter[T](ParameterSpec("body", theDescription, theParamType, deserialize, serialize), location, example) with Mandatory[T]
+  private val param = new BodyParameter[T](ParameterSpec("body", spec.description, paramType, spec.deserialize, spec.serialize), location, example) with Mandatory[T]
 
   override def parameterParts: Seq[BodyParameter[_]] = Seq(param)
 
-  override def from(request: HttpRequest): T = deserialize(location.from(null, request).get)
+  override def from(request: HttpRequest): T = spec.deserialize(location.from(null, request).get)
+
+  override val contentType: ContentType = spec.contentType
 }

@@ -8,9 +8,6 @@ import io.fintrospect.util.ArgoUtil._
 
 import scala.language.higherKinds
 
-
-
-
 /**
  * Prototype functions for creating parameters of various types.
  */
