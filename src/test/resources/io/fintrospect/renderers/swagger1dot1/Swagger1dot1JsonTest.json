@@ -14,7 +14,8 @@
           ],
           "consumes": [
             "application/atom+xml",
-            "application/svg+xml"
+            "application/svg+xml",
+            "application/json"
           ],
           "parameters": [
             {

@@ -1,13 +1,17 @@
 package io.fintrospect.parameters
 
 import io.fintrospect.{ContentType, ContentTypes}
+import org.jboss.netty.handler.codec.http.HttpRequest
 
-case class Form private(private val fields: List[Parameter[_]]) extends Body {
-  override def iterator: Iterator[Parameter[_]] = fields.iterator
+case class Form private(override val parameterParts: List[BodyParameter[_]]) extends Body[List[_]] {
 
-  def withField(field: Parameter[_]) = copy(field :: fields)
+  override val example = None
+
+  def withField(field: FormField[_]) = copy(field :: parameterParts)
 
   override val contentType: ContentType = ContentTypes.APPLICATION_FORM_URLENCODED
+
+  override def from(request: HttpRequest): List[_] = ???
 }
 
 
@@ -15,5 +19,5 @@ case class Form private(private val fields: List[Parameter[_]]) extends Body {
  * Builder for parameters that are encoded in the HTTP form.
  */
 object Form {
-  def apply(fields: Parameter[_]*): Form = Form(fields.toList)
+  def apply(fields: FormField[_]*): Form = Form(fields.toList)
 }

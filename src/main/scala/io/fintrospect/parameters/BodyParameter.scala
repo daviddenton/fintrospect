@@ -8,7 +8,7 @@ import scala.util.Try
 abstract class BodyParameter[T](val name: String,
                                 val description: Option[String],
                                 val paramType: ParamType,
-                                val example: JsonRootNode,
+                                val example: Option[JsonRootNode],
                                 location: Location,
                                 deserialize: String => T,
                                 serialize: T => String)

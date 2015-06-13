@@ -19,13 +19,6 @@
         ],
         "parameters": [
           {
-            "in": "form",
-            "name": "form",
-            "description": "description of the form",
-            "required": true,
-            "type": "integer"
-          },
-          {
             "in": "query",
             "name": "query",
             "description": "description of the query",
@@ -45,6 +38,13 @@
             "description": null,
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "form",
+            "name": "form",
+            "description": "description of the form",
+            "required": true,
+            "type": "integer"
           }
         ],
         "responses": {},
@@ -109,7 +109,8 @@
         ],
         "consumes": [
           "application/atom+xml",
-          "application/svg+xml"
+          "application/svg+xml",
+          "application/json"
         ],
         "parameters": [
           {

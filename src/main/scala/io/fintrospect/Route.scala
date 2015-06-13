@@ -7,7 +7,7 @@ import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse
 
 abstract class Route(val describedRoute: DescribedRoute, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
 
-  val allParams: List[Parameter[_]] = describedRoute.aBody.toIterable.flatMap(_.toIterable).toList ++ describedRoute.params ++ pathParams.flatMap(identity)
+  val allParams: List[Parameter[_]] = describedRoute.params ++ pathParams.flatMap(identity)
 
   def matches(actualMethod: HttpMethod, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
 
