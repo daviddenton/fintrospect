@@ -3,7 +3,7 @@ package io.fintrospect.renderers.swagger2dot0
 import argo.jdom.JsonNode
 import com.twitter.finagle.http.path.Path
 import io.fintrospect._
-import io.fintrospect.parameters.{BodyParameter, Parameter, RequestParameter}
+import io.fintrospect.parameters.{Parameter, RequestParameter}
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
 import io.fintrospect.util.ArgoUtil._
@@ -41,11 +41,11 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   private def render(basePath: Path, route: Route): FieldAndDefinitions = {
     val FieldsAndDefinitions(responses, responseDefinitions) = render(route.describedRoute.responses)
 
-    val bodyParameters: Iterable[BodyParameter[_]] = route.describedRoute.body.toList.flatMap(bp => bp.parameterParts)
+    val bodyParameters = route.describedRoute.body.toList.flatMap(bp => bp.parameterParts)
 
     val bpAndSchemaAndRendered = bodyParameters.map(p => (p, p.example.map(schemaGenerator.toSchema), render(p, p.example.map(schemaGenerator.toSchema))))
 
-    val nonBodyParams = route.allParams.map(render(_, Option.empty))
+    val nonBodyParams = (route.describedRoute.requestParams ++ route.pathParams.flatMap(identity)).map(render(_, Option.empty))
 
     val route2 = route.method.getName.toLowerCase -> obj(
       "tags" -> array(string(basePath.toString)),
