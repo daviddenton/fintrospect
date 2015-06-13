@@ -12,8 +12,8 @@ import scala.util.Try
  * Encapsulates the description of a route.
  */
 case class DescribedRoute private(summary: String,
-                                  produces: List[ContentType],
-                                  consumes: List[ContentType],
+                                  produces: Set[ContentType],
+                                  consumes: Set[ContentType],
                                   aBody: Option[ABody],
                                   body: Option[BodyParameter[_]],
                                   params: List[RequestParameter[_]],
@@ -22,12 +22,12 @@ case class DescribedRoute private(summary: String,
   /**
    * Register content types which the route will consume. This is informational only and is NOT currently enforced.
    */
-  def consuming(contentTypes: ContentType*) = copy(consumes = (contentTypes ++ produces).toList)
+  def consuming(contentTypes: ContentType*) = copy(consumes = produces ++ contentTypes)
 
   /**
    * Register content types which thus route will produce. This is informational only and not currently enforced.
    */
-  def producing(contentTypes: ContentType*) = copy(produces = (contentTypes ++ produces).toList)
+  def producing(contentTypes: ContentType*) = copy(produces = produces ++ contentTypes)
 
   /**
    * Register a request parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
@@ -70,5 +70,5 @@ case class DescribedRoute private(summary: String,
 }
 
 object DescribedRoute {
-  def apply(summary: String): DescribedRoute = DescribedRoute(summary, Nil, Nil, None, None, Nil, Nil)
+  def apply(summary: String): DescribedRoute = DescribedRoute(summary, Set.empty, Set.empty, None, None, Nil, Nil)
 }
