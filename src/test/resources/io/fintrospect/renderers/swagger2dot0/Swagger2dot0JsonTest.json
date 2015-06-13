@@ -14,7 +14,9 @@
         ],
         "summary": "a friendly endpoint",
         "produces": [],
-        "consumes": [],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "in": "form",

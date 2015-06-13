@@ -43,13 +43,13 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
         .withRoute(
           DescribedRoute("a friendly endpoint")
             .taking(Query.required.boolean("query", "description of the query"))
-            .taking(Form.required.int("form", "description of the form"))
+            .body(Form(FormField.required.int("form", "description of the form")))
             .at(GET) / "welcome" / string("firstName") / fixed("bertrand") / string("secondName") bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
       val actual = contentFrom(Await.result(module.toService(Request("/basepath"))))
-//            println(actual)
+      //            println(actual)
       parse(actual) shouldEqual expected
     }
   }

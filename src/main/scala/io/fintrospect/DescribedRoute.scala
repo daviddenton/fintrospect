@@ -1,7 +1,7 @@
 package io.fintrospect
 
 import argo.jdom.JsonNode
-import io.fintrospect.parameters.{ABody, BodyParameter, RequestParameter}
+import io.fintrospect.parameters.{Body, BodyParameter, RequestParameter}
 import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpResponseStatus}
@@ -14,7 +14,7 @@ import scala.util.Try
 case class DescribedRoute private(summary: String,
                                   produces: Set[ContentType],
                                   consumes: Set[ContentType],
-                                  aBody: Option[ABody],
+                                  aBody: Option[Body],
                                   body: Option[BodyParameter[_]],
                                   params: List[RequestParameter[_]],
                                   responses: List[ResponseWithExample]) {
@@ -22,27 +22,27 @@ case class DescribedRoute private(summary: String,
   /**
    * Register content types which the route will consume. This is informational only and is NOT currently enforced.
    */
-  def consuming(contentTypes: ContentType*) = copy(consumes = produces ++ contentTypes)
+  def consuming(contentTypes: ContentType*): DescribedRoute = copy(consumes = produces ++ contentTypes)
 
   /**
    * Register content types which thus route will produce. This is informational only and not currently enforced.
    */
-  def producing(contentTypes: ContentType*) = copy(produces = produces ++ contentTypes)
+  def producing(contentTypes: ContentType*): DescribedRoute = copy(produces = produces ++ contentTypes)
 
   /**
    * Register a request parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: RequestParameter[_]) = copy(params = rp :: params)
+  def taking(rp: RequestParameter[_]): DescribedRoute = copy(params = rp :: params)
 
   /**
    * Register the expected content of the body. Presence is NOT currently enforced.
    */
-  def taking(bp: BodyParameter[_]) = copy(body = Some(bp))
+  def taking(bp: BodyParameter[_]): DescribedRoute = copy(body = Some(bp))
 
   /**
    * Register the expected content of the body. Presence is NOT currently enforced.
    */
-  def taking(bp: ABody) = copy(aBody = Some(bp))
+  def body(bp: Body): DescribedRoute = copy(aBody = Some(bp), consumes = consumes + bp.contentType)
 
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
