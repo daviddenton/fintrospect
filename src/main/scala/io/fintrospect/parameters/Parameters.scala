@@ -25,19 +25,6 @@ trait Parameters[P[_], R[_]] {
   def apply[T](spec: ParameterSpec[T]): P[T] with R[T]
 
   /**
-   * Create a parameter of a custom type. This will hook into pre-request validation (in terms of optional/mandatory parameters)
-   * @param name the name of the parameter (for use in description endpoints)
-   * @param deserialize function to take the input string from the request and attempt to construct a deserialized instance. Exceptions are
-   *                    automatically caught and translated into the appropriate result, so just concentrate on the Happy-path case
-   * @param serialize function to take the input type from the request and serialize it to a string to be represented
-   * @param description optional description of the parameter (for use in description endpoints)
-   * @tparam T the type of the parameter
-   * @return a parameter for retrieving a value of type [T] from the request
-   */
-  def apply[T](name: String, deserialize: String => T, serialize: T => String, description: String = null): P[T] with R[T] =
-    apply(ParameterSpec[T](name, Option(description), StringParamType, deserialize, serialize))
-
-  /**
    * Create a LocalDate parameter which is constrained by the format YYYY-MM-DD
    * @param name the name of the parameter (for use in description endpoints)
    * @param description optional description of the parameter (for use in description endpoints)
