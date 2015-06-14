@@ -138,7 +138,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       }
     }
 
-    describe("when a valid path does not contain required body") {
+    describe("when a valid path does not contain required JSON body") {
       val d = DescribedRoute("").body(Body.json(None, ArgoUtil.obj()))
       val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
 
@@ -150,6 +150,22 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       it("it returns a 400 when the required body is not the correct type") {
         val request = Request("/svc")
         request.setContentString("notAJsonBlob")
+        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+      }
+    }
+
+    describe("when a valid path does not contain required custom body") {
+      val d = DescribedRoute("").body(Body(BodySpec[Int](None, ContentTypes.TEXT_PLAIN, _.toInt, _.toString)))
+      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
+
+      it("it returns a 400 when the required body is missing") {
+        val request = Request("/svc")
+        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+      }
+
+      it("it returns a 400 when the required body is not the correct type") {
+        val request = Request("/svc")
+        request.setContentString("notAnInt")
         result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
       }
     }
