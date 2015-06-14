@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 class PathTest extends ParametersTest[PathParameter, Retrieval](Path) {
-  override def from[X](method: (String, String) => PathParameter[X] with Retrieval[X], value: Option[String]): Option[X] = {
+  override def from[X](method: (String, String) => PathParameter[X] with Retrieval[X], value: Option[String])= {
     method(paramName, null).unapply(value.orNull)
   }
 

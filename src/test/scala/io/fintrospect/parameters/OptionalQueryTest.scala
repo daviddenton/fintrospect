@@ -8,7 +8,7 @@ class OptionalQueryTest extends JsonSupportingParametersTest[RequestParameter, O
     method(paramName, null) -> value
   }
 
-  override def from[X](method: (String, String) => RequestParameter[X] with Optional[X], value: Option[String]): Option[X] = {
+  override def from[X](method: (String, String) => RequestParameter[X] with Optional[X], value: Option[String])= {
     val request = value.map(s => Request(paramName -> s)).getOrElse(Request())
     method(paramName, null).from(request)
   }

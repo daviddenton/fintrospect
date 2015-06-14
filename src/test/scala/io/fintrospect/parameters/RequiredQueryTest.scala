@@ -8,7 +8,7 @@ class RequiredQueryTest extends JsonSupportingParametersTest[RequestParameter, M
 
   override def to[X](method: (String, String) => RequestParameter[X] with Mandatory[X], value: X): ParamBinding[X] = method(paramName, null) -> value
 
-  override def from[X](method: (String, String) => RequestParameter[X] with Mandatory[X], value: Option[String]): Option[X] = {
+  override def from[X](method: (String, String) => RequestParameter[X] with Mandatory[X], value: Option[String])= {
     val request = value.map(s => Request(paramName -> s)).getOrElse(Request())
     Try(method(paramName, null).from(request)).toOption
   }
