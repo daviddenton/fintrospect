@@ -7,7 +7,7 @@ class OptionalFormFieldTest extends JsonSupportingParametersTest[FormField, Opti
 
   override def to[X](method: (String, String) => FormField[X] with Optional[X], value: X): ParamBinding[X] = method(paramName, null) -> value
 
-  override def from[X](method: (String, String) => FormField[X] with Optional[X], value: Option[String])= {
+  override def attemptFrom[X](method: (String, String) => FormField[X] with Optional[X], value: Option[String])= {
     val request = Request()
     request.setContentType(MediaType.WwwForm)
     value.foreach({
@@ -18,6 +18,6 @@ class OptionalFormFieldTest extends JsonSupportingParametersTest[FormField, Opti
           }
         }.toUri.getRawQuery)
     })
-    method(paramName, null).from(request)
+    method(paramName, null).attemptToParseFrom(request)
   }
 }
