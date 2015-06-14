@@ -3,7 +3,7 @@ Roadmap/Release Notes/Migration Guide
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
 ######Master (in dev...)
-- Improve support for Forms and custom Body types (other than JSON) in both Serverside and Clientside APIs.
+- Improve support for Forms and custom Body types in Clientside APIs.
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
 #####v6.1.X -> v7.X.X
