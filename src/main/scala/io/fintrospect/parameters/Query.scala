@@ -6,9 +6,6 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
 import scala.util.Try
 
-/**
- * Builder for parameters that are encoded in the HTTP query.
- */
 object Query {
   private val location = new Location {
     override def toString = "query"

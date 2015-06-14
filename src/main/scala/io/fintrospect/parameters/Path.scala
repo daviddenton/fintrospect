@@ -6,9 +6,6 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
-/**
- * Builder for parameters that are encoded in the HTTP request path.
- */
 object Path extends Parameters[PathParameter, Retrieval] {
 
   /**
