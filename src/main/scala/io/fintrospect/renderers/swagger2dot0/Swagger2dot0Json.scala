@@ -41,7 +41,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   private def render(basePath: Path, route: Route): FieldAndDefinitions = {
     val FieldsAndDefinitions(responses, responseDefinitions) = render(route.describedRoute.responses)
 
-    val bodyParameters = route.describedRoute.body.map(_.parameterParts).getOrElse(Nil)
+    val bodyParameters = route.describedRoute.body.map(_.iterator).getOrElse(Nil)
 
     val bpAndSchemaAndRendered = bodyParameters.map(p => (p, p.example.map(schemaGenerator.toSchema), render(p, p.example.map(schemaGenerator.toSchema))))
 

@@ -178,22 +178,6 @@
           "type": "string"
         }
       }
-    },
-    "object-1852275137": {
-      "type": "object",
-      "properties": {
-        "anObject": {
-          "$ref": "#/definitions/object-1920275720"
-        }
-      }
-    },
-    "object-1920275720": {
-      "type": "object",
-      "properties": {
-        "aStringField": {
-          "type": "integer"
-        }
-      }
     }
   }
 }

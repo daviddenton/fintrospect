@@ -8,7 +8,7 @@ import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse
 abstract class Route(val describedRoute: DescribedRoute, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
 
   def validatible: Seq[ParseableParameter[_]] = {
-    describedRoute.requestParams ++ describedRoute.body.toList.flatMap(_.parameterParts).map(_.asInstanceOf[ParseableParameter[_]]).toSeq
+    describedRoute.requestParams ++ describedRoute.body.map(_.iterator).getOrElse(Nil).toSeq
   }
 
   def matches(actualMethod: HttpMethod, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
