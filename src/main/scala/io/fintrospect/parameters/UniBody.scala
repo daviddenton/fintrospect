@@ -29,9 +29,9 @@ class UniBody[T](spec: BodySpec[T],
 
   private val param = new BodyParameter[T](ParameterSpec("body", spec.description, paramType, spec.deserialize, spec.serialize), location, example) with Mandatory[T]
 
-  override def parameterParts: Seq[BodyParameter[_]] = Seq(param)
-
   override def from(request: HttpRequest): T = spec.deserialize(location.from(null, request).get)
 
   override val contentType: ContentType = spec.contentType
+
+  override def iterator: Iterator[BodyParameter[_]] = Iterator(param)
 }

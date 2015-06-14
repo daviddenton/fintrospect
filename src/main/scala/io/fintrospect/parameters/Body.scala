@@ -6,13 +6,11 @@ import io.fintrospect.ContentTypes._
 import io.fintrospect.util.ArgoUtil
 import org.jboss.netty.handler.codec.http.HttpRequest
 
-trait Body[T] {
+trait Body[T] extends Iterable[BodyParameter[_]]{
   val contentType: ContentType
   val example: Option[JsonRootNode]
 
   def from(request: HttpRequest): T
-
-  def parameterParts: Seq[BodyParameter[_]]
 }
 
 object Body {
@@ -29,6 +27,7 @@ object Body {
     override val example = None
     override val contentType = APPLICATION_FORM_URLENCODED
     override def from(request: HttpRequest) = new Form(request)
-    override def parameterParts = fields
+
+    override def iterator = fields.iterator
   }
 }
