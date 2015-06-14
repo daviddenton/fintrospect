@@ -8,9 +8,9 @@ class OptionalHeaderTest extends JsonSupportingParametersTest[RequestParameter, 
     method(paramName, null) -> value
   }
 
-  override def from[X](method: (String, String) => RequestParameter[X] with Optional[X], value: Option[String])= {
+  override def attemptFrom[X](method: (String, String) => RequestParameter[X] with Optional[X], value: Option[String])= {
     val request = Request()
     value.foreach(request.headers().add(paramName, _))
-    method(paramName, null).from(request)
+    method(paramName, null).attemptToParseFrom(request)
   }
 }

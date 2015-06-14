@@ -1,8 +1,14 @@
 package io.fintrospect.parameters
 
+
+import scala.util.{Failure, Success}
+
 class PathTest extends ParametersTest[PathParameter, Retrieval](Path) {
-  override def from[X](method: (String, String) => PathParameter[X] with Retrieval[X], value: Option[String])= {
-    method(paramName, null).unapply(value.orNull)
+  override def attemptFrom[X](method: (String, String) => PathParameter[X] with Retrieval[X], value: Option[String])= {
+    val parsed = method(paramName, null).unapply(value.orNull)
+    if(parsed.isDefined) Some(Success(parsed.get)) else {
+      if(value.isDefined) Some(Failure(new RuntimeException())) else None
+    }
   }
 
   override def to[X](method: (String, String) => PathParameter[X] with Retrieval[X], value: X): ParamBinding[X] = method(paramName, null) -> value

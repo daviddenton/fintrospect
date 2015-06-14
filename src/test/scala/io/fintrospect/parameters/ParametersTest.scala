@@ -5,27 +5,28 @@ import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.language.{higherKinds, implicitConversions}
+import scala.util.{Success, Try}
 
 abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parameters: Parameters[T, R]) extends FunSpec with ShouldMatchers {
 
   val paramName = "name"
 
-  def from[X](methodUnderTest: (String, String) => T[X] with R[X], value: Option[String]): Option[X]
+  def attemptFrom[X](methodUnderTest: (String, String) => T[X] with R[X], value: Option[String]): Option[Try[X]]
 
   def to[X](methodUnderTest: (String, String) => T[X] with R[X], value: X): ParamBinding[X]
 
 
   describe("int") {
     it("retrieves a valid value") {
-      from(parameters.int, Some("123")) shouldEqual Some(123)
+      attemptFrom(parameters.int, Some("123")) shouldEqual Some(Success(123))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.int, Some("notANumber")) shouldEqual None
+      attemptFrom(parameters.int, Some("notANumber")).get.isFailure shouldEqual true
     }
 
     it("does not retrieve an null int value") {
-      from(parameters.int, None) shouldEqual None
+      attemptFrom(parameters.int, None) shouldEqual None
     }
 
     it("serializes an int correctly") {
@@ -35,15 +36,15 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parame
 
   describe("integer") {
     it("retrieves a valid value") {
-      from(parameters.integer, Some("123")) shouldEqual Some(123)
+      attemptFrom(parameters.integer, Some("123")) shouldEqual Some(Success(123))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.integer, Some("notANumber")) shouldEqual None
+      attemptFrom(parameters.integer, Some("notANumber")).get.isFailure shouldEqual true
     }
 
     it("does not retrieve an null integer value") {
-      from(parameters.integer, None) shouldEqual None
+      attemptFrom(parameters.integer, None) shouldEqual None
     }
 
     it("serializes an integer correctly") {
@@ -53,15 +54,15 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parame
 
   describe("long") {
     it("retrieves a valid value") {
-      from(parameters.long, Some("123")) shouldEqual Some(123L)
+      attemptFrom(parameters.long, Some("123")) shouldEqual Some(Success(123L))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.long, Some("notANumber")) shouldEqual None
+      attemptFrom(parameters.long, Some("notANumber")).get.isFailure shouldEqual true
     }
 
     it("does not retrieve an null long value") {
-      from(parameters.long, None) shouldEqual None
+      attemptFrom(parameters.long, None) shouldEqual None
     }
 
     it("serializes a long correctly") {
@@ -71,15 +72,15 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parame
 
   describe("bigDecimal") {
     it("retrieves a valid value") {
-      from(parameters.bigDecimal, Some("1.234")) shouldEqual Some(BigDecimal("1.234"))
+      attemptFrom(parameters.bigDecimal, Some("1.234")) shouldEqual Some(Success(BigDecimal("1.234")))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.bigDecimal, Some("notANumber")) shouldEqual None
+      attemptFrom(parameters.bigDecimal, Some("notANumber")).get.isFailure shouldEqual true
     }
 
     it("does not retrieve an null bigDecimal value") {
-      from(parameters.bigDecimal, None) shouldEqual None
+      attemptFrom(parameters.bigDecimal, None) shouldEqual None
     }
 
     it("serializes a bigDecimal correctly") {
@@ -89,15 +90,15 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parame
 
   describe("boolean") {
     it("retrieves a valid value") {
-      from(parameters.boolean, Some("true")) shouldEqual Some(true)
+      attemptFrom(parameters.boolean, Some("true")) shouldEqual Some(Success(true))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.boolean, Some("notABoolean")) shouldEqual None
+      attemptFrom(parameters.boolean, Some("notABoolean")).get.isFailure shouldEqual true
     }
 
     it("does not retrieve an null boolean value") {
-      from(parameters.boolean, None) shouldEqual None
+      attemptFrom(parameters.boolean, None) shouldEqual None
     }
 
     it("serializes a boolean correctly") {
@@ -107,11 +108,11 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parame
 
   describe("string") {
     it("retrieves a valid value") {
-      from(parameters.string, Some("123")) shouldEqual Some("123")
+      attemptFrom(parameters.string, Some("123")) shouldEqual Some(Success("123"))
     }
 
     it("does not retrieve an null string value") {
-      from(parameters.string, None) shouldEqual None
+      attemptFrom(parameters.string, None) shouldEqual None
     }
 
     it("serializes a string correctly") {
@@ -121,15 +122,15 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parame
 
   describe("dateTime") {
     it("retrieves a valid value") {
-      from(parameters.dateTime, Some("1970-01-01T00:00:00")) shouldEqual Some(LocalDateTime.of(1970, 1, 1, 0, 0, 0))
+      attemptFrom(parameters.dateTime, Some("1970-01-01T00:00:00")) shouldEqual Some(Success(LocalDateTime.of(1970, 1, 1, 0, 0, 0)))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.dateTime, Some("notADateTime")) shouldEqual None
+      attemptFrom(parameters.dateTime, Some("notADateTime")).get.isFailure shouldEqual true
     }
 
     it("does not retrieve an null dateTime value") {
-      from(parameters.dateTime, None) shouldEqual None
+      attemptFrom(parameters.dateTime, None) shouldEqual None
     }
 
     it("serializes a dateTime correctly") {
@@ -139,15 +140,15 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parame
 
   describe("zonedDateTime") {
     it("retrieves a valid value") {
-      from(parameters.zonedDateTime, Some("1970-01-01T00:00:00-01:00")).map(_.toEpochSecond) shouldEqual Some(3600)
+      attemptFrom(parameters.zonedDateTime, Some("1970-01-01T00:00:00-01:00")).get.get.toEpochSecond shouldEqual 3600
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.zonedDateTime, Some("notADateTime")) shouldEqual None
+      attemptFrom(parameters.zonedDateTime, Some("notADateTime")).get.isFailure shouldEqual true
     }
 
     it("does not retrieve an null zonedDateTime value") {
-      from(parameters.zonedDateTime, None) shouldEqual None
+      attemptFrom(parameters.zonedDateTime, None) shouldEqual None
     }
 
     it("serializes a zonedDateTime correctly") {
@@ -157,15 +158,15 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parame
 
   describe("date") {
     it("retrieves a valid value") {
-      from(parameters.localDate, Some("1970-01-01")) shouldEqual Some(LocalDate.of(1970, 1, 1))
+      attemptFrom(parameters.localDate, Some("1970-01-01")) shouldEqual Some(Success(LocalDate.of(1970, 1, 1)))
     }
 
     it("does not retrieve an invalid value") {
-      from(parameters.localDate, Some("notADate")) shouldEqual None
+      attemptFrom(parameters.localDate, Some("notADate")).get.isFailure shouldEqual true
     }
 
     it("does not retrieve an null date value") {
-      from(parameters.localDate, None) shouldEqual None
+      attemptFrom(parameters.localDate, None) shouldEqual None
     }
 
     it("serializes a date correctly") {
@@ -182,15 +183,15 @@ abstract class ParametersTest[T[_] <: Parameter[_], R[_] <: Retrieval[_]](parame
     }
 
     it("retrieves a valid custom value") {
-      from(myCustomParameter, Some("123")) shouldEqual Some(MyCustomType(123))
+      attemptFrom(myCustomParameter, Some("123")) shouldEqual Some(Success(MyCustomType(123)))
     }
 
     it("does not retrieve an invalid custom value") {
-      from(myCustomParameter, Some("BOB")) shouldEqual None
+      attemptFrom(myCustomParameter, Some("BOB")).get.isFailure shouldEqual true
     }
 
     it("does not retrieve an null custom value") {
-      from(myCustomParameter, None) shouldEqual None
+      attemptFrom(myCustomParameter, None) shouldEqual None
     }
 
     it("serializes a custom value correctly") {
