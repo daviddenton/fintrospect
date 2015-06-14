@@ -1,5 +1,7 @@
 package examples.extended
 
+import java.lang.Integer._
+
 import com.twitter.finagle.Service
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes.APPLICATION_JSON
@@ -19,7 +21,9 @@ class BookSearch(books: Books) {
 
   private def search() = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
-      Ok(array(books.search(minPages.from(request).getOrElse(Integer.MIN_VALUE), maxPages.from(request).getOrElse(Integer.MAX_VALUE), titleTerm.from(request)).map(_.toJson)))
+      Ok(array(books.search(minPages.from(request).getOrElse(MIN_VALUE),
+        maxPages.from(request).getOrElse(MAX_VALUE),
+        titleTerm.from(request)).map(_.toJson)))
     }
   }
 

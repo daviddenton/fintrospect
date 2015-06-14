@@ -2,9 +2,6 @@ package io.fintrospect.parameters
 
 import org.jboss.netty.handler.codec.http.HttpRequest
 
-/**
- * Builder for parameters that are encoded as HTTP headers.
- */
 object Header {
 
   private val location = new Location {

@@ -7,6 +7,13 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.Try
 
+/**
+ * Represents a generic body which can be written to and retrieved from a request.
+ * @param spec the specification of this body type
+ * @param paramType the documented type of this body. Usually this is StringParamType, apart from for JSON, which is ObjectParamType
+ * @param example (JSON types only) an example object of this body
+ * @tparam T the type of the request when it has been deserialized from the request
+ */
 class UniBody[T](spec: BodySpec[T],
                  paramType: ParamType,
                  val example: Option[JsonRootNode]) extends Body[T] {
