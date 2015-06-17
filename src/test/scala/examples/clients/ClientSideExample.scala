@@ -11,6 +11,8 @@ import org.jboss.netty.handler.codec.http.HttpMethod._
 import util.Echo
 
 /**
+ * EXPERIMENTAL!!! This API is likely to change significantly in future releases.
+ *
  * Simple example of how to define client endpoints using the same techniques as the server routes.
  * Note that the client will automatically reject (with a 400) any unknown or missing parameters, as per the
  * specified route. The response is also decorated with the anonymised route, allowing for each collection of
