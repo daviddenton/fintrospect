@@ -11,11 +11,7 @@ object Query {
     override def toString = "query"
 
     override def from(name: String, request: HttpRequest): Option[String] = {
-      Try(parseParams(request.getUri).get(name)).map(_.get(0)).toOption
-    }
-
-    private def parseParams(s: String) = {
-      Try(new QueryStringDecoder(s).getParameters).toOption.getOrElse(new JMap[String, JList[String]])
+      Try(new QueryStringDecoder(request.getUri).getParameters.get(name)).map(_.get(0)).toOption
     }
 
     override def into(name: String, value: String, request: HttpRequest): Unit = ???
