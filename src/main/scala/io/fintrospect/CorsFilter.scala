@@ -7,7 +7,7 @@ import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 
 /**
- * This implementation is portef from the Finagle version, in order to add support for the Request type used by
+ * This implementation is ported from the Finagle version, in order to add support for the Request type used by
  * Fintrospect. See:
  *
  */
