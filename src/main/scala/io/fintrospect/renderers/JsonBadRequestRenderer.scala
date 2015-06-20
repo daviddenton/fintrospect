@@ -1,12 +1,12 @@
 package io.fintrospect.renderers
-import io.fintrospect.parameters.ParseableParameter
+import io.fintrospect.parameters.Parameter
 import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.JsonResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponse
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
 object JsonBadRequestRenderer {
-  def apply(badParameters: Seq[ParseableParameter[_]]): HttpResponse = {
+  def apply(badParameters: Seq[Parameter[_]]): HttpResponse = {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),
       "type" -> string(p.where),
