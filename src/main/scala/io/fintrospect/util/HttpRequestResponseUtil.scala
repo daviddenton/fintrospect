@@ -11,6 +11,6 @@ object HttpRequestResponseUtil {
 
   def headersFrom(msg: HttpMessage) : Map[String, String] = {
     val headers = JavaConversions.iterableAsScalaIterable(msg.headers())
-    Map(headers.map(entry => entry.getKey -> entry.getValue).toList: _*)
+    Map(headers.map(entry => entry.getKey -> entry.getValue).toSeq: _*)
   }
 }

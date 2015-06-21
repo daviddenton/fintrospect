@@ -19,7 +19,7 @@ object JsonToJsonSchema {
  * @param node the main schema node (first level only).
  * @param definitions named, flattened JSON schema definitions of all models involved in the reification.
  */
-case class Schema(node: JsonNode, definitions: List[Field])
+case class Schema(node: JsonNode, definitions: Seq[Field])
 
 /**
  * Given a JSON node, converts it to a flattened JSON Schema.
@@ -49,15 +49,15 @@ class JsonToJsonSchema() {
   }
 
   private def objectSchema(input: Schema): Schema = {
-    val (nodeFields, subDefinitions) = input.node.getFieldList.foldLeft((List[Field](), input.definitions)) {
+    val (nodeFields, subDefinitions) = input.node.getFieldList.foldLeft((Seq[Field](), input.definitions)) {
       case ((memoFields, memoDefinitions), nextField) =>
         val next = toSchema(Schema(nextField.getValue, memoDefinitions))
-        (nextField.getName.getText -> next.node :: memoFields, next.definitions)
+        ((nextField.getName.getText -> next.node) +: memoFields, next.definitions)
     }
 
     val newDefinition = obj("type" -> string("object"), "properties" -> obj(nodeFields: _*))
     val definitionId = "object" + reflectionHashCode(newDefinition)
-    val allDefinitions = definitionId -> newDefinition :: subDefinitions
+    val allDefinitions = (definitionId -> newDefinition) +: subDefinitions
     Schema(obj("$ref" -> string(s"#/definitions/$definitionId")), allDefinitions)
   }
 

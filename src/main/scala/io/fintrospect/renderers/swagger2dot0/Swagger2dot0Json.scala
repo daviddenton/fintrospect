@@ -52,7 +52,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "summary" -> string(route.describedRoute.summary),
       "produces" -> array(route.describedRoute.produces.map(m => string(m.value))),
       "consumes" -> array(route.describedRoute.consumes.map(m => string(m.value))),
-      "parameters" -> array(nonBodyParams ++ bpAndSchemaAndRendered.map(_._3).toList),
+      "parameters" -> array(nonBodyParams ++ bpAndSchemaAndRendered.map(_._3)),
       "responses" -> obj(responses),
       "supportedContentTypes" -> array(route.describedRoute.produces.map(m => string(m.value))),
       "security" -> array(obj(Seq[Security]().map(_.toPathSecurity)))

@@ -21,7 +21,7 @@ class PathTest extends FunSpec with ShouldMatchers {
 
   describe("non fixed parameter") {
     it("does contain a param to describe") {
-      Path(ParameterSpec.string("a path piece")).map(_.name) shouldEqual List("a path piece")
+      Path(ParameterSpec.string("a path piece")).map(_.name) shouldEqual Seq("a path piece")
     }
 
     it("unapplies strings as url decoded values") {

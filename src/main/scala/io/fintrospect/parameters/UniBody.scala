@@ -29,18 +29,15 @@ class UniBody[T](spec: BodySpec[T],
     override val example: Option[JsonRootNode] = theExample
   }
 
-  override def from(request: HttpRequest): T = {
-    val validate1: List[Either[Parameter[T], Option[T]]] = validate(request)
-    validate1.head.right.get.get
-  }
+  override def from(request: HttpRequest): T = validate(request).head.right.get.get
 
   override val contentType = spec.contentType
 
   override def iterator = Iterator(param)
 
-  override def validate(request: HttpRequest): List[Either[Parameter[T], Option[T]]] = {
+  override def validate(request: HttpRequest): Seq[Either[Parameter[T], Option[T]]] = {
     val from = Try(contentFrom(request)).toOption
-    List(
+    Seq(
       if (from.isEmpty) {
         Left(param)
       } else {
