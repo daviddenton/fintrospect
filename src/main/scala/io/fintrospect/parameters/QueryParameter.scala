@@ -1,10 +1,20 @@
 package io.fintrospect.parameters
 
-import org.jboss.netty.handler.codec.http.HttpRequest
+import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
 import scala.util.{Failure, Success, Try}
 
-abstract class QueryParameter[T](spec: ParameterSpec[T], location: Location) extends Parameter[T] with Validatable[T, HttpRequest] {
+abstract class QueryParameter[T](spec: ParameterSpec[T]) extends Parameter[T] with Validatable[T, HttpRequest] {
+
+  private val location = new Location {
+    override def toString = "query"
+
+    override def from(name: String, request: HttpRequest) = {
+      Try(new QueryStringDecoder(request.getUri).getParameters.get(name)).map(_.get(0)).toOption
+    }
+
+    override def into(name: String, value: String, request: HttpRequest) = ???
+  }
 
   override val name = spec.name
   override val description = spec.description

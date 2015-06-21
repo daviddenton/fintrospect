@@ -19,13 +19,6 @@
         ],
         "parameters": [
           {
-            "in": "query",
-            "name": "query",
-            "description": "description of the query",
-            "required": true,
-            "type": "boolean"
-          },
-          {
             "in": "path",
             "name": "firstName",
             "description": null,
@@ -38,6 +31,13 @@
             "description": null,
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "description": "description of the query",
+            "required": true,
+            "type": "boolean"
           },
           {
             "in": "form",
@@ -66,17 +66,17 @@
         "consumes": [],
         "parameters": [
           {
-            "in": "header",
-            "name": "header",
-            "description": "description of the header",
-            "required": false,
-            "type": "string"
-          },
-          {
             "in": "path",
             "name": "message",
             "description": null,
             "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "header",
+            "description": "description of the header",
+            "required": false,
             "type": "string"
           }
         ],
@@ -114,18 +114,18 @@
         ],
         "parameters": [
           {
-            "in": "query",
-            "name": "query",
-            "description": null,
-            "required": true,
-            "type": "integer"
-          },
-          {
             "in": "path",
             "name": "message",
             "description": null,
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "description": null,
+            "required": true,
+            "type": "integer"
           },
           {
             "in": "body",
