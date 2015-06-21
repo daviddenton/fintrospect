@@ -18,15 +18,12 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form]
   val where = "form"
 
   def validate(form: Form): Either[Parameter[_], Option[T]] = {
-    val from = form.get(name)
-    if (from.isEmpty) {
-      if (required) Left(this) else Right(None)
-    } else {
-      Try(spec.deserialize(from.get)) match {
+    form.get(name).map {
+      v => Try(spec.deserialize(v)) match {
         case Success(v) => Right(Some(v))
         case Failure(_) => Left(this)
       }
-    }
+    }.getOrElse(if (required) Left(this) else Right(None))
   }
 }
 
