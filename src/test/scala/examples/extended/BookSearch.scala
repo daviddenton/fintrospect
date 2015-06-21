@@ -20,7 +20,6 @@ class BookSearch(books: Books) {
   private val titleTerm = FormField.required.string("term", "the part of the title to look for")
   private val form = Body.form(minPages, titleTerm)
 
-
   private def search() = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
       val requestForm = form.from(request)
