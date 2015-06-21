@@ -24,12 +24,14 @@ class UniBody[T](spec: BodySpec[T],
     override val where = "body"
     override val paramType = theParamType
 
-    override def ->(value: T): ParamBinding[T] = ???
+    override def ->(value: T) = ???
 
-    override val example: Option[JsonRootNode] = theExample
+    override val example = theExample
   }
 
-  override def from(request: HttpRequest): T = validate(request).head.right.get.get
+  override def ->(value: T) = ???
+
+  override def from(request: HttpRequest) = validate(request).head.right.get.get
 
   override val contentType = spec.contentType
 
@@ -42,7 +44,7 @@ class UniBody[T](spec: BodySpec[T],
         Left(param)
       } else {
         Try(spec.deserialize(from.get)) match {
-          case Success(v) => Right(Some(v))
+          case Success(v) => Right(Option(v))
           case Failure(_) => Left(param)
         }
       }

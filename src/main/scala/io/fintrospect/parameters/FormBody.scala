@@ -7,12 +7,12 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
 import scala.collection.JavaConverters._
 
-
-
 class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[Form] {
   override val contentType: ContentType = APPLICATION_FORM_URLENCODED
 
-  override def from(request: HttpRequest): Form = {
+  override def ->(value: Form) = ???
+
+  override def from(request: HttpRequest) = {
     new Form(new QueryStringDecoder("?" + contentFrom(request)).getParameters.asScala.mapValues(_.asScala.toSet))
   }
 

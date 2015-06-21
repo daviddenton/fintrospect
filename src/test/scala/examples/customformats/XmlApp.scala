@@ -15,8 +15,8 @@ object XmlApp extends App {
 
   def aService(): Service[HttpRequest, HttpResponse] = Service.mk((rq) => toFuture(XmlResponseBuilder.Ok))
 
-  val xmlAsABody = BodySpec[XmlFormat](Some("An XML document"), ContentTypes.APPLICATION_XML, XmlFormat(_), _.value)
-  val xmlAsAParam = ParameterSpec[XmlFormat]("anXmlParameter", Some("An XML document"), StringParamType, XmlFormat(_), _.value)
+  val xmlAsABody = BodySpec[XmlFormat](Option("An XML document"), ContentTypes.APPLICATION_XML, XmlFormat(_), _.value)
+  val xmlAsAParam = ParameterSpec[XmlFormat]("anXmlParameter", Option("An XML document"), StringParamType, XmlFormat(_), _.value)
 
   val route = DescribedRoute("an xml endpoint")
     .taking(Header.optional(xmlAsAParam))

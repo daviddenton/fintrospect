@@ -19,7 +19,7 @@ abstract class RequestParameter[T](spec: ParameterSpec[T], location: Location) e
   def validate(request: HttpRequest) = {
     location.from(name, request).map {
       v => Try(spec.deserialize(v)) match {
-        case Success(d) => Right(Some(d))
+        case Success(d) => Right(Option(d))
         case Failure(_) => Left(this)
       }
     }.getOrElse(if (required) Left(this) else Right(None))

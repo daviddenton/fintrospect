@@ -36,7 +36,7 @@ Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, 
 This module will have a single endpoint ```search```:
 
 ```scala
-val apiInfo = ApiInfo("Library Example", "1.0", Some("Simple description"))
+val apiInfo = ApiInfo("Library Example", "1.0", Option("Simple description"))
 val renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
 val libraryModule = FintrospectModule(Root / "library", renderer)
     .withRoute(new BookSearch(new BookRepo()).route)

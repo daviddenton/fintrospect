@@ -5,7 +5,8 @@ import java.time.LocalDate
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await._
 import io.fintrospect.clients.ClientRoute
-import io.fintrospect.parameters.{Header, Path}
+import io.fintrospect.parameters.{Body, Header, Path}
+import io.fintrospect.util.ArgoUtil
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import util.Echo
@@ -26,10 +27,14 @@ object ClientSideExample extends App {
 
   val theDate = Path.localDate("date")
   val theUser = Header.required.string("user")
+  val body = Body.json(Option("body"))
 
-  val localClient = ClientRoute().taking(theUser).at(GET) / "firstSection" / theDate bindTo localEchoService
+  val localClient = ClientRoute()
+    .taking(theUser)
+    .body(body)
+    .at(GET) / "firstSection" / theDate bindTo localEchoService
 
-  val theCall = localClient(theDate -> LocalDate.of(2015, 1, 1), theUser -> System.getenv("USER"))
+  val theCall = localClient(body -> ArgoUtil.obj(), theDate -> LocalDate.of(2015, 1, 1), theUser -> System.getenv("USER"))
 
   val response = result(theCall)
 

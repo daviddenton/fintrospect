@@ -18,15 +18,15 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
 
   val policy = Cors.Policy(
     allowsOrigin = {
-      case origin if origin.startsWith("juug") => Some(origin)
-      case origin if origin.endsWith("street") => Some(origin)
+      case origin if origin.startsWith("juug") => Option(origin)
+      case origin if origin.endsWith("street") => Option(origin)
       case _ => None
     },
-    allowsMethods = { method => Some(method :: "TRAP" :: Nil) },
-    allowsHeaders = { headers => Some(headers) },
+    allowsMethods = { method => Option(method :: "TRAP" :: Nil) },
+    allowsHeaders = { headers => Option(headers) },
     exposedHeaders = "Icey" :: Nil,
     supportsCredentials = true,
-    maxAge = Some(Duration.Top)
+    maxAge = Option(Duration.Top)
   )
 
   val corsFilter = new CorsFilter(policy)
