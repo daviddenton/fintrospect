@@ -17,14 +17,11 @@ abstract class RequestParameter[T](spec: ParameterSpec[T], location: Location) e
   val where = location.toString
 
   def validate(request: HttpRequest) = {
-    val from = location.from(name, request)
-    if (from.isEmpty) {
-      if (required) Left(this) else Right(None)
-    } else {
-      Try(spec.deserialize(from.get)) match {
+    location.from(name, request).map {
+      v => Try(spec.deserialize(v)) match {
         case Success(v) => Right(Some(v))
         case Failure(_) => Left(this)
       }
-    }
+    }.getOrElse(if (required) Left(this) else Right(None))
   }
 }
