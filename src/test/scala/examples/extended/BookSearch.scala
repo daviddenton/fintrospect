@@ -18,7 +18,7 @@ class BookSearch(books: Books) {
   private val maxPages = Query.optional(ParameterSpec.int("maxPages", "max number of pages in book"))
   private val minPages = FormField.optional(ParameterSpec.int("minPages", "min number of pages in book"))
   private val titleTerm = FormField.required(ParameterSpec.string("term", "the part of the title to look for"))
-  private val form: Body[Form] = Body.form(minPages, titleTerm)
+  private val form = Body.form(minPages, titleTerm)
 
 
   private def search() = new Service[HttpRequest, HttpResponse] {
