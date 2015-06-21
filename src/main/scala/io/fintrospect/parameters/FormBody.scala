@@ -12,11 +12,11 @@ trait BodyParameter[T] extends Parameter[T] {
   val example: Option[JsonRootNode]
 }
 
-class FormBody(fields: Seq[FormField[_] with Retrieval[_, NewForm]]) extends Body[NewForm] {
+class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[Form] {
   override val contentType: ContentType = APPLICATION_FORM_URLENCODED
 
-  override def from(request: HttpRequest): NewForm = {
-    new NewForm(new QueryStringDecoder("?" + contentFrom(request)).getParameters.asScala.mapValues(_.asScala.toSet))
+  override def from(request: HttpRequest): Form = {
+    new Form(new QueryStringDecoder("?" + contentFrom(request)).getParameters.asScala.mapValues(_.asScala.toSet))
   }
 
   override def iterator = fields.iterator

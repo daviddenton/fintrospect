@@ -4,7 +4,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.{Failure, Success, Try}
 
-abstract class FormField[T](spec: ParameterSpec[T]) extends ParseableParameter[T, NewForm] with BodyParameter[T] {
+abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form] with BodyParameter[T] {
 
   override val example = None
   override val name = spec.name
@@ -17,7 +17,7 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends ParseableParameter[T
 
   val where = "form"
 
-  def validate(form: NewForm):Either[Parameter[_], Option[T]] = {
+  def validate(form: Form):Either[Parameter[_], Option[T]] = {
     val from = form.get(name)
     if (from.isEmpty) {
       if (required) Left(this) else Right(None)
@@ -31,7 +31,7 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends ParseableParameter[T
 }
 
 object FormField {
-  def required[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Mandatory[T, NewForm] {}
+  def required[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Mandatory[T, Form] {}
 
-  def optional[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Optional[T, NewForm] {}
+  def optional[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Optional[T, Form] {}
 }
