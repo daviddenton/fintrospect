@@ -44,9 +44,7 @@ object FintrospectModule {
 
   private class ValidateParams(route: Route, moduleRenderer: ModuleRenderer) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
-      val paramsAndParseResults = route.validatible.map(p => (p, p.attemptToParseFrom(request)))
-      val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => !pr._1.required && pr._2.isEmpty)
-      val missingOrFailed = withoutMissingOptionalParams.filterNot(pr => pr._2.isDefined && pr._2.get.isSuccess).map(_._1)
+      val missingOrFailed = route.missingOrFailedFrom(request)
       if (missingOrFailed.isEmpty) service(request) else moduleRenderer.badRequest(missingOrFailed)
     }
   }
