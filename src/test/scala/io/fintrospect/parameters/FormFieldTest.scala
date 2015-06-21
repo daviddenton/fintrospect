@@ -9,7 +9,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
   private val paramName = "name"
 
   describe("required") {
-    val field = FormField.required(ParameterSpec.localDate(paramName))
+    val field = FormField.required.localDate(paramName)
 
     it("validates value from form field") {
       field.validate(formWithValueOf(Some("2015-02-04"))) shouldEqual Right(Some(LocalDate.of(2015, 2, 4)))
@@ -26,7 +26,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
   }
 
   describe("optional") {
-    val field = FormField.optional(ParameterSpec.localDate(paramName))
+    val field = FormField.optional.localDate(paramName)
 
     it("validates value from form field") {
       field.validate(formWithValueOf(Some("2015-02-04"))) shouldEqual Right(Some(LocalDate.of(2015, 2, 4)))

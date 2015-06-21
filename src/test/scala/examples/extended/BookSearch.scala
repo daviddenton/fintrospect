@@ -15,9 +15,9 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 class BookSearch(books: Books) {
-  private val maxPages = Query.optional(ParameterSpec.int("maxPages", "max number of pages in book"))
-  private val minPages = FormField.optional(ParameterSpec.int("minPages", "min number of pages in book"))
-  private val titleTerm = FormField.required(ParameterSpec.string("term", "the part of the title to look for"))
+  private val maxPages = Query.optional.int("maxPages", "max number of pages in book")
+  private val minPages = FormField.optional.int("minPages", "min number of pages in book")
+  private val titleTerm = FormField.required.string("term", "the part of the title to look for")
   private val form = Body.form(minPages, titleTerm)
 
 
