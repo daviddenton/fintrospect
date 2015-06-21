@@ -3,7 +3,7 @@ package io.fintrospect.clients
 import com.twitter.finagle.Service
 import com.twitter.util.Await._
 import com.twitter.util.Future
-import io.fintrospect.parameters.{Header, ParameterSpec, Path, Query}
+import io.fintrospect.parameters.{Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil._
 import io.fintrospect.util.PlainTextResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
@@ -17,8 +17,8 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
     val returnsMethodAndUri = Service.mk[HttpRequest, HttpResponse] { request =>
       Future.value(Ok(request.getMethod + "," + request.getUri))
     }
-    val name = Path(ParameterSpec.string("name"))
-    val maxAge = Path(ParameterSpec.integer("maxAge"))
+    val name = Path.string("name")
+    val maxAge = Path.integer("maxAge")
     val clientWithNoParameters = ClientRoute().at(GET) bindTo returnsMethodAndUri
 
     val clientWithNameAndMaxAge = ClientRoute().at(GET) / name / maxAge bindTo returnsMethodAndUri
@@ -75,7 +75,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
     describe("identifies") {
       val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
 
-      val intParam = Path(ParameterSpec.int("anInt"))
+      val intParam = Path.int("anInt")
 
       val client = ClientRoute().at(GET) / "svc" / intParam / Path.fixed("fixed") bindTo returnsHeaders
 

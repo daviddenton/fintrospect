@@ -35,21 +35,21 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
         assertOkResponse(m.withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))), Seq())
       }
       it("with 1 segments") {
-        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path(ParameterSpec.string("s1")) bindTo ((_1: String) => AService(Seq(_1)))), Seq("a"))
+        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") bindTo ((_1: String) => AService(Seq(_1)))), Seq("a"))
       }
       it("with 2 segments") {
-        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path(ParameterSpec.string("s1")) / Path(ParameterSpec.string("s2")) bindTo ((_1: String, _2: String) => AService(Seq(_1, _2)))), Seq("a", "b"))
+        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") / Path.string("s2") bindTo ((_1: String, _2: String) => AService(Seq(_1, _2)))), Seq("a", "b"))
       }
-//      it("with 3 segments") {
-//        assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") / string("s2") / string("s3") bindTo ((_1: String, _2: String, _3: String) => AService(Seq(_1, _2, _3)))), Seq("a", "b", "c"))
-//      }
-//      it("with 4 segments") {
-//        assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") / string("s2") / string("s3") / string("s4") bindTo ((_1: String, _2: String, _3: String, _4: String) => AService(Seq(_1, _2, _3, _4)))), Seq("a", "b", "c", "d"))
-//      }
-//      it("with 5 segments") {
-//        assertOkResponse(m.withRoute(d.at(GET) / "svc" / string("s1") / string("s2") / string("s3") / string("s4") / string("s5") bindTo ((_1: String, _2: String, _3: String, _4: String, _5: String) => AService(Seq(_1, _2, _3, _4, _5)))), Seq("a", "b",
-//          "c", "d", "e"))
-//      }
+      it("with 3 segments") {
+        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") / Path.string("s2") / Path.string("s3") bindTo ((_1: String, _2: String, _3: String) => AService(Seq(_1, _2, _3)))), Seq("a", "b", "c"))
+      }
+      it("with 4 segments") {
+        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") / Path.string("s2") / Path.string("s3") / Path.string("s4") bindTo ((_1: String, _2: String, _3: String, _4: String) => AService(Seq(_1, _2, _3, _4)))), Seq("a", "b", "c", "d"))
+      }
+      it("with 5 segments") {
+        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") / Path.string("s2") / Path.string("s3") / Path.string("s4") / Path.string("s5") bindTo ((_1: String, _2: String, _3: String, _4: String, _5: String) => AService(Seq(_1, _2, _3, _4, _5)))), Seq("a", "b",
+          "c", "d", "e"))
+      }
     }
 
     describe("description route is added") {
@@ -188,7 +188,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     describe("identity") {
       it("identifies route with anonymised description when called") {
         def getHeaders(number: Int, aString: String) = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
-        val route = DescribedRoute("").at(GET) / "svc" / Path(ParameterSpec.int("anInt")) / Path.fixed("fixed") bindTo getHeaders
+        val route = DescribedRoute("").at(GET) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
         val m = FintrospectModule(Root, SimpleJson()).withRoute(route)
         HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldEqual(OK, "Map(X-Fintrospect-Route-Name -> GET./svc/{anInt}/fixed)")
       }
