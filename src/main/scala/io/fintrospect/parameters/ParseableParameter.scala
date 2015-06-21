@@ -1,9 +1,5 @@
 package io.fintrospect.parameters
 
-import org.jboss.netty.handler.codec.http.HttpRequest
-
-import scala.util.Try
-
-trait ParseableParameter[T] extends Parameter[T] {
-  def attemptToParseFrom(request: HttpRequest): Option[Try[T]]
+trait ParseableParameter[T, From] extends Parameter[T] {
+  def validate(from: From): Either[Parameter[_], Option[T]]
 }

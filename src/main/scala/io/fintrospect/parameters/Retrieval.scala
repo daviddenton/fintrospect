@@ -1,18 +1,18 @@
 package io.fintrospect.parameters
 
-import org.jboss.netty.handler.codec.http.HttpRequest
 
-
-trait Retrieval[T] {
-  def from(request: HttpRequest): T
+trait Retrieval[T, From] {
+  def from(from: From): T
 }
 
-trait Mandatory[T] extends Retrieval[T] with ParseableParameter[T] {
+trait Mandatory[T,From] extends Retrieval[T, From] with ParseableParameter[T, From] {
   override val required = true
-  def from(request: HttpRequest): T = attemptToParseFrom(request).get.get
+  def from(from: From): T = validate(from).right.get.get
 }
 
-trait Optional[T] extends Retrieval[Option[T]] with ParseableParameter[T]  {
+trait Optional[T, From] extends Retrieval[Option[T], From] with ParseableParameter[T, From]  {
   override val required = false
-  def from(request: HttpRequest): Option[T] = attemptToParseFrom(request).map(_.get)
+  def from(from: From): Option[T] = {
+    validate(from).right.toOption.get
+  }
 }

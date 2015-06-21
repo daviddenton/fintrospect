@@ -8,9 +8,10 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 trait Body[T] extends Iterable[BodyParameter[_]]{
   val contentType: ContentType
-  val example: Option[JsonRootNode]
 
   def from(request: HttpRequest): T
+
+  def validate(request: HttpRequest): List[Either[Parameter[_], Option[_]]]
 }
 
 object Body {
@@ -23,11 +24,5 @@ object Body {
   def json(description: Option[String], example: JsonRootNode): Body[JsonRootNode] =
     new UniBody[JsonRootNode](BodySpec(description, APPLICATION_JSON, ArgoUtil.parse, ArgoUtil.compact), ObjectParamType, Some(example))
 
-  def form(fields: FormField[_] with Retrieval[_]*): Body[Form] = new Body[Form] {
-    override val example = None
-    override val contentType = APPLICATION_FORM_URLENCODED
-    override def from(request: HttpRequest) = new Form(request)
-
-    override def iterator = fields.iterator
-  }
+  def form(fields: FormField[_] with Retrieval[_, NewForm]*): Body[NewForm] = new FormBody(fields)
 }

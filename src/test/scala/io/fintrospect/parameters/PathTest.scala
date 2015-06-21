@@ -21,15 +21,15 @@ class PathTest extends FunSpec with ShouldMatchers {
 
   describe("non fixed parameter") {
     it("does contain a param to describe") {
-      Path.string("a path piece").map(_.name) shouldEqual List("a path piece")
+      Path(ParameterSpec.string("a path piece")).map(_.name) shouldEqual List("a path piece")
     }
 
     it("unapplies strings as url decoded values") {
-      Path.string("urlEncoded").unapply("a%20path%2F+piece") shouldEqual Some("a path/+piece")
+      Path(ParameterSpec.string("urlEncoded")).unapply("a%20path%2F+piece") shouldEqual Some("a path/+piece")
     }
 
     it("does not url decode reserved characters") {
-      Path.string("urlEncoded").unapply(":@-._~!$&'()*+,;=") shouldEqual Some(":@-._~!$&'()*+,;=")
+      Path(ParameterSpec.string("urlEncoded")).unapply(":@-._~!$&'()*+,;=") shouldEqual Some(":@-._~!$&'()*+,;=")
     }
   }
 
