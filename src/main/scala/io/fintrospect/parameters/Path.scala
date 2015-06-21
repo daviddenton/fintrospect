@@ -4,7 +4,9 @@ import java.net.URI
 
 import scala.util.Try
 
-object Path {
+trait Marker[T]
+
+object Path extends Parameters[PathParameter, Marker] {
 
   /**
    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
@@ -29,7 +31,7 @@ object Path {
    * @tparam T the type of the parameter
    * @return a parameter for retrieving a value of type [T] from the request
    */
-  def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec) {
+  def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec) with Marker[T] {
 
     override val required = true
 

@@ -31,7 +31,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
             .taking(Header.optional.string("header", "description of the header"))
             .returning(ResponseWithExample(OK, "peachy", obj("anObject" -> obj("aStringField" -> number(123)))))
             .returning(FORBIDDEN -> "no way jose")
-            .at(GET) / "echo" / Path(ParameterSpec.string("message")) bindTo ((s: String) => Echo(s)))
+            .at(GET) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
           DescribedRoute("a post endpoint")
             .consuming(APPLICATION_ATOM_XML, APPLICATION_SVG_XML)
@@ -39,12 +39,12 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
             .returning(FORBIDDEN -> "no way jose", obj("aString" -> ArgoUtil.string("a message of some kind")))
             .taking(Query.required.int("query"))
             .body(Body.json(Some("the body of the message"), obj("anObject" -> obj("aStringField" -> number(123)))))
-            .at(POST) / "echo" / Path(ParameterSpec.string("message")) bindTo ((s: String) => Echo(s)))
+            .at(POST) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
           DescribedRoute("a friendly endpoint")
             .taking(Query.required.boolean("query", "description of the query"))
             .body(Body.form(FormField.required.int("form", "description of the form")))
-            .at(GET) / "welcome" / Path(ParameterSpec.string("firstName")) / fixed("bertrand") / Path(ParameterSpec.string("secondName")) bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
+            .at(GET) / "welcome" / Path.string("firstName") / fixed("bertrand") / Path.string("secondName") bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
