@@ -34,8 +34,8 @@ class Client(method: HttpMethod,
              headerParams: Seq[HeaderParameter[_]],
              queryParams: Seq[QueryParameter[_]],
              pathParams: Seq[PathParameter[_]],
+             body: Option[Body[_]],
              underlyingService: Service[HttpRequest, HttpResponse]) {
-
 
   private val systemBindings = pathParams.filter(_.isEmpty).map(parameter => ParamBinding(parameter, parameter.name))
   private val allPossibleParams = pathParams ++ headerParams ++ queryParams
