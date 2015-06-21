@@ -2,8 +2,6 @@ package io.fintrospect.parameters
 
 import org.jboss.netty.handler.codec.http.HttpRequest
 
-import scala.language.reflectiveCalls
-
 
 trait Retrieval[T] {
   def from(request: HttpRequest): T
