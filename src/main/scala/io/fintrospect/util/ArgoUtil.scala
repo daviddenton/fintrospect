@@ -27,7 +27,7 @@ object ArgoUtil {
   }
 
   def obj(fields: Field*): JsonRootNode = {
-    JsonNodeFactories.`object`(fields.map(f => field(f._1, f._2)).toSeq: _*)
+    JsonNodeFactories.`object`(fields.map(f => field(f._1, f._2)): _*)
   }
 
   def array(elements: Iterable[JsonNode]) = JsonNodeFactories.array(elements.toSeq: _*)

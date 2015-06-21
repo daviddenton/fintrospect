@@ -1,7 +1,5 @@
 package io.fintrospect.parameters
 
-import java.util.{HashMap => JMap, List => JList}
-
 import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
 import scala.util.Try
