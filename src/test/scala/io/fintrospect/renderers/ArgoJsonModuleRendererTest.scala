@@ -38,7 +38,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
             .producing(APPLICATION_JSON)
             .returning(FORBIDDEN -> "no way jose", obj("aString" -> ArgoUtil.string("a message of some kind")))
             .taking(Query.required.int("query"))
-            .body(Body.json(Some("the body of the message"), obj("anObject" -> obj("aStringField" -> number(123)))))
+            .body(Body.json(Option("the body of the message"), obj("anObject" -> obj("aStringField" -> number(123)))))
             .at(POST) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
           DescribedRoute("a friendly endpoint")

@@ -12,12 +12,12 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     val field = FormField.required.localDate(paramName)
 
     it("validates value from form field") {
-      field.validate(formWithValueOf(Some("2015-02-04"))) shouldEqual Right(Some(LocalDate.of(2015, 2, 4)))
-      field.from(formWithValueOf(Some("2015-02-04"))) shouldEqual LocalDate.of(2015, 2, 4)
+      field.validate(formWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
+      field.from(formWithValueOf(Option("2015-02-04"))) shouldEqual LocalDate.of(2015, 2, 4)
     }
 
     it("fails to validate invalid value") {
-      field.validate(formWithValueOf(Some("notValid"))) shouldEqual Left(field)
+      field.validate(formWithValueOf(Option("notValid"))) shouldEqual Left(field)
     }
 
     it("does not validate non existent value") {
@@ -29,12 +29,12 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     val field = FormField.optional.localDate(paramName)
 
     it("validates value from form field") {
-      field.validate(formWithValueOf(Some("2015-02-04"))) shouldEqual Right(Some(LocalDate.of(2015, 2, 4)))
-      field.from(formWithValueOf(Some("2015-02-04"))) shouldEqual Some(LocalDate.of(2015, 2, 4))
+      field.validate(formWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
+      field.from(formWithValueOf(Option("2015-02-04"))) shouldEqual Option(LocalDate.of(2015, 2, 4))
     }
 
     it("fails to validate invalid value") {
-      field.validate(formWithValueOf(Some("notValid"))) shouldEqual Left(field)
+      field.validate(formWithValueOf(Option("notValid"))) shouldEqual Left(field)
     }
 
     it("does not validate non existent value") {

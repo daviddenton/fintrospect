@@ -13,7 +13,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 class BookAdd(books: Books) {
   private val exampleBook = Book("the title", "the author", 666)
   private val bookExistsResponse = Error(CONFLICT, "Book with that ISBN exists")
-  private val jsonBody = Body.json(Some("book content"), exampleBook.toJson)
+  private val jsonBody = Body.json(Option("book content"), exampleBook.toJson)
 
   private def addBook(isbn: String) = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] =

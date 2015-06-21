@@ -36,7 +36,7 @@ case class DescribedRoute private(summary: String,
   /**
    * Register the expected content of the body.
    */
-  def body(bp: Body[_]): DescribedRoute = copy(body = Some(bp), consumes = consumes + bp.contentType)
+  def body(bp: Body[_]): DescribedRoute = copy(body = Option(bp), consumes = consumes + bp.contentType)
 
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).

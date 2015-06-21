@@ -7,7 +7,7 @@ class PathTest extends FunSpec with ShouldMatchers {
 
   describe("fixed path parameter") {
     it("unapplies when string matches") {
-      Path.fixed("a path piece").unapply("a path piece") shouldEqual Some("a path piece")
+      Path.fixed("a path piece").unapply("a path piece") shouldEqual Option("a path piece")
     }
 
     it("does not unapply when string mismatches") {
@@ -25,11 +25,11 @@ class PathTest extends FunSpec with ShouldMatchers {
     }
 
     it("unapplies strings as url decoded values") {
-      Path.string("urlEncoded").unapply("a%20path%2F+piece") shouldEqual Some("a path/+piece")
+      Path.string("urlEncoded").unapply("a%20path%2F+piece") shouldEqual Option("a path/+piece")
     }
 
     it("does not url decode reserved characters") {
-      Path.string("urlEncoded").unapply(":@-._~!$&'()*+,;=") shouldEqual Some(":@-._~!$&'()*+,;=")
+      Path.string("urlEncoded").unapply(":@-._~!$&'()*+,;=") shouldEqual Option(":@-._~!$&'()*+,;=")
     }
   }
 

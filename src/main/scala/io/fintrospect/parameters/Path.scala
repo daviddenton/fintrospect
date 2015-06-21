@@ -18,11 +18,11 @@ object Path extends Parameters[PathParameter, Marker] {
 
     override def toString() = name
 
-    override def ->(value: String): ParamBinding[String] = ParamBinding(this, value)
+    override def ->(value: String) = ParamBinding(this, value)
 
-    override def unapply(str: String): Option[String] = if (str == name) Some(str) else None
+    override def unapply(str: String) = if (str == name) Option(str) else None
 
-    override def iterator: Iterator[PathParameter[_]] = Nil.iterator
+    override def iterator = Nil.iterator
   }
 
   /**
@@ -37,12 +37,12 @@ object Path extends Parameters[PathParameter, Marker] {
 
     override def toString() = s"{$name}"
 
-    override def ->(value: T): ParamBinding[T] = ParamBinding[T](this.asInstanceOf[Parameter[T]], spec.serialize(value))
+    override def ->(value: T) = ParamBinding[T](this.asInstanceOf[Parameter[T]], spec.serialize(value))
 
-    override def unapply(str: String): Option[T] = Option(str).flatMap(s => {
+    override def unapply(str: String) = Option(str).flatMap(s => {
       Try(spec.deserialize(new URI("http://localhost/" + s).getPath.substring(1))).toOption
     })
 
-    override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
+    override def iterator = Option(this).iterator
   }
 }
