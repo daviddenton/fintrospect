@@ -17,7 +17,7 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form]
 
   val where = "form"
 
-  def validate(form: Form):Either[Parameter[_], Option[T]] = {
+  def validate(form: Form): Either[Parameter[_], Option[T]] = {
     val from = form.get(name)
     if (from.isEmpty) {
       if (required) Left(this) else Right(None)
@@ -31,7 +31,16 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form]
 }
 
 object FormField {
-  def required[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Mandatory[T, Form]
 
-  def optional[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Optional[T, Form]
+  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, Form]
+
+  trait Optional[T] extends io.fintrospect.parameters.Optional[T, Form]
+
+  val required = new Parameters[FormField, Mandatory] {
+    override def apply[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Mandatory[T]
+  }
+
+  val optional = new Parameters[FormField, Optional] {
+    override def apply[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Optional[T]
+  }
 }

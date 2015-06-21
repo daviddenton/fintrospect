@@ -15,7 +15,15 @@ object Query {
     override def into(name: String, value: String, request: HttpRequest): Unit = ???
   }
 
-  def required[T](spec: ParameterSpec[T]) = new RequestParameter[T](spec, location) with Mandatory[T, HttpRequest]
+  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, HttpRequest]
 
-  def optional[T](spec: ParameterSpec[T]) = new RequestParameter[T](spec, location) with Optional[T, HttpRequest]
+  trait Optional[T] extends io.fintrospect.parameters.Optional[T, HttpRequest]
+
+  val required = new Parameters[RequestParameter, Mandatory] {
+    override def apply[T](spec: ParameterSpec[T]): RequestParameter[T] with Mandatory[T] = new RequestParameter[T](spec, location) with Mandatory[T]
+  }
+
+  val optional = new Parameters[RequestParameter, Optional] {
+    override def apply[T](spec: ParameterSpec[T]): RequestParameter[T] with Optional[T] = new RequestParameter[T](spec, location) with Optional[T]
+  }
 }
