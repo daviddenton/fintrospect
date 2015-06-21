@@ -67,7 +67,7 @@ class CorsFilter(policy: Policy) extends Filter[HttpRequest, HttpResponse, HttpR
   private def getHeaders(request: HttpRequest): Seq[String] =
     Option(request.headers.get("Access-Control-Request-Headers")) map {
       ", *".r.split(_).toSeq
-    } getOrElse List.empty[String]
+    } getOrElse Seq.empty[String]
 
   private def setHeaders(response: HttpResponse, headers: Seq[String]): HttpResponse = {
     if (headers.nonEmpty) {

@@ -15,8 +15,8 @@ case class DescribedRoute private(summary: String,
                                   produces: Set[ContentType],
                                   consumes: Set[ContentType],
                                   body: Option[Body[_]],
-                                  requestParams: List[RequestParameter[_]],
-                                  responses: List[ResponseWithExample]) {
+                                  requestParams: Seq[RequestParameter[_]],
+                                  responses: Seq[ResponseWithExample]) {
 
   /**
    * Register content types which the route will consume. This is informational only and is NOT currently enforced.
@@ -31,7 +31,7 @@ case class DescribedRoute private(summary: String,
   /**
    * Register a request parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: RequestParameter[_]): DescribedRoute = copy(requestParams = rp :: requestParams)
+  def taking(rp: RequestParameter[_]): DescribedRoute = copy(requestParams = rp +: requestParams)
 
   /**
    * Register the expected content of the body.
@@ -41,7 +41,7 @@ case class DescribedRoute private(summary: String,
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(newResponse: ResponseWithExample): DescribedRoute = copy(responses = newResponse :: responses)
+  def returning(newResponse: ResponseWithExample): DescribedRoute = copy(responses = newResponse +: responses)
 
   /**
    * Register one or more possible responses which could be produced by this route.
@@ -58,7 +58,7 @@ case class DescribedRoute private(summary: String,
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(code: (HttpResponseStatus, String), example: JsonNode): DescribedRoute = copy(responses = ResponseWithExample(code._1, code._2, example) :: responses)
+  def returning(code: (HttpResponseStatus, String), example: JsonNode): DescribedRoute = copy(responses = ResponseWithExample(code._1, code._2, example) +: responses)
 
   def at(method: HttpMethod) = IncompletePath(this, method)
 }

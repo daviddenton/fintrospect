@@ -9,7 +9,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 trait Body[T] extends Iterable[BodyParameter[_]] with Retrieval[T, HttpRequest] {
   val contentType: ContentType
 
-  def validate(request: HttpRequest): List[Either[Parameter[_], Option[_]]]
+  def validate(request: HttpRequest): Seq[Either[Parameter[_], Option[_]]]
 }
 
 object Body {

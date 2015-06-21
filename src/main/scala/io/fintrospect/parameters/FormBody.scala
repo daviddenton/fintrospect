@@ -23,6 +23,6 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[F
 
   override def validate(request: HttpRequest) = {
     val form = from(request)
-    fields.map(_.validate(form)).toList
+    fields.map(_.validate(form))
   }
 }

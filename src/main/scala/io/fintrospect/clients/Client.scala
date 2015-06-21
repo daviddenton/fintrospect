@@ -11,7 +11,7 @@ import org.jboss.netty.handler.codec.http._
 
 object Client {
 
-  private case class Identify(method: HttpMethod, pathParams: List[PathParameter[_]]) extends SimpleFilter[HttpRequest, HttpResponse]() {
+  private case class Identify(method: HttpMethod, pathParams: Seq[PathParameter[_]]) extends SimpleFilter[HttpRequest, HttpResponse]() {
     private val description = method + "." + pathParams.map(_.toString()).mkString("/")
 
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
@@ -30,8 +30,8 @@ object Client {
  * @param underlyingService the underlying service to make the request from
  */
 class Client(method: HttpMethod,
-             requestParams: List[RequestParameter[_]],
-             pathParams: List[PathParameter[_]],
+             requestParams: Seq[RequestParameter[_]],
+             pathParams: Seq[PathParameter[_]],
              underlyingService: Service[HttpRequest, HttpResponse]) {
 
 
@@ -41,13 +41,6 @@ class Client(method: HttpMethod,
   private val queryParams = requestParams.filter(_.where == "query")
   private val headerParams = requestParams.filter(_.where == "header")
   private val service = Identify(method, pathParams).andThen(underlyingService)
-
-  /**
-   * Make a request to this client route using the passed parameter bindings
-   * @param requestBindings the parameter bindings for this request
-   * @return the response Future
-   */
-  def apply(requestBindings: List[ParamBinding[_]]): Future[HttpResponse] = apply(requestBindings:_*)
 
   /**
    * Make a request to this client route using the passed parameter bindings
