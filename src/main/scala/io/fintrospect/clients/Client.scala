@@ -4,7 +4,7 @@ import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.clients.Client.Identify
-import io.fintrospect.parameters.{ParamBinding, Parameter, PathParameter, RequestParameter}
+import io.fintrospect.parameters._
 import io.fintrospect.util.PlainTextResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http._
@@ -25,21 +25,21 @@ object Client {
 /**
  * Representation of a pre-configured client HTTP call
  * @param method the HTTP method
- * @param requestParams the request parameters to use
+ * @param headerParams the header parameters to use
+ * @param queryParams the query parameters to use
  * @param pathParams the path parameters to use
  * @param underlyingService the underlying service to make the request from
  */
 class Client(method: HttpMethod,
-             requestParams: Seq[RequestParameter[_]],
+             headerParams: Seq[HeaderParameter[_]],
+             queryParams: Seq[QueryParameter[_]],
              pathParams: Seq[PathParameter[_]],
              underlyingService: Service[HttpRequest, HttpResponse]) {
 
 
   private val systemBindings = pathParams.filter(_.isEmpty).map(parameter => ParamBinding(parameter, parameter.name))
-  private val allPossibleParams = pathParams ++ requestParams
+  private val allPossibleParams = pathParams ++ headerParams ++ queryParams
   private val requiredParams = allPossibleParams.filter(_.required)
-  private val queryParams = requestParams.filter(_.where == "query")
-  private val headerParams = requestParams.filter(_.where == "header")
   private val service = Identify(method, pathParams).andThen(underlyingService)
 
   /**
