@@ -2,16 +2,15 @@ package io.fintrospect
 
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.{Filter, Service}
-import io.fintrospect.parameters.PathParameter
+import io.fintrospect.parameters.{Parameter, PathParameter}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
 abstract class Route(val describedRoute: DescribedRoute, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
 
   def missingOrFailedFrom(request: HttpRequest) = {
-    val validatible = describedRoute.requestParams ++ describedRoute.body.map(_.iterator).getOrElse(Nil).toSeq
-    val paramsAndParseResults = validatible.map(p => (p, p.attemptToParseFrom(request)))
-    val withoutMissingOptionalParams = paramsAndParseResults.filterNot(pr => !pr._1.required && pr._2.isEmpty)
-    withoutMissingOptionalParams.filterNot(pr => pr._2.isDefined && pr._2.get.isSuccess).map(_._1)
+    val validations: List[Either[Parameter[_], Option[Any]]] = describedRoute.requestParams.map(_.validate(request)) ++ describedRoute.body.toList.flatMap(_.validate(request))
+
+    validations.collect { case Left(l) => l}
   }
 
   def matches(actualMethod: HttpMethod, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)

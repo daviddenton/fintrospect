@@ -3,7 +3,7 @@ package examples.extended
 import com.twitter.finagle.Service
 import com.twitter.util.Future
 import io.fintrospect._
-import io.fintrospect.parameters.{Body, Path}
+import io.fintrospect.parameters.{Body, ParameterSpec, Path}
 import io.fintrospect.util.JsonResponseBuilder.{Error, Response}
 import io.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
@@ -31,7 +31,7 @@ class BookAdd(books: Books) {
     .body(jsonBody)
     .returning(ResponseWithExample(CREATED, "we added your book", exampleBook.toJson))
     .returning(bookExistsResponse)
-    .at(POST) / "book" / Path.string("isbn", "the isbn of the book") bindTo addBook
+    .at(POST) / "book" / Path(ParameterSpec.string("isbn", "the isbn of the book")) bindTo addBook
 }
 
 

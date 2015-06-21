@@ -3,8 +3,7 @@ package io.fintrospect.clients
 import com.twitter.finagle.Service
 import com.twitter.util.Await._
 import com.twitter.util.Future
-import io.fintrospect.parameters.Path._
-import io.fintrospect.parameters.{Header, Path, Query}
+import io.fintrospect.parameters.{Header, ParameterSpec, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil._
 import io.fintrospect.util.PlainTextResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
@@ -18,8 +17,8 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
     val returnsMethodAndUri = Service.mk[HttpRequest, HttpResponse] { request =>
       Future.value(Ok(request.getMethod + "," + request.getUri))
     }
-    val name = string("name")
-    val maxAge = integer("maxAge")
+    val name = Path(ParameterSpec.string("name"))
+    val maxAge = Path(ParameterSpec.integer("maxAge"))
     val clientWithNoParameters = ClientRoute().at(GET) bindTo returnsMethodAndUri
 
     val clientWithNameAndMaxAge = ClientRoute().at(GET) / name / maxAge bindTo returnsMethodAndUri
@@ -47,7 +46,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
     }
 
     describe("converts the query parameters into the correct url format") {
-      val nameQuery = Query.optional.string("name")
+      val nameQuery = Query.optional(ParameterSpec.string("name"))
       val clientWithNameQuery = ClientRoute().taking(nameQuery).at(GET) / "prefix" bindTo returnsMethodAndUri
 
       it("when there are some") {
@@ -61,7 +60,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
     describe("puts the header parameters into the request") {
       val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
 
-      val nameHeader = Header.optional.string("name")
+      val nameHeader = Header.optional(ParameterSpec.string("name"))
 
       val clientWithNameHeader = ClientRoute().taking(nameHeader).at(GET) bindTo returnsHeaders
 
@@ -76,7 +75,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
     describe("identifies") {
       val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
 
-      val intParam = Path.int("anInt")
+      val intParam = Path(ParameterSpec.int("anInt"))
 
       val client = ClientRoute().at(GET) / "svc" / intParam / Path.fixed("fixed") bindTo returnsHeaders
 

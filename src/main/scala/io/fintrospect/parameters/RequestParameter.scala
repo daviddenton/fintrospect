@@ -2,9 +2,9 @@ package io.fintrospect.parameters
 
 import org.jboss.netty.handler.codec.http.HttpRequest
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
-abstract class RequestParameter[T](spec: ParameterSpec[T], location: Location) extends ParseableParameter[T]  {
+abstract class RequestParameter[T](spec: ParameterSpec[T], location: Location) extends ParseableParameter[T, HttpRequest] {
 
   override val name = spec.name
   override val description = spec.description
@@ -16,5 +16,15 @@ abstract class RequestParameter[T](spec: ParameterSpec[T], location: Location) e
 
   val where = location.toString
 
-  def attemptToParseFrom(request: HttpRequest): Option[Try[T]] = location.from(name, request).map(s => Try(spec.deserialize(s)))
+  def validate(request: HttpRequest) = {
+    val from = location.from(name, request)
+    if (from.isEmpty) {
+      if (required) Left(this) else Right(None)
+    } else {
+      Try(spec.deserialize(from.get)) match {
+        case Success(v) => Right(Some(v))
+        case Failure(_) => Left(this)
+      }
+    }
+  }
 }

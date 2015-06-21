@@ -5,7 +5,7 @@ import java.time.LocalDate
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await._
 import io.fintrospect.clients.ClientRoute
-import io.fintrospect.parameters.{Header, Path}
+import io.fintrospect.parameters.{Header, ParameterSpec, Path}
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import util.Echo
@@ -24,8 +24,8 @@ object ClientSideExample extends App {
 
   val localEchoService = Http.newService("localhost:10000")
 
-  val theDate = Path.localDate("date")
-  val theUser = Header.required.string("user")
+  val theDate = Path(ParameterSpec.localDate("date"))
+  val theUser = Header.required(ParameterSpec.string("user"))
 
   val localClient = ClientRoute().taking(theUser).at(GET) / "firstSection" / theDate bindTo localEchoService
 

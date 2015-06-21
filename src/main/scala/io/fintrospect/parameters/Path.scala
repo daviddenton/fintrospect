@@ -2,11 +2,9 @@ package io.fintrospect.parameters
 
 import java.net.URI
 
-import org.jboss.netty.handler.codec.http.HttpRequest
-
 import scala.util.Try
 
-object Path extends Parameters[PathParameter, Retrieval] {
+object Path {
 
   /**
    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
@@ -31,7 +29,7 @@ object Path extends Parameters[PathParameter, Retrieval] {
    * @tparam T the type of the parameter
    * @return a parameter for retrieving a value of type [T] from the request
    */
-  override def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec) with Retrieval[T] {
+  def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec) {
 
     override val required = true
 
@@ -44,7 +42,5 @@ object Path extends Parameters[PathParameter, Retrieval] {
     })
 
     override def iterator: Iterator[PathParameter[_]] = Some(this).iterator
-
-    override def from(request: HttpRequest): T = ???
   }
 }
