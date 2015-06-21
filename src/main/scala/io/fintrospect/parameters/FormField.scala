@@ -31,7 +31,7 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form]
 }
 
 object FormField {
-  def required[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Mandatory[T, Form] {}
+  def required[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Mandatory[T, Form]
 
-  def optional[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Optional[T, Form] {}
+  def optional[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Optional[T, Form]
 }
