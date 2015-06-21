@@ -44,6 +44,6 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
   }
 
   private def formWithValueOf(value: Option[String]) = {
-    new NewForm(value.map(v => collection.Map(paramName -> Set(v))).getOrElse(Map()))
+    new Form(value.map(v => collection.Map(paramName -> Set(v))).getOrElse(Map()))
   }
 }

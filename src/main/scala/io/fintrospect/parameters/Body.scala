@@ -24,5 +24,5 @@ object Body {
   def json(description: Option[String], example: JsonRootNode): Body[JsonRootNode] =
     new UniBody[JsonRootNode](BodySpec(description, APPLICATION_JSON, ArgoUtil.parse, ArgoUtil.compact), ObjectParamType, Some(example))
 
-  def form(fields: FormField[_] with Retrieval[_, NewForm]*): Body[NewForm] = new FormBody(fields)
+  def form(fields: FormField[_] with Retrieval[_, Form]*): Body[Form] = new FormBody(fields)
 }
