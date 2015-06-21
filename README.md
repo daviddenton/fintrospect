@@ -49,24 +49,27 @@ This example is quite contrived (and almost all the code is optional) but shows 
 
 ```scala
 class BookSearch(books: Books) {
-  private val MAX_PAGES = Query.optional.int("maxPages", "max number of pages in book")
-  private val MIN_PAGES = FormField.required.int("minPages", "min number of pages in book")
-  private val TITLE_TERM = Path.string("term", "the part of the title to look for")
+  private val maxPages = Query.optional.int("maxPages", "max number of pages in book")
+  private val minPages = FormField.optional.int("minPages", "min number of pages in book")
+  private val titleTerm = FormField.required.string("term", "the part of the title to look for")
+  private val form = Body.form(minPages, titleTerm)
 
-  private def search(titleTerm: String) = new Service[HttpRequest, HttpResponse] {
+  private def search() = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
-      Ok(array(books.search(MIN_PAGES.from(request), MAX_PAGES.from(request).getOrElse(Integer.MAX_VALUE), titleTerm).map(_.toJson)))
+      val requestForm = form.from(request)
+      Ok(array(books.search(minPages.from(requestForm).getOrElse(MIN_VALUE),
+        maxPages.from(request).getOrElse(MAX_VALUE),
+        titleTerm.from(requestForm)).map(_.toJson)))
     }
   }
 
   val route = DescribedRoute("search for books")
     .taking(maxPages)
-    .taking(minPages)
-    .body(Body.form(minPages))
-    .returning(OK -> "search results", array(Book("a book", "authorName", 99).toJson))
-    .returning(BAD_REQUEST -> "invalid request")
+    .body(form)
+    .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
+    .returning(OK -> "results", BAD_REQUEST -> "invalid request")
     .producing(APPLICATION_JSON)
-    .at(POST) / "search" / TITLE_TERM bindTo search
+    .at(POST) / "search" bindTo search
 }
 ```
 
