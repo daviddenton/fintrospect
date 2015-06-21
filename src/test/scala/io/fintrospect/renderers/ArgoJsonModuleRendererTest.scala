@@ -28,7 +28,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
         .withRoute(
           DescribedRoute("some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
-            .taking(Header.optional(ParameterSpec.string("header", "description of the header")))
+            .taking(Header.optional.string("header", "description of the header"))
             .returning(ResponseWithExample(OK, "peachy", obj("anObject" -> obj("aStringField" -> number(123)))))
             .returning(FORBIDDEN -> "no way jose")
             .at(GET) / "echo" / Path(ParameterSpec.string("message")) bindTo ((s: String) => Echo(s)))
@@ -37,13 +37,13 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
             .consuming(APPLICATION_ATOM_XML, APPLICATION_SVG_XML)
             .producing(APPLICATION_JSON)
             .returning(FORBIDDEN -> "no way jose", obj("aString" -> ArgoUtil.string("a message of some kind")))
-            .taking(Query.required(ParameterSpec.int("query")))
+            .taking(Query.required.int("query"))
             .body(Body.json(Some("the body of the message"), obj("anObject" -> obj("aStringField" -> number(123)))))
             .at(POST) / "echo" / Path(ParameterSpec.string("message")) bindTo ((s: String) => Echo(s)))
         .withRoute(
           DescribedRoute("a friendly endpoint")
-            .taking(Query.required(ParameterSpec.boolean("query", "description of the query")))
-            .body(Body.form(FormField.required(ParameterSpec.int("form", "description of the form"))))
+            .taking(Query.required.boolean("query", "description of the query"))
+            .body(Body.form(FormField.required.int("form", "description of the form")))
             .at(GET) / "welcome" / Path(ParameterSpec.string("firstName")) / fixed("bertrand") / Path(ParameterSpec.string("secondName")) bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)

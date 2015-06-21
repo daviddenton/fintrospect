@@ -46,7 +46,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
     }
 
     describe("converts the query parameters into the correct url format") {
-      val nameQuery = Query.optional(ParameterSpec.string("name"))
+      val nameQuery = Query.optional.string("name")
       val clientWithNameQuery = ClientRoute().taking(nameQuery).at(GET) / "prefix" bindTo returnsMethodAndUri
 
       it("when there are some") {
@@ -60,7 +60,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
     describe("puts the header parameters into the request") {
       val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
 
-      val nameHeader = Header.optional(ParameterSpec.string("name"))
+      val nameHeader = Header.optional.string("name")
 
       val clientWithNameHeader = ClientRoute().taking(nameHeader).at(GET) bindTo returnsHeaders
 

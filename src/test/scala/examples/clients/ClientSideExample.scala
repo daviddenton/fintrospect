@@ -25,7 +25,7 @@ object ClientSideExample extends App {
   val localEchoService = Http.newService("localhost:10000")
 
   val theDate = Path(ParameterSpec.localDate("date"))
-  val theUser = Header.required(ParameterSpec.string("user"))
+  val theUser = Header.required.string("user")
 
   val localClient = ClientRoute().taking(theUser).at(GET) / "firstSection" / theDate bindTo localEchoService
 

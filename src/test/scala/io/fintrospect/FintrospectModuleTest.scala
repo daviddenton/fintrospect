@@ -106,7 +106,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     }
 
     describe("when a valid path does not contain all required request parameters") {
-      val d = DescribedRoute("").taking(Header.required(ParameterSpec.int("aNumberHeader")))
+      val d = DescribedRoute("").taking(Header.required.int("aNumberHeader"))
       val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
 
       it("it returns a 400 when the required param is missing") {
@@ -122,7 +122,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     }
 
     describe("when a valid path does not contain all required form fields") {
-      val d = DescribedRoute("").body(Body.form(FormField.required(ParameterSpec.int("aNumber"))))
+      val d = DescribedRoute("").body(Body.form(FormField.required.int("aNumber")))
       val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
 
       it("it returns a 400 when the required param is missing") {
@@ -170,7 +170,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     }
 
     describe("when a valid path contains illegal values for an optional parameter") {
-      val d = DescribedRoute("").taking(Header.optional(ParameterSpec.int("aNumberHeader")))
+      val d = DescribedRoute("").taking(Header.optional.int("aNumberHeader"))
       val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
 
       it("it returns a 200 when the optional param is missing") {

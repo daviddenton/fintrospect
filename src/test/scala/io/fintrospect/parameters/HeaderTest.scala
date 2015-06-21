@@ -10,7 +10,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
   private val paramName = "name"
 
   describe("required") {
-    val param = Header.required(ParameterSpec.localDate(paramName))
+    val param = Header.required.localDate(paramName)
 
     it("validate value from field") {
       param.validate(requestWithValueOf(Some("2015-02-04"))) shouldEqual Right(Some(LocalDate.of(2015, 2, 4)))
@@ -27,7 +27,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
   }
 
   describe("optional") {
-    val param = Header.optional(ParameterSpec.localDate(paramName))
+    val param = Header.optional.localDate(paramName)
 
     it("validate value from field") {
       param.validate(requestWithValueOf(Some("2015-02-04"))) shouldEqual Right(Some(LocalDate.of(2015, 2, 4)))
