@@ -19,18 +19,18 @@
           ],
           "parameters": [
             {
-              "name": "query",
-              "description": null,
-              "paramType": "query",
-              "required": true,
-              "dataType": "integer"
-            },
-            {
               "name": "message",
               "description": null,
               "paramType": "path",
               "required": true,
               "dataType": "string"
+            },
+            {
+              "name": "query",
+              "description": null,
+              "paramType": "query",
+              "required": true,
+              "dataType": "integer"
             },
             {
               "name": "body",
@@ -57,17 +57,17 @@
           "consumes": [],
           "parameters": [
             {
-              "name": "header",
-              "description": "description of the header",
-              "paramType": "header",
-              "required": false,
-              "dataType": "string"
-            },
-            {
               "name": "message",
               "description": null,
               "paramType": "path",
               "required": true,
+              "dataType": "string"
+            },
+            {
+              "name": "header",
+              "description": "description of the header",
+              "paramType": "header",
+              "required": false,
               "dataType": "string"
             }
           ],
@@ -93,13 +93,6 @@
           ],
           "parameters": [
             {
-              "name": "query",
-              "description": "description of the query",
-              "paramType": "query",
-              "required": true,
-              "dataType": "boolean"
-            },
-            {
               "name": "firstName",
               "description": null,
               "paramType": "path",
@@ -112,6 +105,13 @@
               "paramType": "path",
               "required": true,
               "dataType": "string"
+            },
+            {
+              "name": "query",
+              "description": "description of the query",
+              "paramType": "query",
+              "required": true,
+              "dataType": "boolean"
             },
             {
               "name": "form",

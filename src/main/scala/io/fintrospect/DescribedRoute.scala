@@ -1,7 +1,7 @@
 package io.fintrospect
 
 import argo.jdom.JsonNode
-import io.fintrospect.parameters.{Body, RequestParameter}
+import io.fintrospect.parameters.{Body, HeaderParameter, QueryParameter}
 import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpResponseStatus}
@@ -15,7 +15,8 @@ case class DescribedRoute private(summary: String,
                                   produces: Set[ContentType],
                                   consumes: Set[ContentType],
                                   body: Option[Body[_]],
-                                  requestParams: Seq[RequestParameter[_]],
+                                  headerParams: Seq[HeaderParameter[_]],
+                                  queryParams: Seq[QueryParameter[_]],
                                   responses: Seq[ResponseWithExample]) {
 
   /**
@@ -29,9 +30,14 @@ case class DescribedRoute private(summary: String,
   def producing(contentTypes: ContentType*): DescribedRoute = copy(produces = produces ++ contentTypes)
 
   /**
-   * Register a request parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
+   * Register a header parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: RequestParameter[_]): DescribedRoute = copy(requestParams = rp +: requestParams)
+  def taking(rp: HeaderParameter[_]): DescribedRoute = copy(headerParams = rp +: headerParams)
+
+  /**
+   * Register a query parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
+   */
+  def taking(rp: QueryParameter[_]): DescribedRoute = copy(queryParams = rp +: queryParams)
 
   /**
    * Register the expected content of the body.
@@ -64,5 +70,5 @@ case class DescribedRoute private(summary: String,
 }
 
 object DescribedRoute {
-  def apply(summary: String): DescribedRoute = DescribedRoute(summary, Set.empty, Set.empty, None, Nil, Nil)
+  def apply(summary: String): DescribedRoute = DescribedRoute(summary, Set.empty, Set.empty, None, Nil, Nil, Nil)
 }

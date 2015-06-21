@@ -19,11 +19,11 @@ object Query {
 
   trait Optional[T] extends io.fintrospect.parameters.Optional[T, HttpRequest]
 
-  val required = new Parameters[RequestParameter, Mandatory] {
-    override def apply[T](spec: ParameterSpec[T]) = new RequestParameter[T](spec, location) with Mandatory[T]
+  val required = new Parameters[QueryParameter, Mandatory] {
+    override def apply[T](spec: ParameterSpec[T]) = new QueryParameter[T](spec, location) with Mandatory[T]
   }
 
-  val optional = new Parameters[RequestParameter, Optional] {
-    override def apply[T](spec: ParameterSpec[T]) = new RequestParameter[T](spec, location) with Optional[T]
+  val optional = new Parameters[QueryParameter, Optional] {
+    override def apply[T](spec: ParameterSpec[T]) = new QueryParameter[T](spec, location) with Optional[T]
   }
 }

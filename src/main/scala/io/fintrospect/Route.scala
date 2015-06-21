@@ -8,7 +8,9 @@ import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse
 abstract class Route(val describedRoute: DescribedRoute, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
 
   def missingOrFailedFrom(request: HttpRequest) = {
-    val validations = describedRoute.requestParams.map(_.validate(request)) ++ describedRoute.body.toSeq.flatMap(_.validate(request))
+    val validations = describedRoute.headerParams.map(_.validate(request)) ++
+      describedRoute.queryParams.map(_.validate(request)) ++
+      describedRoute.body.toSeq.flatMap(_.validate(request))
     validations.collect { case Left(l) => l }
   }
 

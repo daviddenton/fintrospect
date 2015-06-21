@@ -13,6 +13,6 @@ case class ClientPath private(client: ClientRoute, method: HttpMethod, pathParam
 
   def /(pp: PathParameter[_]): ClientPath = copy(pathParametersInReverse = pp +: pathParametersInReverse)
 
-  def bindTo(service: Service[HttpRequest, HttpResponse]) = new Client(method, client.requestParameters, pathParametersInReverse.reverse, service)
+  def bindTo(service: Service[HttpRequest, HttpResponse]) = new Client(method, client.headerParams, client.queryParams, pathParametersInReverse.reverse, service)
 }
 
