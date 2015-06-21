@@ -19,12 +19,12 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
 
   private val schemaGenerator = new JsonToJsonSchema()
 
-  private case class FieldAndDefinitions(field: Field, definitions: List[Field])
+  private case class FieldAndDefinitions(field: Field, definitions: Seq[Field])
 
-  private case class FieldsAndDefinitions(fields: List[Field] = Nil, definitions: List[Field] = Nil) {
-    def add(newField: Field, newDefinitions: List[Field]) = FieldsAndDefinitions(newField :: fields, newDefinitions ++ definitions)
+  private case class FieldsAndDefinitions(fields: Seq[Field] = Nil, definitions: Seq[Field] = Nil) {
+    def add(newField: Field, newDefinitions: Seq[Field]) = FieldsAndDefinitions(newField +: fields, newDefinitions ++ definitions)
 
-    def add(fieldAndDefinitions: FieldAndDefinitions) = FieldsAndDefinitions(fieldAndDefinitions.field :: fields, fieldAndDefinitions.definitions ++ definitions)
+    def add(fieldAndDefinitions: FieldAndDefinitions) = FieldsAndDefinitions(fieldAndDefinitions.field +: fields, fieldAndDefinitions.definitions ++ definitions)
   }
 
   private def render(parameter: Parameter[_], schema: Option[Schema]): JsonNode = {
@@ -60,7 +60,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     FieldAndDefinitions(route2, responseDefinitions ++ bpAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))
   }
 
-  private def render(responses: List[ResponseWithExample]): FieldsAndDefinitions = {
+  private def render(responses: Seq[ResponseWithExample]): FieldsAndDefinitions = {
     responses.foldLeft(FieldsAndDefinitions()) {
       case (memo, nextResp) =>
         val newSchema = Option(nextResp.example).map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))

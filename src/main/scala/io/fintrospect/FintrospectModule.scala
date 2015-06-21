@@ -64,12 +64,12 @@ object FintrospectModule {
 class FintrospectModule private(basePath: Path,
                                 moduleRenderer: ModuleRenderer,
                                 descriptionRoutePath: Path => Path,
-                                routes: List[Route],
+                                routes: Seq[Route],
                                 moduleFilter: Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]) {
   private def totalBinding = {
     withDefault(routes.foldLeft(empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]) {
       (currentBinding, route) =>
-        val filters = new Identify(route, basePath) :: new ValidateParams(route, moduleRenderer) :: moduleFilter :: List[TFilter]()
+        val filters = new Identify(route, basePath) +: new ValidateParams(route, moduleRenderer) +: moduleFilter +: Seq[TFilter]()
         currentBinding.orElse(route.toPf(basePath)(filters.reduce(_.andThen(_))))
     })
   }
@@ -92,7 +92,7 @@ class FintrospectModule private(basePath: Path,
   /**
    * Attach described Route to the module.
    */
-  def withRoute(route: Route): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, route :: routes, moduleFilter)
+  def withRoute(route: Route): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, route +: routes, moduleFilter)
 
   /**
    * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.

@@ -8,10 +8,10 @@ object ClientPath {
   def apply(client: ClientRoute, method: HttpMethod): ClientPath = ClientPath(client, method, Nil)
 }
 
-case class ClientPath private(client: ClientRoute, method: HttpMethod, pathParametersInReverse: List[PathParameter[_]]) {
+case class ClientPath private(client: ClientRoute, method: HttpMethod, pathParametersInReverse: Seq[PathParameter[_]]) {
   def /(part: String): ClientPath = /(Path.fixed(part))
 
-  def /(pp: PathParameter[_]): ClientPath = copy(pathParametersInReverse = pp :: pathParametersInReverse)
+  def /(pp: PathParameter[_]): ClientPath = copy(pathParametersInReverse = pp +: pathParametersInReverse)
 
   def bindTo(service: Service[HttpRequest, HttpResponse]) = new Client(method, client.requestParameters, pathParametersInReverse.reverse, service)
 }
