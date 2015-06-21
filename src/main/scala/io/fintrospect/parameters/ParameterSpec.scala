@@ -25,14 +25,14 @@ case class ParameterSpec[T](name: String,
  * Predefined ParameterSpec instances for common types
  */
 object ParameterSpec {
-  def localDate(name: String, description: String) = ParameterSpec[LocalDate](name, Option(description), StringParamType, LocalDate.parse(_), ISO_LOCAL_DATE.format(_))
-  def zonedDateTime(name: String, description: String) = ParameterSpec[ZonedDateTime](name, Option(description), StringParamType, ZonedDateTime.parse(_), ISO_ZONED_DATE_TIME.format(_))
-  def dateTime(name: String, description: String) = ParameterSpec[LocalDateTime](name, Option(description), StringParamType, LocalDateTime.parse(_), ISO_LOCAL_DATE_TIME.format(_))
-  def boolean(name: String, description: String) = ParameterSpec[Boolean](name, Option(description), BooleanParamType, _.toBoolean, _.toString)
-  def string(name: String, description: String) = ParameterSpec[String](name, Option(description), StringParamType, _.toString, _.toString)
-  def bigDecimal(name: String, description: String) = ParameterSpec[BigDecimal](name, Option(description), NumberParamType, BigDecimal(_), _.toString())
-  def long(name: String, description: String) = ParameterSpec[Long](name, Option(description), IntegerParamType, _.toLong, _.toString)
-  def int(name: String, description: String) = ParameterSpec[Int](name, Option(description), IntegerParamType, _.toInt, _.toString)
-  def integer(name: String, description: String) = ParameterSpec[Integer](name, Option(description), IntegerParamType, new Integer(_), _.toString)
-  def json(name: String, description: String) = ParameterSpec[JsonRootNode](name, Option(description), ObjectParamType, parse, compact)
+  def localDate(name: String, description: String = null) = ParameterSpec[LocalDate](name, Option(description), StringParamType, LocalDate.parse(_), ISO_LOCAL_DATE.format(_))
+  def zonedDateTime(name: String, description: String = null) = ParameterSpec[ZonedDateTime](name, Option(description), StringParamType, ZonedDateTime.parse(_), ISO_ZONED_DATE_TIME.format(_))
+  def dateTime(name: String, description: String = null) = ParameterSpec[LocalDateTime](name, Option(description), StringParamType, LocalDateTime.parse(_), ISO_LOCAL_DATE_TIME.format(_))
+  def boolean(name: String, description: String = null) = ParameterSpec[Boolean](name, Option(description), BooleanParamType, _.toBoolean, _.toString)
+  def string(name: String, description: String = null) = ParameterSpec[String](name, Option(description), StringParamType, _.toString, _.toString)
+  def bigDecimal(name: String, description: String = null) = ParameterSpec[BigDecimal](name, Option(description), NumberParamType, BigDecimal(_), _.toString())
+  def long(name: String, description: String = null) = ParameterSpec[Long](name, Option(description), IntegerParamType, _.toLong, _.toString)
+  def int(name: String, description: String = null) = ParameterSpec[Int](name, Option(description), IntegerParamType, _.toInt, _.toString)
+  def integer(name: String, description: String = null) = ParameterSpec[Integer](name, Option(description), IntegerParamType, new Integer(_), _.toString)
+  def json(name: String, description: String = null) = ParameterSpec[JsonRootNode](name, Option(description), ObjectParamType, parse, compact)
 }
