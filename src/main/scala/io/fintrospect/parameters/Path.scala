@@ -18,7 +18,7 @@ object Path extends Parameters[PathParameter, Marker] {
 
     override def toString() = name
 
-    override def ->(value: String) = ParamBinding(this, value)
+    override def ->(unused: String) = ParamBinding(this, name)
 
     override def unapply(str: String) = if (str == name) Option(str) else None
 
@@ -37,7 +37,7 @@ object Path extends Parameters[PathParameter, Marker] {
 
     override def toString() = s"{$name}"
 
-    override def ->(value: T) = ParamBinding[T](this.asInstanceOf[Parameter[T]], spec.serialize(value))
+    override def ->(value: T) = ParamBinding[T](this, spec.serialize(value))
 
     override def unapply(str: String) = Option(str).flatMap(s => {
       Try(spec.deserialize(new URI("http://localhost/" + s).getPath.substring(1))).toOption
