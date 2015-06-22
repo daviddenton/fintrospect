@@ -29,7 +29,7 @@ class UniBody[T](spec: BodySpec[T],
     override val example = theExample
   }
 
-  override def ->(value: T) = ???
+  override def ->(value: T) = param -> value
 
   override def from(request: HttpRequest) = validate(request).head.right.get.get
 
