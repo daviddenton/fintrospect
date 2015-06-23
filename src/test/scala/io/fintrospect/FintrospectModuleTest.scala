@@ -123,65 +123,65 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
     describe("when a valid path does not contain all required form fields") {
       val d = DescribedRoute("").body(Body.form(FormField.required.int("aNumber")))
-      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
+      val service = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))).toService
 
-      it("it returns a 400 when the required param is missing") {
+      it("it returns a 400 when a required form field is missing") {
         val request = Request("/svc")
-        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+        result(service(request)).getStatus shouldEqual BAD_REQUEST
       }
 
-      it("it returns a 400 when the required param is not the correct type") {
+      it("it returns a 400 when the required form field is not the correct type") {
         val request = Request("/svc")
         request.params + ("aNumber" -> "notANumber")
-        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+        result(service(request)).getStatus shouldEqual BAD_REQUEST
       }
     }
 
     describe("when a valid path does not contain required JSON body") {
       val d = DescribedRoute("").body(Body.json(None, ArgoUtil.obj()))
-      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
+      val service = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))).toService
 
       it("it returns a 400 when the required body is missing") {
         val request = Request("/svc")
-        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+        result(service(request)).getStatus shouldEqual BAD_REQUEST
       }
 
       it("it returns a 400 when the required body is not the correct type") {
         val request = Request("/svc")
         request.setContentString("notAJsonBlob")
-        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+        result(service(request)).getStatus shouldEqual BAD_REQUEST
       }
     }
 
     describe("when a valid path does not contain required custom body") {
       val d = DescribedRoute("").body(Body(BodySpec[Int](None, ContentTypes.TEXT_PLAIN, _.toInt, _.toString)))
-      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
+      val service = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))).toService
 
       it("it returns a 400 when the required body is missing") {
         val request = Request("/svc")
-        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+        result(service(request)).getStatus shouldEqual BAD_REQUEST
       }
 
       it("it returns a 400 when the required body is not the correct type") {
         val request = Request("/svc")
         request.setContentString("notAnInt")
-        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+        result(service(request)).getStatus shouldEqual BAD_REQUEST
       }
     }
 
     describe("when a valid path contains illegal values for an optional parameter") {
       val d = DescribedRoute("").taking(Header.optional.int("aNumberHeader"))
-      val m = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq())))
+      val service = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))).toService
 
       it("it returns a 200 when the optional param is missing") {
         val request = Request("/svc")
-        result(m.toService(request)).getStatus shouldEqual OK
+        result(service(request)).getStatus shouldEqual OK
       }
 
       it("it returns a 400 when the optional param is not the correct type") {
         val request = Request("/svc")
         request.headers().add("aNumberHeader", "notANumber")
-        result(m.toService(request)).getStatus shouldEqual BAD_REQUEST
+        result(service(request)).getStatus shouldEqual BAD_REQUEST
       }
     }
 

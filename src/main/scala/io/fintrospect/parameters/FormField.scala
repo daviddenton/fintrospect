@@ -13,7 +13,14 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form]
 
   def into(request: HttpRequest, value: String): Unit = ???
 
-  override def ->(value: T) = ParamBinding(this, spec.serialize(value))
+  override def ->(value: T) = ??? //ParamBinding(this, spec.serialize(value))
+//
+//  def -->(value: T): Binding[Form] = new Binding[Form] {
+//    override def apply(in: Form) = {
+//      in + (name -> spec.serialize(value))
+//    }
+//  }
+
 
   val where = "form"
 
