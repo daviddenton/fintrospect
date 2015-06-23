@@ -15,7 +15,7 @@ import scala.util.{Failure, Success, Try}
  */
 class UniBody[T](spec: BodySpec[T],
                  theParamType: ParamType,
-                 theExample: Option[JsonRootNode]) extends Body[T] {
+                 theExample: Option[JsonRootNode]) extends Body[T](spec) {
 
   private val param = new BodyParameter[T] {
     override val required = true
@@ -28,8 +28,6 @@ class UniBody[T](spec: BodySpec[T],
 
     override val example = theExample
   }
-
-  override def ->(value: T) = param -> value
 
   override def from(request: HttpRequest) = validate(request).head.right.get.get
 
@@ -50,4 +48,5 @@ class UniBody[T](spec: BodySpec[T],
       }
     )
   }
+
 }

@@ -11,7 +11,10 @@ abstract class HeaderParameter[T](spec: ParameterSpec[T]) extends Parameter[T] w
 
   def into(request: HttpRequest, value: String): Unit = request.headers().add(name, value)
 
-  override def ->(value: T): ParamBinding[T] = ParamBinding(this, spec.serialize(value))
+  override def ->(value: T) = RequestBinding(in => {
+    in.headers().add(name, spec.serialize(value))
+    in
+  })
 
   val where = "header"
 

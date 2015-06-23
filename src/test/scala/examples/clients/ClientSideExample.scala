@@ -3,13 +3,13 @@ package examples.clients
 import java.time.LocalDate
 
 import com.twitter.finagle.{Http, Service}
-import com.twitter.util.Await._
+import com.twitter.util.{Await, Future}
 import io.fintrospect.clients.ClientRoute
 import io.fintrospect.parameters.{Body, Header, Path}
-import io.fintrospect.util.ArgoUtil
 import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.util.{ArgoUtil, PlainTextResponseBuilder}
 import org.jboss.netty.handler.codec.http.HttpMethod._
-import util.Echo
+import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 /**
  * EXPERIMENTAL!!! This API is likely to change significantly in future releases.
@@ -21,7 +21,14 @@ import util.Echo
  */
 object ClientSideExample extends App {
 
-  Http.serve(":10000", Service.mk(Echo("hello")))
+  Http.serve(":10000", new Service[HttpRequest, HttpResponse] {
+    override def apply(request: HttpRequest): Future[HttpResponse] = {
+      println(contentFrom(request))
+      println(request.getUri)
+      println(headersFrom(request))
+      Future.value(PlainTextResponseBuilder.Ok(""))
+    }
+  })
 
   val localEchoService = Http.newService("localhost:10000")
 
@@ -36,7 +43,7 @@ object ClientSideExample extends App {
 
   val theCall = localClient(body -> ArgoUtil.obj(), theDate -> LocalDate.of(2015, 1, 1), theUser -> System.getenv("USER"))
 
-  val response = result(theCall)
+  val response = Await.result(theCall)
 
   println("Response headers: " + headersFrom(response))
   println("Response: " + statusAndContentFrom(response))
