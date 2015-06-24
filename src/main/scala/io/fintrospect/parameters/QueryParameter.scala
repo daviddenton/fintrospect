@@ -9,8 +9,6 @@ abstract class QueryParameter[T](spec: ParameterSpec[T]) extends Parameter[T] wi
   override val description = spec.description
   override val paramType = spec.paramType
 
-  def into(request: HttpRequest, value: String): Unit = ???
-
   private def from(name: String, request: HttpRequest) = {
     Try(new QueryStringDecoder(request.getUri).getParameters.get(name)).map(_.get(0)).toOption
   }
