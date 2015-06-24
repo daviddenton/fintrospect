@@ -1,7 +1,5 @@
 package io.fintrospect.parameters
 
-import org.jboss.netty.handler.codec.http.HttpRequest
-
 import scala.util.{Failure, Success, Try}
 
 abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form] with BodyParameter[T] {
@@ -11,16 +9,7 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form]
   override val description = spec.description
   override val paramType = spec.paramType
 
-  def into(request: HttpRequest, value: String): Unit = ???
-
   override def ->(value: T) = ??? //ParamBinding(this, spec.serialize(value))
-//
-//  def -->(value: T): Binding[Form] = new Binding[Form] {
-//    override def apply(in: Form) = {
-//      in + (name -> spec.serialize(value))
-//    }
-//  }
-
 
   val where = "form"
 
