@@ -6,6 +6,9 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Improve support for Forms and custom Body types in Clientside APIs.
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+#####v7.0.2
+- Unfortunately contains a bug in the new Client code. Please re-downgrade to 7.0.1 instead and use that until it's fixed.π
+
 #####v6.1.X -> v7.X.X
 - Custom parameter support now more modular. Breaking change of ```custom(XXX)``` -> ```apply(XXX)``` in Parameters classes, which requires using ParameterSpec instead of arg list.
 - Improved support for Forms and custom Body types (other than JSON). Dropped support for Forms parameters as request params and reimplemented as a particular Body type, with automatic setting of Content-Type 
