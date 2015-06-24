@@ -4,11 +4,15 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.language.existentials
 
-sealed trait Binding
+case class Bindings(bindings: Binding*)
 
-case class QueryBinding(entry: (String, String)) extends Binding
+sealed trait Binding {
+  val parameter: Parameter[_]
+}
+
+case class QueryBinding(parameter: Parameter[_], entry: (String, String)) extends Binding
 
 case class PathBinding(parameter: Parameter[_], value: String) extends Binding
 
-case class RequestBinding(into: HttpRequest => HttpRequest) extends Binding
+case class RequestBinding(parameter: Parameter[_], into: HttpRequest => HttpRequest) extends Binding
 

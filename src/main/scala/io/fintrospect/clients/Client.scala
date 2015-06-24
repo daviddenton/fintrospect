@@ -35,9 +35,11 @@ class Client(method: HttpMethod,
              body: Option[Body[_]],
              underlyingService: Service[HttpRequest, HttpResponse]) {
 
-//  private val systemBindings = pathParams.filter(_.isEmpty).map(parameter => ParamBinding(parameter, parameter.name))
-//  private val allPossibleParams = pathParams ++ headerParams ++ queryParams
-//  private val requiredParams = allPossibleParams.filter(_.required)
+//  private val providedBindings = pathParams.filter(_.isEmpty).map(parameter => parameter.of(parameter.name))
+  private val allPossibleParams: Seq[Parameter[_]] = pathParams ++ headerParams ++ queryParams ++ body.toSeq.flatMap(_.iterator)
+
+  private val requiredParams = allPossibleParams.filter(_.required)
+
   private val service = Identify(method, pathParams).andThen(underlyingService)
 
 //
@@ -63,10 +65,10 @@ class Client(method: HttpMethod,
    * @param bindings the bindings for this request
    * @return the response Future
    */
-  def apply(bindings: Binding*): Future[HttpResponse] =
+  def apply(bindings: Bindings*): Future[HttpResponse] =
 
     // check missing here...
-    service(bindings.foldLeft(RequestBuild()) {
+    service(bindings.flatMap(_.bindings).foldLeft(RequestBuild()) {
       (requestBuild, next) => requestBuild.bind(next)
     }.build(method))
 

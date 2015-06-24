@@ -15,7 +15,7 @@ import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 object LibraryApp extends App {
 
   private val apiInfo = ApiInfo("Library Example", "1.0", Option("A simple example of how to construct a Fintrospect module"))
-  private val renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
+  private val renderer = Swagger2dot0Json(apiInfo) //  choose your renderer implementation
 
   private val books = new Books()
 
