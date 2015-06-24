@@ -1,7 +1,10 @@
 package io.fintrospect.parameters
 
 import argo.jdom.JsonRootNode
+import com.twitter.io.Charsets
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
+import org.jboss.netty.buffer.ChannelBuffers._
+import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.{Failure, Success, Try}
@@ -24,10 +27,18 @@ class UniBody[T](spec: BodySpec[T],
     override val where = "body"
     override val paramType = theParamType
 
-    override def ->(value: T) = ???
+    override def ->(value: T) = Bindings(RequestBinding(this, t => {
+      val content = copiedBuffer(spec.serialize(value), Charsets.Utf8)
+      t.headers().add(Names.CONTENT_TYPE, spec.contentType.value)
+      t.headers().add(Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()))
+      t.setContent(content)
+      t
+    }))
 
     override val example = theExample
   }
+
+  override def ->(value: T) = param -> value
 
   override def from(request: HttpRequest) = validate(request).head.right.get.get
 

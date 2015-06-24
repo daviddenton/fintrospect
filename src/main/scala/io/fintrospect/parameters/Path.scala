@@ -18,7 +18,7 @@ object Path extends Parameters[PathParameter, Marker] {
 
     override def toString() = name
 
-    override def ->(unused: String) = PathBinding(this, name)
+    override def ->(unused: String) = Bindings(PathBinding(this, name))
 
     override def unapply(str: String) = if (str == name) Option(str) else None
 

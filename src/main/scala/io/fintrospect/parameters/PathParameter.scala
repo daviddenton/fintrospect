@@ -7,6 +7,6 @@ abstract class PathParameter[T](spec: ParameterSpec[T]) extends Parameter[T] wit
   override val where = "path"
   def unapply(str: String): Option[T]
 
-  override def ->(value: T) = PathBinding(this, spec.serialize(value))
+  override def ->(value: T) = Bindings(PathBinding(this, spec.serialize(value)))
 
 }

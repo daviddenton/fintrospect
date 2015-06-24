@@ -15,7 +15,7 @@ case class RequestBuild(private val uri: Seq[String] = Seq(),
 
   def bind(binding: Binding): RequestBuild = binding match {
     case PathBinding(param, next) => copy(uri = uri :+ next)
-    case QueryBinding(next) => copy(queries = queries + next)
-    case RequestBinding(next) => copy(fn = fn.andThen(next))
+    case QueryBinding(param, next) => copy(queries = queries + next)
+    case RequestBinding(param, next) => copy(fn = fn.andThen(next))
   }
 }

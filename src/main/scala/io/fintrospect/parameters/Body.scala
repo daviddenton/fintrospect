@@ -1,26 +1,15 @@
 package io.fintrospect.parameters
 
 import argo.jdom.JsonRootNode
-import com.twitter.io.Charsets
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes._
 import io.fintrospect.util.ArgoUtil
-import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.jboss.netty.handler.codec.http.HttpRequest
 
 abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter[_]] with Retrieval[T, HttpRequest] with Bindable[T] {
   val contentType: ContentType = spec.contentType
 
   def validate(request: HttpRequest): Seq[Either[Parameter[_], Option[_]]]
-
-  override def ->(value: T): Binding = RequestBinding(t => {
-    val content = copiedBuffer(spec.serialize(value), Charsets.Utf8)
-    t.headers().add(Names.CONTENT_TYPE, spec.contentType.value)
-    t.headers().add(Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()))
-    t.setContent(content)
-    t
-  })
 }
 
 object Body {
