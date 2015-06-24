@@ -31,8 +31,6 @@ class UniBody[T](spec: BodySpec[T],
 
   override def from(request: HttpRequest) = validate(request).head.right.get.get
 
-  override val contentType = spec.contentType
-
   override def iterator = Iterator(param)
 
   override def validate(request: HttpRequest): Seq[Either[Parameter[T], Option[T]]] = {
