@@ -4,8 +4,6 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.language.existentials
 
-case class Bindings(bindings: Binding*)
-
 sealed trait Binding {
   val parameter: Parameter[_]
 }
