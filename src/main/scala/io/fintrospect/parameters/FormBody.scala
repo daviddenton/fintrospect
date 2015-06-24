@@ -10,7 +10,7 @@ import scala.util.{Failure, Success, Try}
 
 class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[Form](BodySpec.form()) {
 
-  override def ->(value: Form) = Bindings(RequestBinding(null, t => {
+  override def ->(value: Form) = Seq(RequestBinding(null, t => {
     val content = copiedBuffer(BodySpec.form().serialize(value), Charsets.Utf8)
     t.headers().add(Names.CONTENT_TYPE, BodySpec.form().contentType.value)
     t.headers().add(Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()))

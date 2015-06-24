@@ -5,6 +5,8 @@ import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.clients.Client.Identify
 import io.fintrospect.parameters._
+import io.fintrospect.util.PlainTextResponseBuilder._
+import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http._
 
 object Client {
@@ -17,7 +19,6 @@ object Client {
       service(request)
     }
   }
-
 }
 
 /**
@@ -35,49 +36,37 @@ class Client(method: HttpMethod,
              body: Option[Body[_]],
              underlyingService: Service[HttpRequest, HttpResponse]) {
 
-//  private val providedBindings = pathParams.filter(_.isEmpty).map(parameter => parameter.of(parameter.name))
-  private val allPossibleParams: Seq[Parameter[_]] = pathParams ++ headerParams ++ queryParams ++ body.toSeq.flatMap(_.iterator)
-
+  private val providedBindings = pathParams.filter(_.isFixed).map(p => PathBinding(p, p.name))
+  private val allPossibleParams = pathParams ++ headerParams ++ queryParams ++ body.toSeq.flatMap(_.iterator)
   private val requiredParams = allPossibleParams.filter(_.required)
-
   private val service = Identify(method, pathParams).andThen(underlyingService)
-
-//
-//  def into(requestBindings: ParamBinding[_]*): Future[HttpResponse] = {
-//    val allSuppliedParams: Map[Parameter[_], String] = Map((requestBindings ++ systemBindings).map(b => (b.parameter, b.value)): _*)
-//    val illegalParams = allSuppliedParams.keys.filterNot(param => allPossibleParams.contains(param))
-//    if (illegalParams.nonEmpty) {
-//      return Future.value(Error(BAD_REQUEST, "Client: Illegal params passed: " + illegalParams))
-//    }
-//
-//    val missingParams = requiredParams.filterNot(allSuppliedParams.keySet.contains)
-//    if (missingParams.nonEmpty) {
-//      return Future.value(Error(BAD_REQUEST, "Client: Missing required params passed: " + missingParams))
-//    }
-//    val request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, buildUrl(allSuppliedParams))
-//    headerParams.filter(allSuppliedParams.contains).foreach(p => p.into(request, allSuppliedParams(p)))
-//
-//    service(request)
-//  }
 
   /**
    * Make a request to this client route using the passed bindings
-   * @param bindings the bindings for this request
+   * @param userBindings the bindings for this request
    * @return the response Future
    */
-  def apply(bindings: Bindings*): Future[HttpResponse] =
+  def apply(userBindings: Iterable[Binding]*): Future[HttpResponse] = {
+    val suppliedBindings = userBindings.flatten ++ providedBindings
 
-    // check missing here...
-    service(bindings.flatMap(_.bindings).foldLeft(RequestBuild()) {
+    val userSuppliedParams = suppliedBindings.map(_.parameter)
+
+    val missing = requiredParams.diff(userSuppliedParams)
+    if (missing.nonEmpty) {
+      return Future.value(Error(BAD_REQUEST, "Client: Missing required params passed: " + missing.toSet))
+    }
+
+    val invalid = userSuppliedParams.diff(allPossibleParams)
+    if (invalid.nonEmpty) {
+      return Future.value(Error(BAD_REQUEST, "Client: Unknown params passed: " + invalid.toSet))
+    }
+
+    val req = suppliedBindings
+      .sortBy(p => pathParams.indexOf(p.parameter))
+      .foldLeft(RequestBuild()) {
       (requestBuild, next) => requestBuild.bind(next)
-    }.build(method))
+    }.build(method)
 
-  private def buildUrl(allSuppliedParams: Map[Parameter[_], String]): String = {
-    val baseUrl = "/" + pathParams.map(allSuppliedParams(_)).mkString("/")
-    val encoder = new QueryStringEncoder(baseUrl)
-    allSuppliedParams
-      .filter(sp => queryParams.contains(sp._1))
-      .foreach(paramAndValue => encoder.addParam(paramAndValue._1.name, paramAndValue._2))
-    encoder.toString
+    service(req)
   }
 }

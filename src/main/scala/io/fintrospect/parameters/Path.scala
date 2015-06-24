@@ -12,13 +12,14 @@ object Path extends Parameters[PathParameter, Marker] {
    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
    * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
    */
-  def fixed(name: String): PathParameter[String] = new PathParameter[String](ParameterSpec(name, None, StringParamType, identity, identity)) {
+  def fixed(name: String): PathParameter[String] = new PathParameter[String](
+    ParameterSpec(name, None, StringParamType, identity, identity), true) {
 
     override val required = true
 
     override def toString() = name
 
-    override def ->(unused: String) = Bindings(PathBinding(this, name))
+    override def ->(unused: String) = Seq()
 
     override def unapply(str: String) = if (str == name) Option(str) else None
 
@@ -31,7 +32,7 @@ object Path extends Parameters[PathParameter, Marker] {
    * @tparam T the type of the parameter
    * @return a parameter for retrieving a value of type [T] from the request
    */
-  def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec) with Marker[T] {
+  def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec, false) with Marker[T] {
 
     override val required = true
 
@@ -40,6 +41,8 @@ object Path extends Parameters[PathParameter, Marker] {
     override def unapply(str: String) = Option(str).flatMap(s => {
       Try(spec.deserialize(new URI("http://localhost/" + s).getPath.substring(1))).toOption
     })
+
+    override def ->(value: T) = Seq(PathBinding(this, spec.serialize(value)))
 
     override def iterator = Option(this).iterator
   }
