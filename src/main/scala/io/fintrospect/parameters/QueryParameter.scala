@@ -4,7 +4,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 
 import scala.util.{Failure, Success, Try}
 
-abstract class QueryParameter[T](spec: ParameterSpec[T]) extends Parameter[T] with Validatable[T, HttpRequest] {
+abstract class QueryParameter[T](spec: ParameterSpec[T]) extends Parameter[T] with Validatable[T, HttpRequest] with Bindable[T, QueryBinding] {
   override val name = spec.name
   override val description = spec.description
   override val paramType = spec.paramType
@@ -13,7 +13,7 @@ abstract class QueryParameter[T](spec: ParameterSpec[T]) extends Parameter[T] wi
     Try(new QueryStringDecoder(request.getUri).getParameters.get(name)).map(_.get(0)).toOption
   }
 
-  override def ->(value: T) = Seq(QueryBinding(this, name -> spec.serialize(value)))
+  override def ->(value: T) = Seq(QueryBinding(this, name, spec.serialize(value)))
 
   val where = "query"
 

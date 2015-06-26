@@ -4,16 +4,16 @@ import java.net.URI
 
 import scala.util.Try
 
-trait Marker[T]
+trait PathBindable[T] extends Bindable[T, PathBinding]
 
-object Path extends Parameters[PathParameter, Marker] {
+object Path extends Parameters[PathParameter, PathBindable] {
 
   /**
    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
    * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
    */
   def fixed(name: String): PathParameter[String] = new PathParameter[String](
-    ParameterSpec(name, None, StringParamType, identity, identity), true) {
+    ParameterSpec(name, None, StringParamType, identity, identity), true) with PathBindable[String] {
 
     override val required = true
 
@@ -32,7 +32,7 @@ object Path extends Parameters[PathParameter, Marker] {
    * @tparam T the type of the parameter
    * @return a parameter for retrieving a value of type [T] from the request
    */
-  def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec, false) with Marker[T] {
+  def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec, false) with PathBindable[T] {
 
     override val required = true
 

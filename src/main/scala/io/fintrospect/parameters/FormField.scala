@@ -2,14 +2,14 @@ package io.fintrospect.parameters
 
 import scala.util.{Failure, Success, Try}
 
-abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form] with BodyParameter[T] {
+abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form] with BodyParameter[T] with Bindable[T, FormFieldBinding] {
 
   override val example = None
   override val name = spec.name
   override val description = spec.description
   override val paramType = spec.paramType
 
-  override def ->(value: T) = ??? //ParamBinding(this, spec.serialize(value))
+  def ->(value: T) = Seq(FormFieldBinding(this, name, spec.serialize(value)))
 
   val where = "form"
 

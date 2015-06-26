@@ -20,7 +20,7 @@ class UniBody[T](spec: BodySpec[T],
                  theParamType: ParamType,
                  theExample: Option[JsonRootNode]) extends Body[T](spec) {
 
-  private val param = new BodyParameter[T] {
+  private val param = new BodyParameter[T] with Bindable[T, RequestBinding] {
     override val required = true
     override val description = spec.description
     override val name = "body"

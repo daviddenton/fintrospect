@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-trait Parameter[T] extends Bindable[T] {
+trait Parameter[T] {
   val required: Boolean
   val name: String
   val description: Option[String]
