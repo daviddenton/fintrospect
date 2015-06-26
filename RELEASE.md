@@ -7,7 +7,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
 #####v7.0.2
-- Unfortunately contains a bug in the new Client code. Please re-downgrade to 7.0.1 instead and use that until it's fixed.π
+- Unfortunately contains a bug in the new Client code. Please ignore this release and upgrade to latest.
 
 #####v6.1.X -> v7.X.X
 - Custom parameter support now more modular. Breaking change of ```custom(XXX)``` -> ```apply(XXX)``` in Parameters classes, which requires using ParameterSpec instead of arg list.

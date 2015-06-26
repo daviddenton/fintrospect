@@ -1,5 +1,6 @@
 package io.fintrospect.parameters
 
+import com.twitter.finagle.http.Request
 import org.jboss.netty.handler.codec.http._
 
 case class RequestBuild(private val uriParts: Seq[String] = Seq(),
@@ -12,7 +13,7 @@ case class RequestBuild(private val uriParts: Seq[String] = Seq(),
         memo
     }.toString
 
-    fn(new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, uri))
+    fn(Request(method, s"/$uri"))
   }
 
   def bind(binding: Binding): RequestBuild = binding match {
