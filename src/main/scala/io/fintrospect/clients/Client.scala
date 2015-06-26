@@ -56,7 +56,7 @@ class Client(method: HttpMethod,
       return Future.value(Error(BAD_REQUEST, "Client: Missing required params passed: " + missing.toSet))
     }
 
-    val invalid = userSuppliedParams.diff(allPossibleParams)
+    val invalid = userSuppliedParams.filter(_ != null).diff(allPossibleParams)
     if (invalid.nonEmpty) {
       return Future.value(Error(BAD_REQUEST, "Client: Unknown params passed: " + invalid.toSet))
     }

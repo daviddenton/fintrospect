@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
-trait Bindable[T] {
-  def of(value: T): Iterable[Binding] = ->(value)
+trait Bindable[T, B <: Binding] {
+  def of(value: T): Iterable[B] = ->(value)
 
-  def ->(value: T): Iterable[Binding]
+  def ->(value: T): Iterable[B]
 }

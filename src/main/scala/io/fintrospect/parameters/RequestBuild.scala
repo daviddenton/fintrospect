@@ -18,7 +18,8 @@ case class RequestBuild(private val uriParts: Seq[String] = Seq(),
 
   def bind(binding: Binding): RequestBuild = binding match {
     case PathBinding(param, next) => copy(uriParts = uriParts :+ next)
-    case QueryBinding(param, next) => copy(queries = queries + next)
+    case QueryBinding(param, key, value) => copy(queries = queries + (key -> value))
     case RequestBinding(param, next) => copy(fn = fn.andThen(next))
+    case FormFieldBinding(_, _, _) => this
   }
 }

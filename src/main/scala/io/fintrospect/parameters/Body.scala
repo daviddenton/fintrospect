@@ -6,7 +6,7 @@ import io.fintrospect.ContentTypes._
 import io.fintrospect.util.ArgoUtil
 import org.jboss.netty.handler.codec.http.HttpRequest
 
-abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter[_]] with Retrieval[T, HttpRequest] with Bindable[T] {
+abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter[_]] with Retrieval[T, HttpRequest] with Bindable[T, Binding] {
   val contentType: ContentType = spec.contentType
 
   def validate(request: HttpRequest): Seq[Either[Parameter[_], Option[_]]]
