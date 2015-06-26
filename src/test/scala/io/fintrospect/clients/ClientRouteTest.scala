@@ -35,14 +35,14 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
 
     describe("converts the path parameters into the correct url") {
       it("when there are none") {
-        responseFor(clientWithNoParameters()) shouldEqual(OK, "GET,")
+        responseFor(clientWithNoParameters()) shouldEqual(OK, "GET,/")
       }
       it("when there are some") {
-        responseFor(clientWithNameAndMaxAgeAndGender(gender -> "male", maxAge -> 7, name.->("bob"))) shouldEqual(OK, "GET,bob/7/male")
+        responseFor(clientWithNameAndMaxAgeAndGender(gender -> "male", maxAge -> 7, name.->("bob"))) shouldEqual(OK, "GET,/bob/7/male")
       }
       it("ignores fixed") {
         val clientWithFixedSections = ClientRoute().at(GET) / "prefix" / maxAge / "suffix" bindTo returnsMethodAndUri
-        responseFor(clientWithFixedSections(maxAge -> 7)) shouldEqual(OK, "GET,prefix/7/suffix")
+        responseFor(clientWithFixedSections(maxAge -> 7)) shouldEqual(OK, "GET,/prefix/7/suffix")
       }
     }
 
@@ -51,10 +51,10 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
       val clientWithNameQuery = ClientRoute().taking(nameQuery).at(GET) / "prefix" bindTo returnsMethodAndUri
 
       it("when there are some") {
-        responseFor(clientWithNameQuery(nameQuery -> "bob")) shouldEqual(OK, "GET,prefix?name=bob")
+        responseFor(clientWithNameQuery(nameQuery -> "bob")) shouldEqual(OK, "GET,/prefix?name=bob")
       }
       it("optional query params are ignored if not there") {
-        responseFor(clientWithNameQuery()) shouldEqual(OK, "GET,prefix")
+        responseFor(clientWithNameQuery()) shouldEqual(OK, "GET,/prefix")
       }
     }
 
