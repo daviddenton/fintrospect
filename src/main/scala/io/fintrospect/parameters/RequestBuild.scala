@@ -3,9 +3,9 @@ package io.fintrospect.parameters
 import com.twitter.finagle.http.Request
 import org.jboss.netty.handler.codec.http._
 
-case class RequestBuild(private val uriParts: Seq[String] = Seq(),
-                        private val queries: Map[String, String] = Map(),
-                        private val fn: HttpRequest => HttpRequest = identity) {
+case class RequestBuild(uriParts: Seq[String] = Seq(),
+                        queries: Map[String, String] = Map(),
+                        fn: HttpRequest => HttpRequest = identity) {
   def build(method: HttpMethod): HttpRequest = {
     val uri = queries.foldLeft(new QueryStringEncoder(uriParts.mkString("/"))) {
       (memo, q) =>
@@ -14,12 +14,5 @@ case class RequestBuild(private val uriParts: Seq[String] = Seq(),
     }.toString
 
     fn(Request(method, s"/$uri"))
-  }
-
-  def bind(binding: Binding): RequestBuild = binding match {
-    case PathBinding(param, next) => copy(uriParts = uriParts :+ next)
-    case QueryBinding(param, key, value) => copy(queries = queries + (key -> value))
-    case RequestBinding(param, next) => copy(fn = fn.andThen(next))
-    case FormFieldBinding(_, _, _) => this
   }
 }

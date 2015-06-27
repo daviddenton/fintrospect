@@ -14,13 +14,13 @@ import scala.util.{Failure, Success, Try}
 class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[Form](FormBody.spec) {
 
   override def -->(value: Form): Seq[Binding] = {
-    Seq(RequestBinding(null, t => {
+    Seq(new RequestBinding(null, t => {
       val content = copiedBuffer(FormBody.spec.serialize(value), Charsets.Utf8)
       t.headers().add(Names.CONTENT_TYPE, FormBody.spec.contentType.value)
       t.headers().add(Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()))
       t.setContent(content)
       t
-    })) ++ fields.map(f => FormFieldBinding(f, f.name, ""))
+    })) ++ fields.map(f => new FormFieldBinding(f, f.name, ""))
   }
 
   override def <--(request: HttpRequest) = FormBody.spec.deserialize(contentFrom(request))
