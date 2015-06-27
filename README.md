@@ -6,8 +6,7 @@ Fintrospect
 <a href="https://bintray.com/daviddenton/maven/fintrospect/_latestVersion" target="_top"><img src="https://api.bintray.com/packages/daviddenton/maven/fintrospect/images/download.svg"/></a> 
 <a href="https://bintray.com/daviddenton/maven/fintrospect/view?source=watch" target="_top"><img src="https://www.bintray.com/docs/images/bintray_badge_color.png"/></a> 
 
-
-Fintrospect is a bolt-on library for use with the [Finagle](http://twitter.github.io/finagle/) RPC framework from Twitter. It was developed out of a desire to provide a pleasant API for describing HTTP request routing in combination with statically-typed documentation which could be verified at compile time and auto-generated at runtime (and thus avoiding the stale documentation risk that exists with manually written docs).
+Fintrospect is a bolt-on HTTP routing library for use with the [Finagle](http://twitter.github.io/finagle/) RPC framework from Twitter. It was developed out of a desire to provide a pleasant API for describing HTTP request routing in combination with statically-typed documentation which could be verified at compile time and auto-generated at runtime (and thus avoiding the stale documentation risk that exists with manually written docs).
 
 Using this library, you can:
 - Define individual HTTP routes and compose them into sensible context-based modules.
