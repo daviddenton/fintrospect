@@ -64,7 +64,7 @@ class Client(method: HttpMethod,
 
     val req = suppliedBindings
       .sortBy(p => pathParams.indexOf(p.parameter))
-      .foldLeft(RequestBuild()) { (requestBuild, next) => next.applyTo(requestBuild) }.build(method)
+      .foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(method)
 
     service(req)
   }
