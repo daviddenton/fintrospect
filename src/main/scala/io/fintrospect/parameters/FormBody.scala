@@ -1,26 +1,29 @@
 package io.fintrospect.parameters
 
 import com.twitter.io.Charsets
+import io.fintrospect.ContentTypes
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
-import org.jboss.netty.handler.codec.http.HttpRequest
+import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder, QueryStringEncoder}
 
+import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
-class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[Form](BodySpec.form()) {
+
+class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[Form](FormBody.spec) {
 
   override def -->(value: Form): Seq[Binding] = {
     Seq(RequestBinding(null, t => {
-      val content = copiedBuffer(BodySpec.form().serialize(value), Charsets.Utf8)
-      t.headers().add(Names.CONTENT_TYPE, BodySpec.form().contentType.value)
+      val content = copiedBuffer(FormBody.spec.serialize(value), Charsets.Utf8)
+      t.headers().add(Names.CONTENT_TYPE, FormBody.spec.contentType.value)
       t.headers().add(Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()))
       t.setContent(content)
       t
     })) ++ fields.map(f => FormFieldBinding(f, f.name, ""))
   }
 
-  override def <--(request: HttpRequest) = BodySpec.form().deserialize(contentFrom(request))
+  override def <--(request: HttpRequest) = FormBody.spec.deserialize(contentFrom(request))
 
   override def iterator = fields.iterator
 
@@ -29,10 +32,22 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[F
     if (from.isEmpty) {
       fields.filter(!_.required).map(Left(_))
     } else {
-      Try(BodySpec.form().deserialize(from.get)) match {
+      Try(FormBody.spec.deserialize(from.get)) match {
         case Success(v) => fields.map(_.validate(v))
         case Failure(_) => fields.filter(!_.required).map(Left(_))
       }
     }
   }
+}
+
+object FormBody {
+  private val spec =  new BodySpec[Form](None,
+    ContentTypes.APPLICATION_FORM_URLENCODED,
+    content => new Form(new QueryStringDecoder("?" + content).getParameters.asScala.mapValues(_.asScala.toSet)),
+    form => {
+      val encoder = new QueryStringEncoder("")
+      form.foreach(entry => encoder.addParam(entry._1, entry._2.mkString(",")))
+      encoder.toUri.getQuery
+    }
+  )
 }
