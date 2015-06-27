@@ -19,6 +19,7 @@ object Client {
       service(request)
     }
   }
+
 }
 
 /**
@@ -36,7 +37,7 @@ class Client(method: HttpMethod,
              body: Option[Body[_]],
              underlyingService: Service[HttpRequest, HttpResponse]) {
 
-  private val providedBindings = pathParams.filter(_.isFixed).map(p => PathBinding(p, p.name))
+  private val providedBindings = pathParams.filter(_.isFixed).map(p => new PathBinding(p, p.name))
   private val allPossibleParams = pathParams ++ headerParams ++ queryParams ++ body.toSeq.flatMap(_.iterator)
   private val requiredParams = allPossibleParams.filter(_.required)
   private val service = Identify(method, pathParams).andThen(underlyingService)
@@ -63,9 +64,7 @@ class Client(method: HttpMethod,
 
     val req = suppliedBindings
       .sortBy(p => pathParams.indexOf(p.parameter))
-      .foldLeft(RequestBuild()) {
-      (requestBuild, next) => requestBuild.bind(next)
-    }.build(method)
+      .foldLeft(RequestBuild()) { (requestBuild, next) => next.applyTo(requestBuild) }.build(method)
 
     service(req)
   }

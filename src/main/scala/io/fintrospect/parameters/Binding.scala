@@ -6,13 +6,22 @@ import scala.language.existentials
 
 sealed trait Binding {
   val parameter: Parameter[_]
+  def applyTo(requestBuild: RequestBuild): RequestBuild
 }
 
-case class QueryBinding(parameter: Parameter[_], key: String, value: String) extends Binding
+class QueryBinding(val parameter: Parameter[_], key: String, value: String) extends Binding {
+  def applyTo(requestBuild: RequestBuild) = requestBuild.copy(queries = requestBuild.queries + (key -> value))
+}
 
-case class PathBinding(parameter: Parameter[_], value: String) extends Binding
+class PathBinding(val parameter: Parameter[_], value: String) extends Binding {
+  def applyTo(requestBuild: RequestBuild) = requestBuild.copy(uriParts = requestBuild.uriParts :+ value)
+}
 
-case class RequestBinding(parameter: Parameter[_], into: HttpRequest => HttpRequest) extends Binding
+class RequestBinding(val parameter: Parameter[_], into: HttpRequest => HttpRequest) extends Binding {
+  def applyTo(requestBuild: RequestBuild) = requestBuild.copy(fn = requestBuild.fn.andThen(into))
+}
 
-case class FormFieldBinding(parameter: Parameter[_], key: String, value: String) extends Binding
+class FormFieldBinding(val parameter: Parameter[_], val key: String, val value: String) extends Binding {
+  def applyTo(requestBuild: RequestBuild) = requestBuild
+}
 

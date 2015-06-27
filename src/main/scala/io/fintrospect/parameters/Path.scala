@@ -42,7 +42,7 @@ object Path extends Parameters[PathParameter, PathBindable] {
       Try(spec.deserialize(new URI("http://localhost/" + s).getPath.substring(1))).toOption
     })
 
-    override def -->(value: T) = Seq(PathBinding(this, spec.serialize(value)))
+    override def -->(value: T) = Seq(new PathBinding(this, spec.serialize(value)))
 
     override def iterator = Option(this).iterator
   }
