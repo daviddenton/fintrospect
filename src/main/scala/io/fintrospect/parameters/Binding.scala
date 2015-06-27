@@ -6,6 +6,7 @@ import scala.language.existentials
 
 sealed trait Binding {
   val parameter: Parameter[_]
+
   def apply(requestBuild: RequestBuild): RequestBuild
 }
 
@@ -21,7 +22,9 @@ class RequestBinding(val parameter: Parameter[_], into: HttpRequest => HttpReque
   def apply(requestBuild: RequestBuild) = requestBuild.copy(fn = requestBuild.fn.andThen(into))
 }
 
-class FormFieldBinding(val parameter: Parameter[_], val key: String, val value: String) extends Binding {
+class FormFieldBinding(val parameter: Parameter[_], key: String, value: String) extends Binding {
   def apply(requestBuild: RequestBuild) = requestBuild
+
+  def apply(form: Form) = form +(key, Set(value))
 }
 
