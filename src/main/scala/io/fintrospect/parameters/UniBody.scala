@@ -27,7 +27,7 @@ class UniBody[T](spec: BodySpec[T],
     override val where = "body"
     override val paramType = theParamType
 
-    override def ->(value: T) = Seq(RequestBinding(this, t => {
+    override def -->(value: T) = Seq(RequestBinding(this, t => {
       val content = copiedBuffer(spec.serialize(value), Charsets.Utf8)
       t.headers().add(Names.CONTENT_TYPE, spec.contentType.value)
       t.headers().add(Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()))
@@ -38,9 +38,9 @@ class UniBody[T](spec: BodySpec[T],
     override val example = theExample
   }
 
-  override def ->(value: T) = param.of(value)
+  override def -->(value: T) = param.of(value)
 
-  override def from(request: HttpRequest) = validate(request).head.right.get.get
+  override def <--(request: HttpRequest) = validate(request).head.right.get.get
 
   override def iterator = Iterator(param)
 

@@ -20,7 +20,7 @@ class BookAdd(books: Books) {
       books.lookup(isbn) match {
         case Some(_) => bookExistsResponse
         case None => {
-          val book = Book.unapply(jsonBody.from(request)).get
+          val book = Book.unapply(jsonBody <-- request).get
           books.add(isbn, book)
           Response().withCode(CREATED).withContent(book.toJson)
         }

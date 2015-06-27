@@ -13,7 +13,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
 
     it("validates value from form field") {
       field.validate(formWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
-      field.from(formWithValueOf(Option("2015-02-04"))) shouldEqual LocalDate.of(2015, 2, 4)
+      field <-- formWithValueOf(Option("2015-02-04")) shouldEqual LocalDate.of(2015, 2, 4)
     }
 
     it("fails to validate invalid value") {
@@ -30,7 +30,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
 
     it("validates value from form field") {
       field.validate(formWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
-      field.from(formWithValueOf(Option("2015-02-04"))) shouldEqual Option(LocalDate.of(2015, 2, 4))
+      field <-- formWithValueOf(Option("2015-02-04")) shouldEqual Option(LocalDate.of(2015, 2, 4))
     }
 
     it("fails to validate invalid value") {
@@ -39,7 +39,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
 
     it("does not validate non existent value") {
       field.validate(formWithValueOf(None)) shouldEqual Right(None)
-      field.from(formWithValueOf(None)) shouldEqual None
+      field <-- formWithValueOf(None) shouldEqual None
     }
   }
 
