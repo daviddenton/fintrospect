@@ -14,7 +14,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
     it("retrieves value from field") {
       param.validate(requestWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
-      param.from(requestWithValueOf(Option("2015-02-04"))) shouldEqual LocalDate.of(2015, 2, 4)
+      param <-- requestWithValueOf(Option("2015-02-04")) shouldEqual LocalDate.of(2015, 2, 4)
     }
 
     it("fails to retrieve invalid value") {
@@ -32,7 +32,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
     it("retrieves value from field") {
       param.validate(requestWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
-      param.from(requestWithValueOf(Option("2015-02-04"))) shouldEqual Option(LocalDate.of(2015, 2, 4))
+      param <-- requestWithValueOf(Option("2015-02-04")) shouldEqual Option(LocalDate.of(2015, 2, 4))
     }
 
     it("fails to retrieve invalid value") {
@@ -41,7 +41,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
     it("does not retrieve non existent value") {
       param.validate(requestWithValueOf(None)) shouldEqual Right(None)
-      param.from(Request()) shouldEqual None
+      param <-- Request() shouldEqual None
     }
   }
 

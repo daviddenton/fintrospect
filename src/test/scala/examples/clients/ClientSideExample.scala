@@ -43,7 +43,7 @@ object ClientSideExample extends App {
     .body(body)
     .at(GET) / "firstSection" / theDate bindTo localEchoService
 
-  val theCall = localClient(theWeather -> "sunny", body -> ArgoUtil.obj(), theDate -> LocalDate.of(2015, 1, 1), theUser -> System.getenv("USER"))
+  val theCall = localClient(theWeather --> "sunny", body --> ArgoUtil.obj(), theDate --> LocalDate.of(2015, 1, 1), theUser --> System.getenv("USER"))
 
   val response = Await.result(theCall)
 

@@ -22,10 +22,12 @@ class BookSearch(books: Books) {
 
   private def search() = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
-      val requestForm = form.from(request)
-      Ok(array(books.search(minPages.from(requestForm).getOrElse(MIN_VALUE),
-        maxPages.from(request).getOrElse(MAX_VALUE),
-        titleTerm.from(requestForm)).map(_.toJson)))
+      val requestForm = form <-- request
+      Ok(array(books.search(
+        minPages <-- requestForm getOrElse MIN_VALUE,
+        maxPages <-- request getOrElse MAX_VALUE,
+        titleTerm <-- requestForm).map
+        (_.toJson)))
     }
   }
 
