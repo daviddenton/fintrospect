@@ -29,7 +29,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
         responseFor(clientWithNameAndMaxAgeAndGender()) shouldEqual(BAD_REQUEST, "Client: Missing required params passed: Set({name}, {maxAge}, {gender})")
       }
       it("unknown parameters returns bad request") {
-        responseFor(clientWithNoParameters(maxAge --> 7)) shouldEqual(BAD_REQUEST, "Client: Unknown params passed: Set({maxAge})")
+        responseFor(clientWithNoParameters(maxAge.of(7))) shouldEqual(BAD_REQUEST, "Client: Unknown params passed: Set({maxAge})")
       }
     }
 

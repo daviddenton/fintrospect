@@ -34,21 +34,21 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       it("with 0 segment") {
         assertOkResponse(m.withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))), Seq())
       }
-      it("with 1 segments") {
-        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") bindTo ((_1: String) => AService(Seq(_1)))), Seq("a"))
+      it("with 1 segment") {
+        assertOkResponse(m.withRoute(d.at(GET) / Path.fixed("svc") bindTo ((_1) => AService(Seq()))), Seq())
       }
       it("with 2 segments") {
-        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") / Path.string("s2") bindTo ((_1: String, _2: String) => AService(Seq(_1, _2)))), Seq("a", "b"))
+        assertOkResponse(m.withRoute(d.at(GET) / Path.fixed("svc") / Path.string("s1") bindTo ((_1, _2:String) => AService(Seq(_2)))), Seq("a"))
       }
       it("with 3 segments") {
-        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") / Path.string("s2") / Path.string("s3") bindTo ((_1: String, _2: String, _3: String) => AService(Seq(_1, _2, _3)))), Seq("a", "b", "c"))
+        assertOkResponse(m.withRoute(d.at(GET) / Path.fixed("svc") / Path.string("s1") / Path.string("s2") bindTo ((_1, _2, _3) => AService(Seq(_2, _3)))), Seq("a", "b"))
       }
       it("with 4 segments") {
-        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") / Path.string("s2") / Path.string("s3") / Path.string("s4") bindTo ((_1: String, _2: String, _3: String, _4: String) => AService(Seq(_1, _2, _3, _4)))), Seq("a", "b", "c", "d"))
+        assertOkResponse(m.withRoute(d.at(GET) / Path.fixed("svc") / Path.string("s1") / Path.string("s2") / Path.string("s3") bindTo ((_1, _2, _3, _4) => AService(Seq(_2, _3, _4)))), Seq("a", "b", "c"))
       }
       it("with 5 segments") {
-        assertOkResponse(m.withRoute(d.at(GET) / "svc" / Path.string("s1") / Path.string("s2") / Path.string("s3") / Path.string("s4") / Path.string("s5") bindTo ((_1: String, _2: String, _3: String, _4: String, _5: String) => AService(Seq(_1, _2, _3, _4, _5)))), Seq("a", "b",
-          "c", "d", "e"))
+        assertOkResponse(m.withRoute(d.at(GET) / Path.fixed("svc") / Path.string("s1") / Path.string("s2") / Path.string("s3") / Path.string("s4") bindTo ((_1, _2, _3, _4, _5) => AService(Seq(_2, _3, _4, _5)))), Seq
+          ("a", "b", "c", "d"))
       }
     }
 
