@@ -32,7 +32,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
 
       contentFrom(request) shouldEqual "date=1976-08-31"
       request.headers().get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
-      val deserializedForm = formBody <-- request
+      val deserializedForm = formBody from request
       deserializedForm shouldEqual inputForm
     }
   }
