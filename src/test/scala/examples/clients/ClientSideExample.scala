@@ -5,9 +5,9 @@ import java.time.LocalDate
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.clients.ClientRoute
-import io.fintrospect.parameters.{Body, Header, Path, Query}
+import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil._
-import io.fintrospect.util.{ArgoUtil, PlainTextResponseBuilder}
+import io.fintrospect.util.PlainTextResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
@@ -35,7 +35,8 @@ object ClientSideExample extends App {
   val theDate = Path.localDate("date")
   val theWeather = Query.optional.string("weather")
   val theUser = Header.required.string("user")
-  val body = Body.json(Option("body"))
+  val gender = FormField.required.string("gender")
+  val body = Body.form(gender)
 
   val localClient = ClientRoute()
     .taking(theUser)
@@ -43,7 +44,7 @@ object ClientSideExample extends App {
     .body(body)
     .at(GET) / "firstSection" / theDate bindTo localEchoService
 
-  val theCall = localClient(theWeather --> "sunny", body --> ArgoUtil.obj(), theDate --> LocalDate.of(2015, 1, 1), theUser --> System.getenv("USER"))
+  val theCall = localClient(theWeather --> "sunny", body --> Form(gender --> "male"), theDate --> LocalDate.of(2015, 1, 1), theUser --> System.getenv("USER"))
 
   val response = Await.result(theCall)
 

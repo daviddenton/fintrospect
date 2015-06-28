@@ -9,5 +9,5 @@ class Form (fields: collection.Map[String, Set[String]]) extends Iterable[(Strin
 }
 
 object Form {
-  def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(Form())((f, b) => b(f))
+  def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form(Map.empty))((f, b) => b(f))
 }
