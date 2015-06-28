@@ -15,6 +15,10 @@ abstract class ResponseBuilderObjectSpec[T](bldr: ResponseBuilderObject[T]) exte
 
   describe("Rendering") {
     it("ok") {
+      statusAndContentFrom(bldr.Ok) shouldEqual(OK, "")
+    }
+
+    it("ok with message") {
       statusAndContentFrom(bldr.Ok(message)) shouldEqual(OK, expectedContent)
     }
 
