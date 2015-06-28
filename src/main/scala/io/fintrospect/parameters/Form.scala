@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
-class Form (fields: collection.Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
-  def +(key: String, value: Set[String]) = new Form(fields + (key -> value))
+case class Form(private val fields: collection.Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
+  def +(key: String, value: Set[String]) = Form(fields + (key -> value))
 
   def get(name: String): Option[String] = fields.get(name).map(_.mkString(","))
 
