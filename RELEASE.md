@@ -6,6 +6,9 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Improve support for Forms and custom Body types in Clientside APIs.
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+#####v7.2.0
+- Upgraded version of Finagle that we build against to v6.26.0
+
 #####v7.0.2
 - Unfortunately contains a bug in the new Client code. Please ignore this release and upgrade to latest.
 
