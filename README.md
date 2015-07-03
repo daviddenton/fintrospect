@@ -18,11 +18,11 @@ for parameters are supported.
 
 ###Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,
-and it has only been tested with the version below:
+and it has built against the version below:
 
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
-libraryDependencies += "com.twitter" %% "finagle-http" % "6.25.0"
+libraryDependencies += "com.twitter" %% "finagle-http" % "6.26.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "X.X.X"
 ```
 
