@@ -21,7 +21,5 @@ trait Mandatory[T,From] extends Retrieval[T, From] with Parameter[T] with Valida
 
 trait Optional[T, From] extends Retrieval[Option[T], From] with Parameter[T] with Validatable[T, From]  {
   override val required = false
-  def <--(from: From) = {
-    validate(from).right.toOption.get
-  }
+  def <--(from: From) = validate(from).right.toOption.get
 }

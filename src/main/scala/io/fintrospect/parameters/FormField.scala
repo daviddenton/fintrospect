@@ -25,9 +25,13 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form]
 
 object FormField {
 
-  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, Form]
+  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, Form] with MandatoryRebind[T, Form, FormFieldBinding] {
+    self: Bindable[T, FormFieldBinding] =>
+  }
 
-  trait Optional[T] extends io.fintrospect.parameters.Optional[T, Form]
+  trait Optional[T] extends io.fintrospect.parameters.Optional[T, Form] with OptionalRebind[T, Form, FormFieldBinding] {
+    self: Bindable[T, FormFieldBinding] =>
+  }
 
   val required = new Parameters[FormField, Mandatory] {
     override def apply[T](spec: ParameterSpec[T]) = new FormField[T](spec) with Mandatory[T]

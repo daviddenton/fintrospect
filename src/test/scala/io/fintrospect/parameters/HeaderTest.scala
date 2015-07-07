@@ -3,6 +3,7 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
+import org.jboss.netty.handler.codec.http.HttpMethod
 import org.scalatest._
 
 class HeaderTest extends FunSpec with ShouldMatchers {
@@ -20,10 +21,18 @@ class HeaderTest extends FunSpec with ShouldMatchers {
     it("fails to retrieve invalid value") {
       param.validate(requestWithValueOf(Option("notValid"))) shouldEqual Left(param)
     }
+
     it("does not retrieve non existent value") {
       param.validate(requestWithValueOf(None)) shouldEqual Left(param)
     }
 
+    it("can rebind valid value") {
+      val inRequest = Request()
+      inRequest.headers().add("field", "123")
+      val bindings = Header.required.int("field") <-> inRequest
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      outRequest.headers().get("field") shouldEqual "123"
+    }
   }
 
   describe("optional") {
@@ -41,6 +50,21 @@ class HeaderTest extends FunSpec with ShouldMatchers {
     it("does not retrieve non existent value") {
       param.validate(requestWithValueOf(None)) shouldEqual Right(None)
       param <-- Request() shouldEqual None
+    }
+
+    it("can rebind valid value") {
+      val inRequest = Request()
+      inRequest.headers().add("field", "123")
+      val bindings = Header.optional.int("field") <-> inRequest
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      outRequest.headers().get("field") shouldEqual "123"
+    }
+
+    it("does not rebind missing value") {
+      val inRequest = Request()
+      val bindings = Header.optional.int("field") <-> inRequest
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      outRequest.headers().get("field") shouldEqual null
     }
   }
 

@@ -18,7 +18,8 @@ import scala.util.{Failure, Success, Try}
  */
 class UniBody[T](spec: BodySpec[T],
                  theParamType: ParamType,
-                 theExample: Option[JsonRootNode]) extends Body[T](spec) {
+                 theExample: Option[JsonRootNode])
+  extends Body[T](spec) {
 
   private val param = new BodyParameter[T] with Bindable[T, RequestBinding] {
     override val required = true

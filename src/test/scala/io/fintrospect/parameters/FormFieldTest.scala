@@ -23,6 +23,12 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     it("does not validate non existent value") {
       field.validate(formWithValueOf(None)) shouldEqual Left(field)
     }
+
+    it("can rebind valid value") {
+      val bindings = FormField.required.int("field") <-> Form(Map("field" -> Set("123")))
+      val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
+      outForm.get("field") shouldEqual Some("123")
+    }
   }
 
   describe("optional") {
@@ -40,6 +46,17 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     it("does not validate non existent value") {
       field.validate(formWithValueOf(None)) shouldEqual Right(None)
       field <-- formWithValueOf(None) shouldEqual None
+    }
+
+    it("can rebind valid value") {
+      val outForm = FormField.optional.int("field") <-> Form(Map("field" -> Set("123")))
+      outForm.foldLeft(Form()) { (form, next) => next(form) }.get("field") shouldEqual Some("123")
+    }
+
+    it("doesn't rebind missing value") {
+      val bindings = FormField.optional.int("field") <-> Form()
+      val outForm = bindings.foldLeft(Form()) { (requestBuild, next) => next(requestBuild) }
+      outForm.get("field") shouldEqual None
     }
   }
 

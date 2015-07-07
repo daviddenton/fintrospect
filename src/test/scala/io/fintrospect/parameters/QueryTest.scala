@@ -3,6 +3,7 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
+import org.jboss.netty.handler.codec.http.HttpMethod
 import org.scalatest._
 
 class QueryTest extends FunSpec with ShouldMatchers {
@@ -25,6 +26,12 @@ class QueryTest extends FunSpec with ShouldMatchers {
       param.validate(requestWithValueOf(None)) shouldEqual Left(param)
     }
 
+    it("can rebind valid value") {
+      val inRequest = Request("?field=123")
+      val bindings = Query.required.int("field") <-> inRequest
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      outRequest.getUri shouldEqual "/?field=123"
+    }
   }
 
   describe("optional") {
@@ -42,6 +49,20 @@ class QueryTest extends FunSpec with ShouldMatchers {
     it("does not retrieve non existent value") {
       param.validate(requestWithValueOf(None)) shouldEqual Right(None)
       param <-- Request() shouldEqual None
+    }
+
+    it("can rebind valid value") {
+      val inRequest = Request("?field=123")
+      val bindings = Query.optional.int("field") <-> inRequest
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      outRequest.getUri shouldEqual "/?field=123"
+    }
+
+    it("doesn't rebind missing value") {
+      val inRequest = Request("?")
+      val bindings = Query.optional.int("field") <-> inRequest
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      outRequest.getUri shouldEqual "/"
     }
   }
 
