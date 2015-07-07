@@ -11,7 +11,9 @@ import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
 
-class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[Form](FormBody.spec) {
+class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
+  extends Body[Form](FormBody.spec)
+  with Bindable[Form, Binding] {
 
   override def -->(value: Form): Seq[Binding] = {
     Seq(new RequestBinding(null, t => {
@@ -41,7 +43,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]]) extends Body[F
 }
 
 object FormBody {
-  private val spec =  new BodySpec[Form](None,
+  private val spec = new BodySpec[Form](None,
     ContentTypes.APPLICATION_FORM_URLENCODED,
     content => new Form(new QueryStringDecoder("?" + content).getParameters.asScala.mapValues(_.asScala.toSet)),
     form => {
