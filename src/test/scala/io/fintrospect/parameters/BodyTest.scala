@@ -3,9 +3,12 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
+import com.twitter.io.Charsets
 import io.fintrospect.ContentTypes
+import io.fintrospect.util.ArgoUtil
 import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
+import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -51,6 +54,14 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val deserializedJson = jsonBody <-- request
       deserializedJson shouldEqual inputJson
     }
-  }
 
+    it("can rebind valid value") {
+      val inRequest = Request()
+      val inputJson = obj("bob" -> string("builder"))
+      inRequest.setContent(copiedBuffer(pretty(inputJson), Charsets.Utf8))
+      val bindings = Body.json(None) <-> inRequest
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      ArgoUtil.parse(contentFrom(outRequest)) shouldEqual inputJson
+    }
+  }
 }

@@ -6,7 +6,7 @@ import io.fintrospect.ContentTypes._
 import io.fintrospect.util.ArgoUtil
 import org.jboss.netty.handler.codec.http.HttpRequest
 
-abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter[_]] with Retrieval[T, HttpRequest] with Bindable[T, Binding] {
+abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter[_]] with Retrieval[T, HttpRequest] {
   val contentType: ContentType = spec.contentType
 
   def validate(request: HttpRequest): Seq[Either[Parameter[_], Option[_]]]
@@ -19,8 +19,8 @@ object Body {
    */
   def apply[T](bodySpec: BodySpec[T]): Body[T] = new UniBody[T](bodySpec, StringParamType, None)
 
-  def json(description: Option[String], example: JsonRootNode = null): Body[JsonRootNode] =
+  def json(description: Option[String], example: JsonRootNode = null): UniBody[JsonRootNode] =
     new UniBody[JsonRootNode](BodySpec(description, APPLICATION_JSON, ArgoUtil.parse, ArgoUtil.compact), ObjectParamType, Option(example))
 
-  def form(fields: FormField[_] with Retrieval[_, Form]*): Body[Form] = new FormBody(fields)
+  def form(fields: FormField[_] with Retrieval[_, Form]*): FormBody = new FormBody(fields)
 }
