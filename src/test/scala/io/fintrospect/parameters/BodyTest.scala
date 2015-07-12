@@ -38,6 +38,18 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val deserializedForm = formBody from request
       deserializedForm shouldEqual inputForm
     }
+
+    it("can rebind valid value") {
+      val date = FormField.required.localDate("date")
+      val inputForm = Form(date --> LocalDate.of(1976, 8, 31))
+      val formBody = Body.form(date)
+      val bindings = formBody --> inputForm
+      val inRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val rebindings = formBody <-> inRequest
+      val outRequest = rebindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val deserializedForm = formBody from outRequest
+      deserializedForm shouldEqual inputForm
+    }
   }
 
   describe("json") {
