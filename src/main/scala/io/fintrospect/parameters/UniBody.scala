@@ -21,7 +21,7 @@ class UniBody[T](spec: BodySpec[T],
                  theExample: Option[JsonRootNode])
   extends Body[T](spec)
   with Bindable[T, RequestBinding]
-  with MandatoryRebind[T, HttpRequest, RequestBinding]{
+  with MandatoryRebind[T, HttpRequest, RequestBinding] {
 
   private val param = new BodyParameter[T] with Bindable[T, RequestBinding] {
     override val required = true

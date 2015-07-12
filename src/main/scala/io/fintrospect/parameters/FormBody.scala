@@ -13,7 +13,8 @@ import scala.util.{Failure, Success, Try}
 
 class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
   extends Body[Form](FormBody.spec)
-  with Bindable[Form, Binding] {
+  with Bindable[Form, Binding]
+  with MandatoryRebind[Form, HttpRequest, Binding] {
 
   override def -->(value: Form): Seq[Binding] = {
     Seq(new RequestBinding(null, t => {
