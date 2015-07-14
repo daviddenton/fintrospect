@@ -48,17 +48,12 @@ class UniBody[T](spec: BodySpec[T],
   override def iterator = Iterator(param)
 
   override def validate(request: HttpRequest): Seq[Either[Parameter[T], Option[T]]] = {
-    val from = Try(contentFrom(request)).toOption
-    Seq(
-      if (from.isEmpty) {
-        Left(param)
-      } else {
-        Try(spec.deserialize(from.get)) match {
-          case Success(v) => Right(Option(v))
-          case Failure(_) => Left(param)
-        }
-      }
-    )
+    Try(contentFrom(request)).toOption match {
+      case Some(r) => Seq(Try(spec.deserialize(r)) match {
+        case Success(v) => Right(Option(v))
+        case Failure(_) => Left(param)
+      })
+      case None => Seq(Left(param))
+    }
   }
-
 }
