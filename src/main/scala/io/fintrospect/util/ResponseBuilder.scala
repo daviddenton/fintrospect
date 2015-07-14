@@ -1,5 +1,7 @@
 package io.fintrospect.util
 
+import java.io.OutputStream
+
 import com.twitter.finagle.http.Response
 import com.twitter.util.Future
 import io.fintrospect.ContentType
@@ -44,6 +46,12 @@ class ResponseBuilder[T](toFormat: T => String,
   def withContent(channelBuffer: ChannelBuffer): ResponseBuilder[T] = {
     response.setContentType(contentType.value)
     response.setContent(channelBuffer)
+    this
+  }
+
+  def withContent(f: OutputStream => Unit): ResponseBuilder[T] = {
+    response.setContentType(contentType.value)
+    response.withOutputStream(f)
     this
   }
 
