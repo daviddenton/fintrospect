@@ -31,12 +31,12 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
   override def iterator = fields.iterator
 
   override def validate(request: HttpRequest): Seq[Either[Parameter[_], Option[_]]] = {
-    Try(contentFrom(request)).toOption match {
-      case Some(r) => Try(FormBody.spec.deserialize(r)) match {
+    Try(contentFrom(request)) match {
+      case Success(r) => Try(FormBody.spec.deserialize(r)) match {
         case Success(v) => fields.map(_.validate(v))
         case Failure(_) => fields.filter(!_.required).map(Left(_))
       }
-      case None => fields.filter(!_.required).map(Left(_))
+      case _ => fields.filter(!_.required).map(Left(_))
     }
   }
 }
