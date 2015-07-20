@@ -12,11 +12,11 @@ object Query {
     self: Bindable[T, QueryBinding] =>
   }
 
-  val required = new Parameters[QueryParameter, Mandatory] {
-    override def apply[T](spec: ParameterSpec[T]) = new QueryParameter[T](spec) with Mandatory[T]
+  val required = new Parameters[SingleQueryParameter, Mandatory] {
+    override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Mandatory[T]
   }
 
-  val optional = new Parameters[QueryParameter, Optional] {
-    override def apply[T](spec: ParameterSpec[T]) = new QueryParameter[T](spec) with Optional[T]
+  val optional = new Parameters[SingleQueryParameter, Optional] {
+    override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Optional[T]
   }
 }
