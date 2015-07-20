@@ -5,7 +5,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
-abstract class QueryParameter[T](val name: String, val description: Option[String], val paramType:ParamType)
+abstract class QueryParameter[T](val name: String, val description: Option[String], val paramType: ParamType)
   extends Parameter
   with Validatable[T, HttpRequest]
   with Bindable[T, QueryBinding] {
@@ -26,16 +26,18 @@ abstract class SingleQueryParameter[T](spec: ParameterSpec[T]) extends QueryPara
     }.getOrElse(if (required) Left(this) else Right(None))
 }
 
-abstract class MultiQueryParameter[T](spec: ParameterSpec[T]) extends QueryParameter[Seq[T]](spec.name, spec.description, spec.paramType) {
+abstract class MultiQueryParameter[T](spec: ParameterSpec[T])
+  extends QueryParameter[Seq[T]](spec.name, spec.description, spec.paramType) {
 
   override def -->(value: Seq[T]) = value.map(v => new QueryBinding(this, spec.serialize(v)))
 
-  def validate(request: HttpRequest) =
-    Try(new QueryStringDecoder(request.getUri).getParameters.get(name).asScala.toSeq).toOption.map {
-      v =>
-        Try(v.map(s => spec.deserialize(s))) match {
-          case Success(d) => Right(Option(d))
-          case Failure(_) => Left(this)
-        }
-    }.getOrElse(if (required) Left(this) else Right(None))
+  def validate(request: HttpRequest) = {
+    Option(new QueryStringDecoder(request.getUri).getParameters.get(name))
+      .map(_.asScala.toSeq)
+      .map(v =>
+      Try(v.map(s => spec.deserialize(s))) match {
+        case Success(d) => Right(Option(d))
+        case Failure(_) => Left(this)
+      }).getOrElse(if (required) Left(this) else Right(None))
+  }
 }
