@@ -4,6 +4,6 @@ scala:
     - 2.11.5
 script:
     - sbt clean coverage test
-    - sbt coveralls
+#    - sbt coveralls
 jdk:
   - oraclejdk8
