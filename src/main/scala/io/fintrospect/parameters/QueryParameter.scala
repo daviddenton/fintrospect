@@ -5,10 +5,10 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
-abstract class QueryParameter[WRAPPED](val name: String, val description: Option[String], val paramType:ParamType)
+abstract class QueryParameter[T](val name: String, val description: Option[String], val paramType:ParamType)
   extends Parameter
-  with Validatable[WRAPPED, HttpRequest]
-  with Bindable[WRAPPED, QueryBinding] {
+  with Validatable[T, HttpRequest]
+  with Bindable[T, QueryBinding] {
 
   val where = "query"
 }
