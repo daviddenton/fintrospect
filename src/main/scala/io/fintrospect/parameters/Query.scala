@@ -37,8 +37,3 @@ object Query {
     }
   }
 }
-
-
-object Bob extends App {
-  Query.required.multi.int("bob")
-}
