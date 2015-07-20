@@ -32,7 +32,7 @@ object Client {
  */
 class Client(method: HttpMethod,
              headerParams: Seq[HeaderParameter[_]],
-             queryParams: Seq[QueryParameter[_, _]],
+             queryParams: Seq[QueryParameter[_]],
              pathParams: Seq[PathParameter[_]],
              body: Option[Body[_]],
              underlyingService: Service[HttpRequest, HttpResponse]) {

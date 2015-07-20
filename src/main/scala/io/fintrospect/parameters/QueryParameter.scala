@@ -5,18 +5,15 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
-abstract class QueryParameter[BASE, WRAPPED](protected val spec: ParameterSpec[BASE])
+abstract class QueryParameter[WRAPPED](val name: String, val description: Option[String], val paramType:ParamType)
   extends Parameter
   with Validatable[WRAPPED, HttpRequest]
   with Bindable[WRAPPED, QueryBinding] {
-  override val name = spec.name
-  override val description = spec.description
-  override val paramType = spec.paramType
 
   val where = "query"
 }
 
-abstract class SingleQueryParameter[T](spec: ParameterSpec[T]) extends QueryParameter[T, T](spec) {
+abstract class SingleQueryParameter[T](spec: ParameterSpec[T]) extends QueryParameter[T](spec.name, spec.description, spec.paramType) {
 
   override def -->(value: T) = Seq(new QueryBinding(this, spec.serialize(value)))
 
@@ -29,7 +26,7 @@ abstract class SingleQueryParameter[T](spec: ParameterSpec[T]) extends QueryPara
     }.getOrElse(if (required) Left(this) else Right(None))
 }
 
-abstract class MultiQueryParameter[T](spec: ParameterSpec[T]) extends QueryParameter[T, Seq[T]](spec) {
+abstract class MultiQueryParameter[T](spec: ParameterSpec[T]) extends QueryParameter[Seq[T]](spec.name, spec.description, spec.paramType) {
 
   override def -->(value: Seq[T]) = value.map(v => new QueryBinding(this, spec.serialize(v)))
 
