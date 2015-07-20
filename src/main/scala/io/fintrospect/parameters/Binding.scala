@@ -28,6 +28,6 @@ class RequestBinding(val parameter: Parameter, into: HttpRequest => HttpRequest)
 class FormFieldBinding(val parameter: Parameter, value: String) extends Binding {
   def apply(requestBuild: RequestBuild) = requestBuild
 
-  def apply(form: Form) = form +(parameter.name, Set(value))
+  def apply(form: Form) = form +(parameter.name, value)
 }
 
