@@ -31,8 +31,7 @@ abstract class MultiQueryParameter[T](spec: ParameterSpec[T]) extends QueryParam
   override def -->(value: Seq[T]) = value.map(v => new QueryBinding(this, spec.serialize(v)))
 
   def validate(request: HttpRequest) =
-    Try(new QueryStringDecoder(request.getUri).getParameters.get(name).asScala.toSeq).toOption
-      .map {
+    Try(new QueryStringDecoder(request.getUri).getParameters.get(name).asScala.toSeq).toOption.map {
       v =>
         Try(v.map(s => spec.deserialize(s))) match {
           case Success(d) => Right(Option(d))
