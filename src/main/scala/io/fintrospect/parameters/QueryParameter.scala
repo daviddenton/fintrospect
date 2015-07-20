@@ -8,10 +8,10 @@ import scala.util.{Failure, Success, Try}
 abstract class QueryParameter[T](spec: ParameterSpec[_], val deserialize: Seq[String] => T)
   extends Parameter with Validatable[T, HttpRequest] with Bindable[T, QueryBinding] {
 
-  val name = spec.name
-  val description = spec.description
-  val paramType = spec.paramType
-  val where = "query"
+  override val name = spec.name
+  override val description = spec.description
+  override val paramType = spec.paramType
+  override val where = "query"
 
   def validate(request: HttpRequest) = {
     Option(new QueryStringDecoder(request.getUri).getParameters.get(name))

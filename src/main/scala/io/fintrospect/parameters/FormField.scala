@@ -2,24 +2,20 @@ package io.fintrospect.parameters
 
 import scala.util.{Failure, Success, Try}
 
-abstract class FormField[T](val name: String, val description: Option[String], val paramType: ParamType)
+abstract class FormField[T](spec: ParameterSpec[_], val deserialize: Seq[String] => T)
   extends BodyParameter
   with Validatable[T, Form]
   with Bindable[T, FormFieldBinding] {
 
-  val where = "form"
-
+  override val name = spec.name
+  override val description = spec.description
+  override val paramType = spec.paramType
   override val example = None
-}
-
-abstract class SingleFormField[T](spec: ParameterSpec[T])
-  extends FormField[T](spec.name, spec.description, spec.paramType) {
-
-  def -->(value: T) = Seq(new FormFieldBinding(this, spec.serialize(value)))
+  override val where = "form"
 
   def validate(form: Form): Either[Parameter, Option[T]] = {
     form.get(name).map {
-      v => Try(spec.deserialize(v.head)) match {
+      v => Try(deserialize(v)) match {
         case Success(d) => Right(Option(d))
         case Failure(_) => Left(this)
       }
@@ -27,19 +23,16 @@ abstract class SingleFormField[T](spec: ParameterSpec[T])
   }
 }
 
+abstract class SingleFormField[T](spec: ParameterSpec[T])
+  extends FormField[T](spec, xs => spec.deserialize(xs.head)) {
+
+  def -->(value: T) = Seq(new FormFieldBinding(this, spec.serialize(value)))
+}
+
 abstract class MultiFormField[T](spec: ParameterSpec[T])
-  extends FormField[Seq[T]](spec.name, spec.description, spec.paramType) {
+  extends FormField[Seq[T]](spec, xs => xs.map(spec.deserialize)) {
 
   def -->(value: Seq[T]) = value.map(v => new FormFieldBinding(this, spec.serialize(v)))
-
-  def validate(form: Form): Either[Parameter, Option[Seq[T]]] = {
-    form.get(name).map {
-      v => Try(v.map(spec.deserialize)) match {
-        case Success(d) => Right(Option(d))
-        case Failure(_) => Left(this)
-      }
-    }.getOrElse(if (required) Left(this) else Right(None))
-  }
 }
 
 object FormField {
