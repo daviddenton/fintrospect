@@ -4,7 +4,10 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.{Failure, Success, Try}
 
-abstract class HeaderParameter[T](spec: ParameterSpec[T]) extends Parameter[T] with Validatable[T, HttpRequest] with Bindable[T, RequestBinding] {
+abstract class HeaderParameter[T](spec: ParameterSpec[T])
+  extends Parameter[T]
+  with Validatable[T, HttpRequest]
+  with Bindable[T, RequestBinding] {
   override val name = spec.name
   override val description = spec.description
   override val paramType = spec.paramType

@@ -50,14 +50,14 @@ class Client(method: HttpMethod,
   def apply(userBindings: Iterable[Binding]*): Future[HttpResponse] = {
     val suppliedBindings = userBindings.flatten ++ providedBindings
 
-    val userSuppliedParams = suppliedBindings.map(_.parameter)
+    val userSuppliedParams = suppliedBindings.map(_.parameter).filter(_ != null)
 
     val missing = requiredParams.diff(userSuppliedParams)
     if (missing.nonEmpty) {
       return Future.value(Error(BAD_REQUEST, "Client: Missing required params passed: " + missing.toSet))
     }
 
-    val invalid = userSuppliedParams.filter(_ != null).diff(allPossibleParams)
+    val invalid = userSuppliedParams.diff(allPossibleParams)
     if (invalid.nonEmpty) {
       return Future.value(Error(BAD_REQUEST, "Client: Unknown params passed: " + invalid.toSet))
     }
