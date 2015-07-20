@@ -3,6 +3,7 @@ Roadmap/Release Notes/Migration Guide
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
 ######Master (in dev...)
+- Support multi-parameters in forms and queries.
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
 #####v7.2.0

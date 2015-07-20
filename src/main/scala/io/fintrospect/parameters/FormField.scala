@@ -9,7 +9,7 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form]
   override val description = spec.description
   override val paramType = spec.paramType
 
-  def -->(value: T) = Seq(new FormFieldBinding(this, name, spec.serialize(value)))
+  def -->(value: T) = Seq(new FormFieldBinding(this, spec.serialize(value)))
 
   val where = "form"
 
