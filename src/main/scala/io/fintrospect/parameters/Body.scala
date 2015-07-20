@@ -6,10 +6,10 @@ import io.fintrospect.ContentTypes._
 import io.fintrospect.util.ArgoUtil
 import org.jboss.netty.handler.codec.http.HttpRequest
 
-abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter[_]] with Retrieval[T, HttpRequest] {
+abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with Retrieval[T, HttpRequest] {
   val contentType: ContentType = spec.contentType
 
-  def validate(request: HttpRequest): Seq[Either[Parameter[_], Option[_]]]
+  def validate(request: HttpRequest): Seq[Either[Parameter, Option[_]]]
 }
 
 object Body {

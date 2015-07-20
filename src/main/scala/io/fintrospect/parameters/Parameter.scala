@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-trait Parameter[T] {
+trait Parameter {
   val required: Boolean
   val name: String
   val description: Option[String]

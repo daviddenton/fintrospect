@@ -12,7 +12,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse
  * Ultra-basic ModuleRenderer implementation that only supports the route paths and the main descriptions of each.
  */
 class SimpleJson extends ModuleRenderer {
-  override def badRequest(badParameters: Seq[Parameter[_]]): HttpResponse = JsonBadRequestRenderer(badParameters)
+  override def badRequest(badParameters: Seq[Parameter]): HttpResponse = JsonBadRequestRenderer(badParameters)
 
   private def render(basePath: Path, route: Route): Field = {
     route.method + ":" + route.describeFor(basePath) -> string(route.describedRoute.summary)

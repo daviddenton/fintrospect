@@ -2,6 +2,6 @@ package io.fintrospect.parameters
 
 import argo.jdom.JsonRootNode
 
-trait BodyParameter[T] extends Parameter[T] {
+trait BodyParameter extends Parameter {
   val example: Option[JsonRootNode]
 }
