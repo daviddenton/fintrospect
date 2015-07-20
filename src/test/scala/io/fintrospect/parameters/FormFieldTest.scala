@@ -2,6 +2,7 @@ package io.fintrospect.parameters
 
 import java.time.LocalDate
 
+import com.twitter.finagle.http.Request
 import org.scalatest._
 
 class FormFieldTest extends FunSpec with ShouldMatchers {
@@ -9,25 +10,50 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
   private val paramName = "name"
 
   describe("required") {
-    val field = FormField.required.localDate(paramName)
+    describe("singular") {
+      val field = FormField.required.localDate(paramName)
 
-    it("validates value from form field") {
-      field.validate(formWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
-      field <-- formWithValueOf(Option("2015-02-04")) shouldEqual LocalDate.of(2015, 2, 4)
+      it("validates value from form field") {
+        field.validate(formWithValueOf("2015-02-04")) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
+        field <-- formWithValueOf("2015-02-04") shouldEqual LocalDate.of(2015, 2, 4)
+      }
+
+      it("fails to validate invalid value") {
+        field.validate(formWithValueOf("notValid")) shouldEqual Left(field)
+      }
+
+      it("does not validate non existent value") {
+        field.validate(formWithValueOf()) shouldEqual Left(field)
+      }
+
+      it("can rebind valid value") {
+        val bindings = FormField.required.int("field") <-> Form(Map("field" -> Set("123")))
+        val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
+        outForm.get("field") shouldEqual Some(Seq("123"))
+      }
     }
 
-    it("fails to validate invalid value") {
-      field.validate(formWithValueOf(Option("notValid"))) shouldEqual Left(field)
-    }
+    describe("multi") {
+      val field = FormField.required.multi.localDate(paramName)
 
-    it("does not validate non existent value") {
-      field.validate(formWithValueOf(None)) shouldEqual Left(field)
-    }
+      it("validates value from form field") {
+        field.validate(formWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Right(Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
+        field <-- formWithValueOf("2015-02-04", "2015-02-05") shouldEqual Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
+      }
 
-    it("can rebind valid value") {
-      val bindings = FormField.required.int("field") <-> Form(Map("field" -> Set("123")))
-      val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-      outForm.get("field") shouldEqual Some(Seq("123"))
+      it("fails to validate invalid value") {
+        field.validate(formWithValueOf("2015-02-04", "notValid")) shouldEqual Left(field)
+      }
+
+      it("does not validate non existent value") {
+        field.validate(formWithValueOf()) shouldEqual Left(field)
+      }
+
+      it("can rebind valid value") {
+        val bindings = FormField.required.multi.int("field") <-> Form(Map("field" -> Set("123", "456")))
+        val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
+        outForm.get("field") shouldEqual Some(Seq("123", "456"))
+      }
     }
   }
 
@@ -35,17 +61,17 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     val field = FormField.optional.localDate(paramName)
 
     it("validates value from form field") {
-      field.validate(formWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
-      field <-- formWithValueOf(Option("2015-02-04")) shouldEqual Option(LocalDate.of(2015, 2, 4))
+      field.validate(formWithValueOf("2015-02-04")) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
+      field <-- formWithValueOf("2015-02-04") shouldEqual Option(LocalDate.of(2015, 2, 4))
     }
 
     it("fails to validate invalid value") {
-      field.validate(formWithValueOf(Option("notValid"))) shouldEqual Left(field)
+      field.validate(formWithValueOf("notValid")) shouldEqual Left(field)
     }
 
     it("does not validate non existent value") {
-      field.validate(formWithValueOf(None)) shouldEqual Right(None)
-      field <-- formWithValueOf(None) shouldEqual None
+      field.validate(formWithValueOf()) shouldEqual Right(None)
+      field <-- formWithValueOf() shouldEqual None
     }
 
     it("can rebind valid value") {
@@ -60,7 +86,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  private def formWithValueOf(value: Option[String]) = {
-    new Form(value.map(v => collection.Map(paramName -> Set(v))).getOrElse(Map()))
+
+  private def requestWithValueOf(value: String*) = {
+    Request(value.map(value => paramName -> value): _*)
+  }
+  private def formWithValueOf(value: String*) = {
+    if(value.isEmpty) new Form(Map()) else new Form(Map(paramName -> value.toSet))
   }
 }

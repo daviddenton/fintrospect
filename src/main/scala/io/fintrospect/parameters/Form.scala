@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 case class Form(private val fields: collection.Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
-  def +(key: String, value: Set[String]) = Form(fields + (key -> value))
+  def +(key: String, value: String) = Form(fields + (key -> (fields.getOrElse(key, Set()) + value)))
 
   def get(name: String): Option[Seq[String]] = fields.get(name).map(_.toSeq)
 
