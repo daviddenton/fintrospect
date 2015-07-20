@@ -27,7 +27,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     it("can rebind valid value") {
       val bindings = FormField.required.int("field") <-> Form(Map("field" -> Set("123")))
       val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-      outForm.get("field") shouldEqual Some("123")
+      outForm.get("field") shouldEqual Some(Seq("123"))
     }
   }
 
@@ -50,7 +50,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
 
     it("can rebind valid value") {
       val outForm = FormField.optional.int("field") <-> Form(Map("field" -> Set("123")))
-      outForm.foldLeft(Form()) { (form, next) => next(form) }.get("field") shouldEqual Some("123")
+      outForm.foldLeft(Form()) { (form, next) => next(form) }.get("field") shouldEqual Some(Seq("123"))
     }
 
     it("doesn't rebind missing value") {
