@@ -18,12 +18,13 @@ abstract class SingleQueryParameter[T](spec: ParameterSpec[T]) extends QueryPara
   override def -->(value: T) = Seq(new QueryBinding(this, spec.serialize(value)))
 
   def validate(request: HttpRequest) =
-    Try(new QueryStringDecoder(request.getUri).getParameters.get(name).asScala.toSeq.head).toOption.map {
-      v => Try(spec.deserialize(v)) match {
+    Option(new QueryStringDecoder(request.getUri).getParameters.get(name))
+      .map(_.asScala.toSeq)
+      .map(v =>
+      Try(spec.deserialize(v.head)) match {
         case Success(d) => Right(Option(d))
         case Failure(_) => Left(this)
-      }
-    }.getOrElse(if (required) Left(this) else Right(None))
+      }).getOrElse(if (required) Left(this) else Right(None))
 }
 
 abstract class MultiQueryParameter[T](spec: ParameterSpec[T])
