@@ -21,7 +21,7 @@ abstract class SingleQueryParameter[T](spec: ParameterSpec[T]) extends QueryPara
   override def -->(value: T) = Seq(new QueryBinding(this, spec.serialize(value)))
 
   def validate(request: HttpRequest) =
-    Try(new QueryStringDecoder(request.getUri).getParameters.get(name)).map(_.get(0)).toOption.map {
+    Try(new QueryStringDecoder(request.getUri).getParameters.get(name).get(0)).toOption.map {
       v => Try(spec.deserialize(v)) match {
         case Success(d) => Right(Option(d))
         case Failure(_) => Left(this)
