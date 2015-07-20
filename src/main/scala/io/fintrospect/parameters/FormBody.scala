@@ -23,7 +23,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
       t.headers().add(Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()))
       t.setContent(content)
       t
-    })) ++ fields.map(f => new FormFieldBinding(f, f.name, ""))
+    })) ++ fields.map(f => new FormFieldBinding(f, ""))
   }
 
   override def <--(request: HttpRequest) = FormBody.spec.deserialize(contentFrom(request))

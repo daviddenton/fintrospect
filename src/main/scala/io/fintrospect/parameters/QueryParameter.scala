@@ -11,7 +11,7 @@ abstract class QueryParameter[T](spec: ParameterSpec[T]) extends Parameter[T] wi
 
   private def from(name: String, request: HttpRequest) = Try(new QueryStringDecoder(request.getUri).getParameters.get(name)).map(_.get(0)).toOption
 
-  override def -->(value: T) = Seq(new QueryBinding(this, name, spec.serialize(value)))
+  override def -->(value: T) = Seq(new QueryBinding(this, spec.serialize(value)))
 
   val where = "query"
 
