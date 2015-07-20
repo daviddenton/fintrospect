@@ -48,15 +48,31 @@ object FormField {
     self: Bindable[T, FormFieldBinding] =>
   }
 
+  trait MandatorySeq[T] extends io.fintrospect.parameters.Mandatory[Seq[T], Form] with MandatoryRebind[Seq[T], Form, FormFieldBinding] {
+    self: Bindable[Seq[T], FormFieldBinding] =>
+  }
+
   trait Optional[T] extends io.fintrospect.parameters.Optional[T, Form] with OptionalRebind[T, Form, FormFieldBinding] {
     self: Bindable[T, FormFieldBinding] =>
   }
 
-  val required = new Parameters[FormField, Mandatory] {
-    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Mandatory[T]
+  trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Seq[T], Form] with OptionalRebind[Seq[T], Form, FormFieldBinding] {
+    self: Bindable[Seq[T], FormFieldBinding] =>
   }
 
-  val optional = new Parameters[FormField, Optional] {
+  val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
+    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Mandatory[T]
+
+    override val multi = new Parameters[MultiFormField, MandatorySeq] {
+      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with MandatorySeq[T]
+    }
+  }
+
+  val optional = new Parameters[FormField, Optional] with MultiParameters[MultiFormField, OptionalSeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Optional[T]
+
+    override val multi = new Parameters[MultiFormField, OptionalSeq] {
+      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with OptionalSeq[T]
+    }
   }
 }
