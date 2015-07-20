@@ -20,8 +20,7 @@ object Query {
     self: Bindable[Seq[T], QueryBinding] =>
   }
 
-  val required = new Parameters[SingleQueryParameter, Mandatory] with MultiParameters[MultiQueryParameter, MandatorySeq] {
-
+  val required = new Parameters[QueryParameter, Mandatory] with MultiParameters[MultiQueryParameter, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Mandatory[T]
 
     override val multi = new Parameters[MultiQueryParameter, MandatorySeq] {
@@ -29,7 +28,7 @@ object Query {
     }
   }
 
-  val optional = new Parameters[SingleQueryParameter, Optional] with MultiParameters[MultiQueryParameter, OptionalSeq] {
+  val optional = new Parameters[QueryParameter, Optional] with MultiParameters[MultiQueryParameter, OptionalSeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Optional[T]
 
     override val multi = new Parameters[MultiQueryParameter, OptionalSeq] {
