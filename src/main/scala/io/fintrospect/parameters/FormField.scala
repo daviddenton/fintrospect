@@ -2,7 +2,7 @@ package io.fintrospect.parameters
 
 import scala.util.{Failure, Success, Try}
 
-abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form] with BodyParameter[T] with Bindable[T, FormFieldBinding] {
+abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form] with BodyParameter with Bindable[T, FormFieldBinding] {
 
   override val example = None
   override val name = spec.name
@@ -13,7 +13,7 @@ abstract class FormField[T](spec: ParameterSpec[T]) extends Validatable[T, Form]
 
   val where = "form"
 
-  def validate(form: Form): Either[Parameter[_], Option[T]] = {
+  def validate(form: Form): Either[Parameter, Option[T]] = {
     form.get(name).map {
       v => Try(spec.deserialize(v)) match {
         case Success(d) => Right(Option(d))

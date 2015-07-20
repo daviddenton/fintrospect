@@ -30,7 +30,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
 
   override def iterator = fields.iterator
 
-  override def validate(request: HttpRequest): Seq[Either[Parameter[_], Option[_]]] = {
+  override def validate(request: HttpRequest): Seq[Either[Parameter, Option[_]]] = {
     Try(contentFrom(request)) match {
       case Success(r) => Try(FormBody.spec.deserialize(r)) match {
         case Success(v) => fields.map(_.validate(v))

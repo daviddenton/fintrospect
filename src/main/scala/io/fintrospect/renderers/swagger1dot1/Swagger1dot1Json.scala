@@ -16,7 +16,7 @@ import scala.collection.JavaConversions._
  */
 class Swagger1dot1Json extends ModuleRenderer {
 
-  private def render(parameter: Parameter[_]): JsonNode = obj(
+  private def render(parameter: Parameter): JsonNode = obj(
     "name" -> string(parameter.name),
     "description" -> parameter.description.map(string).getOrElse(nullNode()),
     "paramType" -> string(parameter.where),
@@ -25,7 +25,7 @@ class Swagger1dot1Json extends ModuleRenderer {
   )
 
   private def render(route: Route): Field = route.method.getName.toLowerCase -> {
-    val allParams: Seq[Parameter[_]] =
+    val allParams: Seq[Parameter] =
       route.pathParams.flatMap(identity) ++
       route.describedRoute.queryParams ++
       route.describedRoute.headerParams ++
@@ -52,7 +52,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     Ok(obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api))))
   }
 
-  override def badRequest(badParameters: Seq[Parameter[_]]): HttpResponse = JsonBadRequestRenderer(badParameters)
+  override def badRequest(badParameters: Seq[Parameter]): HttpResponse = JsonBadRequestRenderer(badParameters)
 }
 
 object Swagger1dot1Json {

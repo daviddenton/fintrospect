@@ -15,7 +15,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse
  */
 case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
 
-  def badRequest(badParameters: Seq[Parameter[_]]): HttpResponse = JsonBadRequestRenderer(badParameters)
+  def badRequest(badParameters: Seq[Parameter]): HttpResponse = JsonBadRequestRenderer(badParameters)
 
   private val schemaGenerator = new JsonToJsonSchema()
 
@@ -27,7 +27,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     def add(fieldAndDefinitions: FieldAndDefinitions) = FieldsAndDefinitions(fieldAndDefinitions.field +: fields, fieldAndDefinitions.definitions ++ definitions)
   }
 
-  private def render(parameter: Parameter[_], schema: Option[Schema]): JsonNode = {
+  private def render(parameter: Parameter, schema: Option[Schema]): JsonNode = {
     val typeField = schema.map("schema" -> _.node).getOrElse("type" -> string(parameter.paramType.name))
     obj(
       "in" -> string(parameter.where),
@@ -45,7 +45,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
 
     val bpAndSchemaAndRendered = bodyParameters.map(p => (p, p.example.map(schemaGenerator.toSchema), render(p, p.example.map(schemaGenerator.toSchema))))
 
-    val allParams: Seq[Parameter[_]] =
+    val allParams: Seq[Parameter] =
       route.pathParams.flatMap(identity) ++
       route.describedRoute.headerParams ++
       route.describedRoute.queryParams

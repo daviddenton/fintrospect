@@ -10,7 +10,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse
  * Provide one of these to implement a pluggable custom format for module responses.
  */
 trait ModuleRenderer {
-  def badRequest(badParameters: Seq[Parameter[_]]): HttpResponse
+  def badRequest(badParameters: Seq[Parameter]): HttpResponse
 
   def description(basePath: Path, routes: Seq[Route]): HttpResponse
 }

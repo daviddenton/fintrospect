@@ -13,7 +13,7 @@ object Path extends Parameters[PathParameter, PathBindable] {
    * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
    */
   def fixed(name: String): PathParameter[String] = new PathParameter[String](
-    ParameterSpec(name, None, StringParamType, identity, identity), true) with PathBindable[String] {
+    ParameterSpec[String](name, None, StringParamType, identity, identity), true) with PathBindable[String] {
 
     override val required = true
 

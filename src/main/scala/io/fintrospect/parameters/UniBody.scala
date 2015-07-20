@@ -23,7 +23,7 @@ class UniBody[T](spec: BodySpec[T],
   with Bindable[T, RequestBinding]
   with MandatoryRebind[T, HttpRequest, RequestBinding] {
 
-  private val param = new BodyParameter[T] with Bindable[T, RequestBinding] {
+  private val param = new BodyParameter with Bindable[T, RequestBinding] {
     override val required = true
     override val description = spec.description
     override val name = "body"
@@ -47,7 +47,7 @@ class UniBody[T](spec: BodySpec[T],
 
   override def iterator = Iterator(param)
 
-  override def validate(request: HttpRequest): Seq[Either[Parameter[T], Option[T]]] = {
+  override def validate(request: HttpRequest): Seq[Either[Parameter, Option[T]]] = {
     Try(contentFrom(request)).toOption match {
       case Some(r) => Seq(Try(spec.deserialize(r)) match {
         case Success(v) => Right(Option(v))
