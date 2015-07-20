@@ -3,8 +3,11 @@ Roadmap/Release Notes/Migration Guide
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
 ######Master (in dev...)
-- Support multi-parameters in forms and queries.
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
+
+#####v7.5.0
+- Support multi-parameters in forms and queries.
+- Removal of some generics around Parameters. Should be non-breaking change.
 
 #####v7.2.0
 - Upgraded version of Finagle that we build against to v6.26.0
