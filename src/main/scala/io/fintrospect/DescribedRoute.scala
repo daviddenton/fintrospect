@@ -16,7 +16,7 @@ case class DescribedRoute private(summary: String,
                                   consumes: Set[ContentType],
                                   body: Option[Body[_]],
                                   headerParams: Seq[HeaderParameter[_]],
-                                  queryParams: Seq[QueryParameter[_, _]],
+                                  queryParams: Seq[QueryParameter[_]],
                                   responses: Seq[ResponseWithExample]) {
 
   /**
@@ -37,7 +37,7 @@ case class DescribedRoute private(summary: String,
   /**
    * Register a query parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: QueryParameter[_, _]): DescribedRoute = copy(queryParams = rp +: queryParams)
+  def taking(rp: QueryParameter[_]): DescribedRoute = copy(queryParams = rp +: queryParams)
 
   /**
    * Register the expected content of the body.
