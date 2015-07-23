@@ -55,6 +55,11 @@ class ResponseBuilder[T](toFormat: T => String,
     this
   }
 
+  def withHeaders(headers: (String, String)*): ResponseBuilder[T] = {
+    headers.map{case (e1: String, e2: String) => response.headers().add(e1, e2)}
+    this
+  }
+
   def build: Response = response
 
   def toFuture: Future[Response] = Future.value(build)
