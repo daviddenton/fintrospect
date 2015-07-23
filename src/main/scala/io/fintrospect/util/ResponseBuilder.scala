@@ -56,7 +56,7 @@ class ResponseBuilder[T](toFormat: T => String,
   }
 
   def withHeaders(headers: (String, String)*): ResponseBuilder[T] = {
-    headers.map{case (e1: String, e2: String) => response.headers().add(e1, e2)}
+    headers.map{case (name: String, value: String) => response.headers().add(name, value)}
     this
   }
 
