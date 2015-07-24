@@ -3,12 +3,12 @@ package examples.customformats
 /**
  * @param value the content to encase in html
  */
-case class XmlFormat(value: String) {
+case class HipsterXmlFormat(value: String) {
   override def toString: String = value
 
   def asXmlMessage: String = s"<envelope><body>$value</body></envelope>"
 }
 
-object XmlFormat {
-  def apply(children: XmlFormat*): XmlFormat = XmlFormat(children.map(_.toString()).mkString(""))
+object HipsterXmlFormat {
+  def apply(children: HipsterXmlFormat*): HipsterXmlFormat = HipsterXmlFormat(children.map(_.toString()).mkString(""))
 }

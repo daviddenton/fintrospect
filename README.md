@@ -11,10 +11,12 @@ Fintrospect is a bolt-on HTTP routing library for use with the [Finagle](http://
 Using this library, you can:
 - Define individual HTTP routes and compose them into sensible context-based modules.
 - Declare both required and optional parameters to be used in the following locations: ```Path/Header/Query/Form/Body```. Retrieval of the parameters is simple and type-safe (```[T]``` for required, ```Option[T]``` for optional). Custom datatypes 
-for parameters are supported.
+for parameters are supported. Also support for typesafe conversions of custom types.
 - Automatically generate documentation in a variety of formats (e.g. [Swagger](http://swagger.io/) v1.2 and v2.0). Pluggable architecture for adding your own format renderers (e.g other JSON, XML).
 - Endpoints automatically verify the presence and validity of both optional and required parameters. If any parameters are missing or invalid, a ```BAD_REQUEST``` response is generated - meaning that no extra validation code is required for these parameters in your controller code.
 - The library provide identification HTTP headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. ```/search/author/rowling -> /search/author/{name}```.
+- A set of HTTP Response builders with pluggable extension points for custom formats
+- Define HTTP Client endpoints APIs which reuse the same syntax and parameter bindings as the server-side. These endpoints are also exposed as simple functions.
 
 ###Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,
@@ -30,6 +32,8 @@ libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "X.X.X"
 See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples).
 
 ###Learn it
+
+####Server-side
 Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, we'll imagine a Library application (see the example above for the full code) which will be rendering Swagger v2 documentation.
 #####Define a module to live at ```http://{host}:8080/library```
 This module will have a single endpoint ```search```:
@@ -74,6 +78,26 @@ class BookSearch(books: Books) {
 
 #####View the generated documentation
 The auto-generated documentation lives at the root of the module, so point the Swagger UI at ```http://{host}:8080/library``` to see it.
+
+####Client-side
+Declare the fields to be sent to the client service and then bind them to a remote service. This produces a simple function, which can then be called with the bindings for each parameter. 
+```scala
+  val localService = Http.newService("localhost:10000")
+
+  val theUser = Path.string("user")
+  val gender = Header.required.string("gender")
+  val theDate = FormField.required.localDate("date")
+  val body = Body.form(theDate)
+
+  val formClient = ClientRoute()
+    .taking(gender)
+    .body(body)
+    .at(GET) / "firstSection" / theUser bindTo localEchoService
+
+  val theCall = formClient(gender --> "female", body --> Form(theDate --> LocalDate.of(2015, 1, 1)), theUser --> System.getenv("USER"))
+
+  println(Await.result(theCall))
+```
 
 #####Test it
 Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you can mix into your tests in order to validate your routes.
