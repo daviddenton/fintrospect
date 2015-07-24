@@ -100,7 +100,7 @@ Declare the fields to be sent to the client service and then bind them to a remo
 ```
 
 #####Test it
-Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you can mix into your tests in order to validate your routes.
+Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you can mix into your tests in order to validate your declared server-side routes.
 
 ###Upgrading?
 See the [Roadmap/Release Notes/Migration Guide](https://github.com/daviddenton/fintrospect/blob/master/RELEASE.md)
