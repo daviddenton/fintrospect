@@ -7,5 +7,3 @@ script:
     - sbt coveralls
 jdk:
   - oraclejdk8
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
