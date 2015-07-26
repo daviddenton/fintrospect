@@ -14,28 +14,26 @@ import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
-class BookSearch(books: Books) {
-  private val maxPages = Query.optional.int("maxPages", "max number of pages in book")
+class BookLengthSearch(books: Books) {
   private val minPages = FormField.optional.int("minPages", "min number of pages in book")
-  private val titleTerm = FormField.required.string("term", "the part of the title to look for")
-  private val form = Body.form(minPages, titleTerm)
+  private val maxPages = FormField.required.int("maxPages", "max number of pages in book")
+  private val form = Body.form(minPages, maxPages)
 
   private def search() = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
       val requestForm = form <-- request
       Ok(array(books.search(
         minPages <-- requestForm getOrElse MIN_VALUE,
-        maxPages <-- request getOrElse MAX_VALUE,
-        titleTerm <-- requestForm).map
+        maxPages <-- requestForm,
+        Seq("")).map
         (_.toJson)))
     }
   }
 
-  val route = DescribedRoute("search for books")
-    .taking(maxPages)
+  val route = DescribedRoute("search for books by number of pages")
     .body(form)
-    .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
+    .returning(OK -> "we found some books", array(Book("a book", "authorName", 99).toJson))
     .returning(OK -> "results", BAD_REQUEST -> "invalid request")
     .producing(APPLICATION_JSON)
-    .at(POST) / "search" bindTo search
+    .at(POST) / "lengthSearch" bindTo search
 }
