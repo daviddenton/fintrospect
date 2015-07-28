@@ -11,7 +11,7 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-class HttpRouteTest extends FunSpec with ShouldMatchers {
+class RouteSpecTest extends FunSpec with ShouldMatchers {
 
   describe("Http Route as a client") {
     val returnsMethodAndUri = Service.mk[HttpRequest, HttpResponse] { request =>
@@ -20,9 +20,9 @@ class HttpRouteTest extends FunSpec with ShouldMatchers {
     val name = Path.string("name")
     val maxAge = Path.integer("maxAge")
     val gender = Path.string("gender")
-    val clientWithNoParameters = HttpRoute().at(GET) bindClient returnsMethodAndUri
+    val clientWithNoParameters = RouteSpec().at(GET) bindToClient returnsMethodAndUri
 
-    val clientWithNameAndMaxAgeAndGender = HttpRoute().at(GET) / name / maxAge / gender bindClient returnsMethodAndUri
+    val clientWithNameAndMaxAgeAndGender = RouteSpec().at(GET) / name / maxAge / gender bindToClient returnsMethodAndUri
 
     describe("invalid parameters are dealt with") {
       it("missing parameters throw up") {
@@ -41,14 +41,14 @@ class HttpRouteTest extends FunSpec with ShouldMatchers {
         responseFor(clientWithNameAndMaxAgeAndGender(gender --> "male", maxAge --> 7, name.-->("bob"))) shouldEqual(OK, "GET,/bob/7/male")
       }
       it("ignores fixed") {
-        val clientWithFixedSections = HttpRoute().at(GET) / "prefix" / maxAge / "suffix" bindClient returnsMethodAndUri
+        val clientWithFixedSections = RouteSpec().at(GET) / "prefix" / maxAge / "suffix" bindToClient returnsMethodAndUri
         responseFor(clientWithFixedSections(maxAge --> 7)) shouldEqual(OK, "GET,/prefix/7/suffix")
       }
     }
 
     describe("converts the query parameters into the correct url format") {
       val nameQuery = Query.optional.string("name")
-      val clientWithNameQuery = HttpRoute().taking(nameQuery).at(GET) / "prefix" bindClient returnsMethodAndUri
+      val clientWithNameQuery = RouteSpec().taking(nameQuery).at(GET) / "prefix" bindToClient returnsMethodAndUri
 
       it("when there are some") {
         responseFor(clientWithNameQuery(nameQuery --> "bob")) shouldEqual(OK, "GET,/prefix?name=bob")
@@ -63,7 +63,7 @@ class HttpRouteTest extends FunSpec with ShouldMatchers {
 
       val nameHeader = Header.optional.string("name")
 
-      val clientWithNameHeader = HttpRoute().taking(nameHeader).at(GET) bindClient returnsHeaders
+      val clientWithNameHeader = RouteSpec().taking(nameHeader).at(GET) bindToClient returnsHeaders
 
       it("when there are some, includes them") {
         responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldEqual(OK, "Map(name -> bob, X-Fintrospect-Route-Name -> GET.)")
@@ -78,7 +78,7 @@ class HttpRouteTest extends FunSpec with ShouldMatchers {
 
       val intParam = Path.int("anInt")
 
-      val client = HttpRoute().at(GET) / "svc" / intParam / Path.fixed("fixed") bindClient returnsHeaders
+      val client = RouteSpec().at(GET) / "svc" / intParam / Path.fixed("fixed") bindToClient returnsHeaders
 
       it("identifies called route as a request header") {
         responseFor(client(intParam --> 55)) shouldEqual(HttpResponseStatus.OK, "Map(X-Fintrospect-Route-Name -> GET./svc/{anInt}/fixed)")

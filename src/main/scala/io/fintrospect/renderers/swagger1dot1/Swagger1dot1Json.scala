@@ -27,18 +27,18 @@ class Swagger1dot1Json extends ModuleRenderer {
   private def render(route: ServerRoute): Field = route.method.getName.toLowerCase -> {
     val allParams: Seq[Parameter] =
       route.pathParams.flatMap(identity) ++
-      route.httpRoute.queryParams ++
-      route.httpRoute.headerParams ++
-      route.httpRoute.body.map(_.iterator).getOrElse(Nil)
+      route.routeSpec.queryParams ++
+      route.routeSpec.headerParams ++
+      route.routeSpec.body.map(_.iterator).getOrElse(Nil)
 
     obj(
       "httpMethod" -> string(route.method.getName),
-      "nickname" -> string(route.httpRoute.summary),
-      "notes" -> string(route.httpRoute.summary),
-      "produces" -> array(route.httpRoute.produces.map(m => string(m.value))),
-      "consumes" -> array(route.httpRoute.consumes.map(m => string(m.value))),
+      "nickname" -> string(route.routeSpec.summary),
+      "notes" -> string(route.routeSpec.summary),
+      "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
+      "consumes" -> array(route.routeSpec.consumes.map(m => string(m.value))),
       "parameters" -> array(allParams.map(render)),
-      "errorResponses" -> array(route.httpRoute.responses
+      "errorResponses" -> array(route.routeSpec.responses
         .filter(_.status.getCode > 399)
         .map(resp => obj("code" -> number(resp.status.getCode), "reason" -> string(resp.description))))
     )

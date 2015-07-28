@@ -30,7 +30,7 @@ class BookLengthSearch(books: Books) {
     }
   }
 
-  val route = HttpRoute("search for books by number of pages")
+  val route = RouteSpec("search for books by number of pages")
     .body(form)
     .returning(OK -> "we found some books", array(Book("a book", "authorName", 99).toJson))
     .returning(OK -> "results", BAD_REQUEST -> "invalid request")

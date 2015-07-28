@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
-import io.fintrospect.HttpRoute
+import io.fintrospect.RouteSpec
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil._
 import io.fintrospect.util.PlainTextResponseBuilder
@@ -36,11 +36,11 @@ object ClientSideExample extends App {
   val gender = FormField.required.string("gender")
   val body = Body.form(gender)
 
-  val localClient = HttpRoute()
+  val localClient = RouteSpec()
     .taking(theUser)
     .taking(theWeather)
     .body(body)
-    .at(GET) / "firstSection" / theDate bindClient localEchoService
+    .at(GET) / "firstSection" / theDate bindToClient localEchoService
 
   val theCall = localClient(theWeather --> "sunny", body --> Form(gender --> "male"), theDate --> LocalDate.of(2015, 1, 1), theUser --> System.getenv("USER"))
 

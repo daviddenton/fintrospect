@@ -2,14 +2,14 @@ package io.fintrospect
 
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
-import io.fintrospect.Client.Identify
 import io.fintrospect.Headers._
+import io.fintrospect.RouteClient.Identify
 import io.fintrospect.parameters._
 import io.fintrospect.util.PlainTextResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http._
 
-object Client {
+object RouteClient {
 
   private case class Identify(method: HttpMethod, pathParams: Seq[PathParameter[_]]) extends SimpleFilter[HttpRequest, HttpResponse]() {
     private val description = method + "." + pathParams.map(_.toString()).mkString("/")
@@ -24,18 +24,18 @@ object Client {
 
 /**
  * Representation of a pre-configured client HTTP call
- * @param httpRoute the route specification
+ * @param routeSpec the route specification
  * @param method the HTTP method
  * @param underlyingService the underlying service to make the request from
  * @param pathParams the path parameters to use
  */
-class Client(method: HttpMethod,
-             httpRoute: HttpRoute,
+class RouteClient(method: HttpMethod,
+             routeSpec: RouteSpec,
              pathParams: Seq[PathParameter[_]],
              underlyingService: Service[HttpRequest, HttpResponse]) {
 
   private val providedBindings = pathParams.filter(_.isFixed).map(p => new PathBinding(p, p.name))
-  private val allPossibleParams = pathParams ++ httpRoute.headerParams ++ httpRoute.queryParams ++ httpRoute.body.toSeq.flatMap(_.iterator)
+  private val allPossibleParams = pathParams ++ routeSpec.headerParams ++ routeSpec.queryParams ++ routeSpec.body.toSeq.flatMap(_.iterator)
   private val requiredParams = allPossibleParams.filter(_.required)
   private val service = Identify(method, pathParams).andThen(underlyingService)
 

@@ -18,7 +18,7 @@ object HipsterXmlApp extends App {
   val xmlAsABody = BodySpec[HipsterXmlFormat](Option("An XML document"), ContentTypes.APPLICATION_XML, HipsterXmlFormat(_), _.value)
   val xmlAsAParam = ParameterSpec[HipsterXmlFormat]("anXmlParameter", Option("An XML document"), StringParamType, HipsterXmlFormat(_), _.value)
 
-  val route = HttpRoute("an xml endpoint")
+  val route = RouteSpec("an xml endpoint")
     .taking(Header.optional(xmlAsAParam))
     .body(Body(xmlAsABody))
     .at(HttpMethod.GET) / "view" bindTo aService
