@@ -33,7 +33,7 @@ class IncompletePath0(val httpRoute: HttpRoute, val method: HttpMethod, val path
 
   def /[T](pp0: PathParameter[T]) = new IncompletePath1(httpRoute, method, pathFn, pp0)
 
-  def bindTo(fn: () => Service[HttpRequest, HttpResponse]): Route = new Route(httpRoute, method, pathFn) {
+  def bindTo(fn: () => Service[HttpRequest, HttpResponse]): ServerRoute = new ServerRoute(httpRoute, method, pathFn) {
     override def toPf(basePath: Path): RouteFilter => Binding = {
       filtered: RouteFilter => {
         case actualMethod -> path if matches(actualMethod, basePath, path) => filtered.andThen(fn())
@@ -50,7 +50,7 @@ class IncompletePath1[A](val httpRoute: HttpRoute, val method: HttpMethod, val p
 
   def /[B](pp2: PathParameter[B]): IncompletePath2[A, B] = new IncompletePath2(httpRoute, method, pathFn, pp1, pp2)
 
-  def bindTo(fn: (A) => Service[HttpRequest, HttpResponse]): Route = new Route(httpRoute, method, pathFn, pp1) {
+  def bindTo(fn: (A) => Service[HttpRequest, HttpResponse]): ServerRoute = new ServerRoute(httpRoute, method, pathFn, pp1) {
     override def toPf(basePath: Path): RouteFilter => Binding = {
       filtered: RouteFilter => {
         case actualMethod -> path / pp1(s1) if matches(actualMethod, basePath, path) => filtered.andThen(fn(s1))
@@ -68,7 +68,7 @@ class IncompletePath2[A, B](val httpRoute: HttpRoute, val method: HttpMethod, va
 
   def /[C](pp3: PathParameter[C]): IncompletePath3[A, B, C] = new IncompletePath3(httpRoute, method, pathFn, pp1, pp2, pp3)
 
-  def bindTo(fn: (A, B) => Service[HttpRequest, HttpResponse]): Route = new Route(httpRoute, method, pathFn, pp1, pp2) {
+  def bindTo(fn: (A, B) => Service[HttpRequest, HttpResponse]): ServerRoute = new ServerRoute(httpRoute, method, pathFn, pp1, pp2) {
     override def toPf(basePath: Path): RouteFilter => Binding = {
       filtered: RouteFilter => {
         case actualMethod -> path / pp1(s1) / pp2(s2) if matches(actualMethod, basePath, path) => filtered.andThen(fn(s1, s2))
@@ -87,7 +87,7 @@ class IncompletePath3[A, B, C](val httpRoute: HttpRoute, val method: HttpMethod,
 
   def /[D](pp4: PathParameter[D]): IncompletePath4[A, B, C, D] = new IncompletePath4(httpRoute, method, pathFn, pp1, pp2, pp3, pp4)
 
-  def bindTo(fn: (A, B, C) => Service[HttpRequest, HttpResponse]): Route = new Route(httpRoute, method, pathFn, pp1, pp2, pp3) {
+  def bindTo(fn: (A, B, C) => Service[HttpRequest, HttpResponse]): ServerRoute = new ServerRoute(httpRoute, method, pathFn, pp1, pp2, pp3) {
     override def toPf(basePath: Path): RouteFilter => Binding = {
       filtered: RouteFilter => {
         case actualMethod -> path / pp1(s1) / pp2(s2) / pp3(s3) if matches(actualMethod, basePath, path) => filtered.andThen(fn(s1, s2, s3))
@@ -108,7 +108,7 @@ class IncompletePath4[A, B, C, D](val httpRoute: HttpRoute, val method: HttpMeth
 
   def /[E](pp5: PathParameter[E]): IncompletePath5[A, B, C, D, E] = new IncompletePath5(httpRoute, method, pathFn, pp1, pp2, pp3, pp4, pp5)
 
-  def bindTo(fn: (A, B, C, D) => Service[HttpRequest, HttpResponse]): Route = new Route(httpRoute, method, pathFn, pp1, pp2, pp3, pp4) {
+  def bindTo(fn: (A, B, C, D) => Service[HttpRequest, HttpResponse]): ServerRoute = new ServerRoute(httpRoute, method, pathFn, pp1, pp2, pp3, pp4) {
     override def toPf(basePath: Path): RouteFilter => Binding = {
       filtered: RouteFilter => {
         case actualMethod -> path / pp1(s1) / pp2(s2) / pp3(s3) / pp4(s4) if matches(actualMethod, basePath, path) => filtered.andThen(fn(s1, s2, s3, s4))
@@ -128,7 +128,7 @@ class IncompletePath5[A, B, C, D, E](val httpRoute: HttpRoute, val method: HttpM
                                       ) extends IncompletePath {
   def /[F](pp5: PathParameter[F]) = throw new UnsupportedOperationException("Limit on number of elements!")
 
-  def bindTo(fn: (A, B, C, D, E) => Service[HttpRequest, HttpResponse]): Route = new Route(httpRoute, method, pathFn, pp1, pp2, pp3, pp4, pp5) {
+  def bindTo(fn: (A, B, C, D, E) => Service[HttpRequest, HttpResponse]): ServerRoute = new ServerRoute(httpRoute, method, pathFn, pp1, pp2, pp3, pp4, pp5) {
     override def toPf(basePath: Path): RouteFilter => Binding = {
       filtered: RouteFilter => {
         case actualMethod -> path / pp1(s1) / pp2(s2) / pp3(s3) / pp4(s4) / pp5(s5) if matches(actualMethod, basePath, path) => filtered.andThen(fn(s1, s2, s3, s4, s5))
