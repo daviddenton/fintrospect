@@ -65,7 +65,7 @@ class BookSearch(books: Books) {
     }
   }
 
-  val route = DescribedRoute("search for books")
+  val route = HttpRoute("search for books")
     .taking(maxPages)
     .body(form)
     .returning(OK -> "we found your book", array(Book("a book", "authorName", 99).toJson))
@@ -88,10 +88,10 @@ Declare the fields to be sent to the client service and then bind them to a remo
   val theDate = FormField.required.localDate("date")
   val body = Body.form(theDate)
 
-  val formClient = ClientRoute()
+  val formClient = HttpRoute()
     .taking(gender)
     .body(body)
-    .at(GET) / "firstSection" / theUser bindTo localEchoService
+    .at(GET) / "firstSection" / theUser bindClient localEchoService
 
   val theCall = formClient(gender --> "female", body --> Form(theDate --> LocalDate.of(2015, 1, 1)), theUser --> System.getenv("USER"))
 
