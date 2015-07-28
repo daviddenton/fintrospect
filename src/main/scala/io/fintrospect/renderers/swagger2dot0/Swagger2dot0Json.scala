@@ -38,7 +38,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     )
   }
 
-  private def render(basePath: Path, route: Route): FieldAndDefinitions = {
+  private def render(basePath: Path, route: ServerRoute): FieldAndDefinitions = {
     val FieldsAndDefinitions(responses, responseDefinitions) = render(route.httpRoute.responses)
 
     val bodyParameters = route.httpRoute.body.map(_.iterator).getOrElse(Nil)
@@ -77,7 +77,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
   }
 
-  override def description(basePath: Path, routes: Seq[Route]): HttpResponse = {
+  override def description(basePath: Path, routes: Seq[ServerRoute]): HttpResponse = {
     val pathsAndDefinitions = routes
       .groupBy(_.describeFor(basePath))
       .foldLeft(FieldsAndDefinitions()) {

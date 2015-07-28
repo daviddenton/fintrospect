@@ -2,7 +2,7 @@ package io.fintrospect.renderers.swagger1dot1
 
 import argo.jdom.JsonNode
 import com.twitter.finagle.http.path.Path
-import io.fintrospect.Route
+import io.fintrospect.ServerRoute
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
 import io.fintrospect.util.ArgoUtil._
@@ -24,7 +24,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     "dataType" -> string(parameter.paramType.name)
   )
 
-  private def render(route: Route): Field = route.method.getName.toLowerCase -> {
+  private def render(route: ServerRoute): Field = route.method.getName.toLowerCase -> {
     val allParams: Seq[Parameter] =
       route.pathParams.flatMap(identity) ++
       route.httpRoute.queryParams ++
@@ -44,7 +44,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     )
   }
 
-  override def description(basePath: Path, routes: Seq[Route]): HttpResponse = {
+  override def description(basePath: Path, routes: Seq[ServerRoute]): HttpResponse = {
     val api = routes
       .groupBy(_.describeFor(basePath))
       .map { case (path, routesForPath) => obj("path" -> string(path), "operations" -> array(routesForPath.map(render(_)._2))) }

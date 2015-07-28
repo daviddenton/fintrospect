@@ -1,7 +1,7 @@
 package io.fintrospect.renderers
 
 import com.twitter.finagle.http.path.Path
-import io.fintrospect.Route
+import io.fintrospect.ServerRoute
 import io.fintrospect.parameters.Parameter
 import org.jboss.netty.handler.codec.http.HttpResponse
 
@@ -12,7 +12,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse
 trait ModuleRenderer {
   def badRequest(badParameters: Seq[Parameter]): HttpResponse
 
-  def description(basePath: Path, routes: Seq[Route]): HttpResponse
+  def description(basePath: Path, routes: Seq[ServerRoute]): HttpResponse
 }
 
 

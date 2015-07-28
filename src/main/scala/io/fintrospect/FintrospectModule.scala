@@ -41,14 +41,14 @@ object FintrospectModule {
     new FintrospectModule(basePath, moduleRenderer, identity, Nil, moduleFilter)
   }
 
-  private class ValidateParams(route: Route, moduleRenderer: ModuleRenderer) extends SimpleFilter[HttpRequest, HttpResponse]() {
+  private class ValidateParams(serverRoute: ServerRoute, moduleRenderer: ModuleRenderer) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
-      val missingOrFailed = route.missingOrFailedFrom(request)
+      val missingOrFailed = serverRoute.missingOrFailedFrom(request)
       if (missingOrFailed.isEmpty) service(request) else moduleRenderer.badRequest(missingOrFailed)
     }
   }
 
-  private class Identify(route: Route, basePath: Path) extends SimpleFilter[HttpRequest, HttpResponse]() {
+  private class Identify(route: ServerRoute, basePath: Path) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
       request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod + "." + url)
@@ -64,7 +64,7 @@ object FintrospectModule {
 class FintrospectModule private(basePath: Path,
                                 moduleRenderer: ModuleRenderer,
                                 descriptionRoutePath: Path => Path,
-                                routes: Seq[Route],
+                                routes: Seq[ServerRoute],
                                 moduleFilter: Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]) {
   private def totalBinding = {
     withDefault(routes.foldLeft(empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]) {
@@ -92,7 +92,7 @@ class FintrospectModule private(basePath: Path,
   /**
    * Attach described Route to the module.
    */
-  def withRoute(route: Route): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, route +: routes, moduleFilter)
+  def withRoute(route: ServerRoute): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, route +: routes, moduleFilter)
 
   /**
    * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
