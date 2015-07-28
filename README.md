@@ -81,7 +81,7 @@ The auto-generated documentation lives at the root of the module, so point the S
 ####Client-side
 Declare the fields to be sent to the client service and then bind them to a remote service. This produces a simple function, which can then be called with the bindings for each parameter. 
 ```scala
-  val localService = Http.newService("localhost:10000")
+  val httpClient = Http.newService("localhost:10000")
 
   val theUser = Path.string("user")
   val gender = Header.required.string("gender")
@@ -91,7 +91,7 @@ Declare the fields to be sent to the client service and then bind them to a remo
   val formClient = RouteSpec()
     .taking(gender)
     .body(body)
-    .at(GET) / "firstSection" / theUser bindToClient localEchoService
+    .at(GET) / "firstSection" / theUser bindToClient httpClient
 
   val theCall = formClient(gender --> "female", body --> Form(theDate --> LocalDate.of(2015, 1, 1)), theUser --> System.getenv("USER"))
 

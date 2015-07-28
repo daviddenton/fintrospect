@@ -28,7 +28,7 @@ object ClientSideExample extends App {
     }
   })
 
-  val localEchoService = Http.newService("localhost:10000")
+  val httpClient = Http.newService("localhost:10000")
 
   val theDate = Path.localDate("date")
   val theWeather = Query.optional.string("weather")
@@ -36,13 +36,13 @@ object ClientSideExample extends App {
   val gender = FormField.required.string("gender")
   val body = Body.form(gender)
 
-  val localClient = RouteSpec()
+  val client = RouteSpec()
     .taking(theUser)
     .taking(theWeather)
     .body(body)
-    .at(GET) / "firstSection" / theDate bindToClient localEchoService
+    .at(GET) / "firstSection" / theDate bindToClient httpClient
 
-  val theCall = localClient(theWeather --> "sunny", body --> Form(gender --> "male"), theDate --> LocalDate.of(2015, 1, 1), theUser --> System.getenv("USER"))
+  val theCall = client(theWeather --> "sunny", body --> Form(gender --> "male"), theDate --> LocalDate.of(2015, 1, 1), theUser --> System.getenv("USER"))
 
   val response = Await.result(theCall)
 
