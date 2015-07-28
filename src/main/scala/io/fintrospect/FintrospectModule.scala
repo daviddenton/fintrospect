@@ -82,7 +82,7 @@ class FintrospectModule private(basePath: Path,
   }
 
   private def withDefault(otherRoutes: PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]) = {
-    val descriptionRoute = new IncompletePath0(DescribedRoute("Description route"), GET, descriptionRoutePath).bindTo(() => {
+    val descriptionRoute = new IncompletePath0(HttpRoute("Description route"), GET, descriptionRoutePath).bindTo(() => {
       Service.mk((req) => moduleRenderer.description(basePath, routes))
     })
 

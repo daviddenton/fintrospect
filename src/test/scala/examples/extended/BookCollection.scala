@@ -17,7 +17,7 @@ class BookCollection(books: Books) {
     override def apply(request: HttpRequest): Future[HttpResponse] = Ok(array(books.list().map(_.toJson)))
   }
 
-  val route = DescribedRoute("show collection")
+  val route = HttpRoute("show collection")
     .producing(APPLICATION_JSON)
     .returning(OK -> "list of books", array(Book("a book", "authorName", 99).toJson))
     .at(GET) / "book" bindTo listBooks

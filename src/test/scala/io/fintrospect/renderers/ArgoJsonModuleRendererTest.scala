@@ -26,14 +26,14 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
     it("renders as expected") {
       val module = FintrospectModule(Root / "basepath", renderer)
         .withRoute(
-          DescribedRoute("some rambling description of what this thing actually does")
+          HttpRoute("some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
             .taking(Header.optional.string("header", "description of the header"))
             .returning(ResponseWithExample(OK, "peachy", obj("anObject" -> obj("aStringField" -> number(123)))))
             .returning(FORBIDDEN -> "no way jose")
             .at(GET) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
-          DescribedRoute("a post endpoint")
+          HttpRoute("a post endpoint")
             .consuming(APPLICATION_ATOM_XML, APPLICATION_SVG_XML)
             .producing(APPLICATION_JSON)
             .returning(FORBIDDEN -> "no way jose", obj("aString" -> ArgoUtil.string("a message of some kind")))
@@ -41,7 +41,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
             .body(Body.json(Option("the body of the message"), obj("anObject" -> obj("aStringField" -> number(123)))))
             .at(POST) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
-          DescribedRoute("a friendly endpoint")
+          HttpRoute("a friendly endpoint")
             .taking(Query.required.boolean("query", "description of the query"))
             .body(Body.form(FormField.required.int("form", "description of the form")))
             .at(GET) / "welcome" / Path.string("firstName") / fixed("bertrand") / Path.string("secondName") bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
