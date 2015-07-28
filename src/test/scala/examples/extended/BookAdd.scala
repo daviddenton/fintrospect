@@ -27,7 +27,7 @@ class BookAdd(books: Books) {
       }
   }
 
-  val route = HttpRoute("add book by isbn number")
+  val route = RouteSpec("add book by isbn number")
     .body(jsonBody)
     .returning(ResponseWithExample(CREATED, "we added your book", exampleBook.toJson))
     .returning(bookExistsResponse)

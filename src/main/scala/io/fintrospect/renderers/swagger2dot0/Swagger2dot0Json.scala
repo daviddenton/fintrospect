@@ -39,26 +39,26 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   }
 
   private def render(basePath: Path, route: ServerRoute): FieldAndDefinitions = {
-    val FieldsAndDefinitions(responses, responseDefinitions) = render(route.httpRoute.responses)
+    val FieldsAndDefinitions(responses, responseDefinitions) = render(route.routeSpec.responses)
 
-    val bodyParameters = route.httpRoute.body.map(_.iterator).getOrElse(Nil)
+    val bodyParameters = route.routeSpec.body.map(_.iterator).getOrElse(Nil)
 
     val bpAndSchemaAndRendered = bodyParameters.map(p => (p, p.example.map(schemaGenerator.toSchema), render(p, p.example.map(schemaGenerator.toSchema))))
 
     val allParams: Seq[Parameter] =
       route.pathParams.flatMap(identity) ++
-      route.httpRoute.headerParams ++
-      route.httpRoute.queryParams
+      route.routeSpec.headerParams ++
+      route.routeSpec.queryParams
     val nonBodyParams = allParams.map(render(_, Option.empty))
 
     val route2 = route.method.getName.toLowerCase -> obj(
       "tags" -> array(string(basePath.toString)),
-      "summary" -> string(route.httpRoute.summary),
-      "produces" -> array(route.httpRoute.produces.map(m => string(m.value))),
-      "consumes" -> array(route.httpRoute.consumes.map(m => string(m.value))),
+      "summary" -> string(route.routeSpec.summary),
+      "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
+      "consumes" -> array(route.routeSpec.consumes.map(m => string(m.value))),
       "parameters" -> array(nonBodyParams ++ bpAndSchemaAndRendered.map(_._3)),
       "responses" -> obj(responses),
-      "supportedContentTypes" -> array(route.httpRoute.produces.map(m => string(m.value))),
+      "supportedContentTypes" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "security" -> array()
     )
     FieldAndDefinitions(route2, responseDefinitions ++ bpAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))

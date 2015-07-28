@@ -27,7 +27,7 @@ class BookTermSearch(books: Books) {
     }
   }
 
-  val route = HttpRoute("search for book by title fragment")
+  val route = RouteSpec("search for book by title fragment")
     .taking(titleTerms)
     .returning(OK -> "we found some books", array(Book("a book", "authorName", 99).toJson))
     .producing(APPLICATION_JSON)

@@ -5,12 +5,12 @@ import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.parameters.PathParameter
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
-abstract class ServerRoute(val httpRoute: HttpRoute, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
+abstract class ServerRoute(val routeSpec: RouteSpec, val method: HttpMethod, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
 
   def missingOrFailedFrom(request: HttpRequest) = {
-    val validations = httpRoute.headerParams.map(_.validate(request)) ++
-      httpRoute.queryParams.map(_.validate(request)) ++
-      httpRoute.body.toSeq.flatMap(_.validate(request))
+    val validations = routeSpec.headerParams.map(_.validate(request)) ++
+      routeSpec.queryParams.map(_.validate(request)) ++
+      routeSpec.body.toSeq.flatMap(_.validate(request))
     validations.collect { case Left(l) => l }
   }
 
