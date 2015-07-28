@@ -16,10 +16,7 @@ object IncompletePath {
   private[fintrospect] def clientFor(ip: IncompletePath,
                                      service: Service[HttpRequest, HttpResponse],
                                      pp: PathParameter[_]*): Client = {
-    new Client(ip.method,
-      ip.httpRoute.headerParams,
-      ip.httpRoute.queryParams,
-      Fp.fixed(ip.pathFn(Path("")).toString) +: pp, ip.httpRoute.body, service)
+    new Client(ip.method, ip.httpRoute, Fp.fixed(ip.pathFn(Path("")).toString) +: pp, service)
   }
 }
 

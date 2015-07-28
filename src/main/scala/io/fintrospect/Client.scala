@@ -24,21 +24,18 @@ object Client {
 
 /**
  * Representation of a pre-configured client HTTP call
+ * @param httpRoute the route specification
  * @param method the HTTP method
- * @param headerParams the header parameters to use
- * @param queryParams the query parameters to use
- * @param pathParams the path parameters to use
  * @param underlyingService the underlying service to make the request from
+ * @param pathParams the path parameters to use
  */
 class Client(method: HttpMethod,
-             headerParams: Seq[HeaderParameter[_]],
-             queryParams: Seq[QueryParameter[_]],
+             httpRoute: HttpRoute,
              pathParams: Seq[PathParameter[_]],
-             body: Option[Body[_]],
              underlyingService: Service[HttpRequest, HttpResponse]) {
 
   private val providedBindings = pathParams.filter(_.isFixed).map(p => new PathBinding(p, p.name))
-  private val allPossibleParams = pathParams ++ headerParams ++ queryParams ++ body.toSeq.flatMap(_.iterator)
+  private val allPossibleParams = pathParams ++ httpRoute.headerParams ++ httpRoute.queryParams ++ httpRoute.body.toSeq.flatMap(_.iterator)
   private val requiredParams = allPossibleParams.filter(_.required)
   private val service = Identify(method, pathParams).andThen(underlyingService)
 
