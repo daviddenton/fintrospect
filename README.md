@@ -14,8 +14,12 @@ for parameters are supported. Also support for typesafe conversions of custom ty
 - Automatically generate documentation in a variety of formats (e.g. <a href="http://swagger.io/" target="_top">Swagger</a> v1.2 and v2.0). Pluggable architecture for adding your own format renderers (e.g other JSON, XML).
 - Endpoints automatically verify the presence and validity of both optional and required parameters. If any parameters are missing or invalid, a ```BAD_REQUEST``` response is generated - meaning that no extra validation code is required for these parameters in your controller code.
 - The library provide identification HTTP headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. ```/search/author/rowling -> /search/author/{name}```.
+- Define HTTP Client endpoints APIs which reuse the same syntax and parameter bindings as the server-side, which means that you can use the same route specification to define both sides of the transport boundary. This allows, for example, 
+the HTTP API of a downstream servers (for a fake) to be created with no effort, and exactly matching the client side.
 - A set of HTTP Response builders with pluggable extension points for custom formats
-- Define HTTP Client endpoints APIs which reuse the same syntax and parameter bindings as the server-side. These endpoints are also exposed as simple functions.
+
+These endpoints are also exposed as simple functions.
+
 
 ###Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,
