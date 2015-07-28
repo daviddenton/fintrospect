@@ -9,66 +9,66 @@ import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpRespons
 import scala.util.Try
 
 /**
- * Encapsulates the description of a route.
+ * Encapsulates the specification of an HTTP endpoint, for use by either the
  */
-case class DescribedRoute private(summary: String,
-                                  produces: Set[ContentType],
-                                  consumes: Set[ContentType],
-                                  body: Option[Body[_]],
-                                  headerParams: Seq[HeaderParameter[_]],
-                                  queryParams: Seq[QueryParameter[_]],
-                                  responses: Seq[ResponseWithExample]) {
+case class HttpRoute private(summary: String,
+                             produces: Set[ContentType],
+                             consumes: Set[ContentType],
+                             body: Option[Body[_]],
+                             headerParams: Seq[HeaderParameter[_]],
+                             queryParams: Seq[QueryParameter[_]],
+                             responses: Seq[ResponseWithExample]) {
 
   /**
    * Register content types which the route will consume. This is informational only and is NOT currently enforced.
    */
-  def consuming(contentTypes: ContentType*): DescribedRoute = copy(consumes = produces ++ contentTypes)
+  def consuming(contentTypes: ContentType*): HttpRoute = copy(consumes = produces ++ contentTypes)
 
   /**
    * Register content types which thus route will produce. This is informational only and NOT currently enforced.
    */
-  def producing(contentTypes: ContentType*): DescribedRoute = copy(produces = produces ++ contentTypes)
+  def producing(contentTypes: ContentType*): HttpRoute = copy(produces = produces ++ contentTypes)
 
   /**
    * Register a header parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: HeaderParameter[_]): DescribedRoute = copy(headerParams = rp +: headerParams)
+  def taking(rp: HeaderParameter[_]): HttpRoute = copy(headerParams = rp +: headerParams)
 
   /**
    * Register a query parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: QueryParameter[_]): DescribedRoute = copy(queryParams = rp +: queryParams)
+  def taking(rp: QueryParameter[_]): HttpRoute = copy(queryParams = rp +: queryParams)
 
   /**
    * Register the expected content of the body.
    */
-  def body(bp: Body[_]): DescribedRoute = copy(body = Option(bp), consumes = consumes + bp.contentType)
+  def body(bp: Body[_]): HttpRoute = copy(body = Option(bp), consumes = consumes + bp.contentType)
 
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(newResponse: ResponseWithExample): DescribedRoute = copy(responses = newResponse +: responses)
+  def returning(newResponse: ResponseWithExample): HttpRoute = copy(responses = newResponse +: responses)
 
   /**
    * Register one or more possible responses which could be produced by this route.
    */
-  def returning(codes: (HttpResponseStatus, String)*): DescribedRoute = copy(responses = responses ++ codes.map(c => ResponseWithExample(c._1, c._2)))
+  def returning(codes: (HttpResponseStatus, String)*): HttpRoute = copy(responses = responses ++ codes.map(c => ResponseWithExample(c._1, c._2)))
 
   /**
    * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
    */
-  def returning(response: HttpResponse): DescribedRoute = {
+  def returning(response: HttpResponse): HttpRoute = {
     returning(ResponseWithExample(response.getStatus, response.getStatus.getReasonPhrase, Try(parse(contentFrom(response))).getOrElse(nullNode())))
   }
 
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(code: (HttpResponseStatus, String), example: JsonNode): DescribedRoute = copy(responses = ResponseWithExample(code._1, code._2, example) +: responses)
+  def returning(code: (HttpResponseStatus, String), example: JsonNode): HttpRoute = copy(responses = ResponseWithExample(code._1, code._2, example) +: responses)
 
   def at(method: HttpMethod) = IncompletePath(this, method)
 }
 
-object DescribedRoute {
-  def apply(summary: String): DescribedRoute = DescribedRoute(summary, Set.empty, Set.empty, None, Nil, Nil, Nil)
+object HttpRoute {
+  def apply(summary: String = "<unknown>"): HttpRoute = HttpRoute(summary, Set.empty, Set.empty, None, Nil, Nil, Nil)
 }

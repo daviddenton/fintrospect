@@ -1,4 +1,4 @@
-package io.fintrospect.clients
+package io.fintrospect
 
 import com.twitter.finagle.Service
 import com.twitter.util.Await._
@@ -11,20 +11,20 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-class ClientRouteTest extends FunSpec with ShouldMatchers {
+class HttpRouteTest extends FunSpec with ShouldMatchers {
 
-  describe("ClientRoute") {
+  describe("Http Route as a client") {
     val returnsMethodAndUri = Service.mk[HttpRequest, HttpResponse] { request =>
       Future.value(Ok(request.getMethod + "," + request.getUri))
     }
     val name = Path.string("name")
     val maxAge = Path.integer("maxAge")
     val gender = Path.string("gender")
-    val clientWithNoParameters = ClientRoute().at(GET) bindTo returnsMethodAndUri
+    val clientWithNoParameters = HttpRoute().at(GET) bindClient returnsMethodAndUri
 
-    val clientWithNameAndMaxAgeAndGender = ClientRoute().at(GET) / name / maxAge / gender bindTo returnsMethodAndUri
+    val clientWithNameAndMaxAgeAndGender = HttpRoute().at(GET) / name / maxAge / gender bindClient returnsMethodAndUri
 
-    describe("invalid parameters") {
+    describe("invalid parameters are dealt with") {
       it("missing parameters throw up") {
         responseFor(clientWithNameAndMaxAgeAndGender()) shouldEqual(BAD_REQUEST, "Client: Missing required params passed: Set({name}, {maxAge}, {gender})")
       }
@@ -41,14 +41,14 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
         responseFor(clientWithNameAndMaxAgeAndGender(gender --> "male", maxAge --> 7, name.-->("bob"))) shouldEqual(OK, "GET,/bob/7/male")
       }
       it("ignores fixed") {
-        val clientWithFixedSections = ClientRoute().at(GET) / "prefix" / maxAge / "suffix" bindTo returnsMethodAndUri
+        val clientWithFixedSections = HttpRoute().at(GET) / "prefix" / maxAge / "suffix" bindClient returnsMethodAndUri
         responseFor(clientWithFixedSections(maxAge --> 7)) shouldEqual(OK, "GET,/prefix/7/suffix")
       }
     }
 
     describe("converts the query parameters into the correct url format") {
       val nameQuery = Query.optional.string("name")
-      val clientWithNameQuery = ClientRoute().taking(nameQuery).at(GET) / "prefix" bindTo returnsMethodAndUri
+      val clientWithNameQuery = HttpRoute().taking(nameQuery).at(GET) / "prefix" bindClient returnsMethodAndUri
 
       it("when there are some") {
         responseFor(clientWithNameQuery(nameQuery --> "bob")) shouldEqual(OK, "GET,/prefix?name=bob")
@@ -63,7 +63,7 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
 
       val nameHeader = Header.optional.string("name")
 
-      val clientWithNameHeader = ClientRoute().taking(nameHeader).at(GET) bindTo returnsHeaders
+      val clientWithNameHeader = HttpRoute().taking(nameHeader).at(GET) bindClient returnsHeaders
 
       it("when there are some, includes them") {
         responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldEqual(OK, "Map(name -> bob, X-Fintrospect-Route-Name -> GET.)")
@@ -78,10 +78,10 @@ class ClientRouteTest extends FunSpec with ShouldMatchers {
 
       val intParam = Path.int("anInt")
 
-      val client = ClientRoute().at(GET) / "svc" / intParam / Path.fixed("fixed") bindTo returnsHeaders
+      val client = HttpRoute().at(GET) / "svc" / intParam / Path.fixed("fixed") bindClient returnsHeaders
 
       it("identifies called route as a request header") {
-        responseFor(client(intParam --> 55)) shouldEqual (HttpResponseStatus.OK, "Map(X-Fintrospect-Route-Name -> GET.svc/{anInt}/fixed)")
+        responseFor(client(intParam --> 55)) shouldEqual(HttpResponseStatus.OK, "Map(X-Fintrospect-Route-Name -> GET./svc/{anInt}/fixed)")
       }
     }
   }

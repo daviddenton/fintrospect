@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
-import io.fintrospect.clients.ClientRoute
+import io.fintrospect.HttpRoute
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil._
 import io.fintrospect.util.PlainTextResponseBuilder
@@ -14,7 +14,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 /**
  * Simple example of how to define client endpoints using the same techniques as the server routes.
  * Note that the client will automatically reject (with a 400) any unknown or missing parameters, as per the
- * specified route. The response is also decorated with the anonymised route, allowing for each collection of
+ * specified route. The response is also decorated with the anonymised route, allowing for collection of
  * metrics about timing and number of requests going to the downsteam systems.
  */
 object ClientSideExample extends App {
@@ -36,11 +36,11 @@ object ClientSideExample extends App {
   val gender = FormField.required.string("gender")
   val body = Body.form(gender)
 
-  val localClient = ClientRoute()
+  val localClient = HttpRoute()
     .taking(theUser)
     .taking(theWeather)
     .body(body)
-    .at(GET) / "firstSection" / theDate bindTo localEchoService
+    .at(GET) / "firstSection" / theDate bindClient localEchoService
 
   val theCall = localClient(theWeather --> "sunny", body --> Form(gender --> "male"), theDate --> LocalDate.of(2015, 1, 1), theUser --> System.getenv("USER"))
 

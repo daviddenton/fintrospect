@@ -1,9 +1,9 @@
-package io.fintrospect.clients
+package io.fintrospect
 
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
+import io.fintrospect.Client.Identify
 import io.fintrospect.Headers._
-import io.fintrospect.clients.Client.Identify
 import io.fintrospect.parameters._
 import io.fintrospect.util.PlainTextResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._

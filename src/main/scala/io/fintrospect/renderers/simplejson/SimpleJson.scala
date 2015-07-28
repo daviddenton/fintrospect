@@ -15,7 +15,7 @@ class SimpleJson extends ModuleRenderer {
   override def badRequest(badParameters: Seq[Parameter]): HttpResponse = JsonBadRequestRenderer(badParameters)
 
   private def render(basePath: Path, route: Route): Field = {
-    route.method + ":" + route.describeFor(basePath) -> string(route.describedRoute.summary)
+    route.method + ":" + route.describeFor(basePath) -> string(route.httpRoute.summary)
   }
 
   override def description(basePath: Path, routes: Seq[Route]): HttpResponse = Ok(obj("resources" -> obj(routes.map(r => render(basePath, r)))))
