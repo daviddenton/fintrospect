@@ -17,7 +17,7 @@ object Body {
   /**
    * Create a custom body type for the request. Encapsulates the means to insert/retrieve into the request
    */
-  def apply[T](bodySpec: BodySpec[T]): Body[T] = new UniBody[T](bodySpec, StringParamType, None)
+  def apply[T](bodySpec: BodySpec[T]): UniBody[T] = new UniBody[T](bodySpec, StringParamType, None)
 
   def json(description: Option[String], example: JsonRootNode = null): UniBody[JsonRootNode] =
     new UniBody[JsonRootNode](BodySpec(description, APPLICATION_JSON, ArgoUtil.parse, ArgoUtil.compact), ObjectParamType, Option(example))

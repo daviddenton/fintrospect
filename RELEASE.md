@@ -5,6 +5,9 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+#####v8.0.1
+- Bugfix for cannot bind custom body to a request.
+
 #####v8.X.X
 - Unification of Server and Client route description APIs. Breaking API changes (renames only):
     - ```DescribedRoute``` is now ```RouteSpec```
