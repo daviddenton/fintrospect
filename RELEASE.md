@@ -8,12 +8,13 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 #####v8.0.1
 - Bugfix for cannot bind custom body to a request.
 
-#####v8.X.X
+#####v8.0.X
 - Unification of Server and Client route description APIs. Breaking API changes (renames only):
     - ```DescribedRoute``` is now ```RouteSpec```
     - ```ClientRoute``` is now ```RouteSpec``` (different package), and ```bindTo()``` is now ```bindToClient()```
     - ```Route``` is now ```ServerRoute```
     - ```Client``` is now ```RouteClient```
+    - ```ResponseWithExample``` is now ```ResponseSpec```
 
 #####v7.6.X
 - Support for multi-parameters in forms and queries to provide type-safe retrieval. Eg. ```Query.required.*.int("name")```

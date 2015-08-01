@@ -9,7 +9,7 @@ import io.fintrospect._
 import io.fintrospect.parameters.Path._
 import io.fintrospect.parameters._
 import io.fintrospect.util.ArgoUtil
-import io.fintrospect.util.ArgoUtil.{compact, number, obj, parse}
+import io.fintrospect.util.ArgoUtil.{number, obj, parse}
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
@@ -29,14 +29,14 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
           RouteSpec("some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
             .taking(Header.optional.string("header", "description of the header"))
-            .returning(ResponseWithExample(OK, "peachy", compact(obj("anObject" -> obj("aStringField" -> number(123))))))
+            .returning(ResponseSpec.json(OK -> "peachy", obj("anObject" -> obj("aStringField" -> number(123)))))
             .returning(FORBIDDEN -> "no way jose")
             .at(GET) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
           RouteSpec("a post endpoint")
             .consuming(APPLICATION_ATOM_XML, APPLICATION_SVG_XML)
             .producing(APPLICATION_JSON)
-            .returning(FORBIDDEN -> "no way jose", obj("aString" -> ArgoUtil.string("a message of some kind")))
+            .returning(ResponseSpec.json(FORBIDDEN -> "no way jose", obj("aString" -> ArgoUtil.string("a message of some kind"))))
             .taking(Query.required.int("query"))
             .body(Body.json(Option("the body of the message"), obj("anObject" -> obj("aStringField" -> number(123)))))
             .at(POST) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))

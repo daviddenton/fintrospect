@@ -14,7 +14,7 @@ case class RouteSpec private(summary: String,
                              body: Option[Body[_]],
                              headerParams: Seq[HeaderParameter[_]],
                              queryParams: Seq[QueryParameter[_]],
-                             responses: Seq[ResponseWithExample]) {
+                             responses: Seq[ResponseSpec]) {
 
   /**
    * Register content types which the route will consume. This is informational only and is NOT currently enforced.
@@ -44,29 +44,29 @@ case class RouteSpec private(summary: String,
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(newResponse: ResponseWithExample): RouteSpec = copy(responses = newResponse +: responses)
+  def returning(newResponse: ResponseSpec): RouteSpec = copy(responses = newResponse +: responses)
 
   /**
    * Register one or more possible responses which could be produced by this route.
    */
-  def returning(codes: (HttpResponseStatus, String)*): RouteSpec = copy(responses = responses ++ codes.map(c => ResponseWithExample(c._1, c._2, null)))
+  def returning(codes: (HttpResponseStatus, String)*): RouteSpec = copy(responses = responses ++ codes.map(c => new ResponseSpec(c, null)))
 
   /**
    * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
    */
   def returning(response: HttpResponse): RouteSpec = {
-    returning(ResponseWithExample(response.getStatus, response.getStatus.getReasonPhrase, contentFrom(response)))
+    returning(new ResponseSpec(response.getStatus -> response.getStatus.getReasonPhrase, Option(contentFrom(response))))
   }
 
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(code: (HttpResponseStatus, String), example: JsonRootNode): RouteSpec = copy(responses = ResponseWithExample.json(code._1, code._2, example) +: responses)
+  def returning(code: (HttpResponseStatus, String), example: JsonRootNode): RouteSpec = copy(responses = ResponseSpec.json(code, example) +: responses)
 
   /**
    * Register a possible response which could be produced by this route, with an example body (used for schema generation).
    */
-  def returning(code: (HttpResponseStatus, String), example: String): RouteSpec = copy(responses = ResponseWithExample(code._1, code._2, example) +: responses)
+  def returning(code: (HttpResponseStatus, String), example: String): RouteSpec = copy(responses = new ResponseSpec(code, Option(example)) +: responses)
 
   def at(method: HttpMethod) = IncompletePath(this, method)
 }

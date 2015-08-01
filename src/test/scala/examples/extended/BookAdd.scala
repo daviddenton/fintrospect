@@ -29,7 +29,7 @@ class BookAdd(books: Books) {
 
   val route = RouteSpec("add book by isbn number")
     .body(jsonBody)
-    .returning(ResponseWithExample.json(CREATED, "we added your book", exampleBook.toJson))
+    .returning(ResponseSpec.json(CREATED -> "we added your book", exampleBook.toJson))
     .returning(bookExistsResponse)
     .at(POST) / "book" / Path.string("isbn", "the isbn of the book") bindTo addBook
 }

@@ -66,10 +66,10 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     FieldAndDefinitions(route2, responseDefinitions ++ bpAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))
   }
 
-  private def render(responses: Seq[ResponseWithExample]): FieldsAndDefinitions = {
+  private def render(responses: Seq[ResponseSpec]): FieldsAndDefinitions = {
     responses.foldLeft(FieldsAndDefinitions()) {
       case (memo, nextResp) =>
-        val newSchema = Try(parse(nextResp.example)).toOption.map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
+        val newSchema = Try(parse(nextResp.example.get)).toOption.map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
         val newField = nextResp.status.getCode.toString -> obj("description" -> string(nextResp.description), "schema" -> newSchema.node)
         memo.add(newField, newSchema.definitions)
     }
