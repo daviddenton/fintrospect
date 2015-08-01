@@ -5,6 +5,8 @@ import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes._
 import io.fintrospect.util.ArgoUtil
 
+import scala.xml.{Elem, XML}
+
 /**
  * Spec required to marshall a body of a custom type
  * @param description Description to be used in the documentation
@@ -18,4 +20,5 @@ case class BodySpec[T](description: Option[String], contentType: ContentType, de
 
 object BodySpec {
   def json(description: Option[String] = None): BodySpec[JsonRootNode] = BodySpec[JsonRootNode](description, APPLICATION_JSON, ArgoUtil.parse, ArgoUtil.compact)
+  def xml(description: Option[String] = None): BodySpec[Elem] = BodySpec[Elem](description, APPLICATION_XML, XML.loadString, _.toString())
 }

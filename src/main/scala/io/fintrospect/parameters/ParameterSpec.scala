@@ -6,6 +6,8 @@ import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import argo.jdom.JsonRootNode
 import io.fintrospect.util.ArgoUtil._
 
+import scala.xml.{Elem, XML}
+
 /**
  * Spec required to marshall a parameter of a custom type
  * @param deserialize function to take the input string from the request and attempt to construct a deserialized instance of T. Exceptions are
@@ -35,4 +37,5 @@ object ParameterSpec {
   def int(name: String, description: String = null) = ParameterSpec[Int](name, Option(description), IntegerParamType, _.toInt, _.toString)
   def integer(name: String, description: String = null) = ParameterSpec[Integer](name, Option(description), IntegerParamType, new Integer(_), _.toString)
   def json(name: String, description: String = null) = ParameterSpec[JsonRootNode](name, Option(description), ObjectParamType, parse, compact)
+  def xml(name: String, description: String = null) = ParameterSpec[Elem](name, Option(description), StringParamType, XML.loadString, _.toString())
 }
