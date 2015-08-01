@@ -1,12 +1,9 @@
 package io.fintrospect
 
-import argo.jdom.JsonNode
+import argo.jdom.JsonRootNode
 import io.fintrospect.parameters.{Body, HeaderParameter, QueryParameter}
-import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpResponseStatus}
-
-import scala.util.Try
 
 /**
  * Encapsulates the specification of an HTTP endpoint, for use by either the
@@ -52,19 +49,24 @@ case class RouteSpec private(summary: String,
   /**
    * Register one or more possible responses which could be produced by this route.
    */
-  def returning(codes: (HttpResponseStatus, String)*): RouteSpec = copy(responses = responses ++ codes.map(c => ResponseWithExample(c._1, c._2)))
+  def returning(codes: (HttpResponseStatus, String)*): RouteSpec = copy(responses = responses ++ codes.map(c => ResponseWithExample(c._1, c._2, null)))
 
   /**
    * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
    */
   def returning(response: HttpResponse): RouteSpec = {
-    returning(ResponseWithExample(response.getStatus, response.getStatus.getReasonPhrase, Try(parse(contentFrom(response))).getOrElse(nullNode())))
+    returning(ResponseWithExample(response.getStatus, response.getStatus.getReasonPhrase, contentFrom(response)))
   }
 
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(code: (HttpResponseStatus, String), example: JsonNode): RouteSpec = copy(responses = ResponseWithExample(code._1, code._2, example) +: responses)
+  def returning(code: (HttpResponseStatus, String), example: JsonRootNode): RouteSpec = copy(responses = ResponseWithExample.json(code._1, code._2, example) +: responses)
+
+  /**
+   * Register a possible response which could be produced by this route, with an example body (used for schema generation).
+   */
+  def returning(code: (HttpResponseStatus, String), example: String): RouteSpec = copy(responses = ResponseWithExample(code._1, code._2, example) +: responses)
 
   def at(method: HttpMethod) = IncompletePath(this, method)
 }

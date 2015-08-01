@@ -10,6 +10,8 @@ import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.JsonResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponse
 
+import scala.util.Try
+
 /**
  * ModuleRenderer that provides fairly comprehensive Swagger v2.0 support
  */
@@ -67,7 +69,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   private def render(responses: Seq[ResponseWithExample]): FieldsAndDefinitions = {
     responses.foldLeft(FieldsAndDefinitions()) {
       case (memo, nextResp) =>
-        val newSchema = Option(nextResp.example).map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
+        val newSchema = Try(parse(nextResp.example)).toOption.map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
         val newField = nextResp.status.getCode.toString -> obj("description" -> string(nextResp.description), "schema" -> newSchema.node)
         memo.add(newField, newSchema.definitions)
     }
