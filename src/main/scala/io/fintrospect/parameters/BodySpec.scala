@@ -1,6 +1,9 @@
 package io.fintrospect.parameters
 
+import argo.jdom.JsonRootNode
 import io.fintrospect.ContentType
+import io.fintrospect.ContentTypes._
+import io.fintrospect.util.ArgoUtil
 
 /**
  * Spec required to marshall a body of a custom type
@@ -12,3 +15,7 @@ import io.fintrospect.ContentType
  * @tparam T the type of the parameter
  */
 case class BodySpec[T](description: Option[String], contentType: ContentType, deserialize: String => T, serialize: T => String)
+
+object BodySpec {
+  def json(description: Option[String] = None): BodySpec[JsonRootNode] = BodySpec[JsonRootNode](description, APPLICATION_JSON, ArgoUtil.parse, ArgoUtil.compact)
+}
