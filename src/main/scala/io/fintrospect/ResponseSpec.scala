@@ -5,6 +5,7 @@ import io.fintrospect.parameters.BodySpec
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 import scala.util.Try
+import scala.xml.Elem
 
 /**
  * Defines a potential response from a route, with a possible example
@@ -17,6 +18,10 @@ class ResponseSpec private[fintrospect](statusAndDescription: (HttpResponseStatu
 object ResponseSpec {
   def json(statusAndDescription: (HttpResponseStatus, String), example: JsonRootNode): ResponseSpec = {
     ResponseSpec(statusAndDescription, example, BodySpec.json())
+  }
+
+  def xml(statusAndDescription: (HttpResponseStatus, String), example: Elem): ResponseSpec = {
+    ResponseSpec(statusAndDescription, example, BodySpec.xml())
   }
 
   def apply(statusAndDescription: (HttpResponseStatus, String)): ResponseSpec = new ResponseSpec(statusAndDescription)
