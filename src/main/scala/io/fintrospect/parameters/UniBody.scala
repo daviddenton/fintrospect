@@ -1,6 +1,5 @@
 package io.fintrospect.parameters
 
-import argo.jdom.JsonRootNode
 import com.twitter.io.Charsets
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.buffer.ChannelBuffers._
@@ -13,12 +12,12 @@ import scala.util.{Failure, Success, Try}
  * Represents a generic body which can be written to and retrieved from a request.
  * @param spec the specification of this body type
  * @param theParamType the documented type of this body. Usually this is StringParamType, apart from for JSON, which is ObjectParamType
- * @param theExample (JSON types only) an example object of this body
+ * @param theExample an example object of this body
  * @tparam T the type of the request when it has been deserialized from the request
  */
 class UniBody[T](spec: BodySpec[T],
                  theParamType: ParamType,
-                 theExample: Option[JsonRootNode])
+                 theExample: Option[T])
   extends Body[T](spec)
   with Bindable[T, RequestBinding]
   with MandatoryRebind[T, HttpRequest, RequestBinding] {
@@ -38,7 +37,7 @@ class UniBody[T](spec: BodySpec[T],
       t
     }))
 
-    override val example = theExample
+    override val example = theExample.map(spec.serialize)
   }
 
   override def -->(value: T) = param.of(value)

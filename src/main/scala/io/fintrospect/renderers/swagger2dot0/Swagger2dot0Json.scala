@@ -45,10 +45,12 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
 
     val bodyParameters = route.routeSpec.body.map(_.iterator).getOrElse(Nil)
 
-    val bpAndSchemaAndRendered = bodyParameters.map(p => (p, p.example.map(schemaGenerator.toSchema), render(p, p.example.map(schemaGenerator.toSchema))))
+    val bpAndSchemaAndRendered = bodyParameters.map(p => {
+      val exampleOption = p.example.flatMap(s => Try(parse(s)).toOption).map(schemaGenerator.toSchema)
+      (p, exampleOption, render(p, exampleOption))
+    })
 
-    val allParams: Seq[Parameter] =
-      route.pathParams.flatMap(identity) ++
+    val allParams = route.pathParams.flatMap(identity) ++
       route.routeSpec.headerParams ++
       route.routeSpec.queryParams
     val nonBodyParams = allParams.map(render(_, Option.empty))
