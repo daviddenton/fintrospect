@@ -5,6 +5,7 @@ import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import argo.jdom.JsonRootNode
 
 import scala.language.higherKinds
+import scala.xml.Elem
 
 /**
  * Prototype functions for creating parameters of various types.
@@ -98,6 +99,14 @@ trait Parameters[P[_], R[_]] {
    * @return a parameter for retrieving a JsonNode value from the request
    */
   def json(name: String, description: String = null): P[JsonRootNode] with R[JsonRootNode] = apply(ParameterSpec.json(name, description))
+
+  /**
+   * Create a native Scala XML-format parameter which is constrained to values which parse to valid XML objects
+   * @param name the name of the parameter (for use in description endpoints)
+   * @param description optional description of the parameter (for use in description endpoints)
+   * @return a parameter for retrieving a JsonNode value from the request
+   */
+  def xml(name: String, description: String = null): P[Elem] with R[Elem] = apply(ParameterSpec.xml(name, description))
 }
 
 

@@ -5,6 +5,10 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+
+#####v8.1.0
+- Added native XML support as a body and a parameter type
+
 #####v8.0.1
 - Bugfix for cannot bind custom body to a request.
 

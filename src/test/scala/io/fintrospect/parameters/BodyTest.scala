@@ -13,6 +13,8 @@ import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.scalatest.{FunSpec, ShouldMatchers}
 
+import scala.xml.XML
+
 class BodyTest extends FunSpec with ShouldMatchers {
 
   describe("body") {
@@ -74,6 +76,31 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val bindings = Body.json(None) <-> inRequest
       val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
       ArgoUtil.parse(contentFrom(outRequest)) shouldEqual inputJson
+    }
+  }
+
+  describe("xml") {
+    it("should serialize and deserialize into the request") {
+
+      val xmlBody = Body.xml(None)
+      val inputXml = <field>value</field>
+      val bindings = xmlBody --> inputXml
+
+      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+
+      contentFrom(request) shouldEqual "<field>value</field>"
+      request.headers().get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_XML.value
+      val deserializedXml = xmlBody <-- request
+      deserializedXml shouldEqual inputXml
+    }
+
+    it("can rebind valid value") {
+      val inRequest = Request()
+      val inputXml = <field>value</field>
+      inRequest.setContent(copiedBuffer(inputXml.toString(), Charsets.Utf8))
+      val bindings = Body.xml(None) <-> inRequest
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      XML.loadString(contentFrom(outRequest)) shouldEqual inputXml
     }
   }
 }

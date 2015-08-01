@@ -190,6 +190,26 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
     }
   }
 
+  describe("xml") {
+    val expected = <field>value</field>
+
+    it("retrieves a valid value") {
+      Try(ParameterSpec.xml(paramName, "").deserialize(expected.toString())) shouldEqual Success(expected)
+    }
+
+    it("does not retrieve an invalid value") {
+      Try(ParameterSpec.xml(paramName, "").deserialize("notXml")).isFailure shouldEqual true
+    }
+
+    it("does not retrieve an null value") {
+      Try(ParameterSpec.xml(paramName, "").deserialize(null)).isFailure shouldEqual true
+    }
+
+    it("serializes correctly") {
+      ParameterSpec.xml(paramName, "").serialize(expected) shouldEqual """<field>value</field>"""
+    }
+  }
+
   case class MyCustomType(value: Int)
 
   describe("custom") {
