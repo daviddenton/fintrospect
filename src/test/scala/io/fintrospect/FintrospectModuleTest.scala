@@ -154,7 +154,8 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     }
 
     describe("when a valid path does not contain required custom body") {
-      val d = RouteSpec("").body(Body(BodySpec[Int](None, ContentTypes.TEXT_PLAIN, _.toInt, _.toString)))
+      val body: UniBody[Int] = Body[Int](BodySpec[Int](None, ContentTypes.TEXT_PLAIN, _.toInt, _.toString), example = 1)
+      val d = RouteSpec("").body(body)
       val service = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))).toService
 
       it("it returns a 400 when the required body is missing") {

@@ -4,8 +4,9 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
+import io.fintrospect.ContentTypes._
 import io.fintrospect._
-import io.fintrospect.parameters.{Body, Query}
+import io.fintrospect.parameters.{Body, BodySpec, Query, StringParamType}
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.{JsonResponseBuilder, PlainTextResponseBuilder}
@@ -33,11 +34,12 @@ class SearchRoute(books: RemoteBooks) {
 }
 
 class BookAvailable(books: RemoteBooks) {
-  private val body = Body.json(Option("the book to search for"), Book("1984").toJson)
+  private val bodySpec = BodySpec[Book](Option("a book"), APPLICATION_JSON, s => Book.fromJson(parse(s)), b => compact(b.toJson))
+  private val body = Body(bodySpec, Book("1984"), StringParamType)
 
   def availability() = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
-      val book = Book.fromJson(body <-- request)
+      val book = body <-- request
       books.search(book.title)
         .map(results => {
         if (results.length > 0) PlainTextResponseBuilder.Ok else PlainTextResponseBuilder.Error(HttpResponseStatus.NOT_FOUND, "!")
