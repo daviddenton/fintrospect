@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import argo.jdom.JsonRootNode
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes._
-import io.fintrospect.util.ArgoUtil
+import io.fintrospect.util.ArgoUtil._
 
 import scala.xml.{Elem, XML}
 
@@ -19,6 +19,6 @@ import scala.xml.{Elem, XML}
 case class BodySpec[T](description: Option[String], contentType: ContentType, deserialize: String => T, serialize: T => String)
 
 object BodySpec {
-  def json(description: Option[String] = None): BodySpec[JsonRootNode] = BodySpec[JsonRootNode](description, APPLICATION_JSON, ArgoUtil.parse, ArgoUtil.compact)
+  def json(description: Option[String] = None): BodySpec[JsonRootNode] = BodySpec[JsonRootNode](description, APPLICATION_JSON, parse, compact)
   def xml(description: Option[String] = None): BodySpec[Elem] = BodySpec[Elem](description, APPLICATION_XML, XML.loadString, _.toString())
 }

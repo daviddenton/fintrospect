@@ -17,13 +17,11 @@ object Body {
   /**
    * Create a custom body type for the request. Encapsulates the means to insert/retrieve into the request
    */
-  def apply[T](bodySpec: BodySpec[T]): UniBody[T] = new UniBody[T](bodySpec, StringParamType, None)
+  def apply[T](bodySpec: BodySpec[T], example: T = null, paramType: ParamType = StringParamType): UniBody[T] = new UniBody[T](bodySpec, paramType, Option(example))
 
-  def json(description: Option[String], example: JsonRootNode = null): UniBody[JsonRootNode] =
-    new UniBody[JsonRootNode](BodySpec.json(description), ObjectParamType, Option(example))
+  def json(description: Option[String], example: JsonRootNode = null): UniBody[JsonRootNode] = Body(BodySpec.json(description), example, ObjectParamType)
 
-  def xml(description: Option[String], example: Elem = null): UniBody[Elem] =
-    new UniBody[Elem](BodySpec.xml(description), StringParamType, Option(example))
+  def xml(description: Option[String], example: Elem = null): UniBody[Elem] = Body(BodySpec.xml(description), example, StringParamType)
 
   def form(fields: FormField[_] with Retrieval[_, Form]*): FormBody = new FormBody(fields)
 }
