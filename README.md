@@ -27,7 +27,7 @@ and it has built against the version below:
 
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
-libraryDependencies += "com.twitter" %% "finagle-http" % "6.26.0"
+libraryDependencies += "com.twitter" %% "finagle-http" % "6.27.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "X.X.X"
 ```
 
