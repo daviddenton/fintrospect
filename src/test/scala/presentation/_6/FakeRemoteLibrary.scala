@@ -14,7 +14,6 @@ import presentation.Books
 class FakeRemoteLibrary(books: Books) {
   def search(titlePart: String) = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
-      println("i go this", titlePart)
       val results = books.titles().filter(_.toLowerCase.contains(titlePart.toLowerCase))
       Future.value(PlainTextResponseBuilder.Ok(results.mkString(",")))
     }

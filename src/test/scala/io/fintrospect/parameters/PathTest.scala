@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 
+import org.jboss.netty.handler.codec.http.HttpMethod
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class PathTest extends FunSpec with ShouldMatchers {
@@ -30,6 +31,10 @@ class PathTest extends FunSpec with ShouldMatchers {
 
     it("does not url decode reserved characters") {
       Path.string("urlEncoded").unapply(":@-._~!$&'()*+,;=") shouldEqual Option(":@-._~!$&'()*+,;=")
+    }
+
+    it("handles special characters when binding values") {
+      (Path.string("urlEncoded") --> "a path/+piece").head.apply(RequestBuild()).build(HttpMethod.GET).getUri shouldEqual "a%20path%2F+piece"
     }
   }
 
