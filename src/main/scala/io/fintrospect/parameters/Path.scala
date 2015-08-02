@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import java.net.URI
+import io.fintrospect.util.PathSegmentEncoderDecoder.{decode, encode}
 
 import scala.util.Try
 
@@ -38,11 +38,9 @@ object Path extends Parameters[PathParameter, PathBindable] {
 
     override def toString() = s"{$name}"
 
-    override def unapply(str: String) = Option(str).flatMap(s => {
-      Try(spec.deserialize(new URI("http://localhost/" + s).getPath.substring(1))).toOption
-    })
+    override def unapply(str: String) = Option(str).flatMap(s => Try(spec.deserialize(decode(s))).toOption)
 
-    override def -->(value: T) = Seq(new PathBinding(this, spec.serialize(value)))
+    override def -->(value: T) = Seq(new PathBinding(this, encode(spec.serialize(value))))
 
     override def iterator = Option(this).iterator
   }
