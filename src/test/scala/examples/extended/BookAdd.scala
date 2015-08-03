@@ -27,7 +27,7 @@ class BookAdd(books: Books) {
       }
   }
 
-  val route = RouteSpec("add book by isbn number")
+  val route = RouteSpec("add book by isbn number", "This book must not already exist")
     .body(jsonBody)
     .returning(ResponseSpec.json(CREATED -> "we added your book", exampleBook.toJson))
     .returning(bookExistsResponse)

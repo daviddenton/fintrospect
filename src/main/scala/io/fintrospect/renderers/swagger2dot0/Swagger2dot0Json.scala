@@ -58,6 +58,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     val route2 = route.method.getName.toLowerCase -> obj(
       "tags" -> array(string(basePath.toString)),
       "summary" -> string(route.routeSpec.summary),
+      "description" -> route.routeSpec.description.map(string).getOrElse(nullNode()),
       "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "consumes" -> array(route.routeSpec.consumes.map(m => string(m.value))),
       "parameters" -> array(nonBodyParams ++ bpAndSchemaAndRendered.map(_._3)),

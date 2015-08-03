@@ -34,7 +34,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     obj(
       "httpMethod" -> string(route.method.getName),
       "nickname" -> string(route.routeSpec.summary),
-      "notes" -> string(route.routeSpec.summary),
+      "notes" -> route.routeSpec.description.map(string).getOrElse(nullNode()),
       "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "consumes" -> array(route.routeSpec.consumes.map(m => string(m.value))),
       "parameters" -> array(allParams.map(render)),
