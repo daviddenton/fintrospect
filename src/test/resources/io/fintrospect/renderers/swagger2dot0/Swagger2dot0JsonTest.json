@@ -13,6 +13,7 @@
           "/basepath"
         ],
         "summary": "a friendly endpoint",
+        "description": null,
         "produces": [],
         "consumes": [
           "application/x-www-form-urlencoded"
@@ -57,7 +58,8 @@
         "tags": [
           "/basepath"
         ],
-        "summary": "some rambling description of what this thing actually does",
+        "summary": "summary of this route",
+        "description": "some rambling description of what this thing actually does",
         "produces": [
           "application/json"
         ],
@@ -100,6 +102,7 @@
           "/basepath"
         ],
         "summary": "a post endpoint",
+        "description": null,
         "produces": [
           "application/json"
         ],

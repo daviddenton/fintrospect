@@ -26,7 +26,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
     it("renders as expected") {
       val module = FintrospectModule(Root / "basepath", renderer)
         .withRoute(
-          RouteSpec("some rambling description of what this thing actually does")
+          RouteSpec("summary of this route", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
             .taking(Header.optional.string("header", "description of the header"))
             .returning(ResponseSpec.json(OK -> "peachy", obj("anObject" -> obj("aStringField" -> number(123)))))

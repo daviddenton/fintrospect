@@ -9,6 +9,7 @@ import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpRespons
  * Encapsulates the specification of an HTTP endpoint, for use by either the
  */
 case class RouteSpec private(summary: String,
+                             description: Option[String],
                              produces: Set[ContentType],
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
@@ -72,5 +73,6 @@ case class RouteSpec private(summary: String,
 }
 
 object RouteSpec {
-  def apply(summary: String = "<unknown>"): RouteSpec = RouteSpec(summary, Set.empty, Set.empty, None, Nil, Nil, Nil)
+  def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
+    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil, Nil)
 }
