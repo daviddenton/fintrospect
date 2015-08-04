@@ -30,22 +30,21 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   }
 
   private def render(parameter: Parameter, schema: Option[Schema]): JsonNode = {
-    val typeField = schema.map("schema" -> _.node).getOrElse("type" -> string(parameter.paramType.name))
     obj(
       "in" -> string(parameter.where),
       "name" -> string(parameter.name),
       "description" -> parameter.description.map(string).getOrElse(nullNode()),
       "required" -> boolean(parameter.required),
-      typeField
+      schema.map("schema" -> _.node).getOrElse("type" -> string(parameter.paramType.name))
     )
   }
 
   private def render(basePath: Path, route: ServerRoute): FieldAndDefinitions = {
     val FieldsAndDefinitions(responses, responseDefinitions) = render(route.routeSpec.responses)
 
-    val bodyParameters = route.routeSpec.body.map(_.iterator).getOrElse(Nil)
+    val bodyParameters = route.routeSpec.body.flatMap(p => Option(p.toList)).getOrElse(Nil)
 
-    val bpAndSchemaAndRendered = bodyParameters.map(p => {
+    val bodyAndSchemaAndRendered = bodyParameters.map(p => {
       val exampleOption = p.example.flatMap(s => Try(parse(s)).toOption).map(schemaGenerator.toSchema)
       (p, exampleOption, render(p, exampleOption))
     })
@@ -61,12 +60,12 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "description" -> route.routeSpec.description.map(string).getOrElse(nullNode()),
       "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "consumes" -> array(route.routeSpec.consumes.map(m => string(m.value))),
-      "parameters" -> array(nonBodyParams ++ bpAndSchemaAndRendered.map(_._3)),
+      "parameters" -> array(nonBodyParams ++ bodyAndSchemaAndRendered.map(_._3)),
       "responses" -> obj(responses),
       "supportedContentTypes" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "security" -> array()
     )
-    FieldAndDefinitions(route2, responseDefinitions ++ bpAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))
+    FieldAndDefinitions(route2, responseDefinitions ++ bodyAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))
   }
 
   private def render(responses: Seq[ResponseSpec]): FieldsAndDefinitions = {
