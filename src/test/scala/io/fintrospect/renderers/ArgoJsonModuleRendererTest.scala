@@ -24,12 +24,15 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
 
   describe(name) {
     it("renders as expected") {
+
+      val customBody = Body.json(Option("the body of the message"), obj("anObject" -> obj("notAStringField" -> number(123))))
+
       val module = FintrospectModule(Root / "basepath", renderer)
         .withRoute(
           RouteSpec("summary of this route", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
             .taking(Header.optional.string("header", "description of the header"))
-            .returning(ResponseSpec.json(OK -> "peachy", obj("anObject" -> obj("aStringField" -> number(123)))))
+            .returning(ResponseSpec.json(OK -> "peachy", obj("anAnotherObject" -> obj("aNumberField" -> number(123)))))
             .returning(FORBIDDEN -> "no way jose")
             .at(GET) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
@@ -38,7 +41,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
             .producing(APPLICATION_JSON)
             .returning(ResponseSpec.json(FORBIDDEN -> "no way jose", obj("aString" -> ArgoUtil.string("a message of some kind"))))
             .taking(Query.required.int("query"))
-            .body(Body.json(Option("the body of the message"), obj("anObject" -> obj("aStringField" -> number(123)))))
+            .body(customBody)
             .at(POST) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
           RouteSpec("a friendly endpoint")
@@ -49,7 +52,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
       val actual = contentFrom(Await.result(module.toService(Request("/basepath"))))
-//                  println(actual)
+                  println(actual)
       parse(actual) shouldEqual expected
     }
   }

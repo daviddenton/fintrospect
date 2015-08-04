@@ -88,7 +88,7 @@
           "200": {
             "description": "peachy",
             "schema": {
-              "$ref": "#/definitions/object-1852275137"
+              "$ref": "#/definitions/object730416582"
             }
           }
         },
@@ -132,7 +132,7 @@
             "description": "the body of the message",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/object-1852275137"
+              "$ref": "#/definitions/object26492172"
             }
           }
         ],
@@ -152,18 +152,18 @@
     }
   },
   "definitions": {
-    "object-1852275137": {
+    "object730416582": {
       "type": "object",
       "properties": {
-        "anObject": {
-          "$ref": "#/definitions/object-1920275720"
+        "anAnotherObject": {
+          "$ref": "#/definitions/object-945611728"
         }
       }
     },
-    "object-1920275720": {
+    "object-945611728": {
       "type": "object",
       "properties": {
-        "aStringField": {
+        "aNumberField": {
           "type": "integer"
         }
       }
