@@ -5,6 +5,9 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+#####v8.3.1
+- Bugfix for Body models not being outputted in Swagger 2 JSON schema.
+
 #####v8.3.0
 - Added optional description field to ```RouteSpec```. This appears as the "implementation notes" section in Swagger docs.
 
