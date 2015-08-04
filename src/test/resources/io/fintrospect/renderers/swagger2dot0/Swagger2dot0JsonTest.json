@@ -175,6 +175,22 @@
           "type": "string"
         }
       }
+    },
+    "object26492172": {
+      "type": "object",
+      "properties": {
+        "anObject": {
+          "$ref": "#/definitions/object-126230811"
+        }
+      }
+    },
+    "object-126230811": {
+      "type": "object",
+      "properties": {
+        "notAStringField": {
+          "type": "integer"
+        }
+      }
     }
   }
 }
