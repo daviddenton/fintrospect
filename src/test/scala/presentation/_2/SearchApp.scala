@@ -4,9 +4,9 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
-import io.fintrospect.renderers.simplejson.SimpleJson
+import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 import io.fintrospect.util.PlainTextResponseBuilder
-import io.fintrospect.{CorsFilter, FintrospectModule, RouteSpec}
+import io.fintrospect.{ApiInfo, CorsFilter, FintrospectModule, RouteSpec}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 import presentation.Books
 
@@ -18,7 +18,9 @@ class SearchApp(books: Books) {
     }
   }
 
-  val service = FintrospectModule(Root, SimpleJson())
+  private val apiInfo = ApiInfo("search some books", "1.0", Option("an api for searching our book collection"))
+
+  val service = FintrospectModule(Root, Swagger2dot0Json(apiInfo))
     .withRoute(RouteSpec("search books").at(HttpMethod.GET) / "search" bindTo search)
     .toService
 
