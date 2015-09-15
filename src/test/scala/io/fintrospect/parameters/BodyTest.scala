@@ -28,7 +28,6 @@ class BodyTest extends FunSpec with ShouldMatchers {
 
   describe("form") {
     it("should serialize and deserialize into the request") {
-
       val date = FormField.required.localDate("date")
       val formBody = Body.form(date)
       val inputForm = Form(date --> LocalDate.of(1976, 8, 31))
@@ -36,6 +35,18 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
 
       contentFrom(request) shouldEqual "date=1976-08-31"
+      request.headers().get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
+      val deserializedForm = formBody from request
+      deserializedForm shouldEqual inputForm
+    }
+
+    it("should serialize strings correctly into the request") {
+      val aString = FormField.required.string("na&\"<>me")
+      val formBody = Body.form(aString)
+      val inputForm = Form(aString --> "&\"<>")
+      val bindings = formBody --> inputForm
+      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+
       request.headers().get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
       deserializedForm shouldEqual inputForm
