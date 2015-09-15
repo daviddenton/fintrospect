@@ -1,13 +1,15 @@
 package io.fintrospect.parameters
 
+import java.net.URLDecoder._
+import java.net.URLEncoder.encode
+
 import com.twitter.io.Charsets
 import io.fintrospect.ContentTypes
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
-import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder, QueryStringEncoder}
+import org.jboss.netty.handler.codec.http.HttpRequest
 
-import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
 
@@ -34,21 +36,32 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
     Try(contentFrom(request)) match {
       case Success(r) => Try(FormBody.spec.deserialize(r)) match {
         case Success(v) => fields.map(_.validate(v))
-        case Failure(_) => fields.filter(!_.required).map(Left(_))
+        case Failure(e) => fields.filter(_.required).map(Left(_))
       }
-      case _ => fields.filter(!_.required).map(Left(_))
+      case _ => fields.filter(_.required).map(Left(_))
     }
   }
 }
 
 object FormBody {
-  private val spec = new BodySpec[Form](None,
-    ContentTypes.APPLICATION_FORM_URLENCODED,
-    content => new Form(new QueryStringDecoder("?" + content).getParameters.asScala.mapValues(_.asScala.toSet)),
-    form => {
-      val encoder = new QueryStringEncoder("")
-      form.foreach(entry => encoder.addParam(entry._1, entry._2.mkString(",")))
-      encoder.toUri.getQuery
+  private val spec = new BodySpec[Form](None, ContentTypes.APPLICATION_FORM_URLENCODED, decodeForm, encodeForm)
+
+  private def encodeForm(form: Form): String = {
+    form.flatMap {
+      case (name, values) => values.map {
+        case value => encode(name, "UTF-8") + "=" + encode(value, "UTF-8")
+      }
+    }.mkString("&")
+  }
+
+  private def decodeForm(content: String) = {
+    new Form(content
+      .split("&")
+      .map {
+      case nvp => (decode(nvp.split("=")(0), "UTF-8"), decode(nvp.split("=")(1), "UTF-8"))
     }
-  )
+      .groupBy(_._1)
+      .mapValues(_.map(_._2))
+      .mapValues(_.toSet))
+  }
 }

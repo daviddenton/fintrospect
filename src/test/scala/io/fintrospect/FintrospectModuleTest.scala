@@ -15,7 +15,7 @@ import io.fintrospect.util.ResponseBuilder._
 import io.fintrospect.util.{ArgoUtil, HttpRequestResponseUtil}
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
-import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
+import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class FintrospectModuleTest extends FunSpec with ShouldMatchers {
@@ -123,16 +123,16 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
     describe("when a valid path does not contain all required form fields") {
       val d = RouteSpec("").body(Body.form(FormField.required.int("aNumber")))
-      val service = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))).toService
+      val service = FintrospectModule(Root, SimpleJson()).withRoute(d.at(POST) / "svc" bindTo (() => AService(Seq()))).toService
 
       it("it returns a 400 when a required form field is missing") {
-        val request = Request("/svc")
+        val request = Request(HttpMethod.POST, "/svc")
         result(service(request)).getStatus shouldEqual BAD_REQUEST
       }
 
       it("it returns a 400 when the required form field is not the correct type") {
-        val request = Request("/svc")
-        request.params + ("aNumber" -> "notANumber")
+        val request = Request(HttpMethod.POST, "/svc")
+        request.setContentString("aNumber=notANumber")
         result(service(request)).getStatus shouldEqual BAD_REQUEST
       }
     }
