@@ -1,4 +1,4 @@
-package io.fintrospect.util
+package io.fintrospect.util.json
 
 import java.math.BigInteger
 
@@ -9,7 +9,7 @@ import argo.jdom.{JdomParser, JsonNode, JsonNodeFactories, JsonRootNode}
 /**
  * Utility functions for dealing with Argo JSON nodes (creating/parsing/printing)
  */
-object ArgoUtil {
+object ArgoJsonFormat extends JsonFormat[JsonRootNode] {
 
   type Field = (String, JsonNode)
 

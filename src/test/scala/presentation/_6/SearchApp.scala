@@ -8,8 +8,9 @@ import io.fintrospect.ContentTypes._
 import io.fintrospect._
 import io.fintrospect.parameters.{Body, BodySpec, Query, StringParamType}
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
-import io.fintrospect.util.ArgoUtil._
-import io.fintrospect.util.{JsonResponseBuilder, PlainTextResponseBuilder}
+import io.fintrospect.util.PlainTextResponseBuilder
+import io.fintrospect.util.json.ArgoJsonFormat._
+import io.fintrospect.util.json.{ArgoJsonFormat, ArgoJsonResponseBuilder}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 import presentation.Book
 
@@ -23,7 +24,7 @@ class SearchRoute(books: RemoteBooks) {
 
       books.search(titlePart)
         .map(results => results.split(",").map(Book(_)).toSeq)
-        .map(books => JsonResponseBuilder.Ok(array(books.map(_.toJson))))
+        .map(books => ArgoJsonResponseBuilder.Ok(array(books.map(_.toJson))))
     }
   }
 

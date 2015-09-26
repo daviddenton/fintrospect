@@ -2,7 +2,9 @@ package io.fintrospect.parameters
 
 import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 
-import io.fintrospect.util.ArgoUtil._
+import io.fintrospect.util.json.ArgoJsonFormat._
+import io.fintrospect.util.json.{ArgoJsonFormat, Json4sFormat, JsonFormat}
+import org.json4s.JsonAST.{JObject, JString}
 import org.scalatest._
 
 import scala.util.{Success, Try}
@@ -170,25 +172,29 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  describe("json") {
-    val expected = obj("field" -> string("value"))
+  private def describeJson[T](name: String, expected: T, jsonFormat: JsonFormat[T]): Unit = {
+    describe(name + " Json") {
+      it("retrieves a valid value") {
+        Try(ParameterSpec.json(paramName, "", jsonFormat).deserialize(jsonFormat.compact(expected))) shouldEqual Success(expected)
+      }
 
-    it("retrieves a valid value") {
-      Try(ParameterSpec.json(paramName, "").deserialize(compact(expected))) shouldEqual Success(expected)
-    }
+      it("does not retrieve an invalid value") {
+        Try(ParameterSpec.json(paramName, "", jsonFormat).deserialize("notJson")).isFailure shouldEqual true
+      }
 
-    it("does not retrieve an invalid value") {
-      Try(ParameterSpec.json(paramName, "").deserialize("notJson")).isFailure shouldEqual true
-    }
+      it("does not retrieve an null value") {
+        Try(ParameterSpec.json(paramName, "", jsonFormat).deserialize(null)).isFailure shouldEqual true
+      }
 
-    it("does not retrieve an null value") {
-      Try(ParameterSpec.json(paramName, "").deserialize(null)).isFailure shouldEqual true
-    }
-
-    it("serializes correctly") {
-      ParameterSpec.json(paramName, "").serialize(expected) shouldEqual """{"field":"value"}"""
+      it("serializes correctly") {
+        ParameterSpec.json(paramName, "", jsonFormat).serialize(expected) shouldEqual """{"field":"value"}"""
+      }
     }
   }
+
+  describeJson("argo", obj("field" -> string("value")), ArgoJsonFormat)
+  describeJson("json4s native", JObject("field" -> JString("value")), Json4sFormat.native())
+  describeJson("json4s jackson", JObject("field" -> JString("value")), Json4sFormat.jackson())
 
   describe("xml") {
     val expected = <field>value</field>

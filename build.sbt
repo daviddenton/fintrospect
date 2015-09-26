@@ -19,8 +19,12 @@ scalacOptions += "-feature"
 
 libraryDependencies ++= Seq(
   "net.sourceforge.argo" % "argo" % "3.12",
+  "org.json4s" %% "json4s" % "3.2.11" % "provided",
+  "org.json4s" %% "json4s-native" % "3.2.11" % "provided",
+  "org.json4s" %% "json4s-jackson" % "3.2.11" % "provided",
   "com.twitter" %% "finagle-http" % "6.27.0" % "provided",
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test")
+  "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+)
 
 licenses +=("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
 
