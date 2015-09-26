@@ -45,7 +45,7 @@ object Json4s {
    */
   def native(numberMode: NumberMode = NumberMode.UseBigDecimal): JsonLibrary[JValue, JValue, JField] = {
     new JsonLibrary[JValue, JValue, JField] {
-      override val JsonFormat = new AbstractJson4sFormat(numberMode) {
+      override lazy val JsonFormat = new AbstractJson4sFormat(numberMode) {
 
         import org.json4s._
 
@@ -64,7 +64,7 @@ object Json4s {
    */
   def jackson(numberMode: NumberMode = NumberMode.UseBigDecimal): JsonLibrary[JValue, JValue, JField] = {
     new JsonLibrary[JValue, JValue, JField] {
-      override val JsonFormat = new AbstractJson4sFormat(numberMode) {
+      override lazy val JsonFormat = new AbstractJson4sFormat(numberMode) {
 
         import org.json4s._
 
