@@ -2,8 +2,8 @@ package io.fintrospect.parameters
 
 import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 
-import io.fintrospect.util.json.ArgoJsonFormat._
-import io.fintrospect.util.json.{ArgoJsonFormat, Json4sFormat, JsonFormat}
+import io.fintrospect.util.json.Argo.JsonFormat._
+import io.fintrospect.util.json.{Argo, Json4s, JsonFormat}
 import org.json4s.JsonAST.{JObject, JString}
 import org.scalatest._
 
@@ -192,9 +192,9 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  describeJson("argo", obj("field" -> string("value")), ArgoJsonFormat)
-  describeJson("json4s native", JObject("field" -> JString("value")), Json4sFormat.native())
-  describeJson("json4s jackson", JObject("field" -> JString("value")), Json4sFormat.jackson())
+  describeJson("argo", obj("field" -> string("value")), Argo.JsonFormat)
+  describeJson("json4s native", JObject("field" -> JString("value")), Json4s.native().JsonFormat)
+  describeJson("json4s jackson", JObject("field" -> JString("value")), Json4s.jackson().JsonFormat)
 
   describe("xml") {
     val expected = <field>value</field>

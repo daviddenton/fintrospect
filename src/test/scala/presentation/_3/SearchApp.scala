@@ -6,7 +6,8 @@ import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
-import io.fintrospect.util.PlainTextResponseBuilder
+import io.fintrospect.util.PlainTextResponseBuilder._
+import io.fintrospect.util.ResponseBuilder._
 import io.fintrospect.{ApiInfo, CorsFilter, FintrospectModule, RouteSpec}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 import presentation.Books
@@ -18,7 +19,7 @@ class SearchRoute(books: Books) {
     override def apply(request: HttpRequest): Future[HttpResponse] = {
       val titlePart = titlePartParam <-- request
       val results = books.titles().filter(_.toLowerCase.contains(titlePart.toLowerCase))
-      Future.value(PlainTextResponseBuilder.Ok(results.toString()))
+      Ok(results.toString())
     }
   }
 

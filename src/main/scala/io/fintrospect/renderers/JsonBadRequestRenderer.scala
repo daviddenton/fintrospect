@@ -1,8 +1,7 @@
 package io.fintrospect.renderers
 import io.fintrospect.parameters.Parameter
-import io.fintrospect.util.json.ArgoJsonFormat._
-import io.fintrospect.util.json.ArgoJsonResponseBuilder._
-import io.fintrospect.util.json.{ArgoJsonFormat, ArgoJsonResponseBuilder}
+import io.fintrospect.util.json.Argo.JsonFormat._
+import io.fintrospect.util.json.Argo.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponse
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 

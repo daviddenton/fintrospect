@@ -6,8 +6,10 @@ import io.fintrospect.Headers._
 import io.fintrospect.RouteClient.Identify
 import io.fintrospect.parameters._
 import io.fintrospect.util.PlainTextResponseBuilder._
+import io.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http._
+
 
 object RouteClient {
 
@@ -51,12 +53,12 @@ class RouteClient(method: HttpMethod,
 
     val missing = requiredParams.diff(userSuppliedParams)
     if (missing.nonEmpty) {
-      return Future.value(Error(BAD_REQUEST, "Client: Missing required params passed: " + missing.toSet))
+      return Error(BAD_REQUEST, "Client: Missing required params passed: " + missing.toSet)
     }
 
     val invalid = userSuppliedParams.diff(allPossibleParams)
     if (invalid.nonEmpty) {
-      return Future.value(Error(BAD_REQUEST, "Client: Unknown params passed: " + invalid.toSet))
+      return Error(BAD_REQUEST, "Client: Unknown params passed: " + invalid.toSet)
     }
 
     val req = suppliedBindings

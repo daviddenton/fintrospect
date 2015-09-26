@@ -5,9 +5,8 @@ import com.twitter.finagle.http.path.Path
 import io.fintrospect.ServerRoute
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
-import io.fintrospect.util.json.ArgoJsonFormat._
-import io.fintrospect.util.json.ArgoJsonResponseBuilder._
-import io.fintrospect.util.json.{ArgoJsonFormat, ArgoJsonResponseBuilder}
+import io.fintrospect.util.json.Argo.JsonFormat._
+import io.fintrospect.util.json.Argo.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponse
 
 import scala.collection.JavaConversions._

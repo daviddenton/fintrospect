@@ -7,8 +7,8 @@ import com.twitter.util.Future
 import io.fintrospect._
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
-import io.fintrospect.util.json.ArgoJsonFormat._
-import io.fintrospect.util.json.{ArgoJsonFormat, ArgoJsonResponseBuilder}
+import io.fintrospect.util.json.Argo
+import io.fintrospect.util.json.Argo.JsonFormat._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 import presentation.Book
 
@@ -22,7 +22,7 @@ class SearchRoute(books: RemoteBooks) {
 
       books.search(titlePart)
         .map(results => results.split(",").map(Book(_)).toSeq)
-        .map(books => ArgoJsonResponseBuilder.Ok(array(books.map(_.toJson))))
+        .map(books => Argo.ResponseBuilder.Ok(array(books.map(_.toJson))))
     }
   }
 

@@ -5,8 +5,7 @@ import argo.jdom.JsonNodeFactories.string
 import argo.jdom.JsonNodeType._
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.util.JsonToJsonSchema.IllegalSchemaException
-import io.fintrospect.util.json.ArgoJsonFormat
-import io.fintrospect.util.json.ArgoJsonFormat._
+import io.fintrospect.util.json.Argo.JsonFormat._
 import org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode
 
 import scala.collection.JavaConversions._

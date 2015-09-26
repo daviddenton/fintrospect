@@ -4,9 +4,9 @@ import com.twitter.finagle.http.path.Path
 import io.fintrospect.ServerRoute
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
-import io.fintrospect.util.json.ArgoJsonFormat._
-import io.fintrospect.util.json.ArgoJsonResponseBuilder._
-import io.fintrospect.util.json.{ArgoJsonFormat, ArgoJsonResponseBuilder}
+import io.fintrospect.util.json.Argo
+import io.fintrospect.util.json.Argo.JsonFormat._
+import io.fintrospect.util.json.Argo.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponse
 
 /**
@@ -16,7 +16,7 @@ class SimpleJson extends ModuleRenderer {
   override def badRequest(badParameters: Seq[Parameter]): HttpResponse = JsonBadRequestRenderer(badParameters)
 
   private def render(basePath: Path, route: ServerRoute): Field = {
-    route.method + ":" + route.describeFor(basePath) -> string(route.routeSpec.summary)
+    route.method + ":" + route.describeFor(basePath) -> Argo.JsonFormat.string(route.routeSpec.summary)
   }
 
   override def description(basePath: Path, routes: Seq[ServerRoute]): HttpResponse = Ok(obj("resources" -> obj(routes.map(r => render(basePath, r)))))

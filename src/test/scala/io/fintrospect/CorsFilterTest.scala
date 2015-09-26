@@ -6,8 +6,7 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.util.{Await, Duration}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import io.fintrospect.util.ResponseBuilder._
-import io.fintrospect.util.json.ArgoJsonResponseBuilder
-import io.fintrospect.util.json.ArgoJsonResponseBuilder.{Error, Ok}
+import io.fintrospect.util.json.Argo.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FlatSpec, MustMatchers}
 

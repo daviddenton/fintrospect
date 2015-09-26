@@ -8,9 +8,8 @@ import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect._
 import io.fintrospect.parameters._
 import io.fintrospect.util.ResponseBuilder._
-import io.fintrospect.util.json.ArgoJsonFormat._
-import io.fintrospect.util.json.ArgoJsonResponseBuilder.Ok
-import io.fintrospect.util.json.{ArgoJsonFormat, ArgoJsonResponseBuilder}
+import io.fintrospect.util.json.Argo.JsonFormat._
+import io.fintrospect.util.json.Argo.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}

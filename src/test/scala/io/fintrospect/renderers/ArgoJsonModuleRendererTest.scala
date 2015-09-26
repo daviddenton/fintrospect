@@ -9,8 +9,8 @@ import io.fintrospect._
 import io.fintrospect.parameters.Path._
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil._
-import io.fintrospect.util.json.ArgoJsonFormat
-import io.fintrospect.util.json.ArgoJsonFormat.{number, obj, parse}
+import io.fintrospect.util.json.Argo
+import io.fintrospect.util.json.Argo.JsonFormat._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -39,7 +39,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
           RouteSpec("a post endpoint")
             .consuming(APPLICATION_ATOM_XML, APPLICATION_SVG_XML)
             .producing(APPLICATION_JSON)
-            .returning(ResponseSpec.json(FORBIDDEN -> "no way jose", obj("aString" -> ArgoJsonFormat.string("a message of some kind"))))
+            .returning(ResponseSpec.json(FORBIDDEN -> "no way jose", obj("aString" -> Argo.JsonFormat.string("a message of some kind"))))
             .taking(Query.required.int("query"))
             .body(customBody)
             .at(POST) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
