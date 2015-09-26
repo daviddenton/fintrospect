@@ -9,7 +9,7 @@ package io.fintrospect.util.json
 trait JsonLibrary[R, N, F] {
 
   /**
-   * Use this to
+   * Use this to parse and create JSON objects in a generic way
    */
   val JsonFormat: JsonFormat[R, N, F]
 
