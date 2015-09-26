@@ -9,20 +9,18 @@ import argo.jdom.{JdomParser, JsonNode, JsonNodeFactories, JsonRootNode}
 /**
  * Utility functions for dealing with Argo JSON nodes (creating/parsing/printing)
  */
-object ArgoJsonFormat extends JsonFormat[JsonRootNode] {
-
-  type Field = (String, JsonNode)
+object ArgoJsonFormat extends JsonFormat[JsonRootNode, JsonNode] {
 
   private val pretty = new PrettyJsonFormatter()
   private val compact = new CompactJsonFormatter()
 
-  def parse(in: String): JsonRootNode = new JdomParser().parse(in)
+  override def parse(in: String): JsonRootNode = new JdomParser().parse(in)
 
-  def pretty(node: JsonRootNode): String = pretty.format(node)
+  override def pretty(node: JsonRootNode): String = pretty.format(node)
 
-  def compact(node: JsonRootNode): String = compact.format(node)
+  override def compact(node: JsonRootNode): String = compact.format(node)
 
-  def obj(fields: Iterable[Field]): JsonRootNode = {
+  override def obj(fields: Iterable[Field]): JsonRootNode = {
     JsonNodeFactories.`object`(fields.map(f => field(f._1, f._2)).toSeq: _*)
   }
 

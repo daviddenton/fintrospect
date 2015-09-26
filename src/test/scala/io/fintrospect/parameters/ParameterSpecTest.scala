@@ -172,7 +172,7 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  private def describeJson[T](name: String, expected: T, jsonFormat: JsonFormat[T]): Unit = {
+  private def describeJson[T](name: String, expected: T, jsonFormat: JsonFormat[T, _]): Unit = {
     describe(name + " Json") {
       it("retrieves a valid value") {
         Try(ParameterSpec.json(paramName, "", jsonFormat).deserialize(jsonFormat.compact(expected))) shouldEqual Success(expected)
