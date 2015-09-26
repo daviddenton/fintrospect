@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
-import argo.jdom.JsonRootNode
 import io.fintrospect.ContentType
+import io.fintrospect.util.json.{Argo, JsonFormat}
 import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.xml.Elem
@@ -19,7 +19,7 @@ object Body {
    */
   def apply[T](bodySpec: BodySpec[T], example: T = null, paramType: ParamType = StringParamType): UniBody[T] = new UniBody[T](bodySpec, paramType, Option(example))
 
-  def json(description: Option[String], example: JsonRootNode = null): UniBody[JsonRootNode] = Body(BodySpec.json(description), example, ObjectParamType)
+  def json[T](description: Option[String], example: T = null, jsonFormat: JsonFormat[T, _, _] = Argo.JsonFormat): UniBody[T] = Body(BodySpec.json(description, jsonFormat), example, ObjectParamType)
 
   def xml(description: Option[String], example: Elem = null): UniBody[Elem] = Body(BodySpec.xml(description), example, StringParamType)
 
