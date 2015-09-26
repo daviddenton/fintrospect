@@ -36,6 +36,6 @@ object ParameterSpec {
   def long(name: String, description: String = null) = ParameterSpec[Long](name, Option(description), IntegerParamType, _.toLong, _.toString)
   def int(name: String, description: String = null) = ParameterSpec[Int](name, Option(description), IntegerParamType, _.toInt, _.toString)
   def integer(name: String, description: String = null) = ParameterSpec[Integer](name, Option(description), IntegerParamType, new Integer(_), _.toString)
-  def json[T](name: String, description: String = null, format: JsonFormat[T] = ArgoJsonFormat) = ParameterSpec[T](name, Option(description), ObjectParamType, format.parse, format.compact)
+  def json[T](name: String, description: String = null, format: JsonFormat[T, _] = ArgoJsonFormat) = ParameterSpec[T](name, Option(description), ObjectParamType, format.parse, format.compact)
   def xml(name: String, description: String = null) = ParameterSpec[Elem](name, Option(description), StringParamType, XML.loadString, _.toString())
 }
