@@ -6,7 +6,7 @@ import io.fintrospect.util.{ResponseBuilder, ResponseBuilderObject}
 class JsonResponseBuilder[T, N, F](format: JsonFormat[T, N, F]) extends ResponseBuilderObject[T] {
   private def formatJson(node: T): String = format.pretty(node)
 
-  private def formatErrorMessage(errorMessage: String): T =  format.obj("message" -> format.string(errorMessage))
+  private def formatErrorMessage(errorMessage: String): T = format.obj("message" -> format.string(errorMessage))
 
   private def formatError(throwable: Throwable): T = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 

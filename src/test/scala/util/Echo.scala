@@ -1,20 +1,19 @@
 package util
 
-import argo.jdom.JsonNodeFactories._
 import com.twitter.finagle.Service
 import com.twitter.util.Future
 import io.fintrospect.util.HttpRequestResponseUtil.headersFrom
 import io.fintrospect.util.ResponseBuilder._
-import io.fintrospect.util.json.ArgoJsonFormat.obj
-import io.fintrospect.util.json.ArgoJsonResponseBuilder.Ok
-import io.fintrospect.util.json.{ArgoJsonFormat, ArgoJsonResponseBuilder}
+import io.fintrospect.util.json.Argo.JsonFormat
+import io.fintrospect.util.json.Argo.JsonFormat._
+import io.fintrospect.util.json.Argo.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 case class Echo(parts: String*) extends Service[HttpRequest, HttpResponse] {
   def apply(request: HttpRequest): Future[HttpResponse] = {
     Ok(obj(
-      "headers" -> string(headersFrom(request).toString()),
-      "params" -> string(request.toString),
-      "message" -> string(parts.mkString(" "))))
+      "headers" -> JsonFormat.string(headersFrom(request).toString()),
+      "params" -> JsonFormat.string(request.toString),
+      "message" -> JsonFormat.string(parts.mkString(" "))))
   }
 }

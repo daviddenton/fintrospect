@@ -6,6 +6,7 @@ import com.twitter.util.Future
 import io.fintrospect.parameters.{Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil._
 import io.fintrospect.util.PlainTextResponseBuilder._
+import io.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse, HttpResponseStatus}
@@ -15,7 +16,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
 
   describe("Http Route as a client") {
     val returnsMethodAndUri = Service.mk[HttpRequest, HttpResponse] { request =>
-      Future.value(Ok(request.getMethod + "," + request.getUri))
+      Ok(request.getMethod + "," + request.getUri)
     }
     val name = Path.string("name")
     val maxAge = Path.integer("maxAge")
@@ -59,7 +60,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
     }
 
     describe("puts the header parameters into the request") {
-      val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
+      val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request => Ok(headersFrom(request).toString()) }
 
       val nameHeader = Header.optional.string("name")
 
@@ -74,7 +75,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
     }
 
     describe("identifies") {
-      val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
+      val returnsHeaders = Service.mk[HttpRequest, HttpResponse] { request => Ok(headersFrom(request).toString()) }
 
       val intParam = Path.int("anInt")
 

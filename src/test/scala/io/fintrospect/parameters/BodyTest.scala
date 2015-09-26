@@ -6,8 +6,8 @@ import com.twitter.finagle.http.Request
 import com.twitter.io.Charsets
 import io.fintrospect.ContentTypes
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
-import io.fintrospect.util.json.ArgoJsonFormat
-import io.fintrospect.util.json.ArgoJsonFormat._
+import io.fintrospect.util.json.Argo
+import io.fintrospect.util.json.Argo.JsonFormat._
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.jboss.netty.handler.codec.http.HttpMethod
@@ -18,6 +18,7 @@ import scala.xml.XML
 class BodyTest extends FunSpec with ShouldMatchers {
 
   describe("body") {
+
     it("should retrieve the body value from the request") {
       val bodyJson = obj("field" -> string("value"))
       val request = Request("/")
@@ -86,7 +87,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
       inRequest.setContent(copiedBuffer(pretty(inputJson), Charsets.Utf8))
       val bindings = Body.json(None) <-> inRequest
       val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
-      ArgoJsonFormat.parse(contentFrom(outRequest)) shouldEqual inputJson
+      Argo.JsonFormat.parse(contentFrom(outRequest)) shouldEqual inputJson
     }
   }
 

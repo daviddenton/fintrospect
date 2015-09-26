@@ -4,15 +4,14 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.path.Path
 import com.twitter.util.Future
 import io.fintrospect.util.ResponseBuilder._
-import io.fintrospect.util.json.ArgoJsonResponseBuilder
-import io.fintrospect.util.json.ArgoJsonResponseBuilder._
+import io.fintrospect.util.json.Argo
 import org.jboss.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
 class Routing private(routes: PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]]) extends Service[HttpRequest, HttpResponse] {
   private val notFoundPf: PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]] = {
     case _ => new Service[HttpRequest, HttpResponse] {
-      def apply(request: HttpRequest): Future[HttpResponse] = Error(NOT_FOUND, "No route found on this path. Have you used the correct HTTP verb?")
+      def apply(request: HttpRequest): Future[HttpResponse] = Argo.ResponseBuilder.Error(NOT_FOUND, "No route found on this path. Have you used the correct HTTP verb?")
     }
   }
   private val requestToService = routes orElse notFoundPf

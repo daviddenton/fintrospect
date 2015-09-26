@@ -7,7 +7,8 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil._
-import io.fintrospect.util.PlainTextResponseBuilder
+import io.fintrospect.util.PlainTextResponseBuilder._
+import io.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
@@ -24,7 +25,7 @@ object ClientSideExample extends App {
       println("URL was " + request.getUri)
       println("Headers were " + headersFrom(request))
       println("Content was " + contentFrom(request))
-      Future.value(PlainTextResponseBuilder.Ok(""))
+      Ok("")
     }
   })
 

@@ -13,7 +13,7 @@ import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil._
 import io.fintrospect.util.PlainTextResponseBuilder._
 import io.fintrospect.util.ResponseBuilder._
-import io.fintrospect.util.json.ArgoJsonFormat
+import io.fintrospect.util.json.Argo
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
@@ -139,7 +139,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     }
 
     describe("when a valid path does not contain required JSON body") {
-      val d = RouteSpec("").body(Body.json(None, ArgoJsonFormat.obj()))
+      val d = RouteSpec("").body(Body.json(None, Argo.JsonFormat.obj()))
       val service = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))).toService
 
       it("it returns a 400 when the required body is missing") {
@@ -189,7 +189,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
     describe("identity") {
       it("identifies route with anonymised description when called") {
-        def getHeaders(number: Int, aString: String) = Service.mk[HttpRequest, HttpResponse] { request => Future.value(Ok(headersFrom(request).toString())) }
+        def getHeaders(number: Int, aString: String) = Service.mk[HttpRequest, HttpResponse] { request => Ok(headersFrom(request).toString()) }
         val route = RouteSpec("").at(GET) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
         val m = FintrospectModule(Root, SimpleJson()).withRoute(route)
         HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldEqual(OK, "Map(X-Fintrospect-Route-Name -> GET./svc/{anInt}/fixed)")
