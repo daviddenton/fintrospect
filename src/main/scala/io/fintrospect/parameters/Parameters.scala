@@ -2,7 +2,7 @@ package io.fintrospect.parameters
 
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
-import argo.jdom.JsonRootNode
+import io.fintrospect.util.json.{ArgoJsonFormat, JsonFormat}
 
 import scala.language.higherKinds
 import scala.xml.Elem
@@ -93,12 +93,12 @@ trait Parameters[P[_], R[_]] {
   def integer(name: String, description: String = null): P[Integer] with R[Integer] = apply(ParameterSpec.integer(name, description))
 
   /**
-   * Create a Argo-format JsonNode parameter which is constrained to values which parse to valid JSON objects
+   * Create a Json-format JsonNode parameter which is constrained to values which parse to valid JSON objects
    * @param name the name of the parameter (for use in description endpoints)
    * @param description optional description of the parameter (for use in description endpoints)
    * @return a parameter for retrieving a JsonNode value from the request
    */
-  def json(name: String, description: String = null): P[JsonRootNode] with R[JsonRootNode] = apply(ParameterSpec.json(name, description))
+  def json[T](name: String, description: String = null, format: JsonFormat[T] = ArgoJsonFormat): P[T] with R[T] = apply(ParameterSpec.json(name, description, format))
 
   /**
    * Create a native Scala XML-format parameter which is constrained to values which parse to valid XML objects

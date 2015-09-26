@@ -9,10 +9,11 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.FintrospectModule._
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.simplejson.SimpleJson
+import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil._
 import io.fintrospect.util.PlainTextResponseBuilder._
 import io.fintrospect.util.ResponseBuilder._
-import io.fintrospect.util.{ArgoUtil, HttpRequestResponseUtil}
+import io.fintrospect.util.json.ArgoJsonFormat
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
@@ -138,7 +139,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
     }
 
     describe("when a valid path does not contain required JSON body") {
-      val d = RouteSpec("").body(Body.json(None, ArgoUtil.obj()))
+      val d = RouteSpec("").body(Body.json(None, ArgoJsonFormat.obj()))
       val service = FintrospectModule(Root, SimpleJson()).withRoute(d.at(GET) / "svc" bindTo (() => AService(Seq()))).toService
 
       it("it returns a 400 when the required body is missing") {

@@ -3,8 +3,9 @@ package io.fintrospect
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.path.Path
 import com.twitter.util.Future
-import io.fintrospect.util.JsonResponseBuilder._
 import io.fintrospect.util.ResponseBuilder._
+import io.fintrospect.util.json.ArgoJsonResponseBuilder
+import io.fintrospect.util.json.ArgoJsonResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 

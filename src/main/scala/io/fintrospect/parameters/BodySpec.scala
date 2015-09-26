@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import argo.jdom.JsonRootNode
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes._
-import io.fintrospect.util.ArgoUtil._
+import io.fintrospect.util.json.ArgoJsonFormat._
 
 import scala.xml.{Elem, XML}
 

@@ -3,8 +3,7 @@ package io.fintrospect.parameters
 import java.time.format.DateTimeFormatter._
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
-import argo.jdom.JsonRootNode
-import io.fintrospect.util.ArgoUtil._
+import io.fintrospect.util.json.{ArgoJsonFormat, JsonFormat}
 
 import scala.xml.{Elem, XML}
 
@@ -37,6 +36,6 @@ object ParameterSpec {
   def long(name: String, description: String = null) = ParameterSpec[Long](name, Option(description), IntegerParamType, _.toLong, _.toString)
   def int(name: String, description: String = null) = ParameterSpec[Int](name, Option(description), IntegerParamType, _.toInt, _.toString)
   def integer(name: String, description: String = null) = ParameterSpec[Integer](name, Option(description), IntegerParamType, new Integer(_), _.toString)
-  def json(name: String, description: String = null) = ParameterSpec[JsonRootNode](name, Option(description), ObjectParamType, parse, compact)
+  def json[T](name: String, description: String = null, format: JsonFormat[T] = ArgoJsonFormat) = ParameterSpec[T](name, Option(description), ObjectParamType, format.parse, format.compact)
   def xml(name: String, description: String = null) = ParameterSpec[Elem](name, Option(description), StringParamType, XML.loadString, _.toString())
 }

@@ -5,9 +5,9 @@ import java.time.LocalDate
 import com.twitter.finagle.http.Request
 import com.twitter.io.Charsets
 import io.fintrospect.ContentTypes
-import io.fintrospect.util.ArgoUtil
-import io.fintrospect.util.ArgoUtil._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
+import io.fintrospect.util.json.ArgoJsonFormat
+import io.fintrospect.util.json.ArgoJsonFormat._
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.jboss.netty.handler.codec.http.HttpMethod
@@ -86,7 +86,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
       inRequest.setContent(copiedBuffer(pretty(inputJson), Charsets.Utf8))
       val bindings = Body.json(None) <-> inRequest
       val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
-      ArgoUtil.parse(contentFrom(outRequest)) shouldEqual inputJson
+      ArgoJsonFormat.parse(contentFrom(outRequest)) shouldEqual inputJson
     }
   }
 
