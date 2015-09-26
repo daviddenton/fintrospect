@@ -1,7 +1,7 @@
-package io.fintrospect
+package io.fintrospect.util.json
 
+import io.fintrospect.ResponseBuilderObjectSpec
 import io.fintrospect.util.json.ArgoJsonFormat._
-import io.fintrospect.util.json.{ArgoJsonFormat, ArgoJsonResponseBuilder}
 
 class ArgoJsonResponseBuilderTest extends ResponseBuilderObjectSpec(ArgoJsonResponseBuilder) {
   override val expectedContent = message
