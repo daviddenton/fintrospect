@@ -2,37 +2,37 @@ package io.fintrospect.util.json
 
 import java.math.BigInteger
 
-/*
- * Provides pluggable Json formats. Use with ParameterSpec
+/**
+ * Provides ability to create and parse JSON message formats.
  */
-trait JsonFormat[T, N, F] {
-  type Field = (String, N)
+trait JsonFormat[ROOT_NODETYPE, NODETYPE, FIELDTYPE] {
+  type Field = (String, NODETYPE)
 
-  def parse(in: String): T
+  def parse(in: String): ROOT_NODETYPE
 
-  def pretty(in: T): String
+  def pretty(in: ROOT_NODETYPE): String
 
-  def compact(in: T): String
+  def compact(in: ROOT_NODETYPE): String
 
-  def obj(fields: Iterable[Field]): T
+  def obj(fields: Iterable[Field]): ROOT_NODETYPE
 
-  def obj(fields: Field*): T
+  def obj(fields: Field*): ROOT_NODETYPE
 
-  def array(elements: Iterable[N]): N
+  def array(elements: Iterable[NODETYPE]): NODETYPE
 
-  def array(elements: N*): N
+  def array(elements: NODETYPE*): NODETYPE
 
-  def string(value: String): N
+  def string(value: String): NODETYPE
 
-  def number(value: Int): N
+  def number(value: Int): NODETYPE
 
-  def number(value: BigDecimal): N
+  def number(value: BigDecimal): NODETYPE
 
-  def number(value: Long): N
+  def number(value: Long): NODETYPE
 
-  def number(value: BigInteger): N
+  def number(value: BigInteger): NODETYPE
 
-  def boolean(value: Boolean): N
+  def boolean(value: Boolean): NODETYPE
 
-  def nullNode(): N
+  def nullNode(): NODETYPE
 }

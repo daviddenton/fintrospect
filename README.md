@@ -15,11 +15,8 @@ for parameters are supported. Also support for typesafe conversions of custom ty
 - Endpoints automatically verify the presence and validity of both optional and required parameters. If any parameters are missing or invalid, a ```BAD_REQUEST``` response is generated - meaning that no extra validation code is required for these parameters in your controller code.
 - The library provide identification HTTP headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. ```/search/author/rowling -> /search/author/{name}```.
 - Define HTTP Client endpoints APIs which reuse the same syntax and parameter bindings as the server-side, which means that you can use the same route specification to define both sides of the transport boundary. This allows, for example, 
-the HTTP API of a downstream servers (for a fake) to be created with no effort, and exactly matching the client side.
-- A set of HTTP Response builders with pluggable extension points for custom formats
-
-These endpoints are also exposed as simple functions.
-
+the HTTP API of a downstream servers (for a fake) to be created with no effort, and exactly matching the client side. These endpoints are also exposed as simple functions.
+- A set of HTTP Response builders with pluggable extension points for custom formats; currently supported are Argo JSON, and Json4s (Native and Jackson) and Scala native XML.
 
 ###Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,
@@ -30,6 +27,8 @@ resolvers += "JCenter" at "https://jcenter.bintray.com"
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.27.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "X.X.X"
 ```
+
+Additionally, to activate any message formats other than Argo JSON and native XML you'll need to import the relevant libraries (e.g. Json4S native/jackson), since only the bindings are included in the Fintrospect JAR.
 
 ###See it
 See the <a href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples" target="_top">example code</a>.
@@ -108,3 +107,6 @@ Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you 
 ###Upgrading?
 See the <a href="https://github.com/daviddenton/fintrospect/blob/master/RELEASE.md" target="_top">Roadmap</a>.
 
+###Contributions
+If there are any message format libraries bindings that you'd like to see included, then please feel free to suggest them or provide a PR. For JSON formats, this 
+is particularly easy to implement - just provide an implementation of ```JsonLibrary``` by following the ```Argo``` example in the source.

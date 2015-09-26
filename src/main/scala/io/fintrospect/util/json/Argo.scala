@@ -6,6 +6,9 @@ import argo.format.{CompactJsonFormatter, PrettyJsonFormatter}
 import argo.jdom.JsonNodeFactories._
 import argo.jdom._
 
+/**
+ * Argo JSON support.
+ */
 object Argo extends JsonLibrary[JsonRootNode, JsonNode, JsonField] {
   lazy val JsonFormat = new JsonFormat[JsonRootNode, JsonNode, JsonField] {
     private val pretty = new PrettyJsonFormatter()

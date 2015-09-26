@@ -5,7 +5,9 @@ import java.math.BigInteger
 import io.fintrospect.util.json.NumberMode.NumberMode
 import org.json4s._
 
-
+/**
+ * Json4S support
+ */
 object Json4s {
 
   private abstract class AbstractJson4sFormat(numberMode: NumberMode) extends JsonFormat[JValue, JValue, JField] {
@@ -37,6 +39,10 @@ object Json4s {
 
   }
 
+  /**
+   * Native Json4S support
+   * @param numberMode - how to treat decimal JSON values. Defaults to UseBigDecimal
+   */
   def native(numberMode: NumberMode = NumberMode.UseBigDecimal): JsonLibrary[JValue, JValue, JField] = {
     new JsonLibrary[JValue, JValue, JField] {
       override val JsonFormat = new AbstractJson4sFormat(numberMode) {
@@ -52,6 +58,10 @@ object Json4s {
     }
   }
 
+  /**
+   * Jackson Json4S support
+   * @param numberMode - how to treat decimal JSON values. Defaults to UseBigDecimal
+   */
   def jackson(numberMode: NumberMode = NumberMode.UseBigDecimal): JsonLibrary[JValue, JValue, JField] = {
     new JsonLibrary[JValue, JValue, JField] {
       override val JsonFormat = new AbstractJson4sFormat(numberMode) {
