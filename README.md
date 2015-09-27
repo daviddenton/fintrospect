@@ -16,7 +16,7 @@ for parameters are supported. Also support for typesafe conversions of custom ty
 - The library provide identification HTTP headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. ```/search/author/rowling -> /search/author/{name}```.
 - Define HTTP Client endpoints APIs which reuse the same syntax and parameter bindings as the server-side, which means that you can use the same route specification to define both sides of the transport boundary. This allows, for example, 
 the HTTP API of a downstream servers (for a fake) to be created with no effort, and exactly matching the client side. These endpoints are also exposed as simple functions.
-- A set of HTTP Response builders with pluggable extension points for custom formats; currently supported are Argo JSON, and Json4s (Native and Jackson) and Scala native XML.
+- A set of HTTP Response builders with pluggable extension points for custom formats; currently supported are Argo JSON and Scala native XML.
 
 ###Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,
