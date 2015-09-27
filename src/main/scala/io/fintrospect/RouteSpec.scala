@@ -1,8 +1,8 @@
 package io.fintrospect
 
-import argo.jdom.JsonRootNode
 import io.fintrospect.parameters.{Body, HeaderParameter, QueryParameter}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
+import io.fintrospect.util.json.{Argo, JsonFormat}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpResponseStatus}
 
 /**
@@ -62,7 +62,7 @@ case class RouteSpec private(summary: String,
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning(code: (HttpResponseStatus, String), example: JsonRootNode): RouteSpec = copy(responses = ResponseSpec.json(code, example) +: responses)
+  def returning[T](code: (HttpResponseStatus, String), example: T, jsonFormat: JsonFormat[T, _, _] = Argo.JsonFormat): RouteSpec = copy(responses = ResponseSpec.json(code, example, jsonFormat) +: responses)
 
   /**
    * Register a possible response which could be produced by this route, with an example body (used for schema generation).
