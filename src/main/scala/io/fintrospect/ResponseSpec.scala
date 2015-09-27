@@ -1,7 +1,7 @@
 package io.fintrospect
 
-import argo.jdom.JsonRootNode
 import io.fintrospect.parameters.BodySpec
+import io.fintrospect.util.json.{Argo, JsonFormat}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 import scala.util.Try
@@ -16,8 +16,8 @@ class ResponseSpec private[fintrospect](statusAndDescription: (HttpResponseStatu
 }
 
 object ResponseSpec {
-  def json(statusAndDescription: (HttpResponseStatus, String), example: JsonRootNode): ResponseSpec = {
-    ResponseSpec(statusAndDescription, example, BodySpec.json())
+  def json[T](statusAndDescription: (HttpResponseStatus, String), example: T, jsonFormat: JsonFormat[T, _ ,_] = Argo.JsonFormat): ResponseSpec = {
+    ResponseSpec(statusAndDescription, example, BodySpec.json(None, jsonFormat))
   }
 
   def xml(statusAndDescription: (HttpResponseStatus, String), example: Elem): ResponseSpec = {
