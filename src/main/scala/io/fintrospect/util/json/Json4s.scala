@@ -2,6 +2,7 @@ package io.fintrospect.util.json
 
 import java.math.BigInteger
 
+import org.json4s.Extraction.decompose
 import org.json4s._
 
 /**
@@ -9,8 +10,9 @@ import org.json4s._
  */
 object Json4s {
 
-  class AbstractJson4sFormat[T](jsonMethods: JsonMethods[T],
-                             useBigDecimalForDouble: Boolean) extends JsonFormat[JValue, JValue] {
+  class Json4sFormat[T](jsonMethods: JsonMethods[T],
+                        serialization: Serialization,
+                        useBigDecimalForDouble: Boolean) extends JsonFormat[JValue, JValue] {
 
     import org.json4s.JsonDSL._
     import org.json4s._
@@ -43,14 +45,15 @@ object Json4s {
 
     override def nullNode(): JValue = JNull
 
+    def encode(in: AnyRef, formats: Formats = serialization.formats(org.json4s.NoTypeHints)): JValue = decompose(in)(formats)
   }
 
   /**
    * Native Json4S support - uses BigDecimal for decimal
-   */˚
+   */
   object Native extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends AbstractJson4sFormat(org.json4s.native.JsonMethods, true)
+    object JsonFormat extends Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, true)
 
   }
 
@@ -59,7 +62,7 @@ object Json4s {
    */
   object NativeDoubleMode extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends AbstractJson4sFormat(org.json4s.native.JsonMethods, false)
+    object JsonFormat extends Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, false)
 
   }
 
@@ -68,7 +71,7 @@ object Json4s {
    */
   object Jackson extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends AbstractJson4sFormat(org.json4s.jackson.JsonMethods, true)
+    object JsonFormat extends Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, true)
 
   }
 
@@ -77,7 +80,7 @@ object Json4s {
    */
   object JacksonDoubleMode extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends AbstractJson4sFormat(org.json4s.jackson.JsonMethods, false)
+    object JsonFormat extends Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, false)
 
   }
 
