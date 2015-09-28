@@ -1,9 +1,9 @@
 package io.fintrospect.util.json
 
 import io.fintrospect.ContentTypes
-import io.fintrospect.util.{ResponseBuilder, ResponseBuilderObject}
+import io.fintrospect.util.{ResponseBuilder, ResponseBuilderMethods}
 
-class JsonResponseBuilder[T, N](format: JsonFormat[T, N]) extends ResponseBuilderObject[T] {
+class JsonResponseBuilder[T, N](format: JsonFormat[T, N]) extends ResponseBuilderMethods[T] {
   private def formatJson(node: T): String = format.pretty(node)
 
   private def formatErrorMessage(errorMessage: String): T = format.obj("message" -> format.string(errorMessage))

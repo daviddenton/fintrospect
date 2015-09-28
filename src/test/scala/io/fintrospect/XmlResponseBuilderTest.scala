@@ -2,7 +2,7 @@ package io.fintrospect
 
 import io.fintrospect.util.XmlResponseBuilder
 
-class XmlResponseBuilderTest extends ResponseBuilderObjectSpec(XmlResponseBuilder) {
+class XmlResponseBuilderTest extends ResponseBuilderMethodsSpec(XmlResponseBuilder) {
   override val expectedContent = message
   override val expectedErrorContent = s"<message>$message</message>"
   override val customType = <okThing>theMessage</okThing>

@@ -4,7 +4,7 @@ import io.fintrospect.ContentTypes
 
 import scala.xml.Elem
 
-object XmlResponseBuilder extends ResponseBuilderObject[Elem] {
+object XmlResponseBuilder extends ResponseBuilderMethods[Elem] {
 
   private def formatJson(node: Elem): String = node.toString()
 

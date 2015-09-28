@@ -3,7 +3,7 @@ package io.fintrospect.util
 import org.jboss.netty.handler.codec.http.HttpResponseStatus.OK
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
 
-trait ResponseBuilderObject[T] {
+trait ResponseBuilderMethods[T] {
   def Response(): ResponseBuilder[T]
 
   def Response(code: HttpResponseStatus): ResponseBuilder[T] = Response().withCode(code)
