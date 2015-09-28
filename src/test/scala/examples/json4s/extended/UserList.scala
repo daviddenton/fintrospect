@@ -1,7 +1,6 @@
 package examples.json4s.extended
 
 import com.twitter.finagle.Service
-import com.twitter.util.Future
 import examples.json4s.extended.InboxApp.JsonLibrary.JsonFormat
 import examples.json4s.extended.InboxApp.JsonLibrary.JsonFormat._
 import examples.json4s.extended.InboxApp.JsonLibrary.ResponseBuilder.Ok
@@ -13,7 +12,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 class UserList(emails: Emails) {
   private def list() = new Service[HttpRequest, HttpResponse] {
-    override def apply(request: HttpRequest): Future[HttpResponse] = Ok(encode(emails.users()))
+    override def apply(request: HttpRequest) = Ok(encode(emails.users()))
   }
 
   val route = RouteSpec("list the known users on this server")
