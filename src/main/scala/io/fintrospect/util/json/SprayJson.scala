@@ -10,7 +10,7 @@ import spray.json.{JsValue, JsonParser, _}
  */
 object SprayJson extends JsonLibrary[JsValue, JsValue] {
 
-  lazy val JsonFormat = new JsonFormat[JsValue, JsValue] {
+ object JsonFormat extends JsonFormat[JsValue, JsValue] {
 
     override def parse(in: String) = JsonParser(in)
 
