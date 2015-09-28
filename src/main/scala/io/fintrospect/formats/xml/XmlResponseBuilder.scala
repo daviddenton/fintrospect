@@ -1,6 +1,7 @@
-package io.fintrospect.formats
+package io.fintrospect.formats.xml
 
 import io.fintrospect.ContentTypes
+import io.fintrospect.formats.{ResponseBuilder, ResponseBuilderMethods}
 
 import scala.xml.Elem
 
