@@ -2,13 +2,12 @@ package io.fintrospect.formats.json
 
 import io.fintrospect.util.json.Json4s
 import io.fintrospect.util.json.Json4s.Json4sFormat
-import org.scalatest.{FunSpec, ShouldMatchers}
 
 case class StreetAddress(address: String)
 
 case class Letter(to: StreetAddress, from: StreetAddress, message: String)
 
-class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends FunSpec with ShouldMatchers {
+class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends JsonFormatSpec[T](format) {
 
   describe(format.getClass.getSimpleName) {
     val aLetter = Letter(StreetAddress("my house"), StreetAddress("your house"), "hi there")
