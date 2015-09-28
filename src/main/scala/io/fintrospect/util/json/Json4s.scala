@@ -9,10 +9,17 @@ import org.json4s._
  */
 object Json4s {
 
-  abstract class AbstractJson4sFormat() extends JsonFormat[JValue, JValue] {
+  class AbstractJson4sFormat[T](jsonMethods: JsonMethods[T],
+                             useBigDecimalForDouble: Boolean) extends JsonFormat[JValue, JValue] {
 
     import org.json4s.JsonDSL._
     import org.json4s._
+
+    override def pretty(in: JValue): String = jsonMethods.pretty(jsonMethods.render(in))
+
+    override def parse(in: String): JValue = jsonMethods.parse(in, useBigDecimalForDouble)
+
+    override def compact(in: JValue): String = jsonMethods.compact(jsonMethods.render(in))
 
     override def obj(fields: Iterable[Field]): JValue = fields
 
@@ -40,19 +47,10 @@ object Json4s {
 
   /**
    * Native Json4S support - uses BigDecimal for decimal
-   */
+   */˚
   object Native extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends AbstractJson4sFormat {
-
-      import org.json4s._
-
-      def parse(in: String): JValue = org.json4s.native.JsonMethods.parse(in, useBigDecimalForDouble = true)
-
-      def compact(in: JValue): String = org.json4s.native.JsonMethods.compact(org.json4s.native.JsonMethods.render(in))
-
-      def pretty(in: JValue): String = org.json4s.native.JsonMethods.pretty(org.json4s.native.JsonMethods.render(in))
-    }
+    object JsonFormat extends AbstractJson4sFormat(org.json4s.native.JsonMethods, true)
 
   }
 
@@ -61,16 +59,7 @@ object Json4s {
    */
   object NativeDoubleMode extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends AbstractJson4sFormat {
-
-      import org.json4s._
-
-      def parse(in: String): JValue = org.json4s.native.JsonMethods.parse(in, useBigDecimalForDouble = true)
-
-      def compact(in: JValue): String = org.json4s.native.JsonMethods.compact(org.json4s.native.JsonMethods.render(in))
-
-      def pretty(in: JValue): String = org.json4s.native.JsonMethods.pretty(org.json4s.native.JsonMethods.render(in))
-    }
+    object JsonFormat extends AbstractJson4sFormat(org.json4s.native.JsonMethods, false)
 
   }
 
@@ -79,16 +68,7 @@ object Json4s {
    */
   object Jackson extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends AbstractJson4sFormat {
-
-      import org.json4s._
-
-      def parse(in: String): JValue = org.json4s.jackson.JsonMethods.parse(in, useBigDecimalForDouble = true)
-
-      def compact(in: JValue): String = org.json4s.jackson.JsonMethods.compact(org.json4s.jackson.JsonMethods.render(in))
-
-      def pretty(in: JValue): String = org.json4s.jackson.JsonMethods.pretty(org.json4s.jackson.JsonMethods.render(in))
-    }
+    object JsonFormat extends AbstractJson4sFormat(org.json4s.jackson.JsonMethods, true)
 
   }
 
@@ -97,16 +77,7 @@ object Json4s {
    */
   object JacksonDoubleMode extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends AbstractJson4sFormat {
-
-      import org.json4s._
-
-      def parse(in: String): JValue = org.json4s.jackson.JsonMethods.parse(in, useBigDecimalForDouble = false)
-
-      def compact(in: JValue): String = org.json4s.jackson.JsonMethods.compact(org.json4s.jackson.JsonMethods.render(in))
-
-      def pretty(in: JValue): String = org.json4s.jackson.JsonMethods.pretty(org.json4s.jackson.JsonMethods.render(in))
-    }
+    object JsonFormat extends AbstractJson4sFormat(org.json4s.jackson.JsonMethods, false)
 
   }
 
