@@ -5,9 +5,9 @@ import java.time.LocalDate
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.PlainTextResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.{PlainTextResponseBuilder, ResponseBuilder}
+import io.fintrospect.formats.text.PlainTextResponseBuilder
+import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod._

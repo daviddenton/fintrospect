@@ -1,6 +1,5 @@
-package io.fintrospect
+package io.fintrospect.formats
 
-import io.fintrospect.formats.ResponseBuilderMethods
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}

@@ -3,9 +3,9 @@ package presentation._2
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
-import io.fintrospect.formats.PlainTextResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.{PlainTextResponseBuilder, ResponseBuilder}
+import io.fintrospect.formats.text.PlainTextResponseBuilder
+import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 import io.fintrospect.{ApiInfo, CorsFilter, FintrospectModule, RouteSpec}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}

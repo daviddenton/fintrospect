@@ -4,9 +4,9 @@ import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.RouteClient.Identify
-import io.fintrospect.formats.PlainTextResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.{PlainTextResponseBuilder, ResponseBuilder}
+import io.fintrospect.formats.text.PlainTextResponseBuilder
+import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http._

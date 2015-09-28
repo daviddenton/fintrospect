@@ -4,7 +4,7 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
-import io.fintrospect.formats.PlainTextResponseBuilder
+import io.fintrospect.formats.text.PlainTextResponseBuilder
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 import io.fintrospect.{ApiInfo, CorsFilter, FintrospectModule, RouteSpec}
