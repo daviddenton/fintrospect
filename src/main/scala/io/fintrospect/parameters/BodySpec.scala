@@ -18,6 +18,6 @@ import scala.xml.{Elem, XML}
 case class BodySpec[T](description: Option[String], contentType: ContentType, deserialize: String => T, serialize: T => String)
 
 object BodySpec {
-  def json[T](description: Option[String] = None, jsonFormat: JsonFormat[T, _, _] = Argo.JsonFormat): BodySpec[T] = BodySpec[T](description, APPLICATION_JSON, jsonFormat.parse, jsonFormat.compact)
+  def json[T](description: Option[String] = None, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): BodySpec[T] = BodySpec[T](description, APPLICATION_JSON, jsonFormat.parse, jsonFormat.compact)
   def xml(description: Option[String] = None): BodySpec[Elem] = BodySpec[Elem](description, APPLICATION_XML, XML.loadString, _.toString())
 }
