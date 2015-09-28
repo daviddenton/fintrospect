@@ -2,8 +2,9 @@ package util
 
 import com.twitter.finagle.Service
 import com.twitter.util.Future
+import io.fintrospect.formats.ResponseBuilder
+import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.util.HttpRequestResponseUtil.headersFrom
-import io.fintrospect.util.ResponseBuilder._
 import io.fintrospect.util.json.Argo.JsonFormat
 import io.fintrospect.util.json.Argo.JsonFormat._
 import io.fintrospect.util.json.Argo.ResponseBuilder._

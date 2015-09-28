@@ -1,6 +1,6 @@
 package io.fintrospect
 
-import io.fintrospect.util.{PlainText, PlainTextResponseBuilder}
+import io.fintrospect.formats.{PlainText, PlainTextResponseBuilder}
 
 class PlainTextResponseBuilderTest extends ResponseBuilderMethodsSpec(PlainTextResponseBuilder) {
   override val expectedContent = message

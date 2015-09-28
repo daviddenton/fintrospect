@@ -7,12 +7,13 @@ import com.twitter.io.Charsets._
 import com.twitter.util.Await._
 import com.twitter.util.{Await, Future}
 import io.fintrospect.FintrospectModule._
+import io.fintrospect.formats.PlainTextResponseBuilder._
+import io.fintrospect.formats.ResponseBuilder._
+import io.fintrospect.formats.{PlainTextResponseBuilder, ResponseBuilder}
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil._
-import io.fintrospect.util.PlainTextResponseBuilder._
-import io.fintrospect.util.ResponseBuilder._
 import io.fintrospect.util.json.Argo
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._

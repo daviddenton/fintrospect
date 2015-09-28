@@ -6,9 +6,9 @@ import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
+import io.fintrospect.formats.PlainTextResponseBuilder
 import io.fintrospect.parameters.{Body, BodySpec, Query, StringParamType}
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
-import io.fintrospect.util.PlainTextResponseBuilder
 import io.fintrospect.util.json.Argo
 import io.fintrospect.util.json.Argo.JsonFormat._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
