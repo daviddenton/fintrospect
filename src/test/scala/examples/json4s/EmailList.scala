@@ -14,7 +14,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 class EmailList(emails: Emails) {
   private val emailAddress = Path(ParameterSpec[EmailAddress]("address", Option("user email"), StringParamType, EmailAddress, e => e.address))
 
-  private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", false)
+  private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", 250)
 
   private def forUser(emailAddress: EmailAddress) = new Service[HttpRequest, HttpResponse] {
     override def apply(request: HttpRequest) = Ok(encode(emails.forUser(emailAddress)))
