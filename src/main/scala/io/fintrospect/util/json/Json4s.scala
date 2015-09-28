@@ -45,7 +45,13 @@ object Json4s {
 
     override def nullNode(): JValue = JNull
 
-    def encode(in: AnyRef, formats: Formats = serialization.formats(org.json4s.NoTypeHints)): JValue = decompose(in)(formats)
+    def encode(in: AnyRef, formats: Formats = serialization.formats(NoTypeHints)): JValue = decompose(in)(formats)
+
+    def decode[R](in: JValue,
+                  formats: Formats = serialization.formats(NoTypeHints))
+                 (implicit mf: scala.reflect.Manifest[R]): R = {
+      in.extract[R](formats, mf)
+    }
   }
 
   /**
