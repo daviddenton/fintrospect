@@ -1,3 +1,3 @@
-package examples.json4s.extended
+package examples.json4s
 
 case class EmailAddress(address: String)

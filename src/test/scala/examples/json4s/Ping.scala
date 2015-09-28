@@ -1,4 +1,4 @@
-package examples.json4s.extended
+package examples.json4s
 
 import com.twitter.finagle.Service
 import com.twitter.util.Future

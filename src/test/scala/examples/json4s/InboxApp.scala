@@ -1,9 +1,9 @@
-package examples.json4s.extended
+package examples.json4s
 
 import com.twitter.finagle.Http
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
-import examples.json4s.extended.Emails.InMemoryEmails
+import examples.json4s.Emails.InMemoryEmails
 import io.fintrospect._
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 
@@ -12,7 +12,7 @@ import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
  */
 object InboxApp extends App {
 
-  val JsonLibrary = io.fintrospect.util.json.Json4s.Native // we define the JsonFormat here so we can import it in other places
+  val JsonLibrary = io.fintrospect.util.json.Json4s.Native // we define the JsonFormat once here so we can import it in other classes
 
   private val emails = new InMemoryEmails()
 

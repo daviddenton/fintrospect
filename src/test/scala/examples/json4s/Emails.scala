@@ -1,4 +1,4 @@
-package examples.json4s.extended
+package examples.json4s
 
 trait Emails {
   def users(): Set[EmailAddress]
