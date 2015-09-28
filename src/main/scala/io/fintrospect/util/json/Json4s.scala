@@ -59,7 +59,7 @@ object Json4s {
    */
   object Native extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, true)
+    val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, true)
 
   }
 
@@ -68,7 +68,7 @@ object Json4s {
    */
   object NativeDoubleMode extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, false)
+    val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, false)
 
   }
 
@@ -77,7 +77,7 @@ object Json4s {
    */
   object Jackson extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, true)
+    val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, true)
 
   }
 
@@ -86,7 +86,7 @@ object Json4s {
    */
   object JacksonDoubleMode extends JsonLibrary[JValue, JValue] {
 
-    object JsonFormat extends Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, false)
+    val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, false)
 
   }
 
