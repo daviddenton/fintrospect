@@ -2,7 +2,6 @@ package io.fintrospect.util.json
 
 import java.math.BigInteger
 
-import io.fintrospect.util.json.NumberMode.NumberMode
 import org.json4s._
 
 /**
@@ -10,7 +9,7 @@ import org.json4s._
  */
 object Json4s {
 
-  private abstract class AbstractJson4sFormat(numberMode: NumberMode) extends JsonFormat[JValue, JValue, JField] {
+  abstract class AbstractJson4sFormat() extends JsonFormat[JValue, JValue, JField] {
 
     import org.json4s.JsonDSL._
     import org.json4s._
@@ -40,41 +39,64 @@ object Json4s {
   }
 
   /**
-   * Native Json4S support
-   * @param numberMode - how to treat decimal JSON values. Defaults to UseBigDecimal
+   * Native Json4S support - uses BigDecimal for decimal
    */
-  def native(numberMode: NumberMode = NumberMode.UseBigDecimal): JsonLibrary[JValue, JValue, JField] = {
-    new JsonLibrary[JValue, JValue, JField] {
-      override lazy val JsonFormat = new AbstractJson4sFormat(numberMode) {
+  val Native = new JsonLibrary[JValue, JValue, JField] {
+    override lazy val JsonFormat = new AbstractJson4sFormat {
+      import org.json4s._
 
-        import org.json4s._
+      def parse(in: String): JValue = org.json4s.native.JsonMethods.parse(in, useBigDecimalForDouble = true)
 
-        def parse(in: String): JValue = org.json4s.native.JsonMethods.parse(in, numberMode == NumberMode.UseBigDecimal)
+      def compact(in: JValue): String = org.json4s.native.JsonMethods.compact(org.json4s.native.JsonMethods.render(in))
 
-        def compact(in: JValue): String = org.json4s.native.JsonMethods.compact(org.json4s.native.JsonMethods.render(in))
-
-        def pretty(in: JValue): String = org.json4s.native.JsonMethods.pretty(org.json4s.native.JsonMethods.render(in))
-      }
+      def pretty(in: JValue): String = org.json4s.native.JsonMethods.pretty(org.json4s.native.JsonMethods.render(in))
     }
   }
 
   /**
-   * Jackson Json4S support
-   * @param numberMode - how to treat decimal JSON values. Defaults to UseBigDecimal
+   * Native Json4S support - uses Doubles for decimal
    */
-  def jackson(numberMode: NumberMode = NumberMode.UseBigDecimal): JsonLibrary[JValue, JValue, JField] = {
-    new JsonLibrary[JValue, JValue, JField] {
-      override lazy val JsonFormat = new AbstractJson4sFormat(numberMode) {
+  val NativeDoubleMode = new JsonLibrary[JValue, JValue, JField] {
+    override lazy val JsonFormat = new AbstractJson4sFormat {
+      import org.json4s._
 
-        import org.json4s._
+      def parse(in: String): JValue = org.json4s.native.JsonMethods.parse(in, useBigDecimalForDouble = true)
 
-        def parse(in: String): JValue = org.json4s.jackson.JsonMethods.parse(in, numberMode == NumberMode.UseBigDecimal)
+      def compact(in: JValue): String = org.json4s.native.JsonMethods.compact(org.json4s.native.JsonMethods.render(in))
 
-        def compact(in: JValue): String = org.json4s.jackson.JsonMethods.compact(org.json4s.jackson.JsonMethods.render(in))
-
-        def pretty(in: JValue): String = org.json4s.jackson.JsonMethods.pretty(org.json4s.jackson.JsonMethods.render(in))
-      }
+      def pretty(in: JValue): String = org.json4s.native.JsonMethods.pretty(org.json4s.native.JsonMethods.render(in))
     }
+  }
 
+  /**
+   * Jackson Json4S support - uses BigDecimal for decimal
+   */
+  val Jackson = new JsonLibrary[JValue, JValue, JField] {
+    override lazy val JsonFormat = new AbstractJson4sFormat {
+
+      import org.json4s._
+
+      def parse(in: String): JValue = org.json4s.jackson.JsonMethods.parse(in, useBigDecimalForDouble = true)
+
+      def compact(in: JValue): String = org.json4s.jackson.JsonMethods.compact(org.json4s.jackson.JsonMethods.render(in))
+
+      def pretty(in: JValue): String = org.json4s.jackson.JsonMethods.pretty(org.json4s.jackson.JsonMethods.render(in))
+    }
+  }
+
+  /**
+   * Jackson Json4S support - uses Doubles for decimal
+   */
+  val JacksonDoubleMode = new JsonLibrary[JValue, JValue, JField] {
+    override lazy val JsonFormat = new AbstractJson4sFormat {
+
+      import org.json4s._
+
+      def parse(in: String): JValue = org.json4s.jackson.JsonMethods.parse(in, useBigDecimalForDouble = false)
+
+      def compact(in: JValue): String = org.json4s.jackson.JsonMethods.compact(org.json4s.jackson.JsonMethods.render(in))
+
+      def pretty(in: JValue): String = org.json4s.jackson.JsonMethods.pretty(org.json4s.jackson.JsonMethods.render(in))
+    }
   }
 }

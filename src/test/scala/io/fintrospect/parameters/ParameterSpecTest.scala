@@ -193,8 +193,10 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
   }
 
   describeJson("argo", obj("field" -> string("value")), Argo.JsonFormat)
-  describeJson("json4s native", JObject("field" -> JString("value")), Json4s.native().JsonFormat)
-  describeJson("json4s jackson", JObject("field" -> JString("value")), Json4s.jackson().JsonFormat)
+  describeJson("json4s native", JObject("field" -> JString("value")), Json4s.Native.JsonFormat)
+  describeJson("json4s jackson", JObject("field" -> JString("value")), Json4s.Jackson.JsonFormat)
+  describeJson("json4s native - double", JObject("field" -> JString("value")), Json4s.NativeDoubleMode.JsonFormat)
+  describeJson("json4s jackson - double", JObject("field" -> JString("value")), Json4s.JacksonDoubleMode.JsonFormat)
 
   describe("xml") {
     val expected = <field>value</field>
