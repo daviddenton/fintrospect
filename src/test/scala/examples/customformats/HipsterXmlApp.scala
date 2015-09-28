@@ -4,8 +4,9 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect._
+import io.fintrospect.formats.ResponseBuilder
+import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.parameters._
-import io.fintrospect.util.ResponseBuilder.toFuture
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
 /**

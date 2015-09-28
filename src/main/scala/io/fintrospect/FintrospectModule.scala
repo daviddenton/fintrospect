@@ -6,8 +6,9 @@ import com.twitter.util.Future
 import io.fintrospect.FintrospectModule._
 import io.fintrospect.Headers._
 import io.fintrospect.Routing.fromBinding
+import io.fintrospect.formats.ResponseBuilder
+import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.renderers.ModuleRenderer
-import io.fintrospect.util.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 

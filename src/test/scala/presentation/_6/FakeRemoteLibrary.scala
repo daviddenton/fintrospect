@@ -4,9 +4,10 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
+import io.fintrospect.formats.PlainTextResponseBuilder._
+import io.fintrospect.formats.ResponseBuilder._
+import io.fintrospect.formats.{PlainTextResponseBuilder, ResponseBuilder}
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.util.PlainTextResponseBuilder._
-import io.fintrospect.util.ResponseBuilder._
 import io.fintrospect.{CorsFilter, FintrospectModule}
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 import presentation.Books

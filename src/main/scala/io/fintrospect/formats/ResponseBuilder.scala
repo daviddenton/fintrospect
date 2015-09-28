@@ -1,4 +1,4 @@
-package io.fintrospect.util
+package io.fintrospect.formats
 
 import java.io.OutputStream
 
