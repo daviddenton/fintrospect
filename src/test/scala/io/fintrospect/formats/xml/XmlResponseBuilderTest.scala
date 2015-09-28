@@ -1,6 +1,6 @@
-package io.fintrospect
+package io.fintrospect.formats.xml
 
-import io.fintrospect.formats.{ResponseBuilderMethodsSpec, XmlResponseBuilder}
+import io.fintrospect.formats.ResponseBuilderMethodsSpec
 
 class XmlResponseBuilderTest extends ResponseBuilderMethodsSpec(XmlResponseBuilder) {
   override val expectedContent = message
