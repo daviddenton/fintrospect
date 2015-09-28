@@ -1,4 +1,6 @@
-package io.fintrospect.util.json
+package io.fintrospect.formats.json
+
+import io.fintrospect.util.json.Json4s
 
 class JsonNativeBuilderTest extends JsonResponseBuilderSpec(Json4s.Native)
 class Json4NativeDoubleBuilderTest extends JsonResponseBuilderSpec(Json4s.NativeDoubleMode)
