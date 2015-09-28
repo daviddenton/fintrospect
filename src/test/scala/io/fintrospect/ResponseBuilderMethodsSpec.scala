@@ -1,11 +1,11 @@
 package io.fintrospect
 
 import io.fintrospect.util.HttpRequestResponseUtil._
-import io.fintrospect.util.ResponseBuilderObject
+import io.fintrospect.util.ResponseBuilderMethods
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-abstract class ResponseBuilderObjectSpec[T](bldr: ResponseBuilderObject[T]) extends FunSpec with ShouldMatchers {
+abstract class ResponseBuilderMethodsSpec[T](bldr: ResponseBuilderMethods[T]) extends FunSpec with ShouldMatchers {
   val message = "some text goes here"
 
   val expectedContent: String
