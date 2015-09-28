@@ -9,7 +9,7 @@ import org.json4s._
  */
 object Json4s {
 
-  abstract class AbstractJson4sFormat() extends JsonFormat[JValue, JValue, JField] {
+  abstract class AbstractJson4sFormat() extends JsonFormat[JValue, JValue] {
 
     import org.json4s.JsonDSL._
     import org.json4s._
@@ -41,7 +41,7 @@ object Json4s {
   /**
    * Native Json4S support - uses BigDecimal for decimal
    */
-  object Native extends JsonLibrary[JValue, JValue, JField] {
+  object Native extends JsonLibrary[JValue, JValue] {
     override lazy val JsonFormat = new AbstractJson4sFormat {
       import org.json4s._
 
@@ -56,7 +56,7 @@ object Json4s {
   /**
    * Native Json4S support - uses Doubles for decimal
    */
-  object NativeDoubleMode extends JsonLibrary[JValue, JValue, JField] {
+  object NativeDoubleMode extends JsonLibrary[JValue, JValue] {
     override lazy val JsonFormat = new AbstractJson4sFormat {
       import org.json4s._
 
@@ -71,7 +71,7 @@ object Json4s {
   /**
    * Jackson Json4S support - uses BigDecimal for decimal
    */
-  object Jackson extends JsonLibrary[JValue, JValue, JField] {
+  object Jackson extends JsonLibrary[JValue, JValue] {
     override lazy val JsonFormat = new AbstractJson4sFormat {
 
       import org.json4s._
@@ -87,7 +87,7 @@ object Json4s {
   /**
    * Jackson Json4S support - uses Doubles for decimal
    */
-  object JacksonDoubleMode extends JsonLibrary[JValue, JValue, JField] {
+  object JacksonDoubleMode extends JsonLibrary[JValue, JValue] {
     override lazy val JsonFormat = new AbstractJson4sFormat {
 
       import org.json4s._

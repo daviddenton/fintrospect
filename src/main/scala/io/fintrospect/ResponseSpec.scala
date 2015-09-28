@@ -16,7 +16,7 @@ class ResponseSpec private[fintrospect](statusAndDescription: (HttpResponseStatu
 }
 
 object ResponseSpec {
-  def json[T](statusAndDescription: (HttpResponseStatus, String), example: T, jsonFormat: JsonFormat[T, _ ,_] = Argo.JsonFormat): ResponseSpec = {
+  def json[T](statusAndDescription: (HttpResponseStatus, String), example: T, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): ResponseSpec = {
     ResponseSpec(statusAndDescription, example, BodySpec.json(None, jsonFormat))
   }
 

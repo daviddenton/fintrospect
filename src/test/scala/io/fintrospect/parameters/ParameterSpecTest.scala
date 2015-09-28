@@ -3,9 +3,10 @@ package io.fintrospect.parameters
 import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 
 import io.fintrospect.util.json.Argo.JsonFormat._
-import io.fintrospect.util.json.{Argo, Json4s, JsonFormat}
+import io.fintrospect.util.json.{Argo, Json4s, JsonFormat, SprayJson}
 import org.json4s.JsonAST.{JObject, JString}
 import org.scalatest._
+import spray.json.{JsObject, JsString}
 
 import scala.util.{Success, Try}
 
@@ -172,7 +173,7 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  private def describeJson[T](name: String, expected: T, jsonFormat: JsonFormat[T,_,  _]): Unit = {
+  private def describeJson[T](name: String, expected: T, jsonFormat: JsonFormat[T, _]): Unit = {
     describe(name + " Json") {
       it("retrieves a valid value") {
         Try(ParameterSpec.json(paramName, "", jsonFormat).deserialize(jsonFormat.compact(expected))) shouldEqual Success(expected)
@@ -197,6 +198,7 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
   describeJson("json4s jackson", JObject("field" -> JString("value")), Json4s.Jackson.JsonFormat)
   describeJson("json4s native - double", JObject("field" -> JString("value")), Json4s.NativeDoubleMode.JsonFormat)
   describeJson("json4s jackson - double", JObject("field" -> JString("value")), Json4s.JacksonDoubleMode.JsonFormat)
+  describeJson("spray", JsObject("field" -> JsString("value")), SprayJson.JsonFormat)
 
   describe("xml") {
     val expected = <field>value</field>

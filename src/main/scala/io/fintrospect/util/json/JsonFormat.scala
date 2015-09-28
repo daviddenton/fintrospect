@@ -5,7 +5,7 @@ import java.math.BigInteger
 /**
  * Provides ability to create and parse JSON message formats.
  */
-trait JsonFormat[ROOT_NODETYPE, NODETYPE, FIELDTYPE] {
+trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
   type Field = (String, NODETYPE)
 
   def parse(in: String): ROOT_NODETYPE

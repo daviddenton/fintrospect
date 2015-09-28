@@ -9,8 +9,8 @@ import argo.jdom._
 /**
  * Argo JSON support.
  */
-object Argo extends JsonLibrary[JsonRootNode, JsonNode, JsonField] {
-  lazy val JsonFormat = new JsonFormat[JsonRootNode, JsonNode, JsonField] {
+object Argo extends JsonLibrary[JsonRootNode, JsonNode] {
+  lazy val JsonFormat = new JsonFormat[JsonRootNode, JsonNode] {
     private val pretty = new PrettyJsonFormatter()
     private val compact = new CompactJsonFormatter()
 

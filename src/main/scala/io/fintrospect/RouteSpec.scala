@@ -62,7 +62,7 @@ case class RouteSpec private(summary: String,
   /**
    * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
    */
-  def returning[T](code: (HttpResponseStatus, String), example: T, jsonFormat: JsonFormat[T, _, _] = Argo.JsonFormat): RouteSpec = copy(responses = ResponseSpec.json(code, example, jsonFormat) +: responses)
+  def returning[T](code: (HttpResponseStatus, String), example: T, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): RouteSpec = copy(responses = ResponseSpec.json(code, example, jsonFormat) +: responses)
 
   /**
    * Register a possible response which could be produced by this route, with an example body (used for schema generation).
