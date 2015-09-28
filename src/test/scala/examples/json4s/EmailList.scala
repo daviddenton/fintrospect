@@ -1,12 +1,12 @@
-package examples.json4s.extended
+package examples.json4s
 
 import com.twitter.finagle.Service
-import examples.json4s.extended.InboxApp.JsonLibrary.JsonFormat
-import examples.json4s.extended.InboxApp.JsonLibrary.JsonFormat._
-import examples.json4s.extended.InboxApp.JsonLibrary.ResponseBuilder._
+import examples.json4s.InboxApp.JsonLibrary.ResponseBuilder.Ok
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.parameters.{ParameterSpec, Path, StringParamType}
+import io.fintrospect.util.json.Json4s.Native.JsonFormat
+import io.fintrospect.util.json.Json4s.Native.JsonFormat._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}

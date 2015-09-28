@@ -1,9 +1,9 @@
-package examples.json4s.extended
+package examples.json4s
 
 import com.twitter.finagle.Service
-import examples.json4s.extended.InboxApp.JsonLibrary.JsonFormat
-import examples.json4s.extended.InboxApp.JsonLibrary.JsonFormat._
-import examples.json4s.extended.InboxApp.JsonLibrary.ResponseBuilder.Ok
+import examples.json4s.InboxApp.JsonLibrary.JsonFormat
+import examples.json4s.InboxApp.JsonLibrary.JsonFormat._
+import examples.json4s.InboxApp.JsonLibrary.ResponseBuilder.Ok
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpMethod._
