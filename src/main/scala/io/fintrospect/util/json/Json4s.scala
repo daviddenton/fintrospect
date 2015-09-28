@@ -42,7 +42,9 @@ object Json4s {
    * Native Json4S support - uses BigDecimal for decimal
    */
   object Native extends JsonLibrary[JValue, JValue] {
-    override lazy val JsonFormat = new AbstractJson4sFormat {
+
+    object JsonFormat extends AbstractJson4sFormat {
+
       import org.json4s._
 
       def parse(in: String): JValue = org.json4s.native.JsonMethods.parse(in, useBigDecimalForDouble = true)
@@ -51,13 +53,16 @@ object Json4s {
 
       def pretty(in: JValue): String = org.json4s.native.JsonMethods.pretty(org.json4s.native.JsonMethods.render(in))
     }
+
   }
 
   /**
    * Native Json4S support - uses Doubles for decimal
    */
   object NativeDoubleMode extends JsonLibrary[JValue, JValue] {
-    override lazy val JsonFormat = new AbstractJson4sFormat {
+
+    object JsonFormat extends AbstractJson4sFormat {
+
       import org.json4s._
 
       def parse(in: String): JValue = org.json4s.native.JsonMethods.parse(in, useBigDecimalForDouble = true)
@@ -66,13 +71,15 @@ object Json4s {
 
       def pretty(in: JValue): String = org.json4s.native.JsonMethods.pretty(org.json4s.native.JsonMethods.render(in))
     }
+
   }
 
   /**
    * Jackson Json4S support - uses BigDecimal for decimal
    */
   object Jackson extends JsonLibrary[JValue, JValue] {
-    override lazy val JsonFormat = new AbstractJson4sFormat {
+
+    object JsonFormat extends AbstractJson4sFormat {
 
       import org.json4s._
 
@@ -82,13 +89,15 @@ object Json4s {
 
       def pretty(in: JValue): String = org.json4s.jackson.JsonMethods.pretty(org.json4s.jackson.JsonMethods.render(in))
     }
+
   }
 
   /**
    * Jackson Json4S support - uses Doubles for decimal
    */
   object JacksonDoubleMode extends JsonLibrary[JValue, JValue] {
-    override lazy val JsonFormat = new AbstractJson4sFormat {
+
+    object JsonFormat extends AbstractJson4sFormat {
 
       import org.json4s._
 
@@ -98,5 +107,7 @@ object Json4s {
 
       def pretty(in: JValue): String = org.json4s.jackson.JsonMethods.pretty(org.json4s.jackson.JsonMethods.render(in))
     }
+
   }
+
 }

@@ -1,7 +1,7 @@
 package io.fintrospect.util.json
 
 /**
- * Defines a type of JSON format (e.g. Argo or Json4s)
+ * Defines a supported JSON library format (e.g. Argo or Json4s)
  * @tparam R - Root node type
  * @tparam N - Node type
  */
@@ -12,5 +12,5 @@ trait JsonLibrary[R, N] {
    */
   val JsonFormat: JsonFormat[R, N]
 
-  val ResponseBuilder = new JsonResponseBuilder[R, N](JsonFormat)
+  object ResponseBuilder extends JsonResponseBuilder[R, N](JsonFormat)
 }
