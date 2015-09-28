@@ -3,9 +3,9 @@ package io.fintrospect
 import com.twitter.finagle.Service
 import com.twitter.util.Await._
 import com.twitter.util.Future
-import io.fintrospect.formats.PlainTextResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.{PlainTextResponseBuilder, ResponseBuilder}
+import io.fintrospect.formats.text.PlainTextResponseBuilder
+import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters.{Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpMethod._

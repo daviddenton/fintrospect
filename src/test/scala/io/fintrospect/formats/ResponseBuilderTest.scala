@@ -4,6 +4,7 @@ import java.nio.charset.Charset._
 
 import com.twitter.finagle.http.Response
 import io.fintrospect.ContentType
+import io.fintrospect.formats.text.PlainText
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.FunSpec
