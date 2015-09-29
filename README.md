@@ -18,7 +18,7 @@ for parameters are supported. Also support for typesafe conversions of custom ty
 the HTTP API of a downstream servers (for a fake) to be created with no effort, and exactly matching the client side. These endpoints are also exposed as simple functions.
 - A set of HTTP Response builders with pluggable extension points for custom formats; currently supported are:
   - Argo JSON
-  - Json4s Native & Jackson (v9+)
+  - Json4s (v3.2.X compatible) Native & Jackson (v9+)
   - Spray JSON (v9+)
   - Scala native XML.
 
