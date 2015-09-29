@@ -2,7 +2,7 @@ package io.fintrospect.parameters
 
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
-import io.fintrospect.util.json.{Argo, JsonFormat}
+import io.fintrospect.formats.json.{Argo, JsonFormat}
 
 import scala.language.higherKinds
 import scala.xml.Elem

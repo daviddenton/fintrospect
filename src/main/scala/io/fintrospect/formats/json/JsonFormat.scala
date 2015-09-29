@@ -1,4 +1,4 @@
-package io.fintrospect.util.json
+package io.fintrospect.formats.json
 
 import java.math.BigInteger
 

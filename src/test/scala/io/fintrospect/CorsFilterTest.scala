@@ -4,10 +4,10 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.util.{Await, Duration}
-import io.fintrospect.formats.ResponseBuilder
 import io.fintrospect.formats.ResponseBuilder._
+import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
-import io.fintrospect.util.json.Argo.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 import org.scalatest.{FlatSpec, MustMatchers}
 

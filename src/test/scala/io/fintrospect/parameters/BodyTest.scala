@@ -5,9 +5,9 @@ import java.time.LocalDate
 import com.twitter.finagle.http.Request
 import com.twitter.io.Charsets
 import io.fintrospect.ContentTypes
+import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
-import io.fintrospect.util.json.Argo
-import io.fintrospect.util.json.Argo.JsonFormat._
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.jboss.netty.handler.codec.http.HttpMethod

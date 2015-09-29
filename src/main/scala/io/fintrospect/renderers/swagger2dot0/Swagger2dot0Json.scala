@@ -3,11 +3,12 @@ package io.fintrospect.renderers.swagger2dot0
 import argo.jdom.JsonNode
 import com.twitter.finagle.http.path.Path
 import io.fintrospect._
+import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.json.Argo.JsonFormat._
+import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
-import io.fintrospect.util.json.Argo.JsonFormat._
-import io.fintrospect.util.json.Argo.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponse
 
 import scala.util.Try

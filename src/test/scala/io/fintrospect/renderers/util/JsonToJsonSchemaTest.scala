@@ -1,6 +1,7 @@
 package io.fintrospect.renderers.util
 
-import io.fintrospect.util.json.Argo.JsonFormat._
+import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.json.Argo.JsonFormat._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.io.Source.fromInputStream

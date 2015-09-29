@@ -1,9 +1,10 @@
 package examples.extended
 
 import com.twitter.finagle.http.Request
+import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.testing.TestingFintrospectRoute
 import io.fintrospect.util.HttpRequestResponseUtil._
-import io.fintrospect.util.json.Argo.JsonFormat._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.scalatest.{FunSpec, ShouldMatchers}
 

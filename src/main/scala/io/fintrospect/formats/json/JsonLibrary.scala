@@ -1,4 +1,4 @@
-package io.fintrospect.util.json
+package io.fintrospect.formats.json
 
 /**
  * Defines a supported JSON library format (e.g. Argo or Json4s)

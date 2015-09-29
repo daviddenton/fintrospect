@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import java.time.format.DateTimeFormatter._
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
-import io.fintrospect.util.json.{Argo, JsonFormat}
+import io.fintrospect.formats.json.{Argo, JsonFormat}
 
 import scala.xml.{Elem, XML}
 

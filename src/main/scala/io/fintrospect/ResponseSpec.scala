@@ -1,7 +1,7 @@
 package io.fintrospect
 
+import io.fintrospect.formats.json.{Argo, JsonFormat}
 import io.fintrospect.parameters.BodySpec
-import io.fintrospect.util.json.{Argo, JsonFormat}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 import scala.util.Try

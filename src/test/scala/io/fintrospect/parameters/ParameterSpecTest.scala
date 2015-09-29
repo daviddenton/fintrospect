@@ -2,8 +2,8 @@ package io.fintrospect.parameters
 
 import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 
-import io.fintrospect.util.json.Argo.JsonFormat._
-import io.fintrospect.util.json.{Argo, Json4s, JsonFormat, SprayJson}
+import io.fintrospect.formats.json.Argo.JsonFormat._
+import io.fintrospect.formats.json.{Argo, Json4s, JsonFormat, SprayJson}
 import org.json4s.JsonAST.{JObject, JString}
 import org.scalatest._
 import spray.json.{JsObject, JsString}
