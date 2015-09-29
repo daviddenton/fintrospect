@@ -2,7 +2,7 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
-import io.fintrospect.util.json.Json4s.Json4sFormat
+import io.fintrospect.formats.json.Json4s.Json4sFormat
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class JsonFormatSpec[T](format: Json4sFormat[T]) extends FunSpec with ShouldMatchers {

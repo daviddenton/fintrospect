@@ -1,9 +1,9 @@
-package io.fintrospect.util.json
+package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
 import spray.json.DefaultJsonProtocol._
-import spray.json.{JsValue, JsonParser, _}
+import spray.json._
 
 /**
  * Argo JSON support.

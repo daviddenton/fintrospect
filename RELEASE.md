@@ -5,10 +5,13 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
-#####v9.0.X
+#####v9.0.1
 - Added support for other Scala JSON libraries - Json4S (Native and Jackson) and SprayJson out of the box. See ```Json4s``` to get the Format utils and ResponseBuilder for these formats.
 - Breaking change: Response builders are now moved into the ```io.fintrospect.formats.<format> packages```
 - Breaking change: rename of to ```ArgoUtil``` and ```ArgoJsonResponseBuilder``` which are now ```Argo.JsonFormat``` and ```Argo.ResponseBuilder``` respectively. This structure is now is unified with the other JSON formats.
+
+#####v9.0.0
+- Please ignore this release and go straight to v9.0.1
 
 #####v8.3.1
 - Bugfix for Body models not being outputted in Swagger 2 JSON schema.

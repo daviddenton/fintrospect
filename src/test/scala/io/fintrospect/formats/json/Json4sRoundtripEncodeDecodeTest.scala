@@ -1,7 +1,6 @@
 package io.fintrospect.formats.json
 
-import io.fintrospect.util.json.Json4s
-import io.fintrospect.util.json.Json4s.Json4sFormat
+import io.fintrospect.formats.json.Json4s.Json4sFormat
 
 case class StreetAddress(address: String)
 

@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 import io.fintrospect.ContentType
-import io.fintrospect.util.json.{Argo, JsonFormat}
+import io.fintrospect.formats.json.{Argo, JsonFormat}
 import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.xml.Elem

@@ -1,8 +1,8 @@
 package io.fintrospect
 
+import io.fintrospect.formats.json.{Argo, JsonFormat}
 import io.fintrospect.parameters.{Body, HeaderParameter, QueryParameter}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
-import io.fintrospect.util.json.{Argo, JsonFormat}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponse, HttpResponseStatus}
 
 /**

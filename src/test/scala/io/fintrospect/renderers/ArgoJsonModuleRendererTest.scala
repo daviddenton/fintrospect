@@ -6,11 +6,11 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
+import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.parameters.Path._
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil._
-import io.fintrospect.util.json.Argo
-import io.fintrospect.util.json.Argo.JsonFormat._
 import org.jboss.netty.handler.codec.http.HttpMethod._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}

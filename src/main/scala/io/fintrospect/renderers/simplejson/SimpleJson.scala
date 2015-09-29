@@ -2,11 +2,11 @@ package io.fintrospect.renderers.simplejson
 
 import com.twitter.finagle.http.path.Path
 import io.fintrospect.ServerRoute
+import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.json.Argo.JsonFormat._
+import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
-import io.fintrospect.util.json.Argo
-import io.fintrospect.util.json.Argo.JsonFormat._
-import io.fintrospect.util.json.Argo.ResponseBuilder._
 import org.jboss.netty.handler.codec.http.HttpResponse
 
 /**
