@@ -2,6 +2,9 @@ package io.fintrospect.parameters
 
 import org.jboss.netty.handler.codec.http.HttpRequest
 
+/**
+ * Parameters which are bound to the query part of a URL
+ */
 object Query {
 
   trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, HttpRequest] with MandatoryRebind[T, HttpRequest, QueryBinding] {

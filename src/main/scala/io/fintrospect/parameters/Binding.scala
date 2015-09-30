@@ -4,6 +4,9 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.language.existentials
 
+/**
+ * Represents the binding of a parameter to it's value in a particular context
+ */
 sealed trait Binding {
   val parameter: Parameter
 

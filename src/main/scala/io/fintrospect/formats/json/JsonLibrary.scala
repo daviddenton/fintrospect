@@ -12,5 +12,8 @@ trait JsonLibrary[R, N] {
    */
   val JsonFormat: JsonFormat[R, N]
 
+  /**
+   * Use this to create JSON-format HttpResponses
+   */
   object ResponseBuilder extends JsonResponseBuilder[R, N](JsonFormat)
 }

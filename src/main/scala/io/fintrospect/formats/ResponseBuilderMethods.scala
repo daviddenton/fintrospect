@@ -3,6 +3,9 @@ package io.fintrospect.formats
 import org.jboss.netty.handler.codec.http.HttpResponseStatus.OK
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
 
+/**
+ * Convienience methods for building Http Responses
+ */
 trait ResponseBuilderMethods[T] {
   def Response(): ResponseBuilder[T]
 

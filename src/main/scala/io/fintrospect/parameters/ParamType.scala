@@ -1,5 +1,8 @@
 package io.fintrospect.parameters
 
+/**
+ * How a parameter is represented in the HTTP message (JSON type)
+ */
 sealed class ParamType(val name: String)
 
 object StringParamType extends ParamType("string")

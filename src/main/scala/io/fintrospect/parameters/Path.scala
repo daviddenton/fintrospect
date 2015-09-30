@@ -6,6 +6,9 @@ import scala.util.Try
 
 trait PathBindable[T] extends Bindable[T, PathBinding]
 
+/**
+ * Parameters which are bound to the path segments of a URL
+ */
 object Path extends Parameters[PathParameter, PathBindable] {
 
   /**

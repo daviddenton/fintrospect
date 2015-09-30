@@ -8,7 +8,7 @@ import io.fintrospect.formats.json.{Argo, JsonFormat}
 import scala.xml.{Elem, XML}
 
 /**
- * Spec required to marshall a parameter of a custom type
+ * Spec required to marshall and demarshall a parameter of a custom type
  * @param deserialize function to take the input string from the request and attempt to construct a deserialized instance of T. Exceptions are
  *                    automatically caught and translated into the appropriate result, so just concentrate on the Happy-path case
  * @param paramType The parameter type to be used in the documentation. For custom types, this is usually ObjectParamType (for JSON) or StringParamType

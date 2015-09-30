@@ -9,7 +9,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest
 import scala.util.{Failure, Success, Try}
 
 /**
- * Represents a generic body which can be written to and retrieved from a request.
+ * Represents a single entity which makes up the entirety of an HTTP message body.
  * @param spec the specification of this body type
  * @param theParamType the documented type of this body. Usually this is StringParamType, apart from for JSON, which is ObjectParamType
  * @param theExample an example object of this body
