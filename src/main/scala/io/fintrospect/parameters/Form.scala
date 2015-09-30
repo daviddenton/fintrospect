@@ -1,5 +1,8 @@
 package io.fintrospect.parameters
 
+/**
+ * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
+ */
 case class Form(private val fields: collection.Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
 
   /**

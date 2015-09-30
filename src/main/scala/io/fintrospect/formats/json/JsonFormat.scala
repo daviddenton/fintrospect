@@ -3,7 +3,7 @@ package io.fintrospect.formats.json
 import java.math.BigInteger
 
 /**
- * Provides ability to create and parse JSON message formats.
+ * Capability to create and parse JSON message formats in a generic way
  */
 trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
   type Field = (String, NODETYPE)
