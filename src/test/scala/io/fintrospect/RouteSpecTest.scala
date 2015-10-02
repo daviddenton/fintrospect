@@ -4,7 +4,6 @@ import com.twitter.finagle.Service
 import com.twitter.util.Await._
 import com.twitter.util.Future
 import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.text.PlainTextResponseBuilder
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters.{Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil._
@@ -68,10 +67,10 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       val clientWithNameHeader = RouteSpec().taking(nameHeader).at(GET) bindToClient returnsHeaders
 
       it("when there are some, includes them") {
-        responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldEqual(OK, "Map(name -> bob, X-Fintrospect-Route-Name -> GET.)")
+        responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldEqual(OK, "Map(name -> bob, X-Fintrospect-Route-Name -> GET:)")
       }
       it("optional query params are ignored if not there") {
-        responseFor(clientWithNameHeader()) shouldEqual(OK, "Map(X-Fintrospect-Route-Name -> GET.)")
+        responseFor(clientWithNameHeader()) shouldEqual(OK, "Map(X-Fintrospect-Route-Name -> GET:)")
       }
     }
 
@@ -83,7 +82,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       val client = RouteSpec().at(GET) / "svc" / intParam / Path.fixed("fixed") bindToClient returnsHeaders
 
       it("identifies called route as a request header") {
-        responseFor(client(intParam --> 55)) shouldEqual(HttpResponseStatus.OK, "Map(X-Fintrospect-Route-Name -> GET./svc/{anInt}/fixed)")
+        responseFor(client(intParam --> 55)) shouldEqual(HttpResponseStatus.OK, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
       }
     }
   }
