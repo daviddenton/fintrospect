@@ -5,7 +5,6 @@ import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.RouteClient.Identify
 import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.text.PlainTextResponseBuilder
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters._
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
@@ -15,7 +14,7 @@ import org.jboss.netty.handler.codec.http._
 object RouteClient {
 
   private case class Identify(method: HttpMethod, pathParams: Seq[PathParameter[_]]) extends SimpleFilter[HttpRequest, HttpResponse]() {
-    private val description = method + "." + pathParams.map(_.toString()).mkString("/")
+    private val description = method + ":" + pathParams.map(_.toString()).mkString("/")
 
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       request.headers().set(IDENTIFY_SVC_HEADER, description)

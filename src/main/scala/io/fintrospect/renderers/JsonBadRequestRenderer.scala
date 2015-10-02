@@ -1,6 +1,5 @@
 package io.fintrospect.renderers
 
-import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter

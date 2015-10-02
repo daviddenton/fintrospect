@@ -2,7 +2,6 @@ package io.fintrospect.renderers.util
 
 import argo.jdom.JsonNode
 import argo.jdom.JsonNodeType._
-import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.util.JsonToJsonSchema.IllegalSchemaException
