@@ -3,7 +3,6 @@ package io.fintrospect.renderers.swagger1dot1
 import argo.jdom.JsonNode
 import com.twitter.finagle.http.path.Path
 import io.fintrospect.ServerRoute
-import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter

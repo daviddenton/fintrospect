@@ -6,7 +6,6 @@ import com.twitter.util.Future
 import io.fintrospect.FintrospectModule._
 import io.fintrospect.Headers._
 import io.fintrospect.Routing.fromBinding
-import io.fintrospect.formats.ResponseBuilder
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.renderers.ModuleRenderer
 import org.jboss.netty.handler.codec.http.HttpMethod.GET
@@ -52,7 +51,7 @@ object FintrospectModule {
   private class Identify(route: ServerRoute, basePath: Path) extends SimpleFilter[HttpRequest, HttpResponse]() {
     override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
       val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
-      request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod + "." + url)
+      request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod + ":" + url)
       service(request)
     }
   }
