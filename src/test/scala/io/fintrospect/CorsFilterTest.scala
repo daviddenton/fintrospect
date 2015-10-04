@@ -1,8 +1,8 @@
 package io.fintrospect
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.httpx.{Response, _}
 import com.twitter.finagle.httpx.filter.Cors
+import com.twitter.finagle.httpx.{Response, _}
 import com.twitter.util.{Await, Duration}
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
@@ -37,11 +37,11 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
     request.headerMap.set("Access-Control-Request-Method", "BRR")
 
     val response = Await result service(request)
-    response.headerMap.get("Access-Control-Allow-Origin") must be("thestreet")
-    response.headerMap.get("Access-Control-Allow-Credentials") must be("true")
-    response.headerMap.get("Access-Control-Allow-Methods") must be("BRR, TRAP")
-    response.headerMap.get("Vary") must be("Origin")
-    response.headerMap.get("Access-Control-Max-Age") must be(Duration.Top.inSeconds.toString)
+    response.headerMap("Access-Control-Allow-Origin") must be("thestreet")
+    response.headerMap("Access-Control-Allow-Credentials") must be("true")
+    response.headerMap("Access-Control-Allow-Methods") must be("BRR, TRAP")
+    response.headerMap("Vary") must be("Origin")
+    response.headerMap("Access-Control-Max-Age") must be(Duration.Top.inSeconds.toString)
     contentFrom(response) must be("")
   }
 
@@ -51,9 +51,9 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
 
     val response = Await result service(request)
     response.status must be(Status.Ok)
-    response.headerMap.get("Access-Control-Allow-Origin") must be(null)
-    response.headerMap.get("Access-Control-Allow-Credentials") must be(null)
-    response.headerMap.get("Access-Control-Allow-Methods") must be(null)
+    response.headerMap.get("Access-Control-Allow-Origin") must be(None)
+    response.headerMap.get("Access-Control-Allow-Credentials") must be(None)
+    response.headerMap.get("Access-Control-Allow-Methods") must be(None)
     response.headerMap.get("Vary") must be("Origin")
     contentFrom(response) must be("")
   }
@@ -65,9 +65,9 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
 
     val response = Await result service(request)
     response.status must be(Status.Ok)
-    response.headerMap.get("Access-Control-Allow-Origin") must be(null)
-    response.headerMap.get("Access-Control-Allow-Credentials") must be(null)
-    response.headerMap.get("Access-Control-Allow-Methods") must be(null)
+    response.headerMap.get("Access-Control-Allow-Origin") must be(None)
+    response.headerMap.get("Access-Control-Allow-Credentials") must be(None)
+    response.headerMap.get("Access-Control-Allow-Methods") must be(None)
     response.headerMap.get("Vary") must be("Origin")
     contentFrom(response) must be("")
   }

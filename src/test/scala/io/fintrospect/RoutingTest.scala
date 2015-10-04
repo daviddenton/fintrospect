@@ -2,6 +2,7 @@ package io.fintrospect
 
 import _root_.util.Echo
 import com.twitter.finagle.Service
+import com.twitter.finagle.httpx.Method._
 import com.twitter.finagle.httpx.path.Path
 import com.twitter.finagle.httpx.{Method, Request, Response, Status}
 import com.twitter.util.Await._
@@ -12,12 +13,12 @@ class RoutingTest extends FunSpec with ShouldMatchers {
 
   describe("Routing") {
     it("when it matches it responds as expected") {
-      val response = statusAndContentFrom(result(routingWhichMatches((Method.Get, Path("/someUrl")))(Request("/someUrl?field=hello"))))
+      val response = statusAndContentFrom(result(routingWhichMatches((Get, Path("/someUrl")))(Request("/someUrl?field=hello"))))
       response._1 shouldEqual Status.Ok
       response._2 should include("/someUrl?field=hello")
     }
     it("no match responds with default 404") {
-      val response = result(routingWhichMatches((Method.Get, Path("/someUrl")))(Request("/notMyService")))
+      val response = result(routingWhichMatches((Get, Path("/someUrl")))(Request("/notMyService")))
       response.status shouldEqual Status.NotFound
     }
   }

@@ -2,7 +2,8 @@ package examples.clients
 
 import java.time.LocalDate
 
-import com.twitter.finagle.httpx.{Method, Request, Response}
+import com.twitter.finagle.httpx.Method._
+import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.finagle.{Httpx, Service}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec
@@ -40,7 +41,7 @@ object ClientSideExample extends App {
     .taking(theUser)
     .taking(theWeather)
     .body(body)
-    .at(Method.Get) / "firstSection" / theDate bindToClient httpClient
+    .at(Get) / "firstSection" / theDate bindToClient httpClient
 
   val theCall = client(theWeather --> "sunny", body --> Form(gender --> "male"), theDate --> LocalDate.of(2015, 1, 1), theUser --> System.getenv("USER"))
 

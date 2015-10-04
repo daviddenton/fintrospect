@@ -1,6 +1,7 @@
 package examples.extended
 
 import com.twitter.finagle.Service
+import com.twitter.finagle.httpx.Method._
 import com.twitter.finagle.httpx.{Status, _}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes._
@@ -23,6 +24,6 @@ class BookLookup(books: Books) {
     .producing(APPLICATION_JSON)
     .returning(Error(Status.NotFound, "no book was found with this ISBN"))
     .returning(Status.Ok -> "we found your book", Book("a book", "authorName", 99).toJson)
-    .at(Method.Get) / "book" / Path.string("isbn", "the isbn of the book") bindTo lookupByIsbn
+    .at(Get) / "book" / Path.string("isbn", "the isbn of the book") bindTo lookupByIsbn
 }
 

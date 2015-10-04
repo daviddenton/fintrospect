@@ -1,8 +1,9 @@
 package examples.extended
 
 import com.twitter.finagle.Service
+import com.twitter.finagle.httpx.Method._
 import com.twitter.finagle.httpx.Status._
-import com.twitter.finagle.httpx.{Method, Request, Response}
+import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.util.Future
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._
@@ -31,7 +32,7 @@ class BookAdd(books: Books) {
     .body(jsonBody)
     .returning(ResponseSpec.json(Created -> "we added your book", exampleBook.toJson))
     .returning(bookExistsResponse)
-    .at(Method.Post) / "book" / Path.string("isbn", "the isbn of the book") bindTo addBook
+    .at(Post) / "book" / Path.string("isbn", "the isbn of the book") bindTo addBook
 }
 
 

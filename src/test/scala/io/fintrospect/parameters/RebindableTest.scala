@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.httpx.{Method, Request}
+import com.twitter.finagle.httpx.Method._
+import com.twitter.finagle.httpx.Request
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class RebindableTest extends FunSpec with ShouldMatchers {
@@ -11,8 +12,8 @@ class RebindableTest extends FunSpec with ShouldMatchers {
         val inRequest = Request()
         inRequest.headerMap.add("field", "123")
         val bindings = Header.required.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
-        outRequest.headerMap.get("field") shouldEqual "123"
+        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Get)
+        outRequest.headerMap("field") shouldEqual "123"
       }
     }
 
@@ -21,15 +22,15 @@ class RebindableTest extends FunSpec with ShouldMatchers {
         val inRequest = Request()
         inRequest.headerMap.add("field", "123")
         val bindings = Header.optional.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
-        outRequest.headerMap.get("field") shouldEqual "123"
+        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Get)
+        outRequest.headerMap("field") shouldEqual "123"
       }
 
       it("does not rebind missing value") {
         val inRequest = Request()
         val bindings = Header.optional.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
-        outRequest.headerMap.get("field") shouldEqual null
+        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Get)
+        outRequest.headerMap.get("field") shouldEqual None
       }
     }
   }

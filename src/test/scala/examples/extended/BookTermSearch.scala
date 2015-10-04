@@ -3,6 +3,7 @@ package examples.extended
 import java.lang.Integer._
 
 import com.twitter.finagle.Service
+import com.twitter.finagle.httpx.Method._
 import com.twitter.finagle.httpx.{Response, _}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes.APPLICATION_JSON
@@ -29,5 +30,5 @@ class BookTermSearch(books: Books) {
     .taking(titleTerms)
     .returning(Status.Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
     .producing(APPLICATION_JSON)
-    .at(Method.Get) / "titleSearch" bindTo search
+    .at(Get) / "titleSearch" bindTo search
 }
