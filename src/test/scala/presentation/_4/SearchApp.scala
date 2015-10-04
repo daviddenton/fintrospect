@@ -1,8 +1,9 @@
 package presentation._4
 
+import com.twitter.finagle.httpx.Method._
 import com.twitter.finagle.httpx.filter.Cors
 import com.twitter.finagle.httpx.path.Root
-import com.twitter.finagle.httpx.{Method, Request, Response}
+import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.finagle.{Httpx, Service}
 import com.twitter.util.Future
 import io.fintrospect.formats.text.PlainTextResponseBuilder
@@ -24,7 +25,7 @@ class SearchRoute(books: RemoteBooks) {
 
   val route = RouteSpec("search books")
     .taking(titlePartParam)
-    .at(Method.Get) / "search" bindTo search
+    .at(Get) / "search" bindTo search
 }
 
 

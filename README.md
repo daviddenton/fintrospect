@@ -75,8 +75,8 @@ class BookSearch(books: Books) {
   val route = RouteSpec("search for books")
     .taking(maxPages)
     .body(form)
-    .returning(Status.Ok -> "we found your book", array(Book("a book", "authorName", 99).toJson))
-    .returning(Status.Ok -> "results", BAD_REQUEST -> "invalid request")
+    .returning(Ok -> "we found your book", array(Book("a book", "authorName", 99).toJson))
+    .returning(BadRequest -> "invalid request")
     .producing(APPLICATION_JSON)
     .at(Post) / "search" bindTo search
 }
@@ -98,7 +98,7 @@ Declare the fields to be sent to the client service and then bind them to a remo
   val formClient = RouteSpec()
     .taking(gender)
     .body(body)
-    .at(Method.Get) / "firstSection" / theUser bindToClient httpClient
+    .at(Get) / "firstSection" / theUser bindToClient httpClient
 
   val theCall = formClient(gender --> "female", body --> Form(theDate --> LocalDate.of(2015, 1, 1)), theUser --> System.getenv("USER"))
 

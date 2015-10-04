@@ -56,10 +56,10 @@ class ResponseBuilderTest extends FunSpec {
   it("should set multiple headers correctly") {
     val response: Response = new ResponseBuilder[PlainText](_.value, PlainText, e => PlainText(e.getMessage), ContentType("anyContentType"))
       .withHeaders("content_disposition" -> "attachment; filename=foo.txt",
-        "content_disposition" -> "attachment; filename=bar.txt",
         "authorization" -> "Authorization: Basic").build
+
+    println(response.headerMap("CONTENT_DISPOSITION"))
     response.headerMap("CONTENT_DISPOSITION") shouldEqual "attachment; filename=foo.txt"
-    response.headerMap("CONTENT_DISPOSITION") shouldEqual "attachment; filename=bar.txt"
     response.headerMap("authorization") shouldEqual "Authorization: Basic"
   }
 

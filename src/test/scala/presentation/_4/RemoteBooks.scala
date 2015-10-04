@@ -1,7 +1,7 @@
 package presentation._4
 
 import com.twitter.finagle.Httpx
-import com.twitter.finagle.httpx.Method
+import com.twitter.finagle.httpx.Method._
 import com.twitter.util.Future
 import io.fintrospect.RouteSpec
 import io.fintrospect.parameters.Path
@@ -10,7 +10,7 @@ import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 
 object RemoteBooks {
   val titlePart = Path.string("titlePart")
-  val route = RouteSpec().at(Method.Get) / "search" / titlePart
+  val route = RouteSpec().at(Get) / "search" / titlePart
 }
 
 class RemoteBooks {

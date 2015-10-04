@@ -1,5 +1,6 @@
 package io.fintrospect
 
+import com.twitter.finagle.httpx.Method._
 import com.twitter.finagle.httpx.path.Path
 import com.twitter.finagle.httpx.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
@@ -80,7 +81,7 @@ class FintrospectModule private(basePath: Path,
   }
 
   private def withDefault(otherRoutes: PartialFunction[(Method, Path), Service[Request, Response]]) = {
-    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Method.Get, descriptionRoutePath).bindTo(() => new Service[Request, Response] {
+    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo(() => new Service[Request, Response] {
       override def apply(request: Request) = Future.value(moduleRenderer.description(basePath, routes))
     })
 
