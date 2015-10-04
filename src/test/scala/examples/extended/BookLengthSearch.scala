@@ -3,25 +3,22 @@ package examples.extended
 import java.lang.Integer._
 
 import com.twitter.finagle.Service
+import com.twitter.finagle.httpx.{Method, Request, Response, Status}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters._
-import org.jboss.netty.handler.codec.http.HttpMethod._
-import org.jboss.netty.handler.codec.http.HttpResponseStatus._
-import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 class BookLengthSearch(books: Books) {
   private val minPages = FormField.optional.int("minPages", "min number of pages in book")
   private val maxPages = FormField.required.int("maxPages", "max number of pages in book")
   private val form = Body.form(minPages, maxPages)
 
-  private def search() = new Service[HttpRequest, HttpResponse] {
-    override def apply(request: HttpRequest): Future[HttpResponse] = {
+  private def search() = new Service[Request, Response] {
+    override def apply(request: Request): Future[Response] = {
       val requestForm = form <-- request
       Ok(array(books.search(
         minPages <-- requestForm getOrElse MIN_VALUE,
@@ -33,8 +30,8 @@ class BookLengthSearch(books: Books) {
 
   val route = RouteSpec("search for books by number of pages")
     .body(form)
-    .returning(OK -> "we found some books", array(Book("a book", "authorName", 99).toJson))
-    .returning(OK -> "results", BAD_REQUEST -> "invalid request")
+    .returning(Status.Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
+    .returning(Status.BadRequest -> "invalid request")
     .producing(APPLICATION_JSON)
-    .at(POST) / "lengthSearch" bindTo search
+    .at(Method.Post) / "lengthSearch" bindTo search
 }

@@ -1,11 +1,9 @@
 package examples.extended
 
-import com.twitter.finagle.http.Request
-import io.fintrospect.formats.json.Argo
+import com.twitter.finagle.httpx._
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.testing.TestingFintrospectRoute
 import io.fintrospect.util.HttpRequestResponseUtil._
-import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 /*
@@ -22,6 +20,6 @@ class BookLookupTest extends FunSpec with ShouldMatchers with TestingFintrospect
   }
 
   it("non-existing book") {
-    statusAndContentFrom(responseFor(Request("/book/hp8")))._1 shouldEqual HttpResponseStatus.NOT_FOUND
+    statusAndContentFrom(responseFor(Request("/book/hp8")))._1 shouldEqual Status.NotFound
   }
 }

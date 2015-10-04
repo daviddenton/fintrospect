@@ -1,13 +1,12 @@
 package io.fintrospect.renderers
 
+import com.twitter.finagle.httpx.{Response, Status}
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter
-import org.jboss.netty.handler.codec.http.HttpResponse
-import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 
 object JsonBadRequestRenderer {
-  def apply(badParameters: Seq[Parameter]): HttpResponse = {
+  def apply(badParameters: Seq[Parameter]): Response = {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),
       "type" -> string(p.where),
@@ -15,6 +14,6 @@ object JsonBadRequestRenderer {
       "required" -> boolean(p.required)
     ))
 
-    Error(BAD_REQUEST, obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages)))
+    Error(Status.BadRequest, obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages)))
   }
 }

@@ -3,12 +3,10 @@ package io.fintrospect.parameters
 import java.net.URLDecoder._
 import java.net.URLEncoder.encode
 
-import com.twitter.io.Charsets
+import com.twitter.finagle.httpx.Request
 import io.fintrospect.ContentTypes
 import io.fintrospect.util.HttpRequestResponseUtil._
-import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
-import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.{Failure, Success, Try}
 
@@ -16,23 +14,23 @@ import scala.util.{Failure, Success, Try}
 class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
   extends Body[Form](FormBody.spec)
   with Bindable[Form, Binding]
-  with MandatoryRebind[Form, HttpRequest, Binding] {
+  with MandatoryRebind[Form, Request, Binding] {
 
   override def -->(value: Form): Seq[Binding] = {
     Seq(new RequestBinding(null, t => {
-      val content = copiedBuffer(FormBody.spec.serialize(value), Charsets.Utf8)
-      t.headers().add(Names.CONTENT_TYPE, FormBody.spec.contentType.value)
-      t.headers().add(Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()))
-      t.setContent(content)
+      val content = FormBody.spec.serialize(value)
+      t.headerMap.add(Names.CONTENT_TYPE, FormBody.spec.contentType.value)
+      t.headerMap.add(Names.CONTENT_LENGTH, content.length.toString)
+      t.setContentString(content)
       t
     })) ++ fields.map(f => new FormFieldBinding(f, ""))
   }
 
-  override def <--(request: HttpRequest) = FormBody.spec.deserialize(contentFrom(request))
+  override def <--(request: Request) = FormBody.spec.deserialize(contentFrom(request))
 
   override def iterator = fields.iterator
 
-  override def validate(request: HttpRequest): Seq[Either[Parameter, Option[_]]] = {
+  override def validate(request: Request): Seq[Either[Parameter, Option[_]]] = {
     Try(contentFrom(request)) match {
       case Success(r) => Try(FormBody.spec.deserialize(r)) match {
         case Success(v) => fields.map(_.validate(v))

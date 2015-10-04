@@ -1,40 +1,39 @@
 package io.fintrospect
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.path.Path
+import com.twitter.finagle.httpx._
+import com.twitter.finagle.httpx.path.Path
 import com.twitter.util.Future
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.json.Argo
-import org.jboss.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
-class Routing private(routes: PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]]) extends Service[HttpRequest, HttpResponse] {
-  private val notFoundPf: PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]] = {
-    case _ => new Service[HttpRequest, HttpResponse] {
-      def apply(request: HttpRequest): Future[HttpResponse] = Argo.ResponseBuilder.Error(NOT_FOUND, "No route found on this path. Have you used the correct HTTP verb?")
+class Routing private(routes: PartialFunction[Request, Service[Request, Response]]) extends Service[Request, Response] {
+  private val notFoundPf: PartialFunction[Request, Service[Request, Response]] = {
+    case _ => new Service[Request, Response] {
+      def apply(request: Request): Future[Response] = Argo.ResponseBuilder.Error(Status.NotFound, "No route found on this path. Have you used the correct HTTP verb?")
     }
   }
   private val requestToService = routes orElse notFoundPf
 
-  def apply(request: HttpRequest): Future[HttpResponse] = requestToService(request)(request)
+  def apply(request: Request): Future[Response] = requestToService(request)(request)
 }
 
 object Routing {
 
-  private[fintrospect] type RouteBinding = PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]
+  private[fintrospect] type RouteBinding = PartialFunction[(Method, Path), Service[Request, Response]]
 
   def fromBinding(binding: RouteBinding) =
     new Routing(
-      new PartialFunction[HttpRequest, Service[HttpRequest, HttpResponse]] {
-        def apply(request: HttpRequest) = {
-          binding((request.getMethod, Path(pathFrom(request))))
+      new PartialFunction[Request, Service[Request, Response]] {
+        def apply(request: Request) = {
+          binding((request.method, Path(pathFrom(request))))
         }
 
-        def isDefinedAt(request: HttpRequest) = binding.isDefinedAt((request.getMethod, Path(pathFrom(request))))
+        def isDefinedAt(request: Request) = binding.isDefinedAt((request.method, Path(pathFrom(request))))
       })
 
-  private def pathFrom(req: HttpRequest) = {
-    val u = req.getUri
+  private def pathFrom(req: Request) = {
+    val u = req.uri
     u.indexOf('?') match {
       case -1 => u
       case n => u.substring(0, n)

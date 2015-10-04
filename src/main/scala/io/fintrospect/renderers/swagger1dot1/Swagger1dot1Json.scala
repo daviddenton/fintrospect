@@ -1,13 +1,13 @@
 package io.fintrospect.renderers.swagger1dot1
 
 import argo.jdom.JsonNode
-import com.twitter.finagle.http.path.Path
+import com.twitter.finagle.httpx.Response
+import com.twitter.finagle.httpx.path.Path
 import io.fintrospect.ServerRoute
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
-import org.jboss.netty.handler.codec.http.HttpResponse
 
 import scala.collection.JavaConversions._
 
@@ -24,7 +24,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     "dataType" -> string(parameter.paramType.name)
   )
 
-  private def render(route: ServerRoute): Field = route.method.getName.toLowerCase -> {
+  private def render(route: ServerRoute): Field = route.method.toString().toLowerCase -> {
     val allParams: Seq[Parameter] =
       route.pathParams.flatMap(identity) ++
       route.routeSpec.queryParams ++
@@ -32,19 +32,19 @@ class Swagger1dot1Json extends ModuleRenderer {
       route.routeSpec.body.map(_.iterator).getOrElse(Nil)
 
     obj(
-      "httpMethod" -> string(route.method.getName),
+      "Method" -> string(route.method.toString()),
       "nickname" -> string(route.routeSpec.summary),
       "notes" -> route.routeSpec.description.map(string).getOrElse(nullNode()),
       "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "consumes" -> array(route.routeSpec.consumes.map(m => string(m.value))),
       "parameters" -> array(allParams.map(render)),
       "errorResponses" -> array(route.routeSpec.responses
-        .filter(_.status.getCode > 399)
-        .map(resp => obj("code" -> number(resp.status.getCode), "reason" -> string(resp.description))))
+        .filter(_.status.code > 399)
+        .map(resp => obj("code" -> number(resp.status.code), "reason" -> string(resp.description))))
     )
   }
 
-  override def description(basePath: Path, routes: Seq[ServerRoute]): HttpResponse = {
+  override def description(basePath: Path, routes: Seq[ServerRoute]): Response = {
     val api = routes
       .groupBy(_.describeFor(basePath))
       .map { case (path, routesForPath) => obj("path" -> string(path), "operations" -> array(routesForPath.map(render(_)._2))) }
@@ -52,7 +52,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     Ok(obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api))))
   }
 
-  override def badRequest(badParameters: Seq[Parameter]): HttpResponse = JsonBadRequestRenderer(badParameters)
+  override def badRequest(badParameters: Seq[Parameter]): Response = JsonBadRequestRenderer(badParameters)
 }
 
 object Swagger1dot1Json {

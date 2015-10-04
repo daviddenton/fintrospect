@@ -1,12 +1,12 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.Request
+import com.twitter.finagle.httpx.{Method, Request}
 import org.jboss.netty.handler.codec.http._
 
 case class RequestBuild(uriParts: Seq[String] = Seq(),
                         queries: Map[String, Seq[String]] = Map(),
-                        fn: HttpRequest => HttpRequest = identity) {
-  def build(method: HttpMethod): HttpRequest = {
+                        fn: Request => Request = identity) {
+  def build(method: Method): Request = {
     val baseUri = uriParts.mkString("/")
     val uri = queries.foldLeft(new QueryStringEncoder(if(baseUri.isEmpty) "/" else baseUri)) {
       (memo, q) =>

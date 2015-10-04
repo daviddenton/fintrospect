@@ -2,9 +2,9 @@ package io.fintrospect.parameters
 
 import java.time.LocalDate
 
-import com.twitter.finagle.http.Request
-import org.jboss.netty.handler.codec.http.HttpMethod
+import com.twitter.finagle.httpx.{Method, Request}
 import org.scalatest._
+
 
 class QueryTest extends FunSpec with ShouldMatchers {
 
@@ -30,8 +30,8 @@ class QueryTest extends FunSpec with ShouldMatchers {
       it("can rebind valid value") {
         val inRequest = Request("?field=123")
         val bindings = Query.required.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
-        outRequest.getUri shouldEqual "/?field=123"
+        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
+        outRequest.uri shouldEqual "/?field=123"
       }
     }
 
@@ -54,8 +54,8 @@ class QueryTest extends FunSpec with ShouldMatchers {
       it("can rebind valid value") {
         val inRequest = Request("?field=123&field=456")
         val bindings = Query.required.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
-        outRequest.getUri shouldEqual "/?field=123"
+        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
+        outRequest.uri shouldEqual "/?field=123"
       }
     }
   }
@@ -81,15 +81,15 @@ class QueryTest extends FunSpec with ShouldMatchers {
       it("can rebind valid value") {
         val inRequest = Request("?field=123")
         val bindings = Query.optional.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
-        outRequest.getUri shouldEqual "/?field=123"
+        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
+        outRequest.uri shouldEqual "/?field=123"
       }
 
       it("doesn't rebind missing value") {
         val inRequest = Request("?")
         val bindings = Query.optional.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
-        outRequest.getUri shouldEqual "/"
+        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
+        outRequest.uri shouldEqual "/"
       }
     }
     describe("multi") {
@@ -112,15 +112,15 @@ class QueryTest extends FunSpec with ShouldMatchers {
       it("can rebind valid value") {
         val inRequest = Request("?field=123&field=456")
         val bindings = Query.optional.multi.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
-        outRequest.getUri shouldEqual "/?field=456&field=123"
+        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
+        outRequest.uri shouldEqual "/?field=456&field=123"
       }
 
       it("doesn't rebind missing value") {
         val inRequest = Request("?")
         val bindings = Query.optional.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
-        outRequest.getUri shouldEqual "/"
+        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
+        outRequest.uri shouldEqual "/"
       }
     }
   }

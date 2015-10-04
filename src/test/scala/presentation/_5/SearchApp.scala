@@ -1,23 +1,22 @@
 package presentation._5
 
-import com.twitter.finagle.http.filter.Cors
-import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.{Http, Service}
+import com.twitter.finagle.httpx.filter.Cors
+import com.twitter.finagle.httpx.path.Root
+import com.twitter.finagle.httpx.{Method, Request, Response, Status}
+import com.twitter.finagle.{Httpx, Service}
 import com.twitter.util.Future
 import io.fintrospect._
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 import presentation.Book
-
 
 class SearchRoute(books: RemoteBooks) {
   private val titlePartParam = Query.required.string("titlePart")
 
-  def search() = new Service[HttpRequest, HttpResponse] {
-    override def apply(request: HttpRequest): Future[HttpResponse] = {
+  def search() = new Service[Request, Response] {
+    override def apply(request: Request): Future[Response] = {
       val titlePart = titlePartParam <-- request
 
       books.search(titlePart)
@@ -28,8 +27,8 @@ class SearchRoute(books: RemoteBooks) {
 
   val route = RouteSpec("search books")
     .taking(titlePartParam)
-    .returning(ResponseSpec.json(HttpResponseStatus.OK -> "search results", array(Book("1984").toJson)))
-    .at(HttpMethod.GET) / "search" bindTo search
+    .returning(ResponseSpec.json(Status.Ok -> "search results", array(Book("1984").toJson)))
+    .at(Method.Get) / "search" bindTo search
 }
 
 
@@ -41,6 +40,6 @@ class SearchApp {
     .toService
 
   val searchService = new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service)
-  Http.serve(":9000", searchService)
+  Httpx.serve(":9000", searchService)
 }
 

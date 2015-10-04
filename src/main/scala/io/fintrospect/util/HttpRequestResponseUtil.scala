@@ -1,16 +1,12 @@
 package io.fintrospect.util
 
-import com.twitter.io.Charsets
-import org.jboss.netty.handler.codec.http.{HttpMessage, HttpResponse, HttpResponseStatus}
-
-import scala.collection.JavaConversions
+import com.twitter.finagle.httpx.{Message, Response, Status}
 
 object HttpRequestResponseUtil {
-  def contentFrom(msg: HttpMessage): String = msg.getContent.toString(Charsets.Utf8)
-  def statusAndContentFrom(msg: HttpResponse): (HttpResponseStatus, String) = (msg.getStatus, contentFrom(msg))
+  def contentFrom(msg: Message): String = msg.contentString
+  def statusAndContentFrom(msg: Response): (Status, String) = (msg.status, contentFrom(msg))
 
-  def headersFrom(msg: HttpMessage) : Map[String, String] = {
-    val headers = JavaConversions.iterableAsScalaIterable(msg.headers())
-    Map(headers.map(entry => entry.getKey -> entry.getValue).toSeq: _*)
+  def headersFrom(msg: Message) : Map[String, String] = {
+    Map(msg.headerMap.map(entry => entry._1 -> entry._2).toSeq: _*)
   }
 }
