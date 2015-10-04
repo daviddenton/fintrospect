@@ -6,7 +6,7 @@
       "path": "/basepath/echo/{message}",
       "operations": [
         {
-          "Method": "Method.Post",
+          "Method": "POST",
           "nickname": "a post endpoint",
           "notes": null,
           "produces": [
@@ -48,7 +48,7 @@
           ]
         },
         {
-          "Method": "Method.Get",
+          "Method": "GET",
           "nickname": "summary of this route",
           "notes": "some rambling description of what this thing actually does",
           "produces": [
@@ -84,7 +84,7 @@
       "path": "/basepath/welcome/{firstName}/bertrand/{secondName}",
       "operations": [
         {
-          "Method": "Method.Get",
+          "Method": "GET",
           "nickname": "a friendly endpoint",
           "notes": null,
           "produces": [],

@@ -16,7 +16,7 @@ class SimpleJson extends ModuleRenderer {
   override def badRequest(badParameters: Seq[Parameter]): Response = JsonBadRequestRenderer(badParameters)
 
   private def render(basePath: Path, route: ServerRoute): Field = {
-    route.method + ":" + route.describeFor(basePath) -> Argo.JsonFormat.string(route.routeSpec.summary)
+    route.method.toString() + ":" + route.describeFor(basePath) -> Argo.JsonFormat.string(route.routeSpec.summary)
   }
 
   override def description(basePath: Path, routes: Seq[ServerRoute]): Response = Ok(obj("resources" -> obj(routes.map(r => render(basePath, r)))))

@@ -7,7 +7,7 @@ import com.twitter.util.Future
 
 /**
  * This implementation is ported from the Finagle version, in order to add support for the Request type used by
- * Fintrospect. See:
+ * Fintrospect.
  *
  */
 
@@ -68,9 +68,9 @@ class CorsFilter(policy: Policy) extends Filter[Request, Response, Request, Resp
       ", *".r.split(_).toSeq
     } getOrElse Seq.empty[String]
 
-  private def setHeaders(response: Response, headerMap: Seq[String]): Response = {
-    if (headerMap.nonEmpty) {
-      response.headerMap.set("Access-Control-Allow-Headers", headerMap.mkString(", "))
+  private def setHeaders(response: Response, headers: Seq[String]): Response = {
+    if (headers.nonEmpty) {
+      response.headerMap.set("Access-Control-Allow-Headers", headers.mkString(", "))
     }
     response
   }
@@ -79,9 +79,9 @@ class CorsFilter(policy: Policy) extends Filter[Request, Response, Request, Resp
   private def handlePreflight(request: Request): Option[Response] =
     getOrigin(request) flatMap { origin =>
       getMethod(request) flatMap { method =>
-        val headerMap = getHeaders(request)
+        val headers = getHeaders(request)
         policy.allowsMethods(method) flatMap { allowedMethods =>
-          policy.allowsHeaders(headerMap) map { allowedHeaders =>
+          policy.allowsHeaders(headers) map { allowedHeaders =>
             setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Response(Status.Ok), origin)), allowedMethods), allowedHeaders)
           }
         }
