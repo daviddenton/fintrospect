@@ -9,9 +9,9 @@ name := projectName
 
 description := "Library that adds self-documentation to Finagle server endpoint services"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.7"
 
-crossScalaVersions := Seq("2.10.4", "2.11.5")
+crossScalaVersions := Seq("2.10.6", "2.11.7")
 
 scalacOptions += "-deprecation"
 
@@ -23,24 +23,24 @@ libraryDependencies ++= Seq(
   "org.json4s" %% "json4s" % "3.2.11" % "provided",
   "org.json4s" %% "json4s-native" % "3.2.11" % "provided",
   "org.json4s" %% "json4s-jackson" % "3.2.11" % "provided",
-  "com.twitter" %% "finagle-http" % "6.27.0" % "provided",
+  "com.twitter" %% "finagle-httpx" % "6.29.0" % "provided",
   "org.scalatest" %% "scalatest" % "2.2.1" % "test"
 )
 
 licenses +=("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
 
 pomExtra :=
-  <url>http://{projectName}.github.io/</url>
+  <url>http://fintrospect.io</url>
     <scm>
-      <url>git@github.com:daviddenton/{projectName}.git</url>
-      <connection>scm:git:git@github.com:daviddenton/{projectName}.git</connection>
-      <developerConnection>scm:git:git@github.com:daviddenton/{projectName}.git</developerConnection>
+      <url>git@github.com:daviddenton/fintrospect.git</url>
+      <connection>scm:git:git@github.com:daviddenton/fintrospect.git</connection>
+      <developerConnection>scm:git:git@github.com:daviddenton/fintrospect.git</developerConnection>
     </scm>
     <developers>
       <developer>
         <name>David Denton</name>
         <email>dev@fintrospect.io</email>
-        <organization>{projectName}</organization>
+        <organization>fintrospect</organization>
         <organizationUrl>http://fintrospect.io</organizationUrl>
       </developer>
     </developers>

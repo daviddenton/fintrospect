@@ -1,25 +1,25 @@
 package io.fintrospect.parameters
 
-import org.jboss.netty.handler.codec.http.HttpRequest
+import com.twitter.finagle.httpx.Request
 
 /**
  * Parameters which are bound to the query part of a URL
  */
 object Query {
 
-  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, HttpRequest] with MandatoryRebind[T, HttpRequest, QueryBinding] {
+  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, Request] with MandatoryRebind[T, Request, QueryBinding] {
     self: Bindable[T, QueryBinding] =>
   }
 
-  trait MandatorySeq[T] extends io.fintrospect.parameters.Mandatory[Seq[T], HttpRequest] with MandatoryRebind[Seq[T], HttpRequest, QueryBinding] {
+  trait MandatorySeq[T] extends io.fintrospect.parameters.Mandatory[Seq[T], Request] with MandatoryRebind[Seq[T], Request, QueryBinding] {
     self: Bindable[Seq[T], QueryBinding] =>
   }
 
-  trait Optional[T] extends io.fintrospect.parameters.Optional[T, HttpRequest] with OptionalRebind[T, HttpRequest, QueryBinding] {
+  trait Optional[T] extends io.fintrospect.parameters.Optional[T, Request] with OptionalRebind[T, Request, QueryBinding] {
     self: Bindable[T, QueryBinding] =>
   }
 
-  trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Seq[T], HttpRequest] with OptionalRebind[Seq[T], HttpRequest, QueryBinding] {
+  trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Seq[T], Request] with OptionalRebind[Seq[T], Request, QueryBinding] {
     self: Bindable[Seq[T], QueryBinding] =>
   }
 

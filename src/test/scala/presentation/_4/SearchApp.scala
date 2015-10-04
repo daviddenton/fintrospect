@@ -1,20 +1,20 @@
 package presentation._4
 
-import com.twitter.finagle.http.filter.Cors
-import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.{Http, Service}
+import com.twitter.finagle.httpx.filter.Cors
+import com.twitter.finagle.httpx.path.Root
+import com.twitter.finagle.httpx.{Method, Request, Response}
+import com.twitter.finagle.{Httpx, Service}
 import com.twitter.util.Future
 import io.fintrospect.formats.text.PlainTextResponseBuilder
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 import io.fintrospect.{ApiInfo, CorsFilter, FintrospectModule, RouteSpec}
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
 class SearchRoute(books: RemoteBooks) {
   private val titlePartParam = Query.required.string("titlePart")
 
-  def search() = new Service[HttpRequest, HttpResponse] {
-    override def apply(request: HttpRequest): Future[HttpResponse] = {
+  def search() = new Service[Request, Response] {
+    override def apply(request: Request): Future[Response] = {
       val titlePart = titlePartParam <-- request
 
       books.search(titlePart)
@@ -24,7 +24,7 @@ class SearchRoute(books: RemoteBooks) {
 
   val route = RouteSpec("search books")
     .taking(titlePartParam)
-    .at(HttpMethod.GET) / "search" bindTo search
+    .at(Method.Get) / "search" bindTo search
 }
 
 
@@ -36,6 +36,6 @@ class SearchApp {
     .toService
 
   val searchService = new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service)
-  Http.serve(":9000", searchService)
+  Httpx.serve(":9000", searchService)
 }
 

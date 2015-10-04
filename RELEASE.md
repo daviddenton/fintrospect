@@ -5,6 +5,14 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+#####v10.0.X
+- Upgrade from Finagle-http v6.27.0 to finagle-httpx v6.29.0, as the former is EOL. This will result in a significant amount 
+of breaking changes due to Finagle using their own classes instead of Netty equivalents:
+    - ```HttpRequest/Response``` Netty classes are now ```Request/Response``` instead
+    - ```HttpResponseStatus``` changed to ```Status```
+    - ```HttpMethod.GET/POST/...``` changd to ```Method.Get/Post/...```
+- Other than the above, no actual changes to the Fintrospect API or how it works have been made.
+
 #####v9.1.0
 - Changed format of "X-Fintrospect-Route-Name" header to use : instead of . in to describe the route URL - as URLs often have . in (for file extensions).
 
@@ -52,7 +60,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 
 #####v6.1.X -> v7.X.X
 - Custom parameter support now more modular. Breaking change of ```custom(XXX)``` -> ```apply(XXX)``` in Parameters classes, which requires using ParameterSpec instead of arg list.
-- Improved support for Forms and custom Body types (other than JSON). Dropped support for Forms parameters as request params and reimplemented as a particular Body type, with automatic setting of Content-Type 
+- Improved support for Forms and custom Body types (other than JSON). Dropped support for Forms parameters as request params and reimplemented as a particular Body type, with automatic setting of Content-Type
 headers. Clients will need to migrate to the new Form format (see examples).
 - Body parameters are now parsed for validity in the same way as other required parameters.
 - EXPERIMENTAL! Ability to define clients using the same style API as the Services. Supports Path/Query/Headers, but not Bodies or Forms as yet.
@@ -78,11 +86,11 @@ headers. Clients will need to migrate to the new Form format (see examples).
 #####v2.X.X -> v3.X.X
 
 Migrated away from the in-built Twitter HTTP Request package (```com.twitter.finagle.http```) and onto the Netty ```
-org.jboss.netty.handler.codec.http.HttpRequest```. This is to provide compatibility with the changes to the Finagle APIs in regards
+org.jboss.netty.handler.codec.http.Request```. This is to provide compatibility with the changes to the Finagle APIs in regards
 to creating both servers and clients. It also has the advantage of unifying the client/server interface (previously it
 was different between the two). The only things that should have to change in your code are:
 
   - How servers are created - the new method is simpler (see the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
-  - The signature of routes is now ```Service[HttpRequest,HttpResponse]```. Since the Twitter Request/Response classes
+  - The signature of routes is now ```Service[Request,Response]```. Since the Twitter Request/Response classes
    extends these interfaces, usages of the ResponseBuilder remain the same.
   - Form-based parameters are now defined with the ```Form``` object, and not the ```Query``` object (which now just retrieves Query String parameters from the URL).

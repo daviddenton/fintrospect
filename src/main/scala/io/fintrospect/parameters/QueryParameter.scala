@@ -1,20 +1,21 @@
 package io.fintrospect.parameters
 
-import org.jboss.netty.handler.codec.http.{HttpRequest, QueryStringDecoder}
+import com.twitter.finagle.httpx.Request
+import org.jboss.netty.handler.codec.http.QueryStringDecoder
 
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
 abstract class QueryParameter[T](spec: ParameterSpec[_], val deserialize: Seq[String] => T)
-  extends Parameter with Validatable[T, HttpRequest] with Bindable[T, QueryBinding] {
+  extends Parameter with Validatable[T, Request] with Bindable[T, QueryBinding] {
 
   override val name = spec.name
   override val description = spec.description
   override val paramType = spec.paramType
   override val where = "query"
 
-  def validate(request: HttpRequest) = {
-    Option(new QueryStringDecoder(request.getUri).getParameters.get(name))
+  def validate(request: Request) = {
+    Option(new QueryStringDecoder(request.uri).getParameters.get(name))
       .map(_.asScala.toSeq)
       .map(v =>
       Try(deserialize(v)) match {

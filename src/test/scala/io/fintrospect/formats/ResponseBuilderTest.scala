@@ -2,11 +2,10 @@ package io.fintrospect.formats
 
 import java.nio.charset.Charset._
 
-import com.twitter.finagle.http.Response
+import com.twitter.finagle.httpx.{Response, Status}
 import io.fintrospect.ContentType
 import io.fintrospect.formats.text.PlainText
 import org.jboss.netty.buffer.ChannelBuffers._
-import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.FunSpec
 import org.scalatest.Matchers._
 
@@ -26,8 +25,8 @@ class ResponseBuilderTest extends FunSpec {
 
   it("should set the status code correctly") {
     val response: Response = new ResponseBuilder[PlainText](_.value, PlainText, e => PlainText(e.getMessage), ContentType("anyContentType"))
-      .withCode(OK).build
-    response.status shouldBe OK
+      .withCode(Status.Ok).build
+    response.status shouldBe Status.Ok
   }
 
   it("should set the content correctly given content string") {
@@ -51,7 +50,7 @@ class ResponseBuilderTest extends FunSpec {
   it("should set one header correctly") {
     val response: Response = new ResponseBuilder[PlainText](_.value, PlainText, e => PlainText(e.getMessage), ContentType("anyContentType"))
       .withHeaders("content_disposition" -> "attachment; filename=foo.txt").build
-    response.headers().contains("CONTENT_DISPOSITION", "attachment; filename=foo.txt", false) shouldBe true
+    response.headerMap("CONTENT_DISPOSITION") shouldEqual "attachment; filename=foo.txt"
   }
 
   it("should set multiple headers correctly") {
@@ -59,9 +58,9 @@ class ResponseBuilderTest extends FunSpec {
       .withHeaders("content_disposition" -> "attachment; filename=foo.txt",
         "content_disposition" -> "attachment; filename=bar.txt",
         "authorization" -> "Authorization: Basic").build
-    response.headers().contains("CONTENT_DISPOSITION", "attachment; filename=foo.txt", false) shouldBe true
-    response.headers().contains("CONTENT_DISPOSITION", "attachment; filename=bar.txt", false) shouldBe true
-    response.headers().contains("authorization", "Authorization: Basic", false) shouldBe true
+    response.headerMap("CONTENT_DISPOSITION") shouldEqual "attachment; filename=foo.txt"
+    response.headerMap("CONTENT_DISPOSITION") shouldEqual "attachment; filename=bar.txt"
+    response.headerMap("authorization") shouldEqual "Authorization: Basic"
   }
 
 }

@@ -1,10 +1,8 @@
 package io.fintrospect.parameters
 
-import com.twitter.io.Charsets
+import com.twitter.finagle.httpx.Request
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
-import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
-import org.jboss.netty.handler.codec.http.HttpRequest
 
 import scala.util.{Failure, Success, Try}
 
@@ -20,7 +18,7 @@ class UniBody[T](spec: BodySpec[T],
                  theExample: Option[T])
   extends Body[T](spec)
   with Bindable[T, RequestBinding]
-  with MandatoryRebind[T, HttpRequest, RequestBinding] {
+  with MandatoryRebind[T, Request, RequestBinding] {
 
   private val param = new BodyParameter with Bindable[T, RequestBinding] {
     override val required = true
@@ -30,10 +28,10 @@ class UniBody[T](spec: BodySpec[T],
     override val paramType = theParamType
 
     override def -->(value: T) = Seq(new RequestBinding(this, t => {
-      val content = copiedBuffer(spec.serialize(value), Charsets.Utf8)
-      t.headers().add(Names.CONTENT_TYPE, spec.contentType.value)
-      t.headers().add(Names.CONTENT_LENGTH, String.valueOf(content.readableBytes()))
-      t.setContent(content)
+      val content = spec.serialize(value)
+      t.headerMap.add(Names.CONTENT_TYPE, spec.contentType.value)
+      t.headerMap.add(Names.CONTENT_LENGTH, content.length.toString)
+      t.setContentString(content)
       t
     }))
 
@@ -42,11 +40,11 @@ class UniBody[T](spec: BodySpec[T],
 
   override def -->(value: T) = param.of(value)
 
-  override def <--(request: HttpRequest) = validate(request).head.right.get.get
+  override def <--(request: Request) = validate(request).head.right.get.get
 
   override def iterator = Iterator(param)
 
-  override def validate(request: HttpRequest): Seq[Either[Parameter, Option[T]]] = {
+  override def validate(request: Request): Seq[Either[Parameter, Option[T]]] = {
     Try(contentFrom(request)).toOption match {
       case Some(r) => Seq(Try(spec.deserialize(r)) match {
         case Success(v) => Right(Option(v))

@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import org.jboss.netty.handler.codec.http.HttpRequest
+import com.twitter.finagle.httpx.Request
 
 import scala.language.existentials
 
@@ -24,7 +24,7 @@ class PathBinding(val parameter: Parameter, value: String) extends Binding {
   def apply(requestBuild: RequestBuild) = requestBuild.copy(uriParts = requestBuild.uriParts :+ value)
 }
 
-class RequestBinding(val parameter: Parameter, into: HttpRequest => HttpRequest) extends Binding {
+class RequestBinding(val parameter: Parameter, into: Request => Request) extends Binding {
   def apply(requestBuild: RequestBuild) = requestBuild.copy(fn = requestBuild.fn.andThen(into))
 }
 

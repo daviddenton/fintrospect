@@ -9,7 +9,7 @@ var ArrayModel = function(definition) {
   this.name = "arrayModel";
   this.definition = definition || {};
   this.properties = [];
-  
+
   var requiredFields = definition.enum || [];
   var innerType = definition.items;
   if(innerType) {
@@ -301,7 +301,7 @@ PrimitiveModel.prototype.getMockSignature = function(modelsToIgnore) {
   }
   return returnVal;
 };
-/** 
+/**
  * Resolves a spec's remote references
  */
 var Resolver = function (){};
@@ -675,23 +675,23 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   var operations = [];
   for(path in response.paths) {
     if(typeof response.paths[path] === 'object') {
-      var httpMethod;
-      for(httpMethod in response.paths[path]) {
-        if(['delete', 'get', 'head', 'options', 'patch', 'post', 'put'].indexOf(httpMethod) === -1) {
+      var Method;
+      for(Method in response.paths[path]) {
+        if(['delete', 'get', 'head', 'options', 'patch', 'post', 'put'].indexOf(Method) === -1) {
           continue;
         }
-        var operation = response.paths[path][httpMethod];
+        var operation = response.paths[path][Method];
         var tags = operation.tags;
         if(typeof tags === 'undefined') {
           operation.tags = [ 'default' ];
           tags = operation.tags;
         }
-        var operationId = this.idFromOp(path, httpMethod, operation);
+        var operationId = this.idFromOp(path, Method, operation);
         var operationObject = new Operation (
           this,
           operation.scheme,
           operationId,
-          httpMethod,
+          Method,
           path,
           operation,
           this.definitions
@@ -789,8 +789,8 @@ SwaggerClient.prototype.tagFromLabel = function(label) {
   return label;
 };
 
-SwaggerClient.prototype.idFromOp = function(path, httpMethod, op) {
-  var opId = op.operationId || (path.substring(1) + '_' + httpMethod);
+SwaggerClient.prototype.idFromOp = function(path, Method, op) {
+  var opId = op.operationId || (path.substring(1) + '_' + Method);
   return opId.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()\+\s]/g,'_');
 };
 
@@ -809,7 +809,7 @@ var OperationGroup = function(tag, description, externalDocs, operation) {
   this.operationsArray = [];
 };
 
-var Operation = function(parent, scheme, operationId, httpMethod, path, args, definitions) {
+var Operation = function(parent, scheme, operationId, Method, path, args, definitions) {
   var errors = [];
   parent = parent||{};
   args = args||{};
@@ -825,7 +825,7 @@ var Operation = function(parent, scheme, operationId, httpMethod, path, args, de
   this.scheme = scheme || parent.scheme || 'http';
   this.basePath = parent.basePath || '/';
   this.nickname = (operationId||errors.push('Operations must have a nickname.'));
-  this.method = (httpMethod||errors.push('Operation ' + operationId + ' is missing method.'));
+  this.method = (Method||errors.push('Operation ' + operationId + ' is missing method.'));
   this.path = (path||errors.push('Operation ' + this.nickname + ' is missing path.'));
   this.parameters = args !== null ? (args.parameters||[]) : {};
   this.summary = args.summary || '';
@@ -1721,7 +1721,7 @@ Property.prototype.toString = function() {
   }
 
 
-  var options = ''; 
+  var options = '';
   var isArray = this.schema.type === 'array';
   var type;
 
@@ -1783,11 +1783,11 @@ Property.prototype.toString = function() {
     }
 
     options += optionHtml('Enum', enumString);
-  }     
+  }
 
   if (options.length > 0)
     str = '<span class="propWrap">' + str + '<table class="optionsWrapper"><tr><th colspan="2">' + this.name + '</th></tr>' + options + '</table></span>';
-  
+
   return str;
 };
 
@@ -1882,7 +1882,7 @@ SwaggerClient.prototype.finish = function() {
     this.isBuilt = true;
     this.selfReflect();
     this.success();
-  }  
+  }
 };
 
 SwaggerClient.prototype.buildFrom1_1Spec = function (response) {
@@ -2019,7 +2019,7 @@ var SwaggerResource = function (resourceObj, api) {
     this.api.progress('fetching resource ' + this.name + ': ' + this.url);
     var obj = {
       url: this.url,
-      method: 'GET',
+      method: 'Method.Get',
       useJQuery: this.useJQuery,
       headers: {
         accept: this.swaggerRequstHeaders
@@ -2151,8 +2151,8 @@ SwaggerResource.prototype.addOperations = function (resource_path, ops, consumes
       }
       var responseMessages = o.responseMessages;
       var method = o.method;
-      if (o.httpMethod) {
-        method = o.httpMethod;
+      if (o.Method) {
+        method = o.Method;
       }
       if (o.supportedContentTypes) {
         consumes = o.supportedContentTypes;
@@ -2173,11 +2173,11 @@ SwaggerResource.prototype.addOperations = function (resource_path, ops, consumes
           o.summary,
           o.notes,
           type,
-          responseMessages, 
-          this, 
-          consumes, 
-          produces, 
-          o.authorizations, 
+          responseMessages,
+          this,
+          consumes,
+          produces,
+          o.authorizations,
           o.deprecated);
 
       this.operations[op.nickname] = op;
@@ -2674,15 +2674,15 @@ SwaggerOperation.prototype.urlify = function (args) {
     param = params[i];
     if(param.paramType === 'query') {
       if (queryParams !== '')
-        queryParams += '&';    
+        queryParams += '&';
       if (Array.isArray(param)) {
-        var output = '';   
-        for(j = 0; j < param.length; j++) {    
-          if(j > 0)    
-            output += ',';   
-          output += encodeURIComponent(param[j]);    
-        }    
-        queryParams += encodeURIComponent(param.name) + '=' + output;    
+        var output = '';
+        for(j = 0; j < param.length; j++) {
+          if(j > 0)
+            output += ',';
+          output += encodeURIComponent(param[j]);
+        }
+        queryParams += encodeURIComponent(param.name) + '=' + output;
       }
       else {
         if (typeof args[param.name] !== 'undefined') {
@@ -2751,7 +2751,7 @@ SwaggerOperation.prototype.asCurl = function (args) {
   var results = [];
   var i;
 
-  var headers = SwaggerRequest.prototype.setHeaders(args, {}, this);    
+  var headers = SwaggerRequest.prototype.setHeaders(args, {}, this);
   for(i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
     if(param.paramType && param.paramType === 'header' && args[param.name]) {
@@ -2985,7 +2985,7 @@ SwaggerRequest.prototype.setHeaders = function (params, opts, operation) {
   }
 
   // if there's a body, need to set the accepts header via requestContentType
-  if (body && (this.type === 'POST' || this.type === 'PUT' || this.type === 'PATCH' || this.type === 'DELETE')) {
+  if (body && (this.type === 'Method.Post' || this.type === 'PUT' || this.type === 'PATCH' || this.type === 'DELETE')) {
     if (this.opts.requestContentType)
       consumes = this.opts.requestContentType;
   } else {

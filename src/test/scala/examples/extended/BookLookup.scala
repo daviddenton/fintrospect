@@ -1,31 +1,28 @@
 package examples.extended
 
 import com.twitter.finagle.Service
+import com.twitter.finagle.httpx.{Status, _}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Path
-import org.jboss.netty.handler.codec.http.HttpMethod._
-import org.jboss.netty.handler.codec.http.HttpResponseStatus._
-import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 class BookLookup(books: Books) {
 
-  private def lookupByIsbn(isbn: String) = new Service[HttpRequest, HttpResponse] {
-    override def apply(request: HttpRequest): Future[HttpResponse] =
+  private def lookupByIsbn(isbn: String) = new Service[Request, Response] {
+    override def apply(request: Request): Future[Response] =
       books.lookup(isbn) match {
         case Some(book) => Ok(book.toJson)
-        case _ => Error(NOT_FOUND, "No book found with isbn")
+        case _ => Error(Status.NotFound, "No book found with isbn")
       }
   }
 
   val route = RouteSpec("lookup book by isbn number")
     .producing(APPLICATION_JSON)
-    .returning(Error(NOT_FOUND, "no book was found with this ISBN"))
-    .returning(OK -> "we found your book", Book("a book", "authorName", 99).toJson)
-    .at(GET) / "book" / Path.string("isbn", "the isbn of the book") bindTo lookupByIsbn
+    .returning(Error(Status.NotFound, "no book was found with this ISBN"))
+    .returning(Status.Ok -> "we found your book", Book("a book", "authorName", 99).toJson)
+    .at(Method.Get) / "book" / Path.string("isbn", "the isbn of the book") bindTo lookupByIsbn
 }
 

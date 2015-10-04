@@ -1,7 +1,7 @@
 package io.fintrospect.formats
 
+import com.twitter.finagle.httpx.Status
 import io.fintrospect.util.HttpRequestResponseUtil._
-import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 abstract class ResponseBuilderMethodsSpec[T](bldr: ResponseBuilderMethods[T]) extends FunSpec with ShouldMatchers {
@@ -14,27 +14,27 @@ abstract class ResponseBuilderMethodsSpec[T](bldr: ResponseBuilderMethods[T]) ex
 
   describe("Rendering") {
     it("ok") {
-      statusAndContentFrom(bldr.Ok) shouldEqual(OK, "")
+      statusAndContentFrom(bldr.Ok) shouldEqual(Status.Ok, "")
     }
 
     it("ok with message") {
-      statusAndContentFrom(bldr.Ok(message)) shouldEqual(OK, expectedContent)
+      statusAndContentFrom(bldr.Ok(message)) shouldEqual(Status.Ok, expectedContent)
     }
 
     it("content") {
-      statusAndContentFrom(bldr.Response().withContent(message).build) shouldEqual(OK, expectedContent)
+      statusAndContentFrom(bldr.Response().withContent(message).build) shouldEqual(Status.Ok, expectedContent)
     }
 
     it("errors - message") {
-      statusAndContentFrom(bldr.Response(BAD_GATEWAY).withErrorMessage(message).build) shouldEqual(BAD_GATEWAY, expectedErrorContent)
+      statusAndContentFrom(bldr.Response(Status.BadGateway).withErrorMessage(message).build) shouldEqual(Status.BadGateway, expectedErrorContent)
     }
 
     it("errors - exception") {
-      statusAndContentFrom(bldr.Response(BAD_GATEWAY).withError(new RuntimeException(message)).build) shouldEqual(BAD_GATEWAY, expectedErrorContent)
+      statusAndContentFrom(bldr.Response(Status.BadGateway).withError(new RuntimeException(message)).build) shouldEqual(Status.BadGateway, expectedErrorContent)
     }
 
     it("builds Ok with custom type") {
-      statusAndContentFrom(bldr.Ok(customType)) shouldEqual (OK, customTypeSerialised)
+      statusAndContentFrom(bldr.Ok(customType)) shouldEqual (Status.Ok, customTypeSerialised)
     }
   }
 

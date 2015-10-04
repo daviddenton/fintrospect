@@ -1,7 +1,6 @@
 package io.fintrospect.formats
 
-import org.jboss.netty.handler.codec.http.HttpResponseStatus.OK
-import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
+import com.twitter.finagle.httpx.{Response, Status}
 
 /**
  * Convienience methods for building Http Responses
@@ -9,17 +8,17 @@ import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
 trait ResponseBuilderMethods[T] {
   def Response(): ResponseBuilder[T]
 
-  def Response(code: HttpResponseStatus): ResponseBuilder[T] = Response().withCode(code)
+  def Response(code: Status): ResponseBuilder[T] = Response().withCode(code)
 
-  def Ok: HttpResponse = Response(OK).build
+  def Ok: Response = Response(Status.Ok).build
 
-  def Ok(content: T): HttpResponse = Response(OK).withContent(content).build
+  def Ok(content: T): Response = Response(Status.Ok).withContent(content).build
 
-  def Ok(content: String): HttpResponse = Response(OK).withContent(content).build
+  def Ok(content: String): Response = Response(Status.Ok).withContent(content).build
 
-  def Error(code: HttpResponseStatus, content: T): HttpResponse = Response(code).withContent(content).build
+  def Error(code: Status, content: T): Response = Response(code).withContent(content).build
 
-  def Error(code: HttpResponseStatus, message: String): HttpResponse = Response(code).withErrorMessage(message).build
+  def Error(code: Status, message: String): Response = Response(code).withErrorMessage(message).build
 
-  def Error(code: HttpResponseStatus, error: Throwable): HttpResponse = Response(code).withError(error).build
+  def Error(code: Status, error: Throwable): Response = Response(code).withError(error).build
 }

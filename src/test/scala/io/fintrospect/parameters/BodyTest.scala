@@ -2,15 +2,13 @@ package io.fintrospect.parameters
 
 import java.time.LocalDate
 
-import com.twitter.finagle.http.Request
-import com.twitter.io.Charsets
+import argo.jdom.JsonRootNode
+import com.twitter.finagle.httpx.{Method, Request}
 import io.fintrospect.ContentTypes
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
-import org.jboss.netty.buffer.ChannelBuffers._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
-import org.jboss.netty.handler.codec.http.HttpMethod
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.xml.XML
@@ -33,10 +31,10 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val formBody = Body.form(date)
       val inputForm = Form(date --> LocalDate.of(1976, 8, 31))
       val bindings = formBody --> inputForm
-      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
 
       contentFrom(request) shouldEqual "date=1976-08-31"
-      request.headers().get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
+      request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
       deserializedForm shouldEqual inputForm
     }
@@ -46,9 +44,9 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val formBody = Body.form(aString)
       val inputForm = Form(aString --> "&\"<>")
       val bindings = formBody --> inputForm
-      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
 
-      request.headers().get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
+      request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
       deserializedForm shouldEqual inputForm
     }
@@ -58,9 +56,9 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val inputForm = Form(date --> LocalDate.of(1976, 8, 31))
       val formBody = Body.form(date)
       val bindings = formBody --> inputForm
-      val inRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val inRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
       val rebindings = formBody <-> inRequest
-      val outRequest = rebindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val outRequest = rebindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
       val deserializedForm = formBody from outRequest
       deserializedForm shouldEqual inputForm
     }
@@ -69,14 +67,14 @@ class BodyTest extends FunSpec with ShouldMatchers {
   describe("json") {
     it("should serialize and deserialize into the request") {
 
-      val jsonBody = Body.json(None)
+      val jsonBody = Body.json[JsonRootNode](None)
       val inputJson = obj("bob" -> string("builder"))
       val bindings = jsonBody --> inputJson
 
-      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
 
       contentFrom(request) shouldEqual "{\"bob\":\"builder\"}"
-      request.headers().get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_JSON.value
+      request.headerMap.get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_JSON.value
       val deserializedJson = jsonBody <-- request
       deserializedJson shouldEqual inputJson
     }
@@ -84,9 +82,10 @@ class BodyTest extends FunSpec with ShouldMatchers {
     it("can rebind valid value") {
       val inRequest = Request()
       val inputJson = obj("bob" -> string("builder"))
-      inRequest.setContent(copiedBuffer(pretty(inputJson), Charsets.Utf8))
+      inRequest.setContentString(pretty(inputJson))
+
       val bindings = Body.json(None) <-> inRequest
-      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
       Argo.JsonFormat.parse(contentFrom(outRequest)) shouldEqual inputJson
     }
   }
@@ -98,10 +97,10 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val inputXml = <field>value</field>
       val bindings = xmlBody --> inputXml
 
-      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val request = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
 
       contentFrom(request) shouldEqual "<field>value</field>"
-      request.headers().get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_XML.value
+      request.headerMap.get(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_XML.value
       val deserializedXml = xmlBody <-- request
       deserializedXml shouldEqual inputXml
     }
@@ -109,9 +108,9 @@ class BodyTest extends FunSpec with ShouldMatchers {
     it("can rebind valid value") {
       val inRequest = Request()
       val inputXml = <field>value</field>
-      inRequest.setContent(copiedBuffer(inputXml.toString(), Charsets.Utf8))
+      inRequest.setContentString(inputXml.toString())
       val bindings = Body.xml(None) <-> inRequest
-      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(HttpMethod.GET)
+      val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Method.Get)
       XML.loadString(contentFrom(outRequest)) shouldEqual inputXml
     }
   }

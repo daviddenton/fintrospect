@@ -1,7 +1,7 @@
 {
   "resources": {
-    "GET:/basepath/welcome/{firstName}/bertrand/{secondName}": "a friendly endpoint",
-    "POST:/basepath/echo/{message}": "a post endpoint",
-    "GET:/basepath/echo/{message}": "summary of this route"
+    "Method.Get:/basepath/welcome/{firstName}/bertrand/{secondName}": "a friendly endpoint",
+    "Method.Post:/basepath/echo/{message}": "a post endpoint",
+    "Method.Get:/basepath/echo/{message}": "summary of this route"
   }
 }

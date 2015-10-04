@@ -103,12 +103,12 @@ function handleLogin() {
     for (var key in authSchemes) {
       if (authSchemes.hasOwnProperty(key)) {
         var flow = authSchemes[key].flow;
-        
+
         if(authSchemes[key].type === 'oauth2' && flow && (flow === 'implicit' || flow === 'accessCode')) {
           var dets = authSchemes[key];
           url = dets.authorizationUrl + '?response_type=' + (flow === 'implicit' ? 'token' : 'code');
           window.swaggerUi.tokenName = dets.tokenName || 'access_token';
-          window.swaggerUi.tokenUrl = (flow === 'accessCode' ? dets.tokenUrl : null);          
+          window.swaggerUi.tokenUrl = (flow === 'accessCode' ? dets.tokenUrl : null);
         }
         else if(authSchemes[key].grantTypes) {
           // 1.2 support
@@ -135,7 +135,7 @@ function handleLogin() {
 
     for(k =0; k < o.length; k++) {
       var scope = $(o[k]).attr('scope');
-      
+
       if (scopes.indexOf(scope) === -1)
         scopes.push(scope);
     }
@@ -208,13 +208,13 @@ function processOAuthCode(data) {
   $.ajax(
   {
     url : window.swaggerUi.tokenUrl,
-    type: "POST",
+    type: "Method.Post",
     data: params,
-    success:function(data, textStatus, jqXHR) 
+    success:function(data, textStatus, jqXHR)
     {
       onOAuthComplete(data);
     },
-    error: function(jqXHR, textStatus, errorThrown) 
+    error: function(jqXHR, textStatus, errorThrown)
     {
       onOAuthComplete("");
     }
@@ -268,7 +268,7 @@ function onOAuthComplete(token) {
               // all scopes are satisfied
               $(o).find('.api-ic').addClass('ic-info');
               $(o).find('.api-ic').removeClass('ic-warning');
-              $(o).find('.api-ic').removeClass('ic-error');          
+              $(o).find('.api-ic').removeClass('ic-error');
             }
           }
         });

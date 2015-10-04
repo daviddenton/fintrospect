@@ -1,14 +1,14 @@
 package io.fintrospect.renderers.swagger2dot0
 
 import argo.jdom.JsonNode
-import com.twitter.finagle.http.path.Path
+import com.twitter.finagle.httpx.Response
+import com.twitter.finagle.httpx.path.Path
 import io.fintrospect._
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
-import org.jboss.netty.handler.codec.http.HttpResponse
 
 import scala.util.Try
 
@@ -17,7 +17,7 @@ import scala.util.Try
  */
 case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
 
-  def badRequest(badParameters: Seq[Parameter]): HttpResponse = JsonBadRequestRenderer(badParameters)
+  def badRequest(badParameters: Seq[Parameter]): Response = JsonBadRequestRenderer(badParameters)
 
   private val schemaGenerator = new JsonToJsonSchema()
 
@@ -54,7 +54,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       route.routeSpec.queryParams
     val nonBodyParams = allParams.map(render(_, Option.empty))
 
-    val route2 = route.method.getName.toLowerCase -> obj(
+    val route2 = route.method.toString().toLowerCase -> obj(
       "tags" -> array(string(basePath.toString)),
       "summary" -> string(route.routeSpec.summary),
       "description" -> route.routeSpec.description.map(string).getOrElse(nullNode()),
@@ -72,7 +72,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     responses.foldLeft(FieldsAndDefinitions()) {
       case (memo, nextResp) =>
         val newSchema = Try(parse(nextResp.example.get)).toOption.map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
-        val newField = nextResp.status.getCode.toString -> obj("description" -> string(nextResp.description), "schema" -> newSchema.node)
+        val newField = nextResp.status.code.toString -> obj("description" -> string(nextResp.description), "schema" -> newSchema.node)
         memo.add(newField, newSchema.definitions)
     }
   }
@@ -81,7 +81,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
   }
 
-  override def description(basePath: Path, routes: Seq[ServerRoute]): HttpResponse = {
+  override def description(basePath: Path, routes: Seq[ServerRoute]): Response = {
     val pathsAndDefinitions = routes
       .groupBy(_.describeFor(basePath))
       .foldLeft(FieldsAndDefinitions()) {

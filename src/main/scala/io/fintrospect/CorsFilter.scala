@@ -1,10 +1,9 @@
 package io.fintrospect
 
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.http.filter.Cors.Policy
+import com.twitter.finagle.httpx.filter.Cors.Policy
+import com.twitter.finagle.httpx.{Method, Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse, HttpResponseStatus}
 
 /**
  * This implementation is ported from the Finagle version, in order to add support for the Request type used by
@@ -12,32 +11,32 @@ import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse
  *
  */
 
-class CorsFilter(policy: Policy) extends Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse] {
+class CorsFilter(policy: Policy) extends Filter[Request, Response, Request, Response] {
 
-  private def getOrigin(request: HttpRequest): Option[String] = Option(request.headers.get("Origin")) flatMap { origin => policy.allowsOrigin(origin)}
+  private def getOrigin(request: Request): Option[String] = request.headerMap.get("Origin") flatMap { origin => policy.allowsOrigin(origin)}
 
-  private def setOriginAndCredentials(response: HttpResponse, origin: String): HttpResponse = {
-    response.headers.add("Access-Control-Allow-Origin", origin)
+  private def setOriginAndCredentials(response: Response, origin: String): Response = {
+    response.headerMap.add("Access-Control-Allow-Origin", origin)
     if (policy.supportsCredentials && origin != "*") {
-      response.headers.add("Access-Control-Allow-Credentials", "true")
+      response.headerMap.add("Access-Control-Allow-Credentials", "true")
     }
     response
   }
 
-  private def setVary(response: HttpResponse): HttpResponse = {
-    response.headers.set("Vary", "Origin")
+  private def setVary(response: Response): Response = {
+    response.headerMap.set("Vary", "Origin")
     response
   }
 
-  private def addExposedHeaders(response: HttpResponse): HttpResponse = {
+  private def addExposedHeaders(response: Response): Response = {
     if (policy.exposedHeaders.nonEmpty) {
-      response.headers.add(
+      response.headerMap.add(
         "Access-Control-Expose-Headers", policy.exposedHeaders.mkString(", "))
     }
     response
   }
 
-  private def handleSimple(request: HttpRequest, response: HttpResponse): HttpResponse =
+  private def handleSimple(request: Request, response: Response): Response =
     getOrigin(request) map {
       setOriginAndCredentials(response, _)
     } map {
@@ -45,54 +44,54 @@ class CorsFilter(policy: Policy) extends Filter[HttpRequest, HttpResponse, HttpR
     } getOrElse response
 
   private object Preflight {
-    def unapply(request: HttpRequest): Boolean =
-      request.getMethod == HttpMethod.OPTIONS
+    def unapply(request: Request): Boolean =
+      request.method == Method.Options
   }
 
-  private def getMethod(request: HttpRequest): Option[String] =
-    Option(request.headers.get("Access-Control-Request-Method"))
+  private def getMethod(request: Request): Option[String] =
+    request.headerMap.get("Access-Control-Request-Method")
 
-  private def setMethod(response: HttpResponse, methods: Seq[String]): HttpResponse = {
-    response.headers.set("Access-Control-Allow-Methods", methods.mkString(", "))
+  private def setMethod(response: Response, methods: Seq[String]): Response = {
+    response.headerMap.set("Access-Control-Allow-Methods", methods.mkString(", "))
     response
   }
 
-  private def setMaxAge(response: HttpResponse): HttpResponse = {
+  private def setMaxAge(response: Response): Response = {
     policy.maxAge foreach { maxAge =>
-      response.headers.add("Access-Control-Max-Age", maxAge.inSeconds.toString)
+      response.headerMap.add("Access-Control-Max-Age", maxAge.inSeconds.toString)
     }
     response
   }
 
-  private def getHeaders(request: HttpRequest): Seq[String] =
-    Option(request.headers.get("Access-Control-Request-Headers")) map {
+  private def getHeaders(request: Request): Seq[String] =
+    request.headerMap.get("Access-Control-Request-Headers") map {
       ", *".r.split(_).toSeq
     } getOrElse Seq.empty[String]
 
-  private def setHeaders(response: HttpResponse, headers: Seq[String]): HttpResponse = {
-    if (headers.nonEmpty) {
-      response.headers.set("Access-Control-Allow-Headers", headers.mkString(", "))
+  private def setHeaders(response: Response, headerMap: Seq[String]): Response = {
+    if (headerMap.nonEmpty) {
+      response.headerMap.set("Access-Control-Allow-Headers", headerMap.mkString(", "))
     }
     response
   }
 
   /** http://www.w3.org/TR/cors/#resource-preflight-requests */
-  private def handlePreflight(request: HttpRequest): Option[HttpResponse] =
+  private def handlePreflight(request: Request): Option[Response] =
     getOrigin(request) flatMap { origin =>
       getMethod(request) flatMap { method =>
-        val headers = getHeaders(request)
+        val headerMap = getHeaders(request)
         policy.allowsMethods(method) flatMap { allowedMethods =>
-          policy.allowsHeaders(headers) map { allowedHeaders =>
-            setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Response(HttpResponseStatus.OK), origin)), allowedMethods), allowedHeaders)
+          policy.allowsHeaders(headerMap) map { allowedHeaders =>
+            setHeaders(setMethod(setMaxAge(setOriginAndCredentials(Response(Status.Ok), origin)), allowedMethods), allowedHeaders)
           }
         }
       }
     }
 
-  def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
+  def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
     val response = request match {
       case Preflight() => Future {
-        handlePreflight(request) getOrElse Response(HttpResponseStatus.OK)
+        handlePreflight(request) getOrElse Response(Status.Ok)
       }
       case _ => service(request) map {
         handleSimple(request, _)

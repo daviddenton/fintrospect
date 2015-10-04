@@ -2,13 +2,11 @@ package io.fintrospect.formats
 
 import java.io.OutputStream
 
-import com.twitter.finagle.http.Response
+import com.twitter.finagle.httpx.{Response, Status}
+import com.twitter.io.Charsets
 import com.twitter.util.Future
 import io.fintrospect.ContentType
 import org.jboss.netty.buffer.ChannelBuffer
-import org.jboss.netty.buffer.ChannelBuffers._
-import org.jboss.netty.handler.codec.http.{HttpResponse, HttpResponseStatus}
-import org.jboss.netty.util.CharsetUtil._
 
 import scala.language.implicitConversions
 
@@ -30,8 +28,8 @@ class ResponseBuilder[T](toFormat: T => String,
 
   def withErrorMessage(e: String) = withContent(errorFormat(e))
 
-  def withCode(code: HttpResponseStatus): ResponseBuilder[T] = {
-    response.setStatus(code)
+  def withCode(code: Status): ResponseBuilder[T] = {
+    response.setStatusCode(code.code)
     this
   }
 
@@ -39,13 +37,13 @@ class ResponseBuilder[T](toFormat: T => String,
 
   def withContent(content: String): ResponseBuilder[T] = {
     response.setContentType(contentType.value)
-    response.setContent(copiedBuffer(content, UTF_8))
+    response.setContentString(content)
     this
   }
 
   def withContent(channelBuffer: ChannelBuffer): ResponseBuilder[T] = {
     response.setContentType(contentType.value)
-    response.setContent(channelBuffer)
+    response.setContentString(channelBuffer.toString(Charsets.Utf8))
     this
   }
 
@@ -56,7 +54,7 @@ class ResponseBuilder[T](toFormat: T => String,
   }
 
   def withHeaders(headers: (String, String)*): ResponseBuilder[T] = {
-    headers.map{case (name: String, value: String) => response.headers().add(name, value)}
+    headers.map{case (name: String, value: String) => response.headerMap.add(name, value)}
     this
   }
 
@@ -66,8 +64,8 @@ class ResponseBuilder[T](toFormat: T => String,
 }
 
 object ResponseBuilder {
-  implicit def toFuture(builder: ResponseBuilder[_]): Future[HttpResponse] = builder.toFuture
+  implicit def toFuture(builder: ResponseBuilder[_]): Future[Response] = builder.toFuture
 
-  implicit def toFuture(response: HttpResponse): Future[HttpResponse] = Future.value(response)
+  implicit def toFuture(response: Response): Future[Response] = Future.value(response)
 }
 

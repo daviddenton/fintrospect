@@ -1,8 +1,8 @@
 package examples.json4s
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.http.filter.Cors
-import com.twitter.finagle.http.path.Root
+import com.twitter.finagle.Httpx
+import com.twitter.finagle.httpx.filter.Cors
+import com.twitter.finagle.httpx.path.Root
 import examples.json4s.Emails.InMemoryEmails
 import io.fintrospect._
 import io.fintrospect.formats.json.Json4s
@@ -21,7 +21,7 @@ object InboxApp extends App {
     .withRoute(new EmailList(emails).route)
     .withRoute(new UserList(emails).route)
 
-  Http.serve(":8181", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(inboxModule.toService))
+  Httpx.serve(":8181", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(inboxModule.toService))
 
   println("See the service description at: http://localhost:8181/inbox")
 

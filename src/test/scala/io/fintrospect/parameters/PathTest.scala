@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 
-import org.jboss.netty.handler.codec.http.HttpMethod
+import com.twitter.finagle.httpx.Method
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class PathTest extends FunSpec with ShouldMatchers {
@@ -34,7 +34,7 @@ class PathTest extends FunSpec with ShouldMatchers {
     }
 
     it("handles special characters when binding values") {
-      (Path.string("urlEncoded") --> "a path/+piece").head.apply(RequestBuild()).build(HttpMethod.GET).getUri shouldEqual "a%20path%2F+piece"
+      (Path.string("urlEncoded") --> "a path/+piece").head.apply(RequestBuild()).build(Method.Get).uri shouldEqual "a%20path%2F+piece"
     }
   }
 

@@ -1,23 +1,21 @@
 package io.fintrospect
 
-import com.twitter.finagle.http.path.Path
+import com.twitter.finagle.httpx.path.Path
+import com.twitter.finagle.httpx.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.FintrospectModule._
 import io.fintrospect.Headers._
 import io.fintrospect.Routing.fromBinding
-import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.renderers.ModuleRenderer
-import org.jboss.netty.handler.codec.http.HttpMethod.GET
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
 
 import scala.PartialFunction._
 
 object FintrospectModule {
 
-  private type Binding = PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]
+  private type Binding = PartialFunction[(Method, Path), Service[Request, Response]]
 
-  private type TFilter = Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]
+  private type TFilter = Filter[Request, Response, Request, Response]
 
   /**
    * Combines many modules
@@ -27,7 +25,7 @@ object FintrospectModule {
   /**
    * Convert a Binding to a Finagle Service
    */
-  def toService(binding: Binding): Service[HttpRequest, HttpResponse] = fromBinding(binding)
+  def toService(binding: Binding): Service[Request, Response] = fromBinding(binding)
 
   /**
    * Create a module using the given base-path, renderer.
@@ -37,21 +35,21 @@ object FintrospectModule {
   /**
    * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to this module).
    */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]): FintrospectModule = {
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, Request, Response]): FintrospectModule = {
     new FintrospectModule(basePath, moduleRenderer, identity, Nil, moduleFilter)
   }
 
-  private class ValidateParams(serverRoute: ServerRoute, moduleRenderer: ModuleRenderer) extends SimpleFilter[HttpRequest, HttpResponse]() {
-    override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
+  private class ValidateParams(serverRoute: ServerRoute, moduleRenderer: ModuleRenderer) extends SimpleFilter[Request, Response]() {
+    override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
       val missingOrFailed = serverRoute.missingOrFailedFrom(request)
-      if (missingOrFailed.isEmpty) service(request) else moduleRenderer.badRequest(missingOrFailed)
+      if (missingOrFailed.isEmpty) service(request) else Future.value(moduleRenderer.badRequest(missingOrFailed))
     }
   }
 
-  private class Identify(route: ServerRoute, basePath: Path) extends SimpleFilter[HttpRequest, HttpResponse]() {
-    override def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] = {
+  private class Identify(route: ServerRoute, basePath: Path) extends SimpleFilter[Request, Response]() {
+    override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
       val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
-      request.headers().set(IDENTIFY_SVC_HEADER, request.getMethod + ":" + url)
+      request.headerMap.set(IDENTIFY_SVC_HEADER, request.method + ":" + url)
       service(request)
     }
   }
@@ -65,9 +63,9 @@ class FintrospectModule private(basePath: Path,
                                 moduleRenderer: ModuleRenderer,
                                 descriptionRoutePath: Path => Path,
                                 routes: Seq[ServerRoute],
-                                moduleFilter: Filter[HttpRequest, HttpResponse, HttpRequest, HttpResponse]) {
+                                moduleFilter: Filter[Request, Response, Request, Response]) {
   private def totalBinding = {
-    withDefault(routes.foldLeft(empty[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]) {
+    withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
         val filters = new Identify(route, basePath) +: new ValidateParams(route, moduleRenderer) +: moduleFilter +: Seq[TFilter]()
         currentBinding.orElse(route.toPf(basePath)(filters.reduce(_.andThen(_))))
@@ -81,9 +79,9 @@ class FintrospectModule private(basePath: Path,
     new FintrospectModule(basePath, moduleRenderer, newDefaultRoutePath, routes, moduleFilter)
   }
 
-  private def withDefault(otherRoutes: PartialFunction[(HttpMethod, Path), Service[HttpRequest, HttpResponse]]) = {
-    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), GET, descriptionRoutePath).bindTo(() => {
-      Service.mk((req) => moduleRenderer.description(basePath, routes))
+  private def withDefault(otherRoutes: PartialFunction[(Method, Path), Service[Request, Response]]) = {
+    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Method.Get, descriptionRoutePath).bindTo(() => new Service[Request, Response] {
+      override def apply(request: Request) = Future.value(moduleRenderer.description(basePath, routes))
     })
 
     otherRoutes.orElse(descriptionRoute.toPf(basePath)(new Identify(descriptionRoute, basePath)))
@@ -102,5 +100,5 @@ class FintrospectModule private(basePath: Path,
   /**
    * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.
    */
-  def toService: Service[HttpRequest, HttpResponse] = FintrospectModule.toService(totalBinding)
+  def toService: Service[Request, Response] = FintrospectModule.toService(totalBinding)
 }

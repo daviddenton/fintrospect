@@ -2,11 +2,11 @@ package io.fintrospect.testing
 
 import java.util.concurrent.TimeUnit
 
-import com.twitter.finagle.http.path.Root
+import com.twitter.finagle.httpx.path.Root
+import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.util.Await
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{FintrospectModule, ServerRoute}
-import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
 import scala.concurrent.duration.Duration
 
@@ -22,7 +22,7 @@ trait TestingFintrospectRoute {
    * @param timeout defaults to 1s.
    * @return response
    */
-  def responseFor(request: HttpRequest, timeout: Duration = Duration(1, TimeUnit.SECONDS)): HttpResponse = {
+  def responseFor(request: Request, timeout: Duration = Duration(1, TimeUnit.SECONDS)): Response = {
     Await.result(FintrospectModule(Root, SimpleJson()).withRoute(route).toService.apply(request))
   }
 }

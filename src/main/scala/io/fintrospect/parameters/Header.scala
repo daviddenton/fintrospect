@@ -1,17 +1,17 @@
 package io.fintrospect.parameters
 
-import org.jboss.netty.handler.codec.http.HttpRequest
+import com.twitter.finagle.httpx.Request
 
 /**
  * Parameters which are bound to request headers
  */
 object Header {
 
-  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, HttpRequest] with MandatoryRebind[T, HttpRequest, RequestBinding] {
+  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, Request] with MandatoryRebind[T, Request, RequestBinding] {
     self: Bindable[T, RequestBinding] =>
   }
 
-  trait Optional[T] extends io.fintrospect.parameters.Optional[T, HttpRequest] with OptionalRebind[T, HttpRequest, RequestBinding] {
+  trait Optional[T] extends io.fintrospect.parameters.Optional[T, Request] with OptionalRebind[T, Request, RequestBinding] {
     self: Bindable[T, RequestBinding] =>
   }
 

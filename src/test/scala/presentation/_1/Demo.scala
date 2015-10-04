@@ -1,15 +1,15 @@
 package presentation._1
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.http.filter.Cors
-import com.twitter.finagle.http.path.Root
+import com.twitter.finagle.Httpx
+import com.twitter.finagle.httpx.filter.Cors
+import com.twitter.finagle.httpx.path.Root
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{CorsFilter, FintrospectModule}
 
 class SearchApp {
   val service = FintrospectModule(Root, SimpleJson()).toService
   val searchService = new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service)
-  Http.serve(":9000", searchService)
+  Httpx.serve(":9000", searchService)
 }
 
 
