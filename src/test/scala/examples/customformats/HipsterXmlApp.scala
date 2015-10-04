@@ -5,6 +5,7 @@ import com.twitter.finagle.httpx.filter.Cors
 import com.twitter.finagle.httpx.path.Root
 import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.finagle.{Httpx, Service}
+import examples.customformats.HipsterXmlResponseBuilder._
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.parameters._
@@ -14,7 +15,7 @@ import io.fintrospect.parameters._
  */
 object HipsterXmlApp extends App {
 
-  def aService(): Service[Request, Response] = Service.mk((rq) => toFuture(HipsterXmlResponseBuilder.Ok))
+  def aService(): Service[Request, Response] = Service.mk((rq) => OK)
 
   val xmlAsABody = BodySpec[HipsterXmlFormat](Option("An XML document"), ContentTypes.APPLICATION_XML, HipsterXmlFormat(_), _.value)
   val xmlAsAParam = ParameterSpec[HipsterXmlFormat]("anXmlParameter", Option("An XML document"), StringParamType, HipsterXmlFormat(_), _.value)

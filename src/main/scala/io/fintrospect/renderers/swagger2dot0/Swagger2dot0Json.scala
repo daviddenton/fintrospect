@@ -93,7 +93,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
         memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
     }
 
-    Ok(obj(
+    OK(obj(
       "swagger" -> string("2.0"),
       "info" -> render(apiInfo),
       "basePath" -> string("/"),

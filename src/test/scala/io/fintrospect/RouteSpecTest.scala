@@ -15,7 +15,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
 
   describe("Http Route as a client") {
     val returnsMethodAndUri = Service.mk[Request, Response] { request =>
-      Ok(request.method.toString() + "," + request.uri)
+      OK(request.method.toString() + "," + request.uri)
     }
     val name = Path.string("name")
     val maxAge = Path.integer("maxAge")
@@ -59,7 +59,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
     }
 
     describe("puts the header parameters into the request") {
-      val returnsHeaders = Service.mk[Request, Response] { request => Ok(headersFrom(request).toString()) }
+      val returnsHeaders = Service.mk[Request, Response] { request => OK(headersFrom(request).toString()) }
 
       val nameHeader = Header.optional.string("name")
 
@@ -74,7 +74,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
     }
 
     describe("identifies") {
-      val returnsHeaders = Service.mk[Request, Response] { request => Ok(headersFrom(request).toString()) }
+      val returnsHeaders = Service.mk[Request, Response] { request => OK(headersFrom(request).toString()) }
 
       val intParam = Path.int("anInt")
 

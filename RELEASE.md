@@ -12,6 +12,7 @@ of breaking changes due to Finagle using their own classes instead of Netty equi
     - ```HttpResponseStatus``` changed to ```Status```
     - ```HttpMethod.GET/POST/...``` changd to ```Method.Get/Post/...```
 - Other than the above, no actual changes to the Fintrospect API or how it works have been made.
+- Added ```OK``` and ```HttpResponse``` alias methods to the ```ResponseBuilder``` to avoid name clashes with new HttpX methods. Deprecated ```Ok()``` and ```Response``` methods
 
 #####v9.1.0
 - Changed format of "X-Fintrospect-Route-Name" header to use : instead of . in to describe the route URL - as URLs often have . in (for file extensions).

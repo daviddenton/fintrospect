@@ -13,7 +13,7 @@ import io.fintrospect.formats.json.Argo.ResponseBuilder._
 class BookCollection(books: Books) {
 
   private def listBooks(): Service[Request, Response] = new Service[Request, Response] {
-    override def apply(request: Request): Future[Response] = Ok(array(books.list().map(_.toJson)))
+    override def apply(request: Request): Future[Response] = OK(array(books.list().map(_.toJson)))
   }
 
   val route = RouteSpec("show collection")

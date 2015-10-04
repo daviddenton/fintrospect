@@ -19,7 +19,7 @@ class SearchRoute(books: RemoteBooks) {
       val titlePart = titlePartParam <-- request
 
       books.search(titlePart)
-        .map(results => PlainTextResponseBuilder.Ok(results))
+        .map(results => PlainTextResponseBuilder.OK(results))
     }
   }
 

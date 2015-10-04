@@ -4,7 +4,8 @@ import java.lang.Integer._
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.{Response, _}
+import com.twitter.finagle.httpx.Status.Ok
+import com.twitter.finagle.httpx._
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect._
@@ -18,7 +19,7 @@ class BookTermSearch(books: Books) {
 
   private def search() = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
-      Ok(array(books.search(
+      OK(array(books.search(
         MIN_VALUE,
         MAX_VALUE,
         titleTerms <-- request).map
@@ -28,7 +29,7 @@ class BookTermSearch(books: Books) {
 
   val route = RouteSpec("search for book by title fragment")
     .taking(titleTerms)
-    .returning(Status.Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
+    .returning(Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
     .producing(APPLICATION_JSON)
     .at(Get) / "titleSearch" bindTo search
 }

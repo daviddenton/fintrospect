@@ -1,6 +1,7 @@
 package presentation._6
 
 import com.twitter.finagle.httpx.Method._
+import com.twitter.finagle.httpx.Status.Ok
 import com.twitter.finagle.httpx.filter.Cors
 import com.twitter.finagle.httpx.path.Root
 import com.twitter.finagle.httpx.{Request, Response, Status}
@@ -8,13 +9,12 @@ import com.twitter.finagle.{Httpx, Service}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
-import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
+import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.formats.text.PlainTextResponseBuilder
 import io.fintrospect.parameters.{Body, BodySpec, Query, StringParamType}
 import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
 import presentation.Book
-
 
 class SearchRoute(books: RemoteBooks) {
   private val titlePartParam = Query.required.string("titlePart")
@@ -25,13 +25,13 @@ class SearchRoute(books: RemoteBooks) {
 
       books.search(titlePart)
         .map(results => results.split(",").map(Book(_)).toSeq)
-        .map(books => Argo.ResponseBuilder.Ok(array(books.map(_.toJson))))
+        .map(books => OK(array(books.map(_.toJson))))
     }
   }
 
   val route = RouteSpec("search books")
     .taking(titlePartParam)
-    .returning(ResponseSpec.json(Status.Ok -> "search results", array(Book("1984").toJson)))
+    .returning(ResponseSpec.json(Ok -> "search results", array(Book("1984").toJson)))
     .at(Get) / "search" bindTo search
 }
 
@@ -44,7 +44,7 @@ class BookAvailable(books: RemoteBooks) {
       val book = body <-- request
       books.search(book.title)
         .map(results => {
-        if (results.length > 0) PlainTextResponseBuilder.Ok else PlainTextResponseBuilder.Error(Status.NotFound, "!")
+        if (results.length > 0) PlainTextResponseBuilder.OK else PlainTextResponseBuilder.Error(Status.NotFound, "!")
       })
     }
   }

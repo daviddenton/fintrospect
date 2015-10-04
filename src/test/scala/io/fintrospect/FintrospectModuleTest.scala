@@ -20,7 +20,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
   case class AService(segments: Seq[String]) extends Service[Request, Response] {
     def apply(request: Request): Future[Response] = {
-      Ok(segments.mkString(","))
+      OK(segments.mkString(","))
     }
   }
 
@@ -69,7 +69,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       it("can get to all routes") {
         def module(path: String) = {
           FintrospectModule(Root / path, SimpleJson()).withRoute(RouteSpec("").at(Get) / "echo" bindTo (() => new Service[Request, Response] {
-            def apply(request: Request): Future[Response] = Ok(path)
+            def apply(request: Request): Future[Response] = OK(path)
           }))
         }
         val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))
@@ -186,7 +186,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
     describe("identity") {
       it("identifies route with anonymised description when called") {
-        def getHeaders(number: Int, aString: String) = Service.mk[Request, Response] { request => Ok(headersFrom(request).toString()) }
+        def getHeaders(number: Int, aString: String) = Service.mk[Request, Response] { request => OK(headersFrom(request).toString()) }
         val route = RouteSpec("").at(Get) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
         val m = FintrospectModule(Root, SimpleJson()).withRoute(route)
         HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldEqual(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")

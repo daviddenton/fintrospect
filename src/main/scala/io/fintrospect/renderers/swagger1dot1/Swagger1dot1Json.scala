@@ -49,7 +49,7 @@ class Swagger1dot1Json extends ModuleRenderer {
       .groupBy(_.describeFor(basePath))
       .map { case (path, routesForPath) => obj("path" -> string(path), "operations" -> array(routesForPath.map(render(_)._2))) }
 
-    Ok(obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api))))
+    OK(obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api))))
   }
 
   override def badRequest(badParameters: Seq[Parameter]): Response = JsonBadRequestRenderer(badParameters)
