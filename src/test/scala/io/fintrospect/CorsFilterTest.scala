@@ -11,7 +11,7 @@ import org.scalatest.{FlatSpec, MustMatchers}
 
 class CorsFilterTest extends FlatSpec with MustMatchers {
   val underlying = Service.mk[Request, Response] { request =>
-    if (request.method.toString().equals("TRAP")) Ok("#guwop") else Error(Status.MethodNotAllowed, "")
+    if (request.method.equals(Method.Trace)) Ok("#guwop") else Error(Status.MethodNotAllowed, "")
   }
 
   val policy = Cors.Policy(
@@ -54,7 +54,7 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
     response.headerMap.get("Access-Control-Allow-Origin") must be(None)
     response.headerMap.get("Access-Control-Allow-Credentials") must be(None)
     response.headerMap.get("Access-Control-Allow-Methods") must be(None)
-    response.headerMap.get("Vary") must be("Origin")
+    response.headerMap("Vary") must be("Origin")
     contentFrom(response) must be("")
   }
 
@@ -68,32 +68,32 @@ class CorsFilterTest extends FlatSpec with MustMatchers {
     response.headerMap.get("Access-Control-Allow-Origin") must be(None)
     response.headerMap.get("Access-Control-Allow-Credentials") must be(None)
     response.headerMap.get("Access-Control-Allow-Methods") must be(None)
-    response.headerMap.get("Vary") must be("Origin")
+    response.headerMap("Vary") must be("Origin")
     contentFrom(response) must be("")
   }
 
   it should "handle simple requests" in {
     val request = Request()
-//    request.setM =
+    request.method = Method.Trace
     request.headerMap.set("Origin", "juughaus")
 
     val response = Await result service(request)
-    response.headerMap.get("Access-Control-Allow-Origin") must be("juughaus")
-    response.headerMap.get("Access-Control-Allow-Credentials") must be("true")
-    response.headerMap.get("Access-Control-Expose-Headers") must be("Icey")
-    response.headerMap.get("Vary") must be("Origin")
+    response.headerMap("Access-Control-Allow-Origin") must be("juughaus")
+    response.headerMap("Access-Control-Allow-Credentials") must be("true")
+    response.headerMap("Access-Control-Expose-Headers") must be("Icey")
+    response.headerMap("Vary") must be("Origin")
     contentFrom(response) must be("#guwop")
   }
 
   it should "not add response headers to simple requests if request headers aren't present" in {
     val request = Request()
-//    request.method = TRAP
+    request.method = Method.Trace
 
     val response = Await result service(request)
-    response.headerMap.get("Access-Control-Allow-Origin") must be(null)
-    response.headerMap.get("Access-Control-Allow-Credentials") must be(null)
-    response.headerMap.get("Access-Control-Expose-Headers") must be(null)
-    response.headerMap.get("Vary") must be("Origin")
+    response.headerMap.get("Access-Control-Allow-Origin") must be(None)
+    response.headerMap.get("Access-Control-Allow-Credentials") must be(None)
+    response.headerMap.get("Access-Control-Expose-Headers") must be(None)
+    response.headerMap("Vary") must be("Origin")
     contentFrom(response) must be("#guwop")
   }
 }
