@@ -51,7 +51,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
       val actual = contentFrom(Await.result(module.toService(Request("/basepath"))))
-                  println(actual)
+//                  println(actual)
       parse(actual) shouldEqual expected
     }
   }
