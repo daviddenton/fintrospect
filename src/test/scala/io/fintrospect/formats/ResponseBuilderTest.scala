@@ -58,7 +58,6 @@ class ResponseBuilderTest extends FunSpec {
       .withHeaders("content_disposition" -> "attachment; filename=foo.txt",
         "authorization" -> "Authorization: Basic").build
 
-    println(response.headerMap("CONTENT_DISPOSITION"))
     response.headerMap("CONTENT_DISPOSITION") shouldEqual "attachment; filename=foo.txt"
     response.headerMap("authorization") shouldEqual "Authorization: Basic"
   }

@@ -14,27 +14,29 @@ abstract class ResponseBuilderMethodsSpec[T](bldr: ResponseBuilderMethods[T]) ex
 
   describe("Rendering") {
     it("ok") {
-      statusAndContentFrom(bldr.Ok) shouldEqual(Status.Ok, "")
+      statusAndContentFrom(bldr.OK) shouldEqual(Status.Ok, "")
+      statusAndContentFrom(bldr.OK) shouldEqual(Status.Ok, "")
     }
 
     it("ok with message") {
-      statusAndContentFrom(bldr.Ok(message)) shouldEqual(Status.Ok, expectedContent)
+      statusAndContentFrom(bldr.OK(message)) shouldEqual(Status.Ok, expectedContent)
+      statusAndContentFrom(bldr.OK(message)) shouldEqual(Status.Ok, expectedContent)
     }
 
     it("content") {
-      statusAndContentFrom(bldr.Response().withContent(message).build) shouldEqual(Status.Ok, expectedContent)
+      statusAndContentFrom(bldr.HttpResponse().withContent(message).build) shouldEqual(Status.Ok, expectedContent)
     }
 
     it("errors - message") {
-      statusAndContentFrom(bldr.Response(Status.BadGateway).withErrorMessage(message).build) shouldEqual(Status.BadGateway, expectedErrorContent)
+      statusAndContentFrom(bldr.HttpResponse(Status.BadGateway).withErrorMessage(message).build) shouldEqual(Status.BadGateway, expectedErrorContent)
     }
 
     it("errors - exception") {
-      statusAndContentFrom(bldr.Response(Status.BadGateway).withError(new RuntimeException(message)).build) shouldEqual(Status.BadGateway, expectedErrorContent)
+      statusAndContentFrom(bldr.HttpResponse(Status.BadGateway).withError(new RuntimeException(message)).build) shouldEqual(Status.BadGateway, expectedErrorContent)
     }
 
     it("builds Ok with custom type") {
-      statusAndContentFrom(bldr.Ok(customType)) shouldEqual (Status.Ok, customTypeSerialised)
+      statusAndContentFrom(bldr.OK(customType)) shouldEqual (Status.Ok, customTypeSerialised)
     }
   }
 

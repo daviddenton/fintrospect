@@ -14,5 +14,5 @@ object HipsterXmlResponseBuilder extends ResponseBuilderMethods[HipsterXmlFormat
 
   private def errorToString(throwable: Throwable): HipsterXmlFormat = HipsterXmlFormat(s"<error>oh noes!, an error: ${throwable.getMessage}</error>")
 
-  override def Response() = new ResponseBuilder[HipsterXmlFormat](customToString, errorMessageToString, errorToString, ContentTypes.APPLICATION_XML)
+  override def HttpResponse() = new ResponseBuilder[HipsterXmlFormat](customToString, errorMessageToString, errorToString, ContentTypes.APPLICATION_XML)
 }

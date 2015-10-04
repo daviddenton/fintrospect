@@ -21,7 +21,7 @@ class BookLengthSearch(books: Books) {
   private def search() = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
       val requestForm = form <-- request
-      Ok(array(books.search(
+      OK(array(books.search(
         minPages <-- requestForm getOrElse MIN_VALUE,
         maxPages <-- requestForm,
         Seq("")).map

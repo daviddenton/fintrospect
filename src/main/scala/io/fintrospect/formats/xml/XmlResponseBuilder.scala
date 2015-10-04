@@ -13,5 +13,5 @@ object XmlResponseBuilder extends ResponseBuilderMethods[Elem] {
 
   private def formatError(throwable: Throwable): Elem = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 
-  override def Response() = new ResponseBuilder[Elem](formatJson, formatErrorMessage, formatError, ContentTypes.APPLICATION_XML)
+  override def HttpResponse() = new ResponseBuilder[Elem](formatJson, formatErrorMessage, formatError, ContentTypes.APPLICATION_XML)
 }

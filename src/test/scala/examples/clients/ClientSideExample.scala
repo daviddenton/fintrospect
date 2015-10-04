@@ -25,7 +25,7 @@ object ClientSideExample extends App {
       println("URL was " + request.uri)
       println("Headers were " + headersFrom(request))
       println("Content was " + contentFrom(request))
-      Ok("")
+      OK("")
     }
   })
 

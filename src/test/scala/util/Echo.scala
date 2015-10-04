@@ -10,7 +10,7 @@ import io.fintrospect.util.HttpRequestResponseUtil.headersFrom
 
 case class Echo(parts: String*) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
-    Ok(obj(
+    OK(obj(
       "headers" -> string(headersFrom(request).toString()),
       "params" -> string(request.toString()),
       "message" -> string(parts.mkString(" "))))

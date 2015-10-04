@@ -20,7 +20,7 @@ class SearchRoute(books: Books) {
     override def apply(request: Request): Future[Response] = {
       val titlePart = titlePartParam <-- request
       val results = books.titles().filter(_.toLowerCase.contains(titlePart.toLowerCase))
-      Ok(results.toString())
+      OK(results.toString())
     }
   }
 

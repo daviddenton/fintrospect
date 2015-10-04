@@ -13,7 +13,7 @@ import presentation.Books
 
 class SearchApp(books: Books) {
   def search() = new Service[Request, Response] {
-    override def apply(request: Request) = Ok(books.titles().toString())
+    override def apply(request: Request) = OK(books.titles().toString())
   }
 
   private val apiInfo = ApiInfo("search some books", "1.0", Option("an api for searching our book collection"))

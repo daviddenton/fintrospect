@@ -7,13 +7,13 @@ import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.util.Future
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.json.Argo.ResponseBuilder
+import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.{Body, Path}
 
 
 class BookAdd(books: Books) {
   private val exampleBook = Book("the title", "the author", 666)
-  private val bookExistsResponse = ResponseBuilder.Error(Conflict, "Book with that ISBN exists")
+  private val bookExistsResponse = Error(Conflict, "Book with that ISBN exists")
   private val jsonBody = Body.json(Option("book content"), exampleBook.toJson)
 
   private def addBook(isbn: String) = new Service[Request, Response] {
@@ -23,7 +23,7 @@ class BookAdd(books: Books) {
         case None => {
           val book = Book.unapply(jsonBody <-- request).get
           books.add(isbn, book)
-          ResponseBuilder.Response().withCode(Created).withContent(book.toJson)
+          HttpResponse().withCode(Created).withContent(book.toJson)
         }
       }
   }

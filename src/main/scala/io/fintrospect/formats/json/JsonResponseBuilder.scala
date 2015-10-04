@@ -10,5 +10,5 @@ class JsonResponseBuilder[T, N](format: JsonFormat[T, N]) extends ResponseBuilde
 
   private def formatError(throwable: Throwable): T = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 
-  override def Response() = new ResponseBuilder[T](formatJson, formatErrorMessage, formatError, ContentTypes.APPLICATION_JSON)
+  override def HttpResponse() = new ResponseBuilder[T](formatJson, formatErrorMessage, formatError, ContentTypes.APPLICATION_JSON)
 }

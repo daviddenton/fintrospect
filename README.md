@@ -66,7 +66,7 @@ class BookSearch(books: Books) {
   private def search() = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
       val requestForm = form.from(request)
-      Ok(array(books.search(minPages.from(requestForm).getOrElse(MIN_VALUE),
+      OK(array(books.search(minPages.from(requestForm).getOrElse(MIN_VALUE),
         maxPages.from(request).getOrElse(MAX_VALUE),
         titleTerm.from(requestForm)).map(_.toJson)))
     }
