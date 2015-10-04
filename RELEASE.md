@@ -49,6 +49,7 @@ of breaking changes due to Finagle using their own httpx classes instead of Nett
     - ```Route``` is now ```ServerRoute```
     - ```Client``` is now ```RouteClient```
     - ```ResponseWithExample``` is now ```ResponseSpec```
+    - Methods on ```Request/Response``` have dropped the get prefix. Get ```getUri -> uri```
 
 #####v7.6.X
 - Support for multi-parameters in forms and queries to provide type-safe retrieval. Eg. ```Query.required.*.int("name")```
