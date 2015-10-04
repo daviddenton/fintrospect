@@ -6,14 +6,14 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
 #####v10.0.X
-- Upgrade from Finagle-http v6.27.0 to finagle-httpx v6.29.0, as the former is EOL. This will result in a significant amount 
-of breaking changes due to Finagle using their own classes instead of Netty equivalents:
-    - ```HttpRequest/Response``` Netty classes are now ```Request/Response``` instead
-    - ```HttpResponseStatus``` changed to ```Status```
-    - ```HttpMethod.GET/POST/...``` changd to ```Method.Get/Post/...```
+- Upgrade from finagle-http v6.27.0 to finagle-httpx v6.29.0, as the former is EOL. This will result in a significant amount 
+of breaking changes due to Finagle using their own httpx classes instead of Netty equivalents:
+    - References to ```HttpRequest/Response``` Netty classes are now ```Request/Response``` instead
+    - References to ```HttpResponseStatus``` changed to ```Status```
+    - References to ππ```HttpMethod.GET/POST/...``` changd to ```Method.Get/Post/...```
     - References to ```Http.XXX()``` will now use ```Http.XXX()``` instead
 - Other than the above, no actual changes to the Fintrospect API or how it works have been made.
-- Added ```OK``` and ```HttpResponse``` alias methods to the ```ResponseBuilder``` to avoid name clashes with new HttpX methods. Deprecated ```Ok()``` and ```Response``` methods
+- Added ```OK``` and ```HttpResponse``` alias methods to the ```ResponseBuilder``` to avoid name clashes with new HttpX methods. Deprecated ```Ok()``` and ```Response()``` methods for clarity.
 
 #####v9.1.0
 - Changed format of "X-Fintrospect-Route-Name" header to use : instead of . in to describe the route URL - as URLs often have . in (for file extensions).
