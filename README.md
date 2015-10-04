@@ -50,7 +50,7 @@ val renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
 val libraryModule = FintrospectModule(Root / "library", renderer)
     .withRoute(new BookSearch(new BookRepo()).route)
 val service = FintrospectModule.toService(libraryModule)
-Http.serve(":8080", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service))
+Httpx.serve(":8080", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service))
 ```
 
 #####Define the endpoint

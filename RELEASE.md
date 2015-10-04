@@ -11,6 +11,7 @@ of breaking changes due to Finagle using their own classes instead of Netty equi
     - ```HttpRequest/Response``` Netty classes are now ```Request/Response``` instead
     - ```HttpResponseStatus``` changed to ```Status```
     - ```HttpMethod.GET/POST/...``` changd to ```Method.Get/Post/...```
+    - References to ```Http.XXX()``` will now use ```Http.XXX()``` instead
 - Other than the above, no actual changes to the Fintrospect API or how it works have been made.
 - Added ```OK``` and ```HttpResponse``` alias methods to the ```ResponseBuilder``` to avoid name clashes with new HttpX methods. Deprecated ```Ok()``` and ```Response``` methods
 
