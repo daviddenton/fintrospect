@@ -5,7 +5,10 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
-#####v10.0.X
+#####v10.0.1
+- Bugfix for Json4S builder method.
+
+#####v10.0.0
 - Upgrade from finagle-http v6.27.0 to finagle-httpx v6.29.0, as the former is EOL. This will result in a significant amount 
 of breaking changes due to Finagle using their own httpx classes instead of Netty equivalents:
     - References to ```HttpRequest/Response``` Netty classes are now ```Request/Response``` instead
