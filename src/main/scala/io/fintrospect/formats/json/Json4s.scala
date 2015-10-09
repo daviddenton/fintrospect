@@ -14,7 +14,6 @@ object Json4s {
                         serialization: Serialization,
                         useBigDecimalForDouble: Boolean) extends JsonFormat[JValue, JValue] {
 
-    import org.json4s.JsonDSL._
     import org.json4s._
 
     override def pretty(in: JValue): String = jsonMethods.pretty(jsonMethods.render(in))
@@ -23,9 +22,9 @@ object Json4s {
 
     override def compact(in: JValue): String = jsonMethods.compact(jsonMethods.render(in))
 
-    override def obj(fields: Iterable[Field]): JValue = fields
+    override def obj(fields: Iterable[Field]): JValue = JObject(fields.toList)
 
-    override def obj(fields: (String, JValue)*): JValue = fields
+    override def obj(fields: (String, JValue)*): JValue = JObject(fields:_*)
 
     override def string(value: String): JValue = JString(value)
 
