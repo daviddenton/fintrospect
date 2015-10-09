@@ -6,7 +6,7 @@ case class StreetAddress(address: String)
 
 case class Letter(to: StreetAddress, from: StreetAddress, message: String)
 
-class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends JsonFormatSpec[T](format) {
+class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends Json4SFormatSpec[T](format) {
 
   describe(format.getClass.getSimpleName) {
     val aLetter = Letter(StreetAddress("my house"), StreetAddress("your house"), "hi there")
@@ -16,10 +16,10 @@ class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends JsonFormatSp
   }
 }
 
-class JsonNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Native.JsonFormat)
+class Json4SNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Native.JsonFormat)
 
-class Json4NativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.NativeDoubleMode.JsonFormat)
+class Json4SNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.NativeDoubleMode.JsonFormat)
 
-class Json4JacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Jackson.JsonFormat)
+class Json4SJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Jackson.JsonFormat)
 
-class Json4JacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.JacksonDoubleMode.JsonFormat)
+class Json4SJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.JacksonDoubleMode.JsonFormat)
