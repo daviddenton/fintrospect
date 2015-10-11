@@ -18,8 +18,7 @@ import scala.language.implicitConversions
  * @param contentType the content type to return in all responses
  * @tparam T The custom format object type
  */
-class ResponseBuilder[T](toFormat: T => String,
-                         errorFormat: String => T,
+class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
                          exceptionFormat: Throwable => T,
                          contentType: ContentType) {
   private val response = Response()
