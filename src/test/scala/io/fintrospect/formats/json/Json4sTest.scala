@@ -1,0 +1,13 @@
+package io.fintrospect.formats.json
+
+class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Native.JsonFormat)
+class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.NativeDoubleMode.JsonFormat)
+
+class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Jackson.JsonFormat)
+class Json4sJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.JacksonDoubleMode.JsonFormat)
+
+class Json4sNativeBuilderTest extends JsonResponseBuilderSpec(Json4s.Native)
+class Json4sNativeDoubleBuilderTest extends JsonResponseBuilderSpec(Json4s.NativeDoubleMode)
+
+class Json4sJacksonBuilderTest extends JsonResponseBuilderSpec(Json4s.Jackson)
+class Json4sJacksonDoubleBuilderTest extends JsonResponseBuilderSpec(Json4s.JacksonDoubleMode)

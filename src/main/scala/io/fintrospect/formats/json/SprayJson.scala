@@ -20,7 +20,7 @@ object SprayJson extends JsonLibrary[JsValue, JsValue] {
 
     override def obj(fields: Iterable[Field]) = JsObject(fields.toList: _*)
 
-    override def obj(fields: Field*) = JsObject(fields: _*)
+    override def obj(fields: Field*) = this.obj(fields.toSeq)
 
     override def array(elements: Iterable[JsValue]) = elements.toJson
 
