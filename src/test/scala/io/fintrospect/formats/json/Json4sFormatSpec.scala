@@ -5,7 +5,7 @@ import java.math.BigInteger
 import io.fintrospect.formats.json.Json4s.Json4sFormat
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-class Json4sSFormatSpec(format: Json4sFormat[_]) extends FunSpec with ShouldMatchers {
+class Json4sFormatSpec(format: Json4sFormat[_]) extends FunSpec with ShouldMatchers {
 
   describe(format.getClass.getSimpleName) {
     it("creates JSON objects as expected") {

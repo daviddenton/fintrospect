@@ -6,7 +6,7 @@ case class StreetAddress(address: String)
 
 case class Letter(to: StreetAddress, from: StreetAddress, message: String)
 
-class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends Json4sSFormatSpec(format) {
+class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends Json4sFormatSpec(format) {
 
   describe(format.getClass.getSimpleName) {
     val aLetter = Letter(StreetAddress("my house"), StreetAddress("your house"), "hi there")
