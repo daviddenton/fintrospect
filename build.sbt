@@ -19,7 +19,8 @@ scalacOptions += "-feature"
 
 libraryDependencies ++= Seq(
   "net.sourceforge.argo" % "argo" % "3.12",
-  "io.spray" %%  "spray-json" % "1.3.2" % "provided",
+  "io.spray" %% "spray-json" % "1.3.2" % "provided",
+  "io.argonaut" %% "argonaut" % "6.0.4" % "provided",
   "org.json4s" %% "json4s" % "3.2.11" % "provided",
   "org.json4s" %% "json4s-native" % "3.2.11" % "provided",
   "org.json4s" %% "json4s-jackson" % "3.2.11" % "provided",
