@@ -2,10 +2,11 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
-import io.fintrospect.formats.json.Json4s.Json4sFormat
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-class Json4sJsonFormatSpec(format: Json4sFormat[_]) extends FunSpec with ShouldMatchers {
+class JsonFormatSpec[X](format: JsonFormat[X, X]) extends FunSpec with ShouldMatchers {
+
+  val expectedJson = """{"string":"hello","object":{"field1":"aString"},"int":1,"long":2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
 
   describe(format.getClass.getSimpleName) {
     it("creates JSON objects as expected") {
@@ -19,7 +20,7 @@ class Json4sJsonFormatSpec(format: Json4sFormat[_]) extends FunSpec with ShouldM
         "bool" -> format.boolean(true),
         "null" -> format.nullNode(),
         "array" -> format.array(format.string("world"), format.boolean(true))
-      )) shouldEqual """{"string":"hello","object":{"field1":"aString"},"int":1,"long":2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
+      )) shouldEqual expectedJson
     }
   }
 
