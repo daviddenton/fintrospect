@@ -10,9 +10,11 @@ import argonaut.{DecodeJson, EncodeJson, Json}
  */
 object Argonaut extends JsonLibrary[Json, Json] {
 
+  class InvalidJsonException(m: String) extends Exception(m)
+
   object JsonFormat extends JsonFormat[Json, Json] {
 
-    override def parse(in: String): Json = in.parse.leftMap(e => throw new Exception(e)).toOption.get
+    override def parse(in: String): Json = in.parse.leftMap(m => throw new InvalidJsonException(m)).toOption.get
 
     override def pretty(node: Json): String = node.spaces2
 

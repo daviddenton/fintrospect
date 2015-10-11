@@ -3,11 +3,15 @@ package io.fintrospect.formats.json
 import java.math.BigInteger
 
 /**
- * Capability to create and parse JSON message formats in a generic way
+ * Capability to create and parse JSON message formats in a generic way.
  */
 trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
   type Field = (String, NODETYPE)
 
+  /**
+   * Attempt to parse the JSON into the root node type. At the moment, this should throw an exception
+   * if the parsing fails. Tempted to make this an Either instead and to avoid the throw.
+   */
   def parse(in: String): ROOT_NODETYPE
 
   def pretty(in: ROOT_NODETYPE): String
