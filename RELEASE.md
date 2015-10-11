@@ -7,6 +7,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 
 #####v10.1.0
 - Inlined JsonResponseBuilder - this shouldn't be breaking anything - identically implement ```JsonLibrary``` instead for custom JSON formats.
+- Converted ```decode()``` in Json4S decoding to return an ```Either```.
 - Added support Argonaut JSON library out of the box. See ```Argonaut``` to get the Format util and ResponseBuilder for this formats.
 - Added XHtml support (based on native XML).
 

@@ -1,28 +1,35 @@
 package io.fintrospect.formats.json
 
-import java.math.BigInteger
+import argonaut.Argonaut._
+import argonaut._
 
-import org.scalatest.{FunSpec, ShouldMatchers}
+case class ArgonautStreetAddress(address: String)
+
+object ArgonautStreetAddress {
+  implicit def Codec: CodecJson[ArgonautStreetAddress]= casecodec1(ArgonautStreetAddress.apply, ArgonautStreetAddress.unapply)("address")
+}
+
+case class ArgonautLetter(to: ArgonautStreetAddress, from: ArgonautStreetAddress, message: String)
+
+object ArgonautLetter {
+  implicit def Codec: CodecJson[ArgonautLetter]= casecodec3(ArgonautLetter.apply, ArgonautLetter.unapply)("to", "from", "message")
+}
 
 class ArgonautJsonResponseBuilderTest extends JsonResponseBuilderSpec(Argonaut)
 
-class ArgonautJsonFormatTest extends FunSpec with ShouldMatchers {
-  private val format = Argonaut.JsonFormat
+class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut.JsonFormat) {
 
-  describe(format.getClass.getSimpleName) {
+  describe("Argonaut.JsonFormat") {
+    val aLetter = ArgonautLetter(ArgonautStreetAddress("my house"), ArgonautStreetAddress("your house"), "hi there")
+    it("roundtrips to JSON and back") {
+      val encoded = Argonaut.JsonFormat.encode(aLetter)(ArgonautLetter.Codec)
+      Argonaut.JsonFormat.decode[ArgonautLetter](encoded)(ArgonautLetter.Codec) shouldEqual Right(aLetter)
+    }
 
-    it("creates JSON objects as expected") {
-      format.compact(format.obj(
-        "string" -> format.string("hello"),
-        "object" -> format.obj(Seq("field1" -> format.string("aString"))),
-        "int" -> format.number(1),
-        "long" -> format.number(2L),
-        "decimal" -> format.number(BigDecimal(1.2)),
-        "bigInt" -> format.number(new BigInteger("12344")),
-        "bool" -> format.boolean(true),
-        "null" -> format.nullNode(),
-        "array" -> format.array(format.string("world"), format.boolean(true))
-      )) shouldEqual """{"string":"hello","null":null,"bigInt":12344,"object":{"field1":"aString"},"decimal":1.2,"array":["world",true],"long":2,"bool":true,"int":1}"""
+    it("invalid extracted JSON returns Left") {
+      Argonaut.JsonFormat.decode[ArgonautLetter](Argonaut.JsonFormat.obj())(ArgonautLetter.Codec).isLeft shouldEqual true
     }
   }
+
+  override val expectedJson: String = """{"string":"hello","null":null,"bigInt":12344,"object":{"field1":"aString"},"decimal":1.2,"array":["world",true],"long":2,"bool":true,"int":1}"""
 }

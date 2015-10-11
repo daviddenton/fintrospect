@@ -3,7 +3,7 @@ package io.fintrospect.formats.json
 import java.math.BigInteger
 
 import argonaut.Argonaut._
-import argonaut.Json
+import argonaut.{DecodeJson, EncodeJson, Json}
 
 /**
  * Argonaut JSON support.
@@ -12,7 +12,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
 
   object JsonFormat extends JsonFormat[Json, Json] {
 
-    override def parse(in: String): Json = in.parse.asJson
+    override def parse(in: String): Json = in.parse.leftMap(e => throw new Exception(e)).toOption.get
 
     override def pretty(node: Json): String = node.spaces2
 
@@ -39,6 +39,10 @@ object Argonaut extends JsonLibrary[Json, Json] {
     override def boolean(value: Boolean) = jBool(value)
 
     override def nullNode() = jNull
+
+    def encode[T](in: T)(implicit codec: EncodeJson[T]) = codec.encode(in)
+
+    def decode[T](in: Json)(implicit codec: DecodeJson[T]) = codec.decodeJson(in).toEither
   }
 
 }
