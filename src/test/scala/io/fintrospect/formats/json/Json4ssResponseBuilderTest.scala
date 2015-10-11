@@ -1,0 +1,7 @@
+package io.fintrospect.formats.json
+
+class Json4sNativeBuilderTest extends JsonResponseBuilderSpec(Json4s.Native)
+class Json4sNativeDoubleBuilderTest extends JsonResponseBuilderSpec(Json4s.NativeDoubleMode)
+
+class Json4sJacksonBuilderTest extends JsonResponseBuilderSpec(Json4s.Jackson)
+class Json4sJacksonDoubleBuilderTest extends JsonResponseBuilderSpec(Json4s.JacksonDoubleMode)
