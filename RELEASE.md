@@ -5,6 +5,11 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+#####v10.1.0
+- Inlined JsonResponseBuilder - this shouldn't be breaking anything - identically implement ```JsonLibrary``` instead for custom JSON formats.
+- Added support Argonaut JSON library out of the box. See ```Argonaut``` to get the Format util and ResponseBuilder for this formats.
+- Added XHtml support (based on native XML).
+
 #####v10.0.1
 - Bugfix for Json4S builder method.
 

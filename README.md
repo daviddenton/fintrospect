@@ -20,7 +20,8 @@ the HTTP API of a downstream servers (for a fake) to be created with no effort, 
   - Argo JSON
   - Json4s (v3.2.X compatible) Native & Jackson (v9+)
   - Spray JSON (v9+)
-  - Scala native XML.
+  - Argonaut JSON (v6.0.X compatible) (v10.1.X+)
+  - Scala native XML
 
 ###Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,
