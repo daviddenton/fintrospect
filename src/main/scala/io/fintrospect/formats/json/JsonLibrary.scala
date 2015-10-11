@@ -4,7 +4,7 @@ import io.fintrospect.ContentTypes
 import io.fintrospect.formats.{ResponseBuilder, ResponseBuilderMethods}
 
 /**
- * Defines a supported JSON library format (e.g. Argo or Json4s)
+ * Defines a supported JSON library format (e.g. Argo or Json4s).
  * @tparam R - Root node type
  * @tparam N - Node type
  */
