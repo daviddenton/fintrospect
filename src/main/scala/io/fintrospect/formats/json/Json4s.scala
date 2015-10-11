@@ -48,8 +48,8 @@ object Json4s {
 
     def decode[R](in: JValue,
                   formats: Formats = serialization.formats(NoTypeHints))
-                 (implicit mf: scala.reflect.Manifest[R]): R = {
-      in.extract[R](formats, mf)
+                 (implicit mf: scala.reflect.Manifest[R]): Either[String, R] = {
+      in.extractOpt[R](formats, mf).map(Right(_)).getOrElse(Left("Could not decode JSON"))
     }
   }
 

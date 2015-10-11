@@ -10,8 +10,12 @@ abstract class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends Jso
 
   describe(format.getClass.getSimpleName) {
     val aLetter = Letter(StreetAddress("my house"), StreetAddress("your house"), "hi there")
-    it("roundtrips to json and back") {
-      format.decode[Letter](format.encode(aLetter)) shouldEqual aLetter
+    it("roundtrips to JSON and back") {
+      format.decode[Letter](format.encode(aLetter)) shouldEqual Right(aLetter)
+    }
+
+    it("invalid extracted JSON returns Left") {
+      format.decode[Letter](format.obj()).isLeft shouldEqual true
     }
   }
 }

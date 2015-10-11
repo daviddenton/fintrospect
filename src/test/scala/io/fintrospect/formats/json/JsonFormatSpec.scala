@@ -4,7 +4,9 @@ import java.math.BigInteger
 
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-class JsonFormatSpec[X](format: JsonFormat[X, X]) extends FunSpec with ShouldMatchers {
+import scala.util.Try
+
+abstract class JsonFormatSpec[X](val format: JsonFormat[X, X]) extends FunSpec with ShouldMatchers {
 
   val expectedJson = """{"string":"hello","object":{"field1":"aString"},"int":1,"long":2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
 
@@ -22,6 +24,11 @@ class JsonFormatSpec[X](format: JsonFormat[X, X]) extends FunSpec with ShouldMat
         "array" -> format.array(format.string("world"), format.boolean(true))
       )) shouldEqual expectedJson
     }
-  }
 
+    describe("Parse blows up when invalid") {
+      it("parse blows up when invalid") {
+        Try(format.parse("not json")).isFailure shouldBe true
+      }
+    }
+  }
 }
