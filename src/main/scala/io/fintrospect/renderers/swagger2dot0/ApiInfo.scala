@@ -1,4 +1,4 @@
-package io.fintrospect
+package io.fintrospect.renderers.swagger2dot0
 
 /**
  * Main API description details.

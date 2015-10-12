@@ -13,7 +13,7 @@ import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.formats.text.PlainTextResponseBuilder
 import io.fintrospect.parameters.{Body, BodySpec, Query, StringParamType}
-import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
+import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import presentation.Book
 
 class SearchRoute(books: RemoteBooks) {

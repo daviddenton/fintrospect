@@ -6,7 +6,7 @@ import com.twitter.finagle.httpx.path.Root
 import examples.json4s.Emails.InMemoryEmails
 import io.fintrospect._
 import io.fintrospect.formats.json.Json4s
-import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
+import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 
 /**
  * This example uses Json4s as a JSON format instead of the Argo default

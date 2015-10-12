@@ -6,9 +6,9 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
 #####v10.1.0
+- Tiny break: Moved ```ApiInfo``` class to ```io.fintrospect.renderers.swagger2dot0``` package as was messing up the place.
 - Inlined JsonResponseBuilder - this shouldn't be breaking anything - identically implement ```JsonLibrary``` instead for custom JSON formats.
-- Converted ```decode()``` in Json4S decoding to return an ```Either```.
-- Added support Argonaut JSON library out of the box. See ```Argonaut``` to get the Format util and ResponseBuilder for this formats.
+- Added support Argonaut JSON library out of the box. See ```Argonaut``` to get the Format util and ResponseBuilder for this format.
 - Added XHtml support (based on native XML).
 
 #####v10.0.1

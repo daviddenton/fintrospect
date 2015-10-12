@@ -7,8 +7,8 @@ import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.finagle.{Httpx, Service}
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
-import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
-import io.fintrospect.{ApiInfo, CorsFilter, FintrospectModule, RouteSpec}
+import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
+import io.fintrospect.{CorsFilter, FintrospectModule, RouteSpec}
 import presentation.Books
 
 class SearchApp(books: Books) {
