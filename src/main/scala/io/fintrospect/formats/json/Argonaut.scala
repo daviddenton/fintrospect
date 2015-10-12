@@ -14,7 +14,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
 
   object JsonFormat extends JsonFormat[Json, Json] {
 
-    override def parse(in: String): Json = in.parse.leftMap(m => throw new InvalidJsonException).toOption.get
+    override def parse(in: String): Json = in.parseOption.getOrElse(throw new InvalidJsonException)
 
     override def pretty(node: Json): String = node.spaces2
 
