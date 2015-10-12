@@ -208,7 +208,7 @@ function processOAuthCode(data) {
   $.ajax(
   {
     url : window.swaggerUi.tokenUrl,
-    type: "Method.Post",
+    type: "POST",
     data: params,
     success:function(data, textStatus, jqXHR)
     {

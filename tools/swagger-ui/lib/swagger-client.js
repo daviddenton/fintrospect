@@ -675,23 +675,23 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   var operations = [];
   for(path in response.paths) {
     if(typeof response.paths[path] === 'object') {
-      var Method;
-      for(Method in response.paths[path]) {
-        if(['delete', 'get', 'head', 'options', 'patch', 'post', 'put'].indexOf(Method) === -1) {
+      var httpMethod;
+      for(httpMethod in response.paths[path]) {
+        if(['delete', 'get', 'head', 'options', 'patch', 'post', 'put'].indexOf(httpMethod) === -1) {
           continue;
         }
-        var operation = response.paths[path][Method];
+        var operation = response.paths[path][httpMethod];
         var tags = operation.tags;
         if(typeof tags === 'undefined') {
           operation.tags = [ 'default' ];
           tags = operation.tags;
         }
-        var operationId = this.idFromOp(path, Method, operation);
+        var operationId = this.idFromOp(path, httpMethod, operation);
         var operationObject = new Operation (
           this,
           operation.scheme,
           operationId,
-          Method,
+          httpMethod,
           path,
           operation,
           this.definitions
@@ -789,8 +789,8 @@ SwaggerClient.prototype.tagFromLabel = function(label) {
   return label;
 };
 
-SwaggerClient.prototype.idFromOp = function(path, Method, op) {
-  var opId = op.operationId || (path.substring(1) + '_' + Method);
+SwaggerClient.prototype.idFromOp = function(path, httpMethod, op) {
+  var opId = op.operationId || (path.substring(1) + '_' + httpMethod);
   return opId.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()\+\s]/g,'_');
 };
 
@@ -809,7 +809,7 @@ var OperationGroup = function(tag, description, externalDocs, operation) {
   this.operationsArray = [];
 };
 
-var Operation = function(parent, scheme, operationId, Method, path, args, definitions) {
+var Operation = function(parent, scheme, operationId, httpMethod, path, args, definitions) {
   var errors = [];
   parent = parent||{};
   args = args||{};
@@ -825,7 +825,7 @@ var Operation = function(parent, scheme, operationId, Method, path, args, defini
   this.scheme = scheme || parent.scheme || 'http';
   this.basePath = parent.basePath || '/';
   this.nickname = (operationId||errors.push('Operations must have a nickname.'));
-  this.method = (Method||errors.push('Operation ' + operationId + ' is missing method.'));
+  this.method = (httpMethod||errors.push('Operation ' + operationId + ' is missing method.'));
   this.path = (path||errors.push('Operation ' + this.nickname + ' is missing path.'));
   this.parameters = args !== null ? (args.parameters||[]) : {};
   this.summary = args.summary || '';
@@ -2019,7 +2019,7 @@ var SwaggerResource = function (resourceObj, api) {
     this.api.progress('fetching resource ' + this.name + ': ' + this.url);
     var obj = {
       url: this.url,
-      method: 'Method.Get',
+      method: 'GET',
       useJQuery: this.useJQuery,
       headers: {
         accept: this.swaggerRequstHeaders
@@ -2151,8 +2151,8 @@ SwaggerResource.prototype.addOperations = function (resource_path, ops, consumes
       }
       var responseMessages = o.responseMessages;
       var method = o.method;
-      if (o.Method) {
-        method = o.Method;
+      if (o.httpMethod) {
+        method = o.httpMethod;
       }
       if (o.supportedContentTypes) {
         consumes = o.supportedContentTypes;
@@ -2985,7 +2985,7 @@ SwaggerRequest.prototype.setHeaders = function (params, opts, operation) {
   }
 
   // if there's a body, need to set the accepts header via requestContentType
-  if (body && (this.type === 'Method.Post' || this.type === 'PUT' || this.type === 'PATCH' || this.type === 'DELETE')) {
+  if (body && (this.type === 'POST' || this.type === 'PUT' || this.type === 'PATCH' || this.type === 'DELETE')) {
     if (this.opts.requestContentType)
       consumes = this.opts.requestContentType;
   } else {

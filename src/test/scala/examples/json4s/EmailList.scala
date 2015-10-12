@@ -20,7 +20,7 @@ class EmailList(emails: Emails) {
   }
 
   val route = RouteSpec("list the inbox contents")
-    .returning(ResponseSpec.json(Status.Ok -> "list of emails for a user", encode(exampleEmail), JsonFormat))
+    .returning(ResponseSpec.json(Status.Ok -> "list of emails for a user", encode(Seq(exampleEmail)), JsonFormat))
     .at(Get) / "user" / emailAddress bindTo forUser
 }
 
