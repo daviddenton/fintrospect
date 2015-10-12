@@ -19,7 +19,7 @@ trait MandatoryRebind[T, From, B <: Binding] extends Rebindable[T, From, B] {
 
 trait OptionalRebind[T, From, B <: Binding] extends Rebindable[T, From, B] {
   self: Retrieval[Option[T], From] with Bindable[T, B] =>
-  override def <->(from: From): Iterable[B] = (this <-- from).map(this.-->).getOrElse(Seq())
+  override def <->(from: From): Iterable[B] = (this <-- from).map(this.-->).getOrElse(Nil)
 
   override def rebind(from: From): Iterable[B] = <->(from)
 }
