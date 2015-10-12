@@ -9,8 +9,8 @@ trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
   type Field = (String, NODETYPE)
 
   /**
-   * Attempt to parse the JSON into the root node type. At the moment, this should throw an exception
-   * if the parsing fails. Tempted to make this an Either instead and to avoid the throw.
+   * Attempt to parse the JSON into the root node type. Implementations should throw an exception
+   * if the parsing fails, which is dealt with by the surrounding deserialisation mechanism.
    */
   def parse(in: String): ROOT_NODETYPE
 

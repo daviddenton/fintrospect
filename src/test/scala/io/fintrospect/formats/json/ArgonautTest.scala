@@ -2,6 +2,7 @@ package io.fintrospect.formats.json
 
 import argonaut.Argonaut._
 import argonaut._
+import io.fintrospect.formats.json.Argonaut.InvalidJsonException
 
 case class ArgonautStreetAddress(address: String)
 
@@ -23,11 +24,11 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut.JsonFormat) {
     val aLetter = ArgonautLetter(ArgonautStreetAddress("my house"), ArgonautStreetAddress("your house"), "hi there")
     it("roundtrips to JSON and back") {
       val encoded = Argonaut.JsonFormat.encode(aLetter)(ArgonautLetter.Codec)
-      Argonaut.JsonFormat.decode[ArgonautLetter](encoded)(ArgonautLetter.Codec) shouldEqual Right(aLetter)
+      Argonaut.JsonFormat.decode[ArgonautLetter](encoded)(ArgonautLetter.Codec) shouldEqual aLetter
     }
 
-    it("invalid extracted JSON returns Left") {
-      Argonaut.JsonFormat.decode[ArgonautLetter](Argonaut.JsonFormat.obj())(ArgonautLetter.Codec).isLeft shouldEqual true
+    it("invalid extracted JSON throws up") {
+      intercept[InvalidJsonException](Argonaut.JsonFormat.decode[ArgonautLetter](Argonaut.JsonFormat.obj()))
     }
   }
 
