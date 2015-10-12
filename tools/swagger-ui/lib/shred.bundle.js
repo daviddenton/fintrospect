@@ -784,7 +784,7 @@ var STATUS_CODES = HTTP.STATUS_CODES || {
     100 : 'Continue',
     101 : 'Switching Protocols',
     102 : 'Processing', // RFC 2518, obsoleted by RFC 4918
-    200 : 'Status.Ok',
+    200 : 'OK',
     201 : 'Created',
     202 : 'Accepted',
     203 : 'Non-Authoritative Information',
@@ -913,7 +913,7 @@ Object.defineProperties(Request.prototype, {
 
   method: {
     get: function() {
-      return this._method = (this._method||"Method.Get");
+      return this._method = (this._method||"GET");
     },
     set: function(value) {
       this._method = value; return this;
@@ -1019,7 +1019,7 @@ Object.defineProperty(Request.prototype,"content",
 
 Request.prototype.inspect = function () {
   var request = this;
-  var headers = this.format_headerMap;
+  var headers = this.format_headers();
   var summary = ["<Shred Request> ", request.method.toUpperCase(),
       request.url].join(" ")
   return [ summary, "- Headers:", headers].join("\n");
@@ -1842,7 +1842,7 @@ var Response = function(raw, request, callback) {
 Response.prototype = {
   inspect: function() {
     var response = this;
-    var headers = this.format_headerMap;
+    var headers = this.format_headers();
     var summary = ["<Shred Response> ", response.status].join(" ")
     return [ summary, "- Headers:", headers].join("\n");
   },
@@ -2445,7 +2445,7 @@ http.request = function (params, cb) {
 };
 
 http.get = function (params, cb) {
-    params.method = 'Method.Get';
+    params.method = 'GET';
     var req = http.request(params, cb);
     req.end();
     return req;
@@ -2455,8 +2455,8 @@ var xhrHttp = (function () {
     if (typeof window === 'undefined') {
         throw new Error('no window object present');
     }
-    else if (window.XMLRequest) {
-        return window.XMLRequest;
+    else if (window.XMLHttpRequest) {
+        return window.XMLHttpRequest;
     }
     else if (window.ActiveXObject) {
         var axs = [
@@ -2491,7 +2491,7 @@ http.STATUS_CODES = {
     100 : 'Continue',
     101 : 'Switching Protocols',
     102 : 'Processing', // RFC 2518, obsoleted by RFC 4918
-    200 : 'Status.Ok',
+    200 : 'OK',
     201 : 'Created',
     202 : 'Accepted',
     203 : 'Non-Authoritative Information',
@@ -2557,7 +2557,7 @@ var Request = module.exports = function (xhr, params) {
     var uri = params.host + ':' + params.port + (params.path || '/');
 
     xhr.open(
-        params.method || 'Method.Get',
+        params.method || 'GET',
         (params.scheme || 'http') + '://' + uri,
         true
     );
@@ -2727,7 +2727,7 @@ Response.prototype.write = function () {
 });
 
 require.define("/node_modules/http-browserify/lib/isSafeHeader.js", function (require, module, exports, __dirname, __filename) {
-    // Taken from http://dxr.mozilla.org/mozilla/mozilla-central/content/base/src/nsXMLRequest.cpp.html
+    // Taken from http://dxr.mozilla.org/mozilla/mozilla-central/content/base/src/nsXMLHttpRequest.cpp.html
 var unsafeHeaders = [
     "accept-charset",
     "accept-encoding",
