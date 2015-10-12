@@ -8,8 +8,8 @@ import com.twitter.finagle.{Httpx, Service}
 import com.twitter.util.Future
 import io.fintrospect.formats.text.PlainTextResponseBuilder
 import io.fintrospect.parameters.Query
-import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json
-import io.fintrospect.{ApiInfo, CorsFilter, FintrospectModule, RouteSpec}
+import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
+import io.fintrospect.{CorsFilter, FintrospectModule, RouteSpec}
 
 class SearchRoute(books: RemoteBooks) {
   private val titlePartParam = Query.required.string("titlePart")
