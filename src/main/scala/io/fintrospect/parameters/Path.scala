@@ -22,7 +22,7 @@ object Path extends Parameters[PathParameter, PathBindable] {
 
     override def toString() = name
 
-    override def -->(unused: String) = Seq()
+    override def -->(unused: String) = Nil
 
     override def unapply(str: String) = if (str == name) Option(str) else None
 

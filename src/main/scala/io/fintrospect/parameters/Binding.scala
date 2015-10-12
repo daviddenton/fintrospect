@@ -15,7 +15,7 @@ sealed trait Binding {
 
 class QueryBinding(val parameter: Parameter, value: String) extends Binding {
   def apply(requestBuild: RequestBuild) = {
-    val newValues = value +: requestBuild.queries.getOrElse(parameter.name, Seq())
+    val newValues = value +: requestBuild.queries.getOrElse(parameter.name, Nil)
     requestBuild.copy(queries = requestBuild.queries + (parameter.name -> newValues))
   }
 }
