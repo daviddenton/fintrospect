@@ -6,6 +6,7 @@ import java.math.BigInteger
  * Capability to create and parse JSON message formats in a generic way.
  */
 trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
+
   type Field = (String, NODETYPE)
 
   /**
@@ -39,4 +40,11 @@ trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
   def boolean(value: Boolean): NODETYPE
 
   def nullNode(): NODETYPE
+}
+
+object JsonFormat {
+
+  class InvalidJson extends Exception
+  class InvalidJsonForDecoding extends Exception
+
 }

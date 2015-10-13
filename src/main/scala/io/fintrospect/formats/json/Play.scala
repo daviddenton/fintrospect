@@ -2,7 +2,8 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
-import play.api.libs.json._
+import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
+import play.api.libs.json.{Json, _}
 
 /**
  * Play JSON support.
@@ -39,6 +40,10 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     override def nullNode() = JsNull
 
     private def field(name: String, value: JsValue) = name -> value
+
+    def encode[T](in: T)(implicit writes: Writes[T]) = writes.writes(in)
+
+    def decode[T](in: JsValue)(implicit reads: Reads[T]) = reads.reads(in).asOpt.getOrElse(throw new InvalidJsonForDecoding)
   }
 
 }

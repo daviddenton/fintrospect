@@ -2,7 +2,7 @@ package io.fintrospect.formats.json
 
 import argonaut.Argonaut._
 import argonaut._
-import io.fintrospect.formats.json.Argonaut.InvalidJsonException
+import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 
 case class ArgonautStreetAddress(address: String)
 
@@ -28,7 +28,7 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut.JsonFormat) {
     }
 
     it("invalid extracted JSON throws up") {
-      intercept[InvalidJsonException](Argonaut.JsonFormat.decode[ArgonautLetter](Argonaut.JsonFormat.obj()))
+      intercept[InvalidJsonForDecoding](Argonaut.JsonFormat.decode[ArgonautLetter](Argonaut.JsonFormat.obj()))
     }
   }
 

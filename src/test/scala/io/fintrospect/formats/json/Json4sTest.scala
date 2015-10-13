@@ -3,20 +3,20 @@ package io.fintrospect.formats.json
 import io.fintrospect.formats.json.Json4s.Json4sFormat
 import org.json4s.MappingException
 
-case class StreetAddress(address: String)
+case class Json4sStreetAddress(address: String)
 
-case class Letter(to: StreetAddress, from: StreetAddress, message: String)
+case class Json4sLetter(to: Json4sStreetAddress, from: Json4sStreetAddress, message: String)
 
 abstract class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends JsonFormatSpec(format) {
 
   describe(format.getClass.getSimpleName) {
-    val aLetter = Letter(StreetAddress("my house"), StreetAddress("your house"), "hi there")
+    val aLetter = Json4sLetter(Json4sStreetAddress("my house"), Json4sStreetAddress("your house"), "hi there")
     it("roundtrips to JSON and back") {
-      format.decode[Letter](format.encode(aLetter)) shouldEqual aLetter
+      format.decode[Json4sLetter](format.encode(aLetter)) shouldEqual aLetter
     }
 
     it("invalid extracted JSON throws up") {
-      intercept[MappingException](format.decode[Letter](format.obj()))
+      intercept[MappingException](format.decode[Json4sLetter](format.obj()))
     }
   }
 }
