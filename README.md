@@ -17,10 +17,11 @@ for parameters are supported. Also support for typesafe conversions of custom ty
 - Define HTTP Client endpoints APIs which reuse the same syntax and parameter bindings as the server-side, which means that you can use the same route specification to define both sides of the transport boundary. This allows, for example,
 the HTTP API of a downstream servers (for a fake) to be created with no effort, and exactly matching the client side. These endpoints are also exposed as simple functions.
 - A set of HTTP Response builders with pluggable extension points for custom formats; currently supported are:
-  - Argo JSON
-  - Json4s (v3.2.X compatible) Native & Jackson (v9+)
-  - Spray JSON (v9+)
+  - Argo JSON (Java)
   - Argonaut JSON (v6.0.X compatible) (v10.1.X+)
+  - Json4s (v3.2.X compatible) Native & Jackson (v9+)
+  - Play JSON (v2.4.X compatible) (v10.2.X+)
+  - Spray JSON (v9+)
   - Scala native XML
 
 ###Get it
