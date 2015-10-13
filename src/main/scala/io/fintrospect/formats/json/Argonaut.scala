@@ -4,17 +4,16 @@ import java.math.BigInteger
 
 import argonaut.Argonaut._
 import argonaut.{DecodeJson, EncodeJson, Json}
+import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 
 /**
  * Argonaut JSON support.
  */
 object Argonaut extends JsonLibrary[Json, Json] {
 
-  class InvalidJsonException extends Exception
-
   object JsonFormat extends JsonFormat[Json, Json] {
 
-    override def parse(in: String): Json = in.parseOption.getOrElse(throw new InvalidJsonException)
+    override def parse(in: String): Json = in.parseOption.getOrElse(throw new InvalidJson)
 
     override def pretty(node: Json): String = node.spaces2
 
@@ -44,7 +43,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
 
     def encode[T](in: T)(implicit codec: EncodeJson[T]) = codec.encode(in)
 
-    def decode[T](in: Json)(implicit codec: DecodeJson[T]) = codec.decodeJson(in).getOr(throw new InvalidJsonException)
+    def decode[T](in: Json)(implicit codec: DecodeJson[T]) = codec.decodeJson(in).getOr(throw new InvalidJsonForDecoding)
   }
 
 }
