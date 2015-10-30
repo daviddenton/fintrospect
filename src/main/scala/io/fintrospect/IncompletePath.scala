@@ -126,7 +126,9 @@ class IncompletePath5[A, B, C, D, E](val routeSpec: RouteSpec, val method: Metho
                                      pp4: PathParameter[D],
                                      pp5: PathParameter[E]
                                       ) extends IncompletePath {
-  def /[F](pp5: PathParameter[F]) = throw new UnsupportedOperationException("Limit on number of elements!")
+  def /(part: String): IncompletePath6[A, B, C, D, E, String] = /(Fp.fixed(part))
+
+  def /[F](pp6: PathParameter[F]): IncompletePath6[A, B, C, D, E, F] = new IncompletePath6(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6)
 
   def bindTo(fn: (A, B, C, D, E) => Service[Request, Response]): ServerRoute = new ServerRoute(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5) {
     override def toPf(basePath: Path): RouteFilter => Binding = {
@@ -137,4 +139,47 @@ class IncompletePath5[A, B, C, D, E](val routeSpec: RouteSpec, val method: Metho
   }
 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4, pp5)
+}
+
+class IncompletePath6[A, B, C, D, E, F](val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path,
+                                        pp1: PathParameter[A],
+                                        pp2: PathParameter[B],
+                                        pp3: PathParameter[C],
+                                        pp4: PathParameter[D],
+                                        pp5: PathParameter[E],
+                                        pp6: PathParameter[F]
+                                         ) extends IncompletePath {
+  def /(part: String): IncompletePath7[A, B, C, D, E, F, String] = /(Fp.fixed(part))
+
+  def /[G](pp7: PathParameter[G]): IncompletePath7[A, B, C, D, E, F, G] = new IncompletePath7(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6, pp7)
+
+  def bindTo(fn: (A, B, C, D, E, F) => Service[Request, Response]): ServerRoute = new ServerRoute(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6) {
+    override def toPf(basePath: Path): RouteFilter => Binding = {
+      filtered: RouteFilter => {
+        case actualMethod -> path / pp1(s1) / pp2(s2) / pp3(s3) / pp4(s4) / pp5(s5) / pp6(s6) if matches(actualMethod, basePath, path) => filtered.andThen(fn(s1, s2, s3, s4, s5, s6))
+      }
+    }
+  }
+
+  override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4, pp5, pp6)
+}
+
+class IncompletePath7[A, B, C, D, E, F, G](val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path,
+                                           pp1: PathParameter[A],
+                                           pp2: PathParameter[B],
+                                           pp3: PathParameter[C],
+                                           pp4: PathParameter[D],
+                                           pp5: PathParameter[E],
+                                           pp6: PathParameter[F],
+                                           pp7: PathParameter[G]
+                                            ) extends IncompletePath {
+  def bindTo(fn: (A, B, C, D, E, F, G) => Service[Request, Response]): ServerRoute = new ServerRoute(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6, pp7) {
+    override def toPf(basePath: Path): RouteFilter => Binding = {
+      filtered: RouteFilter => {
+        case actualMethod -> path / pp1(s1) / pp2(s2) / pp3(s3) / pp4(s4) / pp5(s5)/ pp6(s6)/ pp7(s7) if matches(actualMethod, basePath, path) => filtered.andThen(fn(s1, s2, s3, s4, s5, s6, s7))
+      }
+    }
+  }
+
+  override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4, pp5, pp6, pp7)
 }
