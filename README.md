@@ -19,7 +19,7 @@ the HTTP API of a downstream servers (for a fake) to be created with no effort, 
 - A set of HTTP Response builders with pluggable extension points for custom formats; currently supported are:
   - Argo JSON (Java)
   - Argonaut JSON (v6.0.X compatible) (v10.1.X+)
-  - Json4s (v3.2.X compatible) Native & Jackson (v9+)
+  - Json4s (v3.2.X+ compatible) Native & Jackson (v9+)
   - Play JSON (v2.4.X compatible) (v10.2.X+)
   - Spray JSON (v9+)
   - Scala native XML

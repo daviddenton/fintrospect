@@ -22,11 +22,10 @@ libraryDependencies ++= Seq(
   "io.spray" %% "spray-json" % "1.3.2" % "provided",
   "io.argonaut" %% "argonaut" % "6.0.4" % "provided",
   "com.typesafe.play" %% "play-json" % "2.4.3" % "provided",
-  "org.json4s" %% "json4s" % "3.2.11" % "provided",
-  "org.json4s" %% "json4s-native" % "3.2.11" % "provided",
-  "org.json4s" %% "json4s-jackson" % "3.2.11" % "provided",
+  "org.json4s" %% "json4s-native" % "3.3.0" % "provided",
+  "org.json4s" %% "json4s-jackson" % "3.3.0" % "provided",
   "com.twitter" %% "finagle-http" % "6.30.0" % "provided",
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
 licenses +=("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
