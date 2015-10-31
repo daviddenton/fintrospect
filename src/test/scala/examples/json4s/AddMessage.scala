@@ -1,8 +1,8 @@
 package examples.json4s
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx._
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http._
 import examples.json4s.InboxApp.JsonLibrary.ResponseBuilder.OK
 import io.fintrospect.ContentTypes._
 import io.fintrospect._

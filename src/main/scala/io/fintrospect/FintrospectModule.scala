@@ -1,8 +1,8 @@
 package io.fintrospect
 
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.path.Path
-import com.twitter.finagle.httpx.{Method, Request, Response}
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.path.Path
+import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.FintrospectModule._

@@ -1,6 +1,6 @@
 package io.fintrospect
 
-import com.twitter.finagle.httpx.Status
+import com.twitter.finagle.http.Status
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 import io.fintrospect.parameters.BodySpec
 

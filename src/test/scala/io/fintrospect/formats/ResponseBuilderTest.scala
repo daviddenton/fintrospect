@@ -2,7 +2,7 @@ package io.fintrospect.formats
 
 import java.nio.charset.Charset._
 
-import com.twitter.finagle.httpx.{Response, Status}
+import com.twitter.finagle.http.{Response, Status}
 import io.fintrospect.ContentType
 import io.fintrospect.formats.text.PlainText
 import org.jboss.netty.buffer.ChannelBuffers._

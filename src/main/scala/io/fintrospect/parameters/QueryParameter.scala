@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.httpx.Request
+import com.twitter.finagle.http.Request
 import org.jboss.netty.handler.codec.http.QueryStringDecoder
 
 import scala.collection.JavaConverters._

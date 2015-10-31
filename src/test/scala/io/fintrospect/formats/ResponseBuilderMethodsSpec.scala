@@ -1,6 +1,6 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.httpx.Status
+import com.twitter.finagle.http.Status
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.scalatest.{FunSpec, ShouldMatchers}
 

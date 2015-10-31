@@ -3,8 +3,8 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import argo.jdom.JsonRootNode
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.Request
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Request
 import io.fintrospect.ContentTypes
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._

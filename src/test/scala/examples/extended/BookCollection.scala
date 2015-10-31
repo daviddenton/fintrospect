@@ -1,8 +1,8 @@
 package examples.extended
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.{Request, Response, Status}
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes._
 import io.fintrospect._

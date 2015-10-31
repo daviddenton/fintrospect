@@ -1,6 +1,6 @@
 package io.fintrospect
 
-import com.twitter.finagle.httpx.{Method, Request, Response, Status}
+import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.Headers._

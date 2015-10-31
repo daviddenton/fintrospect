@@ -1,6 +1,6 @@
 package io.fintrospect.renderers
 
-import com.twitter.finagle.httpx.{Response, Status}
+import com.twitter.finagle.http.{Response, Status}
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter

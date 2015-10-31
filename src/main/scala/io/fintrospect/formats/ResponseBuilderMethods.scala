@@ -1,6 +1,6 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.httpx.{Response, Status}
+import com.twitter.finagle.http.{Response, Status}
 
 /**
  * Convienience methods for building Http Responses

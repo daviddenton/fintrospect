@@ -1,11 +1,11 @@
 package presentation._2
 
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.filter.Cors
-import com.twitter.finagle.httpx.filter.Cors.HttpFilter
-import com.twitter.finagle.httpx.path.Root
-import com.twitter.finagle.httpx.{Request, Response}
-import com.twitter.finagle.{Httpx, Service}
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.filter.Cors
+import com.twitter.finagle.http.filter.Cors.HttpFilter
+import com.twitter.finagle.http.path.Root
+import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.{Http, Service}
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
@@ -24,7 +24,7 @@ class SearchApp(books: Books) {
     .toService
 
   val searchService = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)
-  Httpx.serve(":9000", searchService)
+  Http.serve(":9000", searchService)
 }
 
 
