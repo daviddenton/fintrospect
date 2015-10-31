@@ -3,6 +3,7 @@ package presentation._6
 import com.twitter.finagle.httpx.Method._
 import com.twitter.finagle.httpx.Status.Ok
 import com.twitter.finagle.httpx.filter.Cors
+import com.twitter.finagle.httpx.filter.Cors.HttpFilter
 import com.twitter.finagle.httpx.path.Root
 import com.twitter.finagle.httpx.{Request, Response, Status}
 import com.twitter.finagle.{Httpx, Service}
@@ -65,7 +66,7 @@ class SearchApp {
     .withRoute(new BookAvailable(new RemoteBooks).route)
     .toService
 
-  val searchService = new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service)
+  val searchService = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)
   Httpx.serve(":9000", searchService)
 }
 
