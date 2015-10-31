@@ -1,9 +1,9 @@
 package io.fintrospect.renderers
 
 import _root_.util.Echo
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.path.Root
-import com.twitter.finagle.httpx.{Request, Status}
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.path.Root
+import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await
 import io.fintrospect.ContentTypes._
 import io.fintrospect._

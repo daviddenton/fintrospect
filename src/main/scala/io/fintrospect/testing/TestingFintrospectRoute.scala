@@ -2,8 +2,8 @@ package io.fintrospect.testing
 
 import java.util.concurrent.TimeUnit
 
-import com.twitter.finagle.httpx.path.Root
-import com.twitter.finagle.httpx.{Request, Response}
+import com.twitter.finagle.http.path.Root
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Await
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{FintrospectModule, ServerRoute}

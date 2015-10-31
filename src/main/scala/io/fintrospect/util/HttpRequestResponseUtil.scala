@@ -1,6 +1,6 @@
 package io.fintrospect.util
 
-import com.twitter.finagle.httpx.{Message, Response, Status}
+import com.twitter.finagle.http.{Message, Response, Status}
 
 object HttpRequestResponseUtil {
   def contentFrom(msg: Message): String = msg.contentString

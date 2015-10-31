@@ -1,8 +1,8 @@
 package io.fintrospect
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.httpx._
-import com.twitter.finagle.httpx.path.Path
+import com.twitter.finagle.http._
+import com.twitter.finagle.http.path.Path
 import com.twitter.util.Future
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.json.Argo

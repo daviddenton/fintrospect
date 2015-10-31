@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 
-import com.twitter.finagle.httpx.Method._
+import com.twitter.finagle.http.Method._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class PathTest extends FunSpec with ShouldMatchers {

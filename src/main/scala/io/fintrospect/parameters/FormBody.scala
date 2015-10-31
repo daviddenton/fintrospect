@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import java.net.URLDecoder._
 import java.net.URLEncoder.encode
 
-import com.twitter.finagle.httpx.Request
+import com.twitter.finagle.http.Request
 import io.fintrospect.ContentTypes
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names

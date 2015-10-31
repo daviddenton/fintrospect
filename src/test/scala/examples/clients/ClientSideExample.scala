@@ -2,9 +2,9 @@ package examples.clients
 
 import java.time.LocalDate
 
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.{Request, Response}
-import com.twitter.finagle.{Httpx, Service}
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.ResponseBuilder._
@@ -20,7 +20,7 @@ import io.fintrospect.util.HttpRequestResponseUtil._
  */
 object ClientSideExample extends App {
 
-  Httpx.serve(":10000", new Service[Request, Response] {
+  Http.serve(":10000", new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
       println("URL was " + request.uri)
       println("Headers were " + headersFrom(request))
@@ -29,7 +29,7 @@ object ClientSideExample extends App {
     }
   })
 
-  val httpClient = Httpx.newService("localhost:10000")
+  val httpClient = Http.newService("localhost:10000")
 
   val theDate = Path.localDate("date")
   val theWeather = Query.optional.string("weather")

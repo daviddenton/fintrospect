@@ -3,9 +3,9 @@ package examples.extended
 import java.lang.Integer._
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.Status.Ok
-import com.twitter.finagle.httpx._
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http._
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect._

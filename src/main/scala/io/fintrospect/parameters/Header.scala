@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.httpx.Request
+import com.twitter.finagle.http.Request
 
 /**
  * Parameters which are bound to request headers

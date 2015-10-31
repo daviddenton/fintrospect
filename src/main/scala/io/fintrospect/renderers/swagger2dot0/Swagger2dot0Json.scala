@@ -1,8 +1,8 @@
 package io.fintrospect.renderers.swagger2dot0
 
 import argo.jdom.JsonNode
-import com.twitter.finagle.httpx.Response
-import com.twitter.finagle.httpx.path.Path
+import com.twitter.finagle.http.Response
+import com.twitter.finagle.http.path.Path
 import io.fintrospect._
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._

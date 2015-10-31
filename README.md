@@ -30,7 +30,7 @@ and it has built against the version below:
 
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
-libraryDependencies += "com.twitter" %% "finagle-httpx" % "6.29.0"
+libraryDependencies += "com.twitter" %% "finagle-http" % "6.30.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "X.X.X"
 ```
 
@@ -52,7 +52,7 @@ val renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
 val libraryModule = FintrospectModule(Root / "library", renderer)
     .withRoute(new BookSearch(new BookRepo()).route)
 val service = FintrospectModule.toService(libraryModule)
-Httpx.serve(":8080", new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service))
+Httpx.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service))
 ```
 
 #####Define the endpoint

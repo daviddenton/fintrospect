@@ -1,12 +1,12 @@
 package presentation._6
 
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.Status.Ok
-import com.twitter.finagle.httpx.filter.Cors
-import com.twitter.finagle.httpx.filter.Cors.HttpFilter
-import com.twitter.finagle.httpx.path.Root
-import com.twitter.finagle.httpx.{Request, Response, Status}
-import com.twitter.finagle.{Httpx, Service}
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.filter.Cors
+import com.twitter.finagle.http.filter.Cors.HttpFilter
+import com.twitter.finagle.http.path.Root
+import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
@@ -67,6 +67,6 @@ class SearchApp {
     .toService
 
   val searchService = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)
-  Httpx.serve(":9000", searchService)
+  Http.serve(":9000", searchService)
 }
 

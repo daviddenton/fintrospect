@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.Request
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Request
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class RebindableTest extends FunSpec with ShouldMatchers {

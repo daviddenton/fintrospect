@@ -5,8 +5,10 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
-#####v10.4.0
-- Removed ```CorsFilter```. You can now use the ```Cors.HttpFilter``` supplied by finagle-httpx instead.
+#####v11.0.0
+- Upgrade to Finagle ```6.30.0```, which has resulted in... < drumroll >
+- Breaking change: Musical chairs from the Finagle team with the ```finagle-httpx``` package, which is now renamed to ```finagle-http```. Just globally replace ```httpx``` with ```http``` and all should be good.
+- Removed ```CorsFilter```. You can now use the ```Cors.HttpFilter``` supplied by finagle-http instead.
 
 #####v10.3.0
 - Added 6 and 7 arity path lengths.

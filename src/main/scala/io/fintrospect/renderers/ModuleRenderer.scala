@@ -1,7 +1,7 @@
 package io.fintrospect.renderers
 
-import com.twitter.finagle.httpx.Response
-import com.twitter.finagle.httpx.path.Path
+import com.twitter.finagle.http.Response
+import com.twitter.finagle.http.path.Path
 import io.fintrospect.ServerRoute
 import io.fintrospect.parameters.Parameter
 

@@ -1,8 +1,8 @@
 package examples.json4s
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.{Request, Response, Status}
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.{Request, Response, Status}
 import examples.json4s.InboxApp.JsonLibrary.JsonFormat
 import examples.json4s.InboxApp.JsonLibrary.JsonFormat._
 import examples.json4s.InboxApp.JsonLibrary.ResponseBuilder.OK

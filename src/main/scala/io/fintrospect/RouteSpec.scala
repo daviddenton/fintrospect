@@ -1,6 +1,6 @@
 package io.fintrospect
 
-import com.twitter.finagle.httpx.{Method, Response, Status}
+import com.twitter.finagle.http.{Method, Response, Status}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 import io.fintrospect.parameters.{Body, HeaderParameter, QueryParameter}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom

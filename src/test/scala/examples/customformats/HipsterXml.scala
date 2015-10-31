@@ -1,7 +1,7 @@
 package examples.customformats
 
-import com.twitter.finagle.httpx.path.Path
-import com.twitter.finagle.httpx.{Response, Status}
+import com.twitter.finagle.http.path.Path
+import com.twitter.finagle.http.{Response, Status}
 import io.fintrospect.ServerRoute
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter

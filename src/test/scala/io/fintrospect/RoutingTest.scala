@@ -2,9 +2,9 @@ package io.fintrospect
 
 import _root_.util.Echo
 import com.twitter.finagle.Service
-import com.twitter.finagle.httpx.Method._
-import com.twitter.finagle.httpx.path.Path
-import com.twitter.finagle.httpx.{Method, Request, Response, Status}
+import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.path.Path
+import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.util.Await._
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.scalatest.{FunSpec, ShouldMatchers}

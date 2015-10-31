@@ -25,7 +25,7 @@ libraryDependencies ++= Seq(
   "org.json4s" %% "json4s" % "3.2.11" % "provided",
   "org.json4s" %% "json4s-native" % "3.2.11" % "provided",
   "org.json4s" %% "json4s-jackson" % "3.2.11" % "provided",
-  "com.twitter" %% "finagle-httpx" % "6.29.0" % "provided",
+  "com.twitter" %% "finagle-http" % "6.30.0" % "provided",
   "org.scalatest" %% "scalatest" % "2.2.1" % "test"
 )
 
