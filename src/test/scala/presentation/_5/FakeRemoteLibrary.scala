@@ -1,14 +1,15 @@
 package presentation._5
 
 import com.twitter.finagle.httpx.filter.Cors
+import com.twitter.finagle.httpx.filter.Cors.HttpFilter
 import com.twitter.finagle.httpx.path.Root
 import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.finagle.{Httpx, Service}
 import com.twitter.util.Future
+import io.fintrospect.FintrospectModule
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.{CorsFilter, FintrospectModule}
 import presentation.Books
 
 
@@ -24,6 +25,6 @@ class FakeRemoteLibrary(books: Books) {
     .withRoute(RemoteBooks.route bindTo search)
     .toService
 
-  val searchService = new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service)
+  val searchService = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)
   Httpx.serve(":10000", searchService)
 }

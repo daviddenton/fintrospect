@@ -2,6 +2,7 @@ package presentation._3
 
 import com.twitter.finagle.httpx.Method._
 import com.twitter.finagle.httpx.filter.Cors
+import com.twitter.finagle.httpx.filter.Cors.HttpFilter
 import com.twitter.finagle.httpx.path.Root
 import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.finagle.{Httpx, Service}
@@ -10,7 +11,7 @@ import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
-import io.fintrospect.{CorsFilter, FintrospectModule, RouteSpec}
+import io.fintrospect.{FintrospectModule, RouteSpec}
 import presentation.Books
 
 class SearchRoute(books: Books) {
@@ -37,7 +38,7 @@ class SearchApp(books: Books) {
     .withRoute(new SearchRoute(books).route)
     .toService
 
-  val searchService = new CorsFilter(Cors.UnsafePermissivePolicy).andThen(service)
+  val searchService = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)
   Httpx.serve(":9000", searchService)
 }
 

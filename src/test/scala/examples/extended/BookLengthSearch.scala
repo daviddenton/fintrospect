@@ -29,7 +29,7 @@ class BookLengthSearch(books: Books) {
     }
   }
 
-  val route = RouteSpec("search for books by number of pages")
+  val route = RouteSpec("search for books by number of pages", "This won't work in Swagger because it's a form... :(")
     .body(form)
     .returning(Status.Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
     .returning(Status.BadRequest -> "invalid request")
