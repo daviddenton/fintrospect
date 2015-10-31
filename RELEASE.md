@@ -6,10 +6,10 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
 #####v10.4.0
-- Removed ```CorsFilter```. You can now use the ```Cors.HttpFilter``` supplied by finagle-httpx instead
+- Removed ```CorsFilter```. You can now use the ```Cors.HttpFilter``` supplied by finagle-httpx instead.
 
 #####v10.3.0
-- Added 6 and 7 arity path lengths
+- Added 6 and 7 arity path lengths.
 
 #####v10.2.0
 - Added support Play JSON library out of the box. See ```Play``` to get the Format util and ResponseBuilder for this format.
