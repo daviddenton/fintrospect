@@ -11,16 +11,24 @@ import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 /**
  * This example shows the intended method for implementing a simple app using Fintrospect routes and modules, using
  * a Swagger 2.0 renderer. The Swagger API endpoint lives at the root of the module (in this case /library) instead
- * of /api-docs. Note the use of the CORS policy filter to allow the endpoints to be called by the Swagger UI.
+ * of /api-docs.
+ *
+ * Note the use of the CORS policy filter to allow the endpoints to be called by the Swagger UI. For normal usage,
+ * use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
+ * to all routes in the module (by being passed as the optional param to the FintrospectModule constructor)
  */
 object LibraryApp extends App {
 
-  private val apiInfo = ApiInfo("Library Example", "1.0", Option("A simple example of how to construct a Fintrospect module"))
-  private val renderer = Swagger2dot0Json(apiInfo) //  choose your renderer implementation
+  val apiInfo = ApiInfo("Library Example", "1.0", Option("A simple example of how to construct a Fintrospect module"))
+  val renderer = Swagger2dot0Json(apiInfo) //  choose your renderer implementation
 
-  private val books = new Books()
+  val books = new Books()
 
-  val libraryModule = FintrospectModule(Root / "library", renderer)
+  // use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
+  // to all routes in the module
+  val globalCorsFilter = new HttpFilter(Cors.UnsafePermissivePolicy)
+
+  val libraryModule = FintrospectModule(Root / "library", renderer, globalCorsFilter)
     .withRoute(new BookAdd(books).route)
     .withRoute(new BookCollection(books).route)
     .withRoute(new BookLookup(books).route)
@@ -30,9 +38,7 @@ object LibraryApp extends App {
   val statusModule = FintrospectModule(Root / "internal", SimpleJson())
     .withRoute(new Ping().route)
 
-  val service = FintrospectModule.toService(libraryModule combine statusModule)
-
-  Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service))
+  Http.serve(":8080", FintrospectModule.toService(libraryModule combine statusModule))
 
   println("See the service description at: http://localhost:8080/library")
 
