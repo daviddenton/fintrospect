@@ -9,6 +9,7 @@ abstract class ResponseBuilderMethodsSpec[T](bldr: ResponseBuilderMethods[T]) ex
 
   val expectedContent: String
   val expectedErrorContent: String
+  val customError: T
   val customType: T
   val customTypeSerialised: String
 
@@ -21,6 +22,12 @@ abstract class ResponseBuilderMethodsSpec[T](bldr: ResponseBuilderMethods[T]) ex
     it("ok with message") {
       statusAndContentFrom(bldr.OK(message)) shouldEqual(Status.Ok, expectedContent)
       statusAndContentFrom(bldr.OK(message)) shouldEqual(Status.Ok, expectedContent)
+    }
+
+    it("error with message") {
+      statusAndContentFrom(bldr.Error(Status.NotFound, message)) shouldEqual(Status.NotFound, expectedErrorContent)
+      statusAndContentFrom(bldr.Error(Status.NotFound, customError)) shouldEqual(Status.NotFound, expectedErrorContent)
+      statusAndContentFrom(bldr.Error(Status.NotFound, new RuntimeException(message))) shouldEqual(Status.NotFound, expectedErrorContent)
     }
 
     it("content") {
