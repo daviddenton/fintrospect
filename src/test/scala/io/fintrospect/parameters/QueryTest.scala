@@ -37,53 +37,57 @@ class QueryTest extends FunSpec with ShouldMatchers {
     }
 
     describe("multi") {
-      val param = Query.required.multi.localDate(paramName)
 
       it("retrieves value from field") {
+        val param = Query.required.multi.localDate(paramName)
         param.validate(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Right(Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
         param <-- requestWithValueOf("2015-02-04", "2015-02-05") shouldEqual Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(requestWithValueOf("2015-02-04","notValid")) shouldEqual Left(param)
+        val param = Query.required.*.long(paramName)
+        param.validate(requestWithValueOf("qwe","notValid")) shouldEqual Left(param)
       }
 
       it("does not retrieve non existent value") {
+        val param = Query.required.*.zonedDateTime(paramName)
         param.validate(requestWithValueOf()) shouldEqual Left(param)
       }
 
       it("can rebind valid value") {
         val inRequest = Request("?field=123&field=456")
-        val bindings = Query.required.int("field") <-> inRequest
+        val bindings = Query.required.*.int("field") <-> inRequest
         val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Get)
-        outRequest.uri shouldEqual "/?field=123"
+        outRequest.uri shouldEqual "/?field=456&field=123"
       }
     }
   }
 
   describe("optional") {
     describe("singular") {
-      val param = Query.optional.localDate(paramName)
 
       it("retrieves value from field") {
+        val param = Query.optional.localDate(paramName)
         param.validate(requestWithValueOf("2015-02-04")) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
         param <-- requestWithValueOf("2015-02-04") shouldEqual Option(LocalDate.of(2015, 2, 4))
       }
 
       it("fails to retrieve invalid value") {
+        val param = Query.optional.json(paramName)
         param.validate(requestWithValueOf("notValid")) shouldEqual Left(param)
       }
 
       it("does not retrieve non existent value") {
+        val param = Query.optional.xml(paramName)
         param.validate(requestWithValueOf()) shouldEqual Right(None)
         param <-- Request() shouldEqual None
       }
 
       it("can rebind valid value") {
-        val inRequest = Request("?field=123")
-        val bindings = Query.optional.int("field") <-> inRequest
+        val inRequest = Request("?field=123&field=456")
+        val bindings = Query.optional.*.int("field") <-> inRequest
         val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Get)
-        outRequest.uri shouldEqual "/?field=123"
+        outRequest.uri shouldEqual "/?field=456&field=123"
       }
 
       it("doesn't rebind missing value") {
