@@ -220,12 +220,6 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  case class MyCustomType(value: Int)
-
-  object MyCustomType extends ParameterSpecSupplier[MyCustomType] {
-    override def spec = ParameterSpec[MyCustomType](paramName, None, StringParamType, s => MyCustomType(s.toInt), ct => ct.value.toString)
-  }
-
   describe("custom") {
 
     it("retrieves a valid value") {
