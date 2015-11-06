@@ -89,9 +89,14 @@ class FintrospectModule private(basePath: Path,
   }
 
   /**
-   * Attach described Route to the module.
+   * Attach described Route(s) to the module. Request matching is attempted in the same order as in which this method is called.
    */
-  def withRoute(route: ServerRoute): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, routes :+ route, moduleFilter)
+  def withRoute(newRoutes: ServerRoute*): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, routes ++ newRoutes, moduleFilter)
+
+  /**
+   * Attach described Route(s) to the module. Request matching is attempted in the same order as in which this method is called.
+   */
+  def withRoutes(newRoutes: Iterable[ServerRoute]*): FintrospectModule = newRoutes.flatten.foldLeft(this)(_.withRoute(_))
 
   /**
    * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.

@@ -20,3 +20,4 @@ abstract class ServerRoute(val routeSpec: RouteSpec, val method: Method, pathFn:
 
   def describeFor(basePath: Path): String = (pathFn(basePath).toString +: pathParams.map(_.toString())).mkString("/")
 }
+

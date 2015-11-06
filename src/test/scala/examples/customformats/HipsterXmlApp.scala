@@ -16,7 +16,7 @@ import io.fintrospect.parameters._
  */
 object HipsterXmlApp extends App {
 
-  def aService(): Service[Request, Response] = Service.mk((rq) => OK)
+  def aService(hipsterBeardStyle: HipsterBeardStyle): Service[Request, Response] = Service.mk((rq) => OK(hipsterBeardStyle.name))
 
   val xmlAsABody = BodySpec[HipsterXmlFormat](Option("An XML document"), ContentTypes.APPLICATION_XML, HipsterXmlFormat(_), _.value)
   val xmlAsAParam = ParameterSpec[HipsterXmlFormat]("anXmlParameter", Option("An XML document"), StringParamType, HipsterXmlFormat(_), _.value)
@@ -24,7 +24,7 @@ object HipsterXmlApp extends App {
   val route = RouteSpec("an xml endpoint")
     .taking(Header.optional(xmlAsAParam))
     .body(Body(xmlAsABody))
-    .at(Get) / "view" bindTo aService
+    .at(Get) / "view" / Path(HipsterBeardStyle) bindTo aService
 
   val module = FintrospectModule(Root / "xml", HipsterXml).withRoute(route)
 
