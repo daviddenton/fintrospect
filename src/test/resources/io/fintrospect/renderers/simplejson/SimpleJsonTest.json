@@ -1,7 +1,7 @@
 {
   "resources": {
-    "GET:/basepath/welcome/{firstName}/bertrand/{secondName}": "a friendly endpoint",
+    "GET:/basepath/echo/{message}": "summary of this route",
     "POST:/basepath/echo/{message}": "a post endpoint",
-    "GET:/basepath/echo/{message}": "summary of this route"
+    "GET:/basepath/welcome/{firstName}/bertrand/{secondName}": "a friendly endpoint"
   }
 }

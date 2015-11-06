@@ -54,49 +54,6 @@
       }
     },
     "/basepath/echo/{message}": {
-      "get": {
-        "tags": [
-          "/basepath"
-        ],
-        "summary": "summary of this route",
-        "description": "some rambling description of what this thing actually does",
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "message",
-            "description": null,
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "header",
-            "name": "header",
-            "description": "description of the header",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "403": {
-            "description": "no way jose",
-            "schema": null
-          },
-          "200": {
-            "description": "peachy",
-            "schema": {
-              "$ref": "#/definitions/object730416582"
-            }
-          }
-        },
-        "supportedContentTypes": [
-          "application/json"
-        ],
-        "security": []
-      },
       "post": {
         "tags": [
           "/basepath"
@@ -148,26 +105,53 @@
           "application/json"
         ],
         "security": []
+      },
+      "get": {
+        "tags": [
+          "/basepath"
+        ],
+        "summary": "summary of this route",
+        "description": "some rambling description of what this thing actually does",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message",
+            "description": null,
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "header",
+            "description": "description of the header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "no way jose",
+            "schema": null
+          },
+          "200": {
+            "description": "peachy",
+            "schema": {
+              "$ref": "#/definitions/object730416582"
+            }
+          }
+        },
+        "supportedContentTypes": [
+          "application/json"
+        ],
+        "security": []
       }
     }
   },
   "definitions": {
-    "object730416582": {
-      "type": "object",
-      "properties": {
-        "anAnotherObject": {
-          "$ref": "#/definitions/object-945611728"
-        }
-      }
-    },
-    "object-945611728": {
-      "type": "object",
-      "properties": {
-        "aNumberField": {
-          "type": "integer"
-        }
-      }
-    },
     "object-610697343": {
       "type": "object",
       "properties": {
@@ -188,6 +172,22 @@
       "type": "object",
       "properties": {
         "notAStringField": {
+          "type": "integer"
+        }
+      }
+    },
+    "object730416582": {
+      "type": "object",
+      "properties": {
+        "anAnotherObject": {
+          "$ref": "#/definitions/object-945611728"
+        }
+      }
+    },
+    "object-945611728": {
+      "type": "object",
+      "properties": {
+        "aNumberField": {
           "type": "integer"
         }
       }

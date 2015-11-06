@@ -91,7 +91,7 @@ class FintrospectModule private(basePath: Path,
   /**
    * Attach described Route to the module.
    */
-  def withRoute(route: ServerRoute): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, route +: routes, moduleFilter)
+  def withRoute(route: ServerRoute): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, routes :+ route, moduleFilter)
 
   /**
    * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
