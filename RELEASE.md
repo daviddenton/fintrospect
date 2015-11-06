@@ -5,6 +5,9 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+#####v11.0.1
+- Bugfix for ordering of the routes when matching a path (issue #11)
+
 #####v11.0.0
 - Upgrade to Finagle ```6.30.0```, which has resulted in... < drumroll >
 - Breaking change: Musical chairs from the Finagle team with the ```finagle-httpx``` package, which is now renamed to ```finagle-http```. Just globally replace ```httpx``` with ```http``` and all should be good.

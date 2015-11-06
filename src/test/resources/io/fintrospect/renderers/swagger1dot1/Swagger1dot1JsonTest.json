@@ -6,6 +6,37 @@
       "path": "/basepath/echo/{message}",
       "operations": [
         {
+          "Method": "GET",
+          "nickname": "summary of this route",
+          "notes": "some rambling description of what this thing actually does",
+          "produces": [
+            "application/json"
+          ],
+          "consumes": [],
+          "parameters": [
+            {
+              "name": "message",
+              "description": null,
+              "paramType": "path",
+              "required": true,
+              "dataType": "string"
+            },
+            {
+              "name": "header",
+              "description": "description of the header",
+              "paramType": "header",
+              "required": false,
+              "dataType": "string"
+            }
+          ],
+          "errorResponses": [
+            {
+              "code": 403,
+              "reason": "no way jose"
+            }
+          ]
+        },
+        {
           "Method": "POST",
           "nickname": "a post endpoint",
           "notes": null,
@@ -38,37 +69,6 @@
               "paramType": "body",
               "required": true,
               "dataType": "object"
-            }
-          ],
-          "errorResponses": [
-            {
-              "code": 403,
-              "reason": "no way jose"
-            }
-          ]
-        },
-        {
-          "Method": "GET",
-          "nickname": "summary of this route",
-          "notes": "some rambling description of what this thing actually does",
-          "produces": [
-            "application/json"
-          ],
-          "consumes": [],
-          "parameters": [
-            {
-              "name": "message",
-              "description": null,
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
-            {
-              "name": "header",
-              "description": "description of the header",
-              "paramType": "header",
-              "required": false,
-              "dataType": "string"
             }
           ],
           "errorResponses": [
