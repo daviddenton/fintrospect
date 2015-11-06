@@ -36,8 +36,8 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 of breaking changes due to Finagle using their own httpx classes instead of Netty equivalents:
     - References to ```HttpRequest/Response``` Netty classes are now ```Request/Response``` instead
     - References to ```HttpResponseStatus``` changed to ```Status```
-    - References to ππ```HttpMethod.GET/POST/...``` changd to ```Method.Get/Post/...```
-    - References to ```Http.XXX()``` will now use ```Http.XXX()``` instead
+    - References to ```HttpMethod.GET/POST/...``` changd to ```Method.Get/Post/...```
+    - References to ```Http.XXX()``` will now use ```Httpx.XXX()``` instead
 - Other than the above, no actual changes to the Fintrospect API or how it works have been made.
 - Added ```OK``` and ```HttpResponse``` alias methods to the ```ResponseBuilder``` to avoid name clashes with new HttpX methods. Deprecated ```Ok()``` and ```Response()``` methods for clarity.
 
@@ -95,13 +95,13 @@ headers. Clients will need to migrate to the new Form format (see examples).
 - EXPERIMENTAL! Ability to define clients using the same style API as the Services. Supports Path/Query/Headers, but not Bodies or Forms as yet.
 
 #####v5.X.X -> v6.X.X
-- We've got a domain! So... repackage from ```io.github.daviddenton.fintrospect``` to  ```fintrospect.io```. A global search and replace on your codebase will do it.
+- We've got a domain! So... repackage from ```io.github.daviddenton.fintrospect``` to  ```io.fintrospect```. A global search and replace on your codebase will do it.
 - Added support for custom parameter types. See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
 
 #####v4.X.X -> v5.X.X
 - Upgrade to require Java 8 time API for time parameter support.
 - Removal of Joda-time dependencies since you can now just use ```java.time``` instead.
-- Collapsed ```DescriptionRenderer``` into ```ModuleRenderer```, so just one trait to implement to provide custom format support.π
+- Collapsed ```DescriptionRenderer``` into ```ModuleRenderer```, so just one trait to implement to provide custom format support.
 - Ability to override the default location of the description route.
 
 #####v3.X.X -> v4.X.X
