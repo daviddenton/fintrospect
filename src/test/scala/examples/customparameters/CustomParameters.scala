@@ -3,6 +3,7 @@ package examples.customparameters
 import com.twitter.finagle.http.Request
 import examples.customparameters.CustomParameterTypes.email
 import io.fintrospect.parameters._
+import scala.language.reflectiveCalls
 
 /**
  * This example shows how to define a custom parameter types which can be retrieved from a request. They can be defined and then
