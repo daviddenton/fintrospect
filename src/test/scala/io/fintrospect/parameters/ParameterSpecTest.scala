@@ -222,24 +222,26 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
 
   case class MyCustomType(value: Int)
 
+  object MyCustomType extends ParameterSpecSupplier[MyCustomType] {
+    override def spec = ParameterSpec[MyCustomType](paramName, None, StringParamType, s => MyCustomType(s.toInt), ct => ct.value.toString)
+  }
+
   describe("custom") {
 
-    val spec = ParameterSpec[MyCustomType](paramName, None, StringParamType, s => MyCustomType(s.toInt), ct => ct.value.toString)
-
     it("retrieves a valid value") {
-      Try(spec.deserialize("123")) shouldEqual Success(MyCustomType(123))
+      Try(MyCustomType.spec.deserialize("123")) shouldEqual Success(MyCustomType(123))
     }
 
     it("does not retrieve an invalid value") {
-      Try(spec.deserialize("notAnInt")).isFailure shouldEqual true
+      Try(MyCustomType.spec.deserialize("notAnInt")).isFailure shouldEqual true
     }
 
     it("does not retrieve an null value") {
-      Try(spec.deserialize(null)).isFailure shouldEqual true
+      Try(MyCustomType.spec.deserialize(null)).isFailure shouldEqual true
     }
 
     it("serializes correctly") {
-      spec.serialize(MyCustomType(123)) shouldEqual "123"
+      MyCustomType.spec.serialize(MyCustomType(123)) shouldEqual "123"
     }
   }
 }
