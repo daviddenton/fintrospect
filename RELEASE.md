@@ -5,6 +5,9 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+#####v11.2.0
+- Removed deprecated methods from ```ResponseBuilderMethods```.
+
 #####v11.1.1
 - Added convenience mechanism to create custom parameters.
 
