@@ -1,7 +1,7 @@
 Fintrospect
 ===========
 <a href="https://travis-ci.org/daviddenton/fintrospect" target="_top"><img src="https://travis-ci.org/daviddenton/fintrospect.svg?branch=master"/></a>
-<a href="http://codecov.io/github/daviddenton/fintrospect?branch=master" target="_top"><img src="http://codecov.io/github/daviddenton/fintrospect/coverage.svg?branch=master"/></a>
+<a href="https://coveralls.io/repos/daviddenton/fintrospect/badge.svg?branch=master&service=github" target="_top"><img src="https://coveralls.io/github/daviddenton/fintrospect?branch=master"/></a>
 <a href="https://bintray.com/daviddenton/maven/fintrospect/_latestVersion" target="_top"><img src="https://api.bintray.com/packages/daviddenton/maven/fintrospect/images/download.svg"/></a>
 <a href="https://bintray.com/daviddenton/maven/fintrospect/view?source=watch" target="_top"><img src="https://www.bintray.com/docs/images/bintray_badge_color.png"/></a>
 
