@@ -3,7 +3,7 @@ package io.fintrospect.formats
 import java.io.OutputStream
 
 import com.twitter.finagle.http.{Response, Status}
-import com.twitter.io.Charsets
+import com.twitter.io.{Buf, Charsets}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
 import org.jboss.netty.buffer.ChannelBuffer
@@ -37,6 +37,12 @@ class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
   def withContent(content: String): ResponseBuilder[T] = {
     response.setContentType(contentType.value)
     response.setContentString(content)
+    this
+  }
+
+  def withContent(buf: Buf): ResponseBuilder[T] = {
+    response.setContentType(contentType.value)
+    response.content = buf
     this
   }
 

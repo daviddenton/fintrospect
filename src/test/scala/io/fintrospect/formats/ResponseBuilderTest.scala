@@ -3,6 +3,7 @@ package io.fintrospect.formats
 import java.nio.charset.Charset._
 
 import com.twitter.finagle.http.Status
+import com.twitter.io.Bufs
 import io.fintrospect.ContentType
 import io.fintrospect.formats.text.PlainText
 import org.jboss.netty.buffer.ChannelBuffers._
@@ -38,6 +39,12 @@ class ResponseBuilderTest extends FunSpec {
   it("should set the content correctly given channel buffer") {
     val response = new ResponseBuilder[PlainText](_.value, PlainText, e => PlainText(e.getMessage), ContentType("anyContentType"))
       .withContent(copiedBuffer("hello", defaultCharset())).build
+    response.contentString shouldBe "hello"
+  }
+
+  it("should set the content correctly given Buf") {
+    val response = new ResponseBuilder[PlainText](_.value, PlainText, e => PlainText(e.getMessage), ContentType("anyContentType"))
+      .withContent(Bufs.utf8Buf("hello")).build
     response.contentString shouldBe "hello"
   }
 
