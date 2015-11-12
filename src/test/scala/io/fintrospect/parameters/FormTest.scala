@@ -1,5 +1,6 @@
 package io.fintrospect.parameters
 
+import com.twitter.finagle.http.Request
 import org.scalatest._
 
 class FormTest extends FunSpec with ShouldMatchers {
@@ -28,6 +29,12 @@ class FormTest extends FunSpec with ShouldMatchers {
       formInstance <-- (field1, field2, field3, field4) shouldEqual ("value1", "value2", "value3", "value4")
       formInstance <-- (field1, field2, field3, field4, field5) shouldEqual ("value1", "value2", "value3", "value4", "value5")
       formInstance <-- (field1, field2, field3, field4, field5, field6) shouldEqual ("value1", "value2", "value3", "value4", "value5", "value6")
+    }
+  }
+
+  describe("retrieval") {
+    it("handles empty form") {
+      formSpec.from(Request()).size shouldBe 0
     }
   }
 }
