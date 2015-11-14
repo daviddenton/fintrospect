@@ -52,7 +52,7 @@ val renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
 val libraryModule = FintrospectModule(Root / "library", renderer)
     .withRoute(new BookSearch(new BookRepo()).route)
 val service = FintrospectModule.toService(libraryModule)
-Httpx.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service))
+Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)) // remember to make your own Cors Policy for prod!
 ```
 
 #####Define the endpoint
@@ -68,7 +68,7 @@ class BookSearch(books: Books) {
   private def search() = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
       val requestForm = form.from(request)
-      OK(array(books.search(minPages.from(requestForm).getOrElse(MIN_VALUE),
+      Ok(array(books.search(minPages.from(requestForm).getOrElse(MIN_VALUE),
         maxPages.from(request).getOrElse(MAX_VALUE),
         titleTerm.from(requestForm)).map(_.toJson)))
     }

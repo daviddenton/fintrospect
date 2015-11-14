@@ -1,13 +1,14 @@
 package presentation._4
 
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
-import io.fintrospect.formats.text.PlainTextResponseBuilder
+import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import io.fintrospect.{FintrospectModule, RouteSpec}
@@ -20,7 +21,7 @@ class SearchRoute(books: RemoteBooks) {
       val titlePart = titlePartParam <-- request
 
       books.search(titlePart)
-        .map(results => PlainTextResponseBuilder.OK(results))
+        .map(results => Ok(results))
     }
   }
 

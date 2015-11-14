@@ -1,5 +1,6 @@
 package examples.customformats
 
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Response, Status}
 import io.fintrospect.ServerRoute
@@ -20,6 +21,6 @@ object HipsterXml extends ModuleRenderer {
   private def renderRoutes(basePath: Path, routes: Seq[ServerRoute]): String = HipsterXmlFormat(routes.map(renderRoute(basePath, _)): _*).toString()
 
   override def description(basePath: Path, routes: Seq[ServerRoute]): Response = {
-    OK(HipsterXmlFormat(s"<paths>${renderRoutes(basePath, routes)}</paths>").value)
+    Ok(HipsterXmlFormat(s"<paths>${renderRoutes(basePath, routes)}</paths>").value)
   }
 }

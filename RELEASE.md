@@ -5,6 +5,9 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 ######Master (in dev...)
 - Strictness checks around accepted content types, resulting in  Unsupported Media Type (415) in case of mismatch.
 
+#####v11.3.0
+- Added convenience implicit conversions from ```Status``` to ```ResponseBuilder``` to ```Response```. This tidies up the code nicely since you can use the Status as follows: ```Status.Ok("content")```
+
 #####v11.2.1
 - Bugfix: ArrayIndexOutOfBoundsException when handling an empty form (issue #12).
 

@@ -1,5 +1,6 @@
 package presentation._6
 
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
@@ -17,7 +18,7 @@ class FakeRemoteLibrary(books: Books) {
   def search(titlePart: String) = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
       val results = books.titles().filter(_.toLowerCase.contains(titlePart.toLowerCase))
-      OK(results.mkString(","))
+      Ok(results.mkString(","))
     }
   }
 

@@ -4,7 +4,8 @@ import java.lang.Integer._
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect._
@@ -21,18 +22,14 @@ class BookLengthSearch(books: Books) {
   private def search() = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
       val requestForm = form <-- request
-      OK(array(books.search(
-        minPages <-- requestForm getOrElse MIN_VALUE,
-        maxPages <-- requestForm,
-        Seq("")).map
-        (_.toJson)))
+      Ok(array(books.search(minPages <-- requestForm getOrElse MIN_VALUE, maxPages <-- requestForm, Seq("")).map(_.toJson)))
     }
   }
 
   val route = RouteSpec("search for books by number of pages", "This won't work in Swagger because it's a form... :(")
     .body(form)
-    .returning(Status.Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
-    .returning(Status.BadRequest -> "invalid request")
+    .returning(Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
+    .returning(BadRequest -> "invalid request")
     .producing(APPLICATION_JSON)
     .at(Post) / "lengthSearch" bindTo search
 }

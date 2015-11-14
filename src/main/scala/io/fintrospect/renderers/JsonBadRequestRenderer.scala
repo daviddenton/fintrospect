@@ -1,6 +1,7 @@
 package io.fintrospect.renderers
 
-import com.twitter.finagle.http.{Response, Status}
+import com.twitter.finagle.http.Response
+import com.twitter.finagle.http.Status._
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter
@@ -14,6 +15,6 @@ object JsonBadRequestRenderer {
       "required" -> boolean(p.required)
     ))
 
-    Error(Status.BadRequest, obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages)))
+    BadRequest(obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages)))
   }
 }

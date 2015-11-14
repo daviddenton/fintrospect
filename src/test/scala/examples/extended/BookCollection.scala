@@ -2,6 +2,7 @@ package examples.extended
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes._
@@ -13,7 +14,7 @@ import io.fintrospect.formats.json.Argo.ResponseBuilder._
 class BookCollection(books: Books) {
 
   private def listBooks(): Service[Request, Response] = new Service[Request, Response] {
-    override def apply(request: Request): Future[Response] = OK(array(books.list().map(_.toJson)))
+    override def apply(request: Request): Future[Response] = Ok(array(books.list().map(_.toJson)))
   }
 
   val route = RouteSpec("show collection")

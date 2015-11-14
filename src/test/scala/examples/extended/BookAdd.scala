@@ -13,7 +13,7 @@ import io.fintrospect.parameters.{Body, Path}
 
 class BookAdd(books: Books) {
   private val exampleBook = Book("the title", "the author", 666)
-  private val bookExistsResponse = Error(Conflict, "Book with that ISBN exists")
+  private val bookExistsResponse = Conflict("Book with that ISBN exists")
   private val jsonBody = Body.json(Option("book content"), exampleBook.toJson)
 
   private def addBook(isbn: String) = new Service[Request, Response] {
@@ -23,7 +23,7 @@ class BookAdd(books: Books) {
         case None => {
           val book = Book.unapply(jsonBody <-- request).get
           books.add(isbn, book)
-          HttpResponse().withCode(Created).withContent(book.toJson)
+          Created(book.toJson)
         }
       }
   }
