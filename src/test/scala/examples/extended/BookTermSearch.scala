@@ -19,11 +19,7 @@ class BookTermSearch(books: Books) {
 
   private def search() = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
-      OK(array(books.search(
-        MIN_VALUE,
-        MAX_VALUE,
-        titleTerms <-- request).map
-        (_.toJson)))
+      Ok(array(books.search(MIN_VALUE, MAX_VALUE, titleTerms <-- request).map(_.toJson)))
     }
   }
 

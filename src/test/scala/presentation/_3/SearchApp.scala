@@ -1,6 +1,7 @@
 package presentation._3
 
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
@@ -21,7 +22,7 @@ class SearchRoute(books: Books) {
     override def apply(request: Request): Future[Response] = {
       val titlePart = titlePartParam <-- request
       val results = books.titles().filter(_.toLowerCase.contains(titlePart.toLowerCase))
-      OK(results.toString())
+      Ok(results.toString())
     }
   }
 

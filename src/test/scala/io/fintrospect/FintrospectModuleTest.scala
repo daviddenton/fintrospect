@@ -1,13 +1,14 @@
 package io.fintrospect
 
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Await._
 import com.twitter.util.{Await, Future}
 import io.fintrospect.FintrospectModule._
-import io.fintrospect.formats.ResponseBuilder._
+import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters._
@@ -20,7 +21,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
   case class AService(segments: Seq[String]) extends Service[Request, Response] {
     def apply(request: Request): Future[Response] = {
-      OK(segments.mkString(","))
+      Ok(segments.mkString(","))
     }
   }
 
@@ -80,7 +81,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
       it("can get to all routes") {
         def module(path: String) = {
           FintrospectModule(Root / path, SimpleJson()).withRoutes(Seq(RouteSpec("").at(Get) / "echo" bindTo (() => new Service[Request, Response] {
-            def apply(request: Request): Future[Response] = OK(path)
+            def apply(request: Request): Future[Response] = Ok(path)
           })))
         }
         val totalService = FintrospectModule.toService(combine(module("rita"), module("bob"), module("sue")))
@@ -197,7 +198,7 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
     describe("identity") {
       it("identifies route with anonymised description when called") {
-        def getHeaders(number: Int, aString: String) = Service.mk[Request, Response] { request => OK(headersFrom(request).toString()) }
+        def getHeaders(number: Int, aString: String) = Service.mk[Request, Response] { request => Ok(headersFrom(request).toString()) }
         val route = RouteSpec("").at(Get) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
         val m = FintrospectModule(Root, SimpleJson()).withRoute(route)
         HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldEqual(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")

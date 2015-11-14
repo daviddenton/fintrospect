@@ -1,18 +1,17 @@
 package presentation._6
 
 import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
-import io.fintrospect.formats.text.PlainTextResponseBuilder
 import io.fintrospect.parameters.{Body, BodySpec, Query, StringParamType}
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import presentation.Book
@@ -26,7 +25,7 @@ class SearchRoute(books: RemoteBooks) {
 
       books.search(titlePart)
         .map(results => results.split(",").map(Book(_)).toSeq)
-        .map(books => OK(array(books.map(_.toJson))))
+        .map(books => Ok(array(books.map(_.toJson))))
     }
   }
 
@@ -45,15 +44,15 @@ class BookAvailable(books: RemoteBooks) {
       val book = body <-- request
       books.search(book.title)
         .map(results => {
-        if (results.length > 0) PlainTextResponseBuilder.OK else PlainTextResponseBuilder.Error(Status.NotFound, "!")
+        if (results.length > 0) Ok() else NotFound("!")
       })
     }
   }
 
   val route = RouteSpec("find if the book is owned")
     .body(body)
-    .returning(Status.Ok -> "book is available")
-    .returning(Status.NotFound -> "book not found")
+    .returning(Ok -> "book is available")
+    .returning(NotFound -> "book not found")
     .at(Post) / "availability" bindTo availability
 }
 

@@ -3,11 +3,11 @@ package examples.clients
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil._
@@ -25,7 +25,7 @@ object ClientSideExample extends App {
       println("URL was " + request.uri)
       println("Headers were " + headersFrom(request))
       println("Content was " + contentFrom(request))
-      OK("")
+      Ok("")
     }
   })
 

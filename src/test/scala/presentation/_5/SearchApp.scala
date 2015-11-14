@@ -1,10 +1,11 @@
 package presentation._5
 
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
 import io.fintrospect._
@@ -23,13 +24,13 @@ class SearchRoute(books: RemoteBooks) {
 
       books.search(titlePart)
         .map(results => results.split(",").map(Book(_)).toSeq)
-        .map(books => OK(array(books.map(_.toJson))))
+        .map(books => Ok(array(books.map(_.toJson))))
     }
   }
 
   val route = RouteSpec("search books")
     .taking(titlePartParam)
-    .returning(ResponseSpec.json(Status.Ok -> "search results", array(Book("1984").toJson)))
+    .returning(ResponseSpec.json(Ok -> "search results", array(Book("1984").toJson)))
     .at(Get) / "search" bindTo search
 }
 

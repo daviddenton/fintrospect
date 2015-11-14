@@ -2,6 +2,7 @@ package io.fintrospect.renderers.swagger2dot0
 
 import argo.jdom.JsonNode
 import com.twitter.finagle.http.Response
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Path
 import io.fintrospect._
 import io.fintrospect.formats.json.Argo.JsonFormat._
@@ -93,7 +94,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
         memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
     }
 
-    OK(obj(
+    Ok(obj(
       "swagger" -> string("2.0"),
       "info" -> render(apiInfo),
       "basePath" -> string("/"),

@@ -1,6 +1,7 @@
 package io.fintrospect
 
-import com.twitter.finagle.http.{Method, Request, Response, Status}
+import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
@@ -52,12 +53,12 @@ class RouteClient(method: Method,
 
     val missing = requiredParams.diff(userSuppliedParams)
     if (missing.nonEmpty) {
-      return Error(Status.BadRequest, "Client: Missing required params passed: " + missing.toSet)
+      return BadRequest("Client: Missing required params passed: " + missing.toSet)
     }
 
     val invalid = userSuppliedParams.diff(allPossibleParams)
     if (invalid.nonEmpty) {
-      return Error(Status.BadRequest, "Client: Unknown params passed: " + invalid.toSet)
+      return BadRequest("Client: Unknown params passed: " + invalid.toSet)
     }
 
     val req = suppliedBindings
