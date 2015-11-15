@@ -4,7 +4,9 @@ import java.math.BigInteger
 
 import argonaut.Argonaut._
 import argonaut.{DecodeJson, EncodeJson, Json}
+import io.fintrospect.ContentTypes._
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
+import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 
 /**
  * Argonaut JSON support.
@@ -19,9 +21,9 @@ object Argonaut extends JsonLibrary[Json, Json] {
 
     override def compact(node: Json): String = node.nospaces
 
-    override def obj(fields: Iterable[Field]): Json = Json.obj(fields.map(f => (f._1, f._2)).toSeq:_*)
+    override def obj(fields: Iterable[Field]): Json = Json.obj(fields.map(f => (f._1, f._2)).toSeq: _*)
 
-    override def obj(fields: Field*): Json = Json.obj(fields.map(f => (f._1, f._2)):_*)
+    override def obj(fields: Field*): Json = Json.obj(fields.map(f => (f._1, f._2)): _*)
 
     override def array(elements: Iterable[Json]) = Json.array(elements.toSeq: _*)
 
@@ -41,9 +43,27 @@ object Argonaut extends JsonLibrary[Json, Json] {
 
     override def nullNode() = jNull
 
-    def encode[T](in: T)(implicit codec: EncodeJson[T]) = codec.encode(in)
+    def encode[T](in: T)(implicit encodec: EncodeJson[T]) = encodec.encode(in)
 
-    def decode[T](in: Json)(implicit codec: DecodeJson[T]) = codec.decodeJson(in).getOr(throw new InvalidJsonForDecoding)
+    def decode[T](in: Json)(implicit decodec: DecodeJson[T]) = decodec.decodeJson(in).getOr(throw new InvalidJsonForDecoding)
+
+    /**
+     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+     */
+    def bodySpec[R](description: Option[String] = None)
+                   (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
+      BodySpec[R](description, APPLICATION_JSON,
+        s => decode[R](parse(s))(decodec),
+        (u: R) => compact(encode(u)(encodec)))
+
+    /**
+     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+     */
+    def parameterSpec[R](name: String, description: Option[String] = None)
+                    (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
+      ParameterSpec[R](name, description, ObjectParamType,
+        s => decode[R](parse(s))(decodec),
+        (u: R) => compact(encode(u)(encodec)))
   }
 
 }

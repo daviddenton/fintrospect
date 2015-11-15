@@ -2,6 +2,8 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
+import io.fintrospect.ContentTypes._
+import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 import org.json4s.Extraction.decompose
 import org.json4s._
 
@@ -49,6 +51,24 @@ object Json4s {
     def decode[R](in: JValue,
                   formats: Formats = serialization.formats(NoTypeHints))
                  (implicit mf: scala.reflect.Manifest[R]): R = in.extract[R](formats, mf)
+
+    /**
+     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+     */
+    def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
+                   (implicit mf: scala.reflect.Manifest[R]) =
+      BodySpec[R](description, APPLICATION_JSON,
+        s => decode[R](parse(s), formats)(mf),
+        (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
+
+    /**
+     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+     */
+    def parameterSpec[R](name: String, description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
+                    (implicit mf: scala.reflect.Manifest[R]) =
+      ParameterSpec[R](name, description, ObjectParamType,
+        s => decode[R](parse(s), formats)(mf),
+        (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
   }
 
   /**
