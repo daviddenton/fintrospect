@@ -1,12 +1,12 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.Message
 
 import scala.util.{Failure, Success, Try}
 
 abstract class HeaderParameter[T](spec: ParameterSpec[T])
   extends Parameter
-  with Validatable[T, Request]
+  with Validatable[T, Message]
   with Bindable[T, RequestBinding] {
   override val name = spec.name
   override val description = spec.description
@@ -19,8 +19,8 @@ abstract class HeaderParameter[T](spec: ParameterSpec[T])
 
   val where = "header"
 
-  def validate(request: Request) = {
-    request.headerMap.get(name).map {
+  def validate(message: Message) = {
+    message.headerMap.get(name).map {
       v => Try(spec.deserialize(v)) match {
         case Success(d) => Right(Option(d))
         case Failure(_) => Left(this)

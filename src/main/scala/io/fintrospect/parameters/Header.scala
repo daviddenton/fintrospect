@@ -1,17 +1,17 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.Message
 
 /**
- * Parameters which are bound to request headers
+ * Parameters which are bound to request/response headers
  */
 object Header {
 
-  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, Request] with MandatoryRebind[T, Request, RequestBinding] {
+  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, Message] with MandatoryRebind[T, Message, RequestBinding] {
     self: Bindable[T, RequestBinding] =>
   }
 
-  trait Optional[T] extends io.fintrospect.parameters.Optional[T, Request] with OptionalRebind[T, Request, RequestBinding] {
+  trait Optional[T] extends io.fintrospect.parameters.Optional[T, Message] with OptionalRebind[T, Message, RequestBinding] {
     self: Bindable[T, RequestBinding] =>
   }
 

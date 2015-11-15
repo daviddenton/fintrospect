@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.{Message, Request, Response}
 import org.scalatest._
 
 class HeaderTest extends FunSpec with ShouldMatchers {
@@ -14,16 +14,16 @@ class HeaderTest extends FunSpec with ShouldMatchers {
     val param = Header.required.localDate(paramName)
 
     it("validate value from field") {
-      param.validate(requestWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
-      param <-- requestWithValueOf(Option("2015-02-04")) shouldEqual LocalDate.of(2015, 2, 4)
+      param.validate(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
+      param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldEqual LocalDate.of(2015, 2, 4)
     }
 
     it("fails to retrieve invalid value") {
-      param.validate(requestWithValueOf(Option("notValid"))) shouldEqual Left(param)
+      param.validate(messageWithHeaderValueOf(Option("notValid"))) shouldEqual Left(param)
     }
 
     it("does not retrieve non existent value") {
-      param.validate(requestWithValueOf(None)) shouldEqual Left(param)
+      param.validate(messageWithHeaderValueOf(None)) shouldEqual Left(param)
     }
 
     it("can rebind valid value") {
@@ -39,16 +39,16 @@ class HeaderTest extends FunSpec with ShouldMatchers {
     val param = Header.optional.localDate(paramName)
 
     it("validate value from field") {
-      param.validate(requestWithValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
-      param <-- requestWithValueOf(Option("2015-02-04")) shouldEqual Option(LocalDate.of(2015, 2, 4))
+      param.validate(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Right(Option(LocalDate.of(2015, 2, 4)))
+      param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldEqual Option(LocalDate.of(2015, 2, 4))
     }
 
     it("fails to retrieve invalid value") {
-      param.validate(requestWithValueOf(Option("notValid"))) shouldEqual Left(param)
+      param.validate(messageWithHeaderValueOf(Option("notValid"))) shouldEqual Left(param)
     }
 
     it("does not retrieve non existent value") {
-      param.validate(requestWithValueOf(None)) shouldEqual Right(None)
+      param.validate(messageWithHeaderValueOf(None)) shouldEqual Right(None)
       param <-- Request() shouldEqual None
     }
 
@@ -68,8 +68,8 @@ class HeaderTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  private def requestWithValueOf(value: Option[String]) = {
-    val request = Request()
+  private def messageWithHeaderValueOf(value: Option[String]): Message = {
+    val request = Response()
     value.foreach(v => request.headerMap.add(paramName, v))
     request
   }
