@@ -1,0 +1,3 @@
+This is a new example application which will use all the features of Fintrospect.
+
+Until this is finished, it's probably best to look at the "extended" example instead...
