@@ -11,6 +11,9 @@ import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder._
 
 import scala.collection.mutable
 
+/**
+ * Fake implementation of the User Directory HTTP contract. Note the re-use of the RouteSpecs from UserDirectory.
+ */
 class FakeUserDirectoryState extends ServerRoutes {
 
   private val users = mutable.Map[Id, User]()

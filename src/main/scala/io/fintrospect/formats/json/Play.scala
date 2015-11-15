@@ -2,13 +2,16 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
+import io.fintrospect.ContentTypes._
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
+import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 import play.api.libs.json.{Json, _}
 
 /**
  * Play JSON support.
  */
 object Play extends JsonLibrary[JsValue, JsValue] {
+
   object JsonFormat extends JsonFormat[JsValue, JsValue] {
 
     override def parse(in: String): JsValue = Json.parse(in)
@@ -33,7 +36,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
 
     override def number(value: Long) = JsNumber(value)
 
-    override  def number(value: BigInteger) = JsNumber(value.intValue())
+    override def number(value: BigInteger) = JsNumber(value.intValue())
 
     override def boolean(value: Boolean) = JsBoolean(value)
 
@@ -44,6 +47,24 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     def encode[T](in: T)(implicit writes: Writes[T]) = writes.writes(in)
 
     def decode[T](in: JsValue)(implicit reads: Reads[T]) = reads.reads(in).asOpt.getOrElse(throw new InvalidJsonForDecoding)
+
+    /**
+     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+     */
+    def bodySpec[R](description: Option[String] = None)
+                   (implicit reads: Reads[R], writes: Writes[R]) =
+      BodySpec[R](description, APPLICATION_JSON,
+        s => decode[R](parse(s))(reads),
+        (u: R) => compact(encode(u)(writes)))
+
+    /**
+     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+     */
+    def parameterSpec[R](name: String, description: Option[String] = None)
+                    (implicit reads: Reads[R], writes: Writes[R]) =
+      ParameterSpec[R](name, description, ObjectParamType,
+        s => decode[R](parse(s))(reads),
+        (u: R) => compact(encode(u)(writes)))
   }
 
 }
