@@ -1,15 +1,15 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.Message
 import io.fintrospect.ContentType
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 
 import scala.xml.Elem
 
-abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with Retrieval[T, Request] {
+abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with Retrieval[T, Message] {
   val contentType: ContentType = spec.contentType
 
-  def validate(request: Request): Seq[Either[Parameter, Option[_]]]
+  def validate(request: Message): Seq[Either[Parameter, Option[_]]]
 }
 
 /**
