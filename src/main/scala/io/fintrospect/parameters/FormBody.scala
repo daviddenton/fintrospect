@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import java.net.URLDecoder._
 import java.net.URLEncoder.encode
 
-import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.Message
 import io.fintrospect.ContentTypes
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
@@ -14,7 +14,7 @@ import scala.util.{Failure, Success, Try}
 class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
   extends Body[Form](FormBody.spec)
   with Bindable[Form, Binding]
-  with MandatoryRebind[Form, Request, Binding] {
+  with MandatoryRebind[Form, Message, Binding] {
 
   override def -->(value: Form): Seq[Binding] = {
     Seq(new RequestBinding(null, t => {
@@ -26,12 +26,12 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
     })) ++ fields.map(f => new FormFieldBinding(f, ""))
   }
 
-  override def <--(request: Request) = FormBody.spec.deserialize(contentFrom(request))
+  override def <--(message: Message) = FormBody.spec.deserialize(contentFrom(message))
 
   override def iterator = fields.iterator
 
-  override def validate(request: Request): Seq[Either[Parameter, Option[_]]] = {
-    Try(contentFrom(request)) match {
+  override def validate(message: Message): Seq[Either[Parameter, Option[_]]] = {
+    Try(contentFrom(message)) match {
       case Success(r) => Try(FormBody.spec.deserialize(r)) match {
         case Success(v) => fields.map(_.validate(v))
         case Failure(e) => fields.filter(_.required).map(Left(_))

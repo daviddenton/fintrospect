@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.Message
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
@@ -18,7 +18,7 @@ class UniBody[T](spec: BodySpec[T],
                  theExample: Option[T])
   extends Body[T](spec)
   with Bindable[T, RequestBinding]
-  with MandatoryRebind[T, Request, RequestBinding] {
+  with MandatoryRebind[T, Message, RequestBinding] {
 
   private val param = new BodyParameter with Bindable[T, RequestBinding] {
     override val required = true
@@ -40,11 +40,11 @@ class UniBody[T](spec: BodySpec[T],
 
   override def -->(value: T) = param.of(value)
 
-  override def <--(request: Request) = validate(request).head.right.get.get
+  override def <--(message: Message) = validate(message).head.right.get.get
 
   override def iterator = Iterator(param)
 
-  override def validate(request: Request): Seq[Either[Parameter, Option[T]]] = {
+  override def validate(request: Message): Seq[Either[Parameter, Option[T]]] = {
     Try(contentFrom(request)).toOption match {
       case Some(r) => Seq(Try(spec.deserialize(r)) match {
         case Success(v) => Right(Option(v))
