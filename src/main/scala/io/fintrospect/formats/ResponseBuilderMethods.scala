@@ -2,7 +2,7 @@ package io.fintrospect.formats
 
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Response, Status}
-import com.twitter.io.Buf
+import com.twitter.io.{Buf, Reader}
 import org.jboss.netty.buffer.ChannelBuffer
 
 import scala.language.implicitConversions
@@ -18,13 +18,15 @@ trait ResponseBuilderMethods[T] {
   class ResponseBuilderConfig(status: Status) {
     def apply(): ResponseBuilder[T] = HttpResponse(status)
 
-    def apply(content: ChannelBuffer): ResponseBuilder[T] = HttpResponse(status).withContent(content)
+    def apply(channelBuffer: ChannelBuffer): ResponseBuilder[T] = HttpResponse(status).withContent(channelBuffer)
 
     def apply(content: String): ResponseBuilder[T] = if (status.code < 400) HttpResponse(status).withContent(content) else HttpResponse(status).withErrorMessage(content)
 
-    def apply(content: Buf): ResponseBuilder[T] = HttpResponse(status).withContent(content)
+    def apply(buf: Buf): ResponseBuilder[T] = HttpResponse(status).withContent(buf)
 
-    def apply(content: T): ResponseBuilder[T] = HttpResponse(status).withContent(content)
+    def apply(reader: Reader): ResponseBuilder[T] = HttpResponse(status).withContent(reader)
+
+    def apply(t: T): ResponseBuilder[T] = HttpResponse(status).withContent(t)
 
     def apply(error: Throwable): ResponseBuilder[T] = HttpResponse(status).withError(error)
   }
@@ -38,25 +40,29 @@ trait ResponseBuilderMethods[T] {
 
   def HttpResponse(): ResponseBuilder[T]
 
-  def HttpResponse(code: Status): ResponseBuilder[T] = HttpResponse().withCode(code)
+  def HttpResponse(status: Status): ResponseBuilder[T] = HttpResponse().withCode(status)
 
   def OK: Response = HttpResponse(Ok)
 
-  def OK(content: ChannelBuffer) = toResponseBuilder(Ok)(content)
+  def OK(channelBuffer: ChannelBuffer) = toResponseBuilder(Ok)(channelBuffer)
 
-  def OK(content: Buf) = toResponseBuilder(Ok)(content)
+  def OK(reader: Reader) = toResponseBuilder(Ok)(reader)
+
+  def OK(buf: Buf) = toResponseBuilder(Ok)(buf)
 
   def OK(content: T) = toResponseBuilder(Ok)(content)
 
   def OK(content: String) = toResponseBuilder(Ok)(content)
 
-  def Error(code: Status, content: ChannelBuffer) = toResponseBuilder(code)(content)
+  def Error(status: Status, reader: Reader) = toResponseBuilder(status)(reader)
 
-  def Error(code: Status, content: Buf) = toResponseBuilder(code)(content)
+  def Error(status: Status, channelBuffer: ChannelBuffer) = toResponseBuilder(status)(channelBuffer)
 
-  def Error(code: Status, content: T) = toResponseBuilder(code)(content)
+  def Error(status: Status, buf: Buf) = toResponseBuilder(status)(buf)
 
-  def Error(code: Status, message: String) = toResponseBuilder(code)().withErrorMessage(message)
+  def Error(status: Status, t: T) = toResponseBuilder(status)(t)
 
-  def Error(code: Status, error: Throwable) = toResponseBuilder(code)().withError(error).build
+  def Error(status: Status, message: String) = toResponseBuilder(status)().withErrorMessage(message)
+
+  def Error(status: Status, error: Throwable) = toResponseBuilder(status)().withError(error).build
 }

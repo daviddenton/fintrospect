@@ -3,12 +3,14 @@ package io.fintrospect.formats
 import java.nio.charset.Charset._
 
 import com.twitter.finagle.http.Status._
-import com.twitter.io.Bufs
+import com.twitter.io.{Bufs, Reader}
+import com.twitter.util.Await
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 abstract class ResponseBuilderMethodsSpec[T](bldr: ResponseBuilderMethods[T]) extends FunSpec with ShouldMatchers {
+
   import bldr._
 
   val message = "some text goes here"
@@ -35,14 +37,29 @@ abstract class ResponseBuilderMethodsSpec[T](bldr: ResponseBuilderMethods[T]) ex
       statusAndContentFrom(Ok(Bufs.utf8Buf(message))) shouldEqual(Ok, expectedContent)
     }
 
+    it("ok with message - Reader") {
+      {
+        val reader = Reader.writable()
+        val okBuilder = bldr.OK(reader)
+        reader.write(Bufs.utf8Buf(message)).ensure(reader.close())
+        Await.result(okBuilder.reader.read(message.length)).map(Bufs.asUtf8String).get shouldBe message
+      }
+      {
+        val reader = Reader.writable()
+        val okBuilder = Ok(reader)
+        reader.write(Bufs.utf8Buf(message)).ensure(reader.close())
+        Await.result(okBuilder.reader.read(message.length)).map(Bufs.asUtf8String).get shouldBe message
+      }
+    }
+
     it("ok with message - ChannelBuffer") {
       statusAndContentFrom(bldr.OK(copiedBuffer(message, defaultCharset()))) shouldEqual(Ok, expectedContent)
       statusAndContentFrom(Ok(copiedBuffer(message, defaultCharset()))) shouldEqual(Ok, expectedContent)
     }
 
     it("builds Ok with custom type") {
-      statusAndContentFrom(bldr.OK(customType)) shouldEqual (Ok, customTypeSerialised)
-      statusAndContentFrom(Ok(customType)) shouldEqual (Ok, customTypeSerialised)
+      statusAndContentFrom(bldr.OK(customType)) shouldEqual(Ok, customTypeSerialised)
+      statusAndContentFrom(Ok(customType)) shouldEqual(Ok, customTypeSerialised)
     }
 
     it("content - String") {
