@@ -2,9 +2,11 @@ Roadmap/Release Notes/Migration Guide
 -----------------------------
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
-#####v11.4.0 (in dev)
-- Added convenience methods to remove boilerplate for auto marshall/demarshall JSON when creating body and parameters specs.
+#####v11.5.0 (in dev)
 - New example ```full``` and documentation rewrite to show off advanced feature usage of the library.
+
+#####v11.4.0
+- Added convenience methods to remove boilerplate for auto marshall/demarshall JSON when creating body and parameters specs.
 
 #####v11.3.0
 - Added convenience implicit conversions from ```Status``` to ```ResponseBuilder``` to ```Response```. This tidies up the code nicely since you can use the Status as follows: ```Status.Ok("content")```
