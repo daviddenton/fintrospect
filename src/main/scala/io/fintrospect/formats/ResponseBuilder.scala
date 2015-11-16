@@ -3,7 +3,7 @@ package io.fintrospect.formats
 import java.io.OutputStream
 
 import com.twitter.finagle.http.{Response, Status}
-import com.twitter.io.{Buf, Charsets}
+import com.twitter.io.{Buf, Charsets, Reader}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
 import org.jboss.netty.buffer.ChannelBuffer
@@ -21,14 +21,14 @@ import scala.language.implicitConversions
 class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
                          exceptionFormat: Throwable => T,
                          contentType: ContentType) {
-  private val response = Response()
+  private var response = Response()
 
   def withError(e: Throwable) = withContent(exceptionFormat(e))
 
   def withErrorMessage(e: String) = withContent(errorFormat(e))
 
-  def withCode(code: Status): ResponseBuilder[T] = {
-    response.setStatusCode(code.code)
+  def withCode(status: Status): ResponseBuilder[T] = {
+    response.setStatusCode(status.code)
     this
   }
 
@@ -37,6 +37,14 @@ class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
   def withContent(content: String): ResponseBuilder[T] = {
     response.setContentType(contentType.value)
     response.setContentString(content)
+    this
+  }
+
+  def withContent(reader: Reader): ResponseBuilder[T] = {
+    val newResponse = Response(response.version, response.status, reader)
+    response.setContentType(contentType.value)
+    response.headerMap.foreach(kv => newResponse.headerMap(kv._1) = kv._2)
+    response = newResponse
     this
   }
 
@@ -59,7 +67,7 @@ class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
   }
 
   def withHeaders(headers: (String, String)*): ResponseBuilder[T] = {
-    headers.map{case (name: String, value: String) => response.headerMap.add(name, value)}
+    headers.map { case (name: String, value: String) => response.headerMap.add(name, value) }
     this
   }
 
