@@ -36,7 +36,13 @@ class FakeEntryLoggerContractTest extends EntryLoggerContract with BeforeAndAfte
     describe("log entry") {
       it("returns a RemoteException if the response status is not OK") {
         server.respondWith(NotFound)
-        intercept[RemoteSystemProblem](Await.result(entryLogger.log(User(Id(1), Username("bob"), EmailAddress("bob@bob.com"))))) shouldBe RemoteSystemProblem("entry logger", NotFound)
+        intercept[RemoteSystemProblem](Await.result(entryLogger.enter(User(Id(1), Username("bob"), EmailAddress("bob@bob.com"))))) shouldBe RemoteSystemProblem("entry logger", NotFound)
+      }
+    }
+    describe("log exit") {
+      it("returns a RemoteException if the response status is not OK") {
+        server.respondWith(NotFound)
+        intercept[RemoteSystemProblem](Await.result(entryLogger.exit(User(Id(1), Username("bob"), EmailAddress("bob@bob.com"))))) shouldBe RemoteSystemProblem("entry logger", NotFound)
       }
     }
   }

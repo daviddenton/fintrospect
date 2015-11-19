@@ -16,6 +16,8 @@ import scala.collection.mutable
  */
 class FakeUserDirectoryState extends ServerRoutes {
 
+  def contains(newUser: User): Unit = users(newUser.id) = newUser
+
   private val users = mutable.Map[Id, User]()
 
   private def create() = new Service[Request, Response] {
