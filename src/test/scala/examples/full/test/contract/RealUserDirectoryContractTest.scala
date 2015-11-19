@@ -13,5 +13,5 @@ class RealUserDirectoryContractTest extends UserDirectoryContract with BeforeAnd
   // real test data would be set up here for the required environment
   override lazy val username = Username("Elon Musk")
   override lazy val email = EmailAddress("elon@tesla.com")
-  override lazy val authority = "directory.server.dns:8506"
+  override lazy val authority = "google.com:80"
 }
