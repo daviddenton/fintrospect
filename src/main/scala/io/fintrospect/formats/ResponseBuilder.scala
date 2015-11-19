@@ -6,6 +6,7 @@ import com.twitter.finagle.http.{Response, Status}
 import com.twitter.io.{Buf, Charsets, Reader}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
+import io.fintrospect.parameters.Builder
 import org.jboss.netty.buffer.ChannelBuffer
 
 import scala.language.implicitConversions
@@ -20,7 +21,7 @@ import scala.language.implicitConversions
  */
 class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
                          exceptionFormat: Throwable => T,
-                         contentType: ContentType) {
+                         contentType: ContentType) extends Builder[Response] {
   private var response = Response()
 
   def withError(e: Throwable) = withContent(exceptionFormat(e))

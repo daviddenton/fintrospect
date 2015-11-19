@@ -34,7 +34,7 @@ class PathTest extends FunSpec with ShouldMatchers {
     }
 
     it("handles special characters when binding values") {
-      (Path.string("urlEncoded") --> "a path/+piece").head.apply(RequestBuild()).build(Get).uri shouldEqual "a%20path%2F+piece"
+      (Path.string("urlEncoded") --> "a path/+piece").head.apply(RequestBuilder(Get)).build().uri shouldEqual "a%20path%2F+piece"
     }
   }
 

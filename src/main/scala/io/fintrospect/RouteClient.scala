@@ -63,7 +63,7 @@ class RouteClient(method: Method,
 
     val req = suppliedBindings
       .sortBy(p => pathParams.indexOf(p.parameter))
-      .foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(method)
+      .foldLeft(RequestBuilder(method)) { (requestBuild, next) => next(requestBuild) }.build()
 
     service(req)
   }
