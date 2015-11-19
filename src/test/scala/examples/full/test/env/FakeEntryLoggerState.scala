@@ -14,17 +14,27 @@ import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder._
  */
 class FakeEntryLoggerState extends ServerRoutes {
 
-  private var entries = Seq[UserEntry]()
+  var entries = Seq[UserEntry]()
 
-  private def log() = new Service[Request, Response] {
+  private def entry() = new Service[Request, Response] {
     override def apply(request: Request) = {
-      val userEntry = Log.userEntry <-- request
+      val userEntry = Entry.entry <-- request
       entries = entries :+ userEntry
       Created(encode(userEntry))
     }
   }
 
-  add(Log.route.bindTo(log))
+  add(Entry.route.bindTo(entry))
+
+  private def exit() = new Service[Request, Response] {
+    override def apply(request: Request) = {
+      val userEntry = Exit.entry <-- request
+      entries = entries :+ userEntry
+      Created(encode(userEntry))
+    }
+  }
+
+  add(Exit.route.bindTo(entry))
 
   private def entryList() = new Service[Request, Response] {
     override def apply(request: Request) = Ok(encode(entries))
