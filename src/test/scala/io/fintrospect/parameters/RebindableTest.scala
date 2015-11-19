@@ -12,7 +12,7 @@ class RebindableTest extends FunSpec with ShouldMatchers {
         val inRequest = Request()
         inRequest.headerMap.add("field", "123")
         val bindings = Header.required.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Get)
+        val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
         outRequest.headerMap("field") shouldEqual "123"
       }
     }
@@ -22,14 +22,14 @@ class RebindableTest extends FunSpec with ShouldMatchers {
         val inRequest = Request()
         inRequest.headerMap.add("field", "123")
         val bindings = Header.optional.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Get)
+        val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
         outRequest.headerMap("field") shouldEqual "123"
       }
 
       it("does not rebind missing value") {
         val inRequest = Request()
         val bindings = Header.optional.int("field") <-> inRequest
-        val outRequest = bindings.foldLeft(RequestBuild()) { (requestBuild, next) => next(requestBuild) }.build(Get)
+        val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
         outRequest.headerMap.get("field") shouldEqual None
       }
     }
