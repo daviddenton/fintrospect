@@ -10,7 +10,7 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 trait UserDirectoryContract extends FunSpec with ShouldMatchers {
   def authority: String
 
-  private val userDirectory = new UserDirectory(authority)
+  val userDirectory = new UserDirectory(authority)
 
   val username: Username
   val email: EmailAddress
