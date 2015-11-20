@@ -33,6 +33,7 @@ class KnockKnock(inhabitants: Inhabitants, userDirectory: UserDirectory, entryLo
     .taking(username)
     .returning(Ok -> "Access granted")
     .returning(NotFound -> "Unknown user")
+    .returning(BadRequest -> "User is already inside building")
     .returning(Unauthorized -> "Incorrect key")
     .at(Post) / "knock" bindTo userEntry)
 }
