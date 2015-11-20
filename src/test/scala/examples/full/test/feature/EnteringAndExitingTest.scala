@@ -7,9 +7,9 @@ import examples.full.main._
 import examples.full.test.env.RunningTestEnvironment
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-class AttemptToGainEntryTest extends FunSpec with ShouldMatchers with RunningTestEnvironment {
+class EnteringAndExitingTest extends FunSpec with ShouldMatchers with RunningTestEnvironment {
 
-  describe("for an unknown user") {
+  describe("when a user is unknown") {
     it("does not allow user in") {
       val request = Request(Post, "/security/knock?username=Rita")
       request.headerMap("key") = "realSecret"
@@ -18,7 +18,7 @@ class AttemptToGainEntryTest extends FunSpec with ShouldMatchers with RunningTes
     }
   }
 
-  describe("rejects when key is incorrect") {
+  describe("when an invalid key is used ") {
     it("rejects the entry attempt") {
       val request = Request(Post, "/security/knock?username=Bob")
       request.headerMap("key") = "fakeSecret"
@@ -31,15 +31,17 @@ class AttemptToGainEntryTest extends FunSpec with ShouldMatchers with RunningTes
     }
   }
 
-  describe("does allow known user in") {
-    env.userDirectory.contains(User(Id(1), Username("Bob"), EmailAddress("bob@bob.com")))
-
-    it("does not allow user to exit when not inside") {
+  describe("when a user is not in the building") {
+    it("does not allow user to exit") {
       val request = Request(Post, "/security/bye?username=Bob")
       request.headerMap("key") = "realSecret"
       val (status, _) = env.responseTo(request)
       status shouldBe BadRequest
     }
+  }
+
+  describe("when a known user tries to enter") {
+    env.userDirectory.contains(User(Id(1), Username("Bob"), EmailAddress("bob@bob.com")))
 
     it("allows the user in") {
       val request = Request(Post, "/security/knock?username=Bob")
