@@ -36,7 +36,7 @@ class FakeUserDirectoryContractTest extends UserDirectoryContract with RunningTe
     describe("lookup user") {
       it("returns a RemoteException if the response status is not OK") {
         env.userDirectoryServer.respondWith(InternalServerError)
-        intercept[RemoteSystemProblem](Await.result(userDirectory.lookup(email))) shouldBe RemoteSystemProblem("user directory", InternalServerError)
+        intercept[RemoteSystemProblem](Await.result(userDirectory.lookup(username))) shouldBe RemoteSystemProblem("user directory", InternalServerError)
       }
     }
   }

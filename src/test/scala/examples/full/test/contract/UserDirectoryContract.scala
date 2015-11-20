@@ -18,7 +18,7 @@ trait UserDirectoryContract extends FunSpec with ShouldMatchers {
   var user: User = null
 
   it("is empty initially") {
-    Await.result(userDirectory.lookup(email)) shouldBe None
+    Await.result(userDirectory.lookup(username)) shouldBe None
     Await.result(userDirectory.list()) shouldBe Nil
   }
 
@@ -29,8 +29,8 @@ trait UserDirectoryContract extends FunSpec with ShouldMatchers {
     user.email shouldBe email
   }
 
-  it("can lookup a user by email") {
-    val foundUser = Await.result(userDirectory.lookup(email))
+  it("can lookup a user by username") {
+    val foundUser = Await.result(userDirectory.lookup(username))
     foundUser shouldBe Some(user)
   }
 
@@ -44,7 +44,7 @@ trait UserDirectoryContract extends FunSpec with ShouldMatchers {
 
   it("can delete user") {
     Await.result(userDirectory.delete(user))
-    Await.result(userDirectory.lookup(email)) shouldBe None
+    Await.result(userDirectory.lookup(username)) shouldBe None
     Await.result(userDirectory.list()) shouldBe Nil
   }
 }

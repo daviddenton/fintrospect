@@ -37,8 +37,8 @@ object UserDirectory {
 
   object Lookup {
     val user = Body(bodySpec[User](None))
-    val email = Path(ParameterSpec[EmailAddress]("email", None, StringParamType, s => EmailAddress(s), _.value.toString))
-    val route = RouteSpec().at(Get) / "user" / "email" / email
+    val username = Path(ParameterSpec[Username]("username", None, StringParamType, s => Username(s), _.value.toString))
+    val route = RouteSpec().at(Get) / "user" / username
   }
 
 }
@@ -75,8 +75,8 @@ class UserDirectory(hostAuthority: String) {
 
   private val lookupClient = Lookup.route bindToClient http
 
-  def lookup(inEmail: EmailAddress): Future[Option[User]] =
-    lookupClient(Lookup.email --> inEmail)
+  def lookup(username: Username): Future[Option[User]] =
+    lookupClient(Lookup.username --> username)
       .map { r => r.status match {
         case Ok => Some(Lookup.user <-- r)
         case NotFound => None

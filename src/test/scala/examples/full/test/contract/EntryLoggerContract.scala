@@ -16,8 +16,8 @@ trait EntryLoggerContract extends FunSpec with ShouldMatchers {
   val entryLogger = new EntryLogger(authority, Clock.fixed(time, ZoneId.systemDefault()))
 
   it("can log a user entry and it is listed") {
-    Await.result(entryLogger.enter(User(Id(1), Username("bob"), EmailAddress("bob@bob.com")))) shouldBe UserEntry("bob", goingIn = true, time.toEpochMilli)
-    Await.result(entryLogger.exit(User(Id(1), Username("bob"), EmailAddress("bob@bob.com")))) shouldBe UserEntry("bob", goingIn = false, time.toEpochMilli)
+    Await.result(entryLogger.enter(Username("bob"))) shouldBe UserEntry("bob", goingIn = true, time.toEpochMilli)
+    Await.result(entryLogger.exit(Username("bob"))) shouldBe UserEntry("bob", goingIn = false, time.toEpochMilli)
 
     Await.result(entryLogger.list()) shouldBe Seq(
       UserEntry("bob", goingIn = true, time.toEpochMilli),

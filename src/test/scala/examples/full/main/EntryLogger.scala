@@ -41,12 +41,12 @@ class EntryLogger(hostAuthority: String, clock: Clock) {
 
   private val entryClient = Entry.route bindToClient http
 
-  def enter(user: User): Future[UserEntry] = entryClient(Entry.entry --> UserEntry(user.name.value, goingIn = true, clock.instant().toEpochMilli))
+  def enter(username: Username): Future[UserEntry] = entryClient(Entry.entry --> UserEntry(username.value, goingIn = true, clock.instant().toEpochMilli))
     .map(expect(Status.Created, Entry.entry))
 
   private val exitClient = Exit.route bindToClient http
 
-  def exit(user: User): Future[UserEntry] = exitClient(Exit.entry --> UserEntry(user.name.value, goingIn = false, clock.instant().toEpochMilli))
+  def exit(username: Username): Future[UserEntry] = exitClient(Exit.entry --> UserEntry(username.value, goingIn = false, clock.instant().toEpochMilli))
     .map(expect(Status.Created, Exit.entry))
 
   private val listClient = LogList.route bindToClient http

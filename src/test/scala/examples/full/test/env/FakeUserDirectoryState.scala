@@ -41,10 +41,10 @@ class FakeUserDirectoryState extends ServerRoutes {
 
   add(Delete.route.bindTo(delete))
 
-  private def lookup(email: EmailAddress) = new Service[Request, Response] {
+  private def lookup(username: Username) = new Service[Request, Response] {
     override def apply(request: Request) = users
       .values
-      .find(_.email == email)
+      .find(_.name == username)
       .map { found => Ok(encode(found)).toFuture }
       .getOrElse(NotFound())
   }
