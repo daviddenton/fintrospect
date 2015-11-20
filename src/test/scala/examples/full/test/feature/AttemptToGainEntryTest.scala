@@ -19,43 +19,46 @@ class AttemptToGainEntryTest extends FunSpec with ShouldMatchers with RunningTes
       }
     }
 
-    describe("for a known user") {
-      it("rejects when key is incorrect") {
+    describe("rejects when key is incorrect") {
+      it("rejects the entry attempt") {
         val request = Request(Post, "/security/knock?username=Bob")
         request.headerMap("key") = "fakeSecret"
         val (status, _) = env.responseTo(request)
         status shouldBe Unauthorized
       }
 
-      describe("does allow user in") {
-        env.userDirectory.contains(User(Id(1), Username("Bob"), EmailAddress("bob@bob.com")))
+      it("logs nothing") {
+        env.entryLogger.entries shouldBe Nil
+      }
+    }
 
-        it("allows the user in") {
-          val request = Request(Post, "/security/knock?username=Bob")
-          request.headerMap("key") = "realSecret"
-          val (status, _) = env.responseTo(request)
-          status shouldBe Ok
-        }
+    describe("does allow known user in") {
+      env.userDirectory.contains(User(Id(1), Username("Bob"), EmailAddress("bob@bob.com")))
 
-        it("logs entry") {
-          env.entryLogger.entries shouldBe Seq(UserEntry("Bob", goingIn = true, env.clock.millis()))
-        }
-
-        it("allows the user to exit") {
-          val request = Request(Post, "/security/bye?username=Bob")
-          request.headerMap("key") = "realSecret"
-          val (status, _) = env.responseTo(request)
-          status shouldBe Ok
-        }
-
-        it("logs exit") {
-          env.entryLogger.entries shouldBe Seq(
-            UserEntry("Bob", goingIn = true, env.clock.millis()),
-            UserEntry("Bob", goingIn = false, env.clock.millis())
-          )
-        }
+      it("allows the user in") {
+        val request = Request(Post, "/security/knock?username=Bob")
+        request.headerMap("key") = "realSecret"
+        val (status, _) = env.responseTo(request)
+        status shouldBe Ok
       }
 
+      it("logs entry") {
+        env.entryLogger.entries shouldBe Seq(UserEntry("Bob", goingIn = true, env.clock.millis()))
+      }
+
+      it("allows the user to exit") {
+        val request = Request(Post, "/security/bye?username=Bob")
+        request.headerMap("key") = "realSecret"
+        val (status, _) = env.responseTo(request)
+        status shouldBe Ok
+      }
+
+      it("logs exit") {
+        env.entryLogger.entries shouldBe Seq(
+          UserEntry("Bob", goingIn = true, env.clock.millis()),
+          UserEntry("Bob", goingIn = false, env.clock.millis())
+        )
+      }
     }
   }
 }
