@@ -30,6 +30,7 @@ class ByeBye(inhabitants: Inhabitants, entryLogger: EntryLogger) extends ServerR
     .taking(username)
     .returning(Ok -> "Exit granted")
     .returning(NotFound -> "User was not in building")
+    .returning(BadRequest -> "User is not inside building")
     .returning(Unauthorized -> "Incorrect key")
     .at(Post) / "bye" bindTo userExit)
 }
