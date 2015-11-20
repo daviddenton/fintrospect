@@ -22,7 +22,10 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
   // to all routes in the module
   private val globalCorsFilter = new HttpFilter(Cors.UnsafePermissivePolicy)
 
+  private val secretKeyChecker = new SecretKeyChecker()
   private val securityModule = FintrospectModule(Root / "security", Swagger2dot0Json(apiInfo), globalCorsFilter)
+    .withRoutes(new KnockKnock(secretKeyChecker, userDirectory, entryLogger))
+    .withRoutes(new ByeBye(secretKeyChecker, entryLogger))
 
   private val statusModule = FintrospectModule(Root / "internal", SimpleJson()).withRoute(new Ping().route)
 
