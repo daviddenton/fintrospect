@@ -10,14 +10,19 @@ import io.fintrospect.{RouteSpec, ServerRoutes}
 
 import scala.language.reflectiveCalls
 
-class KnockKnock(userDirectory: UserDirectory, entryLogger: EntryLogger) extends ServerRoutes {
+class KnockKnock(inhabitants: Inhabitants, userDirectory: UserDirectory, entryLogger: EntryLogger) extends ServerRoutes {
   private val username = Query.required(ParameterSpec[Username]("username", None, StringParamType, s => Username(s), _.value.toString))
 
   private def userEntry() = new Service[Request, Response] {
     override def apply(request: Request) = {
       userDirectory.lookup(username <-- request)
         .flatMap {
-          case Some(user) => entryLogger.enter(user.name).map(ue => Ok())
+          case Some(user) =>
+            if (inhabitants.add(user.name))
+              entryLogger
+                .enter(user.name)
+                .map(ue => Ok())
+            else BadRequest()
           case None => NotFound()
         }
     }

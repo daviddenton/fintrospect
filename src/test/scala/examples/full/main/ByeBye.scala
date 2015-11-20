@@ -10,13 +10,18 @@ import io.fintrospect.{RouteSpec, ServerRoutes}
 
 import scala.language.reflectiveCalls
 
-class ByeBye(entryLogger: EntryLogger) extends ServerRoutes {
+class ByeBye(inhabitants: Inhabitants, entryLogger: EntryLogger) extends ServerRoutes {
 
   private val username = Query.required(ParameterSpec[Username]("username", None, StringParamType, s => Username(s), _.value.toString))
 
   private def userExit() = new Service[Request, Response] {
     override def apply(request: Request) = {
-      entryLogger.exit(username <-- request).map(ue => Ok())
+      val exiting = username <-- request
+      if (inhabitants.remove(exiting))
+        entryLogger
+          .exit(exiting)
+          .map(ue => Ok())
+      else BadRequest()
     }
   }
 
