@@ -20,7 +20,7 @@ class ByeBye(inhabitants: Inhabitants, entryLogger: EntryLogger) extends ServerR
       if (inhabitants.remove(exiting))
         entryLogger
           .exit(exiting)
-          .map(ue => Ok())
+          .map(ue => Accepted())
       else BadRequest()
     }
   }

@@ -13,21 +13,35 @@ class EnteringAndExitingTest extends FunSpec with ShouldMatchers with RunningTes
     it("does not allow user in") {
       val request = Request(Post, "/security/knock?username=Rita")
       request.headerMap("key") = "realSecret"
-      val (status, _) = env.responseTo(request)
-      status shouldBe NotFound
+      env.responseTo(request).status shouldBe NotFound
     }
   }
 
-  describe("when an invalid key is used ") {
-    it("rejects the entry attempt") {
-      val request = Request(Post, "/security/knock?username=Bob")
-      request.headerMap("key") = "fakeSecret"
-      val (status, _) = env.responseTo(request)
-      status shouldBe Unauthorized
+  describe("entry endpoint") {
+    it("rejects missing username in entry endpoint") {
+      val request = Request(Post, "/security/knock")
+      request.headerMap("key") = "realSecret"
+      env.responseTo(request).status shouldBe BadRequest
     }
 
-    it("logs nothing") {
-      env.entryLogger.entries shouldBe Nil
+    it("is protected with a secret key") {
+      val request = Request(Post, "/security/knock?username=Bob")
+      request.headerMap("key") = "fakeSecret"
+      env.responseTo(request).status shouldBe Unauthorized
+    }
+  }
+
+  describe("exit endpoint") {
+    it("rejects missing username in exit endpoint") {
+      val request = Request(Post, "/security/bye")
+      request.headerMap("key") = "realSecret"
+      env.responseTo(request).status shouldBe BadRequest
+    }
+
+    it("is protected with a secret key") {
+      val request = Request(Post, "/security/bye?username=Bob")
+      request.headerMap("key") = "fakeSecret"
+      env.responseTo(request).status shouldBe Unauthorized
     }
   }
 
@@ -35,8 +49,7 @@ class EnteringAndExitingTest extends FunSpec with ShouldMatchers with RunningTes
     it("does not allow user to exit") {
       val request = Request(Post, "/security/bye?username=Bob")
       request.headerMap("key") = "realSecret"
-      val (status, _) = env.responseTo(request)
-      status shouldBe BadRequest
+      env.responseTo(request).status shouldBe BadRequest
     }
   }
 
@@ -46,8 +59,7 @@ class EnteringAndExitingTest extends FunSpec with ShouldMatchers with RunningTes
     it("allows the user in") {
       val request = Request(Post, "/security/knock?username=Bob")
       request.headerMap("key") = "realSecret"
-      val (status, _) = env.responseTo(request)
-      status shouldBe Ok
+      env.responseTo(request).status shouldBe Accepted
     }
 
     it("logs entry") {
@@ -57,15 +69,13 @@ class EnteringAndExitingTest extends FunSpec with ShouldMatchers with RunningTes
     it("does not allow user to enter once inside") {
       val request = Request(Post, "/security/knock?username=Bob")
       request.headerMap("key") = "realSecret"
-      val (status, _) = env.responseTo(request)
-      status shouldBe BadRequest
+      env.responseTo(request).status shouldBe BadRequest
     }
 
     it("allows the user to exit") {
       val request = Request(Post, "/security/bye?username=Bob")
       request.headerMap("key") = "realSecret"
-      val (status, _) = env.responseTo(request)
-      status shouldBe Ok
+      env.responseTo(request).status shouldBe Accepted
     }
 
     it("logs exit") {
