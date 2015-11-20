@@ -7,7 +7,6 @@ import com.twitter.finagle.http.Request
 import com.twitter.util.{Await, Future}
 import examples.full.main.SecuritySystem
 import io.fintrospect.testing.TestHttpServer
-import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 
 class TestEnvironment(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: Int) {
 
@@ -21,7 +20,8 @@ class TestEnvironment(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: 
   private val securitySystem = new SecuritySystem(serverPort, userDirectoryPort, entryLoggerPort, clock)
 
   def responseTo(request: Request) = {
-    statusAndContentFrom(Await.result(Http.newService(s"localhost:$serverPort")(request)))
+    val msg = Await.result(Http.newService(s"localhost:$serverPort")(request))
+    ResponseStatusAndContent(msg.status, msg.contentString)
   }
 
   def start() = Future.collect(Seq(

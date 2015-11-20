@@ -21,7 +21,7 @@ class KnockKnock(inhabitants: Inhabitants, userDirectory: UserDirectory, entryLo
             if (inhabitants.add(user.name))
               entryLogger
                 .enter(user.name)
-                .map(ue => Ok())
+                .map(ue => Accepted())
             else BadRequest()
           case None => NotFound()
         }
