@@ -1,8 +1,8 @@
 Building security system
 ------------------------
 
-About
------
+####About
+
 This is a complete example application which uses all the features of Fintrospect:
 - HTTP request routing with automatic parameter marshalling and unmarshalling (Headers/Query/Path/Body)
 - HTTP clients with request creation and route spec reuse for
@@ -14,8 +14,7 @@ This is a complete example application which uses all the features of Fintrospec
 It has been developed in a London-TDD style with outside-in acceptance testing and CDCs for outside dependencies,
 to give a complete overview of how the app would look when finished.
 
-Requirements
-------------
+####Requirements
 
 This example models a simple building security system accessible over HTTP. Requirements are:
 
