@@ -4,16 +4,14 @@ import com.twitter.finagle.http.Status._
 import com.twitter.util.Await
 import examples.full.main._
 import examples.full.test.env.RunningTestEnvironment
-import org.scalatest.BeforeAndAfter
 
 /**
   * Contract implementation for the Fake. We also test failure modes of our client here..
   */
-class FakeEntryLoggerContractTest extends EntryLoggerContract with BeforeAndAfter with RunningTestEnvironment {
+class FakeEntryLoggerContractTest extends EntryLoggerContract with RunningTestEnvironment {
   override lazy val authority = s"localhost:$entryLoggerPort"
 
   describe("the client responds as expected to failure conditions") {
-
     describe("log list") {
       it("returns a RemoteException if the response status is not Created") {
         env.entryLoggerServer.respondWith(NotFound)

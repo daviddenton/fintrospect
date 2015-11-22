@@ -10,11 +10,13 @@ import io.fintrospect.formats.json.Json4s.Native.JsonFormat._
 import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder._
 
 /**
- * Fake implementation of the Entry Logger HTTP contract. Note the re-use of the RouteSpecs from EntryLogger.
- */
+  * Fake implementation of the Entry Logger HTTP contract. Note the re-use of the RouteSpecs from EntryLogger.
+  */
 class FakeEntryLoggerState extends ServerRoutes {
 
-  var entries = Seq[UserEntry]()
+  var entries: Seq[UserEntry] = null
+
+  def reset() = entries = Seq[UserEntry]()
 
   private def entry() = new Service[Request, Response] {
     override def apply(request: Request) = {
@@ -41,4 +43,6 @@ class FakeEntryLoggerState extends ServerRoutes {
   }
 
   add(LogList.route.bindTo(entryList))
+
+  reset()
 }

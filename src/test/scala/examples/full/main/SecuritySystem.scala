@@ -20,7 +20,9 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
 
   // use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
   // to all routes in the module
-  private val globalFilter = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(new SimpleAuthChecker())
+  private val globalFilter = new HttpFilter(Cors.UnsafePermissivePolicy)
+    .andThen(new SimpleAuthChecker())
+    .andThen(CatchAll)
 
   private val inhabitants = new Inhabitants
 

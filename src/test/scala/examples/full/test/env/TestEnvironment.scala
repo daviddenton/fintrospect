@@ -24,10 +24,15 @@ class TestEnvironment(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: 
     ResponseStatusAndContent(msg.status, msg.contentString)
   }
 
-  def start() = Future.collect(Seq(
-    userDirectoryServer.start(),
-    entryLoggerServer.start(),
-    securitySystem.start()))
+  def start() = {
+    userDirectory.reset()
+    entryLogger.reset()
+
+    Future.collect(Seq(
+      userDirectoryServer.start(),
+      entryLoggerServer.start(),
+      securitySystem.start()))
+  }
 
   def stop() = Future.collect(Seq(
     securitySystem.stop(),
