@@ -32,6 +32,7 @@ class TestHttpServer(port: Int, serverRoutes: ServerRoutes) {
   def respondWith(status: Status) = overrideStatus = if (status == Status.Ok) None else Option(status)
 
   def start(): Future[Unit] = {
+    overrideStatus = Option.empty
     server = Http.serve(s":$port",
       new HttpFilter(Cors.UnsafePermissivePolicy)
         .andThen(possibleError)

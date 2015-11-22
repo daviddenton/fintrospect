@@ -12,13 +12,15 @@ import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder._
 import scala.collection.mutable
 
 /**
- * Fake implementation of the User Directory HTTP contract. Note the re-use of the RouteSpecs from UserDirectory.
- */
+  * Fake implementation of the User Directory HTTP contract. Note the re-use of the RouteSpecs from UserDirectory.
+  */
 class FakeUserDirectoryState extends ServerRoutes {
+
+  private var users: mutable.Map[Id, User] = null
 
   def contains(newUser: User): Unit = users(newUser.id) = newUser
 
-  private val users = mutable.Map[Id, User]()
+  def reset() = users = mutable.Map[Id, User]()
 
   private def create() = new Service[Request, Response] {
     override def apply(request: Request) = {
@@ -56,4 +58,6 @@ class FakeUserDirectoryState extends ServerRoutes {
   }
 
   add(UserList.route.bindTo(userList))
+
+  reset()
 }
