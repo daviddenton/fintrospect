@@ -48,13 +48,13 @@ object FormField {
   trait Optional[T] extends io.fintrospect.parameters.Optional[T, Form]
   with OptionalRebind[T, Form, FormFieldBinding]
   with OptionalBindable[T, FormFieldBinding] {
-    self: OptionalBindable[T, FormFieldBinding] =>
+    self: Bindable[T, FormFieldBinding] =>
   }
 
   trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Seq[T], Form]
   with OptionalRebind[Seq[T], Form, FormFieldBinding]
   with OptionalBindable[Seq[T], FormFieldBinding] {
-    self: OptionalBindable[Seq[T], FormFieldBinding] =>
+    self: Bindable[Seq[T], FormFieldBinding] =>
   }
 
   val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
