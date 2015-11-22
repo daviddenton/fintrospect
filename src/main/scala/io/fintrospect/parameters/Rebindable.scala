@@ -1,9 +1,9 @@
 package io.fintrospect.parameters
 
 /**
- * Used to transparently copy the value out of an incoming request (or form etc..) and into an outgoing one. Useful when chaining
- * requests together.
- */
+  * Used to transparently copy the value out of an incoming request (or form etc..) and into an outgoing one. Useful when chaining
+  * requests together.
+  */
 trait Rebindable[T, From, B <: Binding] {
   def <->(req: From): Iterable[B]
 

@@ -17,3 +17,4 @@ trait Bindable[T, B <: Binding] {
    */
   def -->(value: T): Iterable[B]
 }
+

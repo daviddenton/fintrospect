@@ -4,6 +4,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 
 #####v11.5.0 (in dev)
 - New example ```full``` and documentation rewrite to show off advanced feature usage of the library.
+- Added ability to bind options to optional parameter values instead of just concrete values.
 
 #####v11.4.0
 - Added convenience methods to remove boilerplate for auto marshall/demarshall JSON when creating body and parameters specs.
