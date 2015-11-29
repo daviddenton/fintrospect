@@ -40,7 +40,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     )
   }
 
-  private def render(basePath: Path, route: ServerRoute): FieldAndDefinitions = {
+  private def render(basePath: Path, security: Security, route: ServerRoute): FieldAndDefinitions = {
     val FieldsAndDefinitions(responses, responseDefinitions) = render(route.routeSpec.responses)
 
     val bodyParameters = route.routeSpec.body.flatMap(p => Option(p.toList)).getOrElse(Nil)
@@ -64,7 +64,10 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "parameters" -> array(nonBodyParams ++ bodyAndSchemaAndRendered.map(_._3)),
       "responses" -> obj(responses),
       "supportedContentTypes" -> array(route.routeSpec.produces.map(m => string(m.value))),
-      "security" -> array()
+      "security" -> array(security match {
+        case NoSecurity => Seq()
+        case ApiKey(param, _) => Seq(obj("api_key" -> array()))
+      })
     )
     FieldAndDefinitions(route2, responseDefinitions ++ bodyAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))
   }
@@ -81,7 +84,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   private def render(security: Security) = {
     val fields = security match {
       case NoSecurity => Seq()
-      case ApiKey(param) => Seq(
+      case ApiKey(param, _) => Seq(
         "api_key" -> obj(
           "type" -> string("apiKey"),
           "in" -> string(param.where),
@@ -101,10 +104,9 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     val pathsAndDefinitions = routes
       .groupBy(_.describeFor(basePath))
       .foldLeft(FieldsAndDefinitions()) {
-
         case (memo, (path, routesForThisPath)) =>
           val routeFieldsAndDefinitions = routesForThisPath.foldLeft(FieldsAndDefinitions()) {
-            case (memoFields, route) => memoFields.add(render(basePath, route))
+            case (memoFields, route) => memoFields.add(render(basePath, security, route))
           }
           memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
       }

@@ -13,8 +13,7 @@ import io.fintrospect.renderers.ModuleRenderer
  */
 object HipsterXml extends ModuleRenderer {
 
-  override def badRequest(badParameters: Seq[Parameter]): Response =
-    Error(Status.BadRequest, badParameters.toString())
+  override def badRequest(badParameters: Seq[Parameter]): Response = Error(Status.BadRequest, badParameters.toString())
 
   private def renderRoute(basePath: Path, route: ServerRoute): HipsterXmlFormat = HipsterXmlFormat(s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")
 

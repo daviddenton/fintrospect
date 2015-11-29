@@ -4,7 +4,7 @@ import _root_.util.Echo
 import com.twitter.finagle.http.Method._
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Status}
-import com.twitter.util.Await
+import com.twitter.util.{Await, Future}
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
 import io.fintrospect.formats.json.Argo
@@ -27,7 +27,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
       val customBody = Body.json(Option("the body of the message"), obj("anObject" -> obj("notAStringField" -> number(123))))
 
       val module = FintrospectModule(Root / "basepath", renderer)
-        .securedBy(ApiKey(Header.required.string("the_api_key")))
+        .securedBy(ApiKey(Header.required.string("the_api_key"), (_: String) => Future.value(true)))
         .withRoute(
           RouteSpec("summary of this route", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
@@ -52,10 +52,8 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
       val actual = contentFrom(Await.result(module.toService(Request("/basepath"))))
-                  println(actual)
+      //                  println(actual)
       parse(actual) shouldEqual expected
     }
   }
-
-
 }

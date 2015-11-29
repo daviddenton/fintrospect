@@ -15,6 +15,8 @@ import scala.PartialFunction._
 
 object FintrospectModule {
 
+  type ModifyPath = Path => Path
+
   private type Binding = PartialFunction[(Method, Path), Service[Request, Response]]
 
   private type TFilter = Filter[Request, Response, Request, Response]
@@ -64,20 +66,22 @@ object FintrospectModule {
   */
 class FintrospectModule private(basePath: Path,
                                 moduleRenderer: ModuleRenderer,
-                                descriptionRoutePath: Path => Path,
+                                descriptionRoutePath: ModifyPath,
                                 routes: Seq[ServerRoute],
                                 security: Security,
                                 moduleFilter: Filter[Request, Response, Request, Response]) {
   private def totalBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
-        val filters = new Identify(route, basePath) +: new ValidateParams(route, moduleRenderer) +: moduleFilter +: Seq[TFilter]()
+        val filters = new Identify(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: moduleFilter +: Nil
         currentBinding.orElse(route.toPf(basePath)(filters.reduce(_.andThen(_))))
     })
   }
 
   /**
-    * Set the API security for this module. Any parameters from the Security will be added to all routes.
+    * Set the API security for this module. This is implemented though a Filter which is invoked before the
+    * parameter validation takes place, and will return Unauthorized HTTP response codes when a request does
+    * not pass authentication.
     */
   def securedBy(newSecurity: Security): FintrospectModule = {
     new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, routes, newSecurity, moduleFilter)
@@ -86,7 +90,7 @@ class FintrospectModule private(basePath: Path,
   /**
     * Override the path from the root of this module (incoming) where the default module description will live.
     */
-  def withDescriptionPath(newDefaultRoutePath: Path => Path): FintrospectModule = {
+  def withDescriptionPath(newDefaultRoutePath: ModifyPath): FintrospectModule = {
     new FintrospectModule(basePath, moduleRenderer, newDefaultRoutePath, routes, security, moduleFilter)
   }
 
