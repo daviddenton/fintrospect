@@ -7,15 +7,15 @@ import com.twitter.finagle.http.path.Path
 import io.fintrospect._
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
-import io.fintrospect.parameters.Parameter
+import io.fintrospect.parameters._
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
 
 import scala.util.Try
 
 /**
- * ModuleRenderer that provides fairly comprehensive Swagger v2.0 support
- */
+  * ModuleRenderer that provides fairly comprehensive Swagger v2.0 support
+  */
 case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
 
   def badRequest(badParameters: Seq[Parameter]): Response = JsonBadRequestRenderer(badParameters)
@@ -78,28 +78,52 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     }
   }
 
+  private def render(security: Security) = {
+    val fields = security match {
+      case NoSecurity => Seq()
+      case apiKey: ApiKey => Seq(
+        "api_key" -> obj(
+          "type" -> string("apiKey"),
+          "in" -> string(apiKey.param.where),
+          "name" -> string(apiKey.param.name)
+        )
+      )
+    }
+
+    obj(fields)
+  }
+
   private def render(apiInfo: ApiInfo): JsonNode = {
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
   }
 
-  override def description(basePath: Path, routes: Seq[ServerRoute]): Response = {
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = {
     val pathsAndDefinitions = routes
       .groupBy(_.describeFor(basePath))
       .foldLeft(FieldsAndDefinitions()) {
 
-      case (memo, (path, routesForThisPath)) =>
-        val routeFieldsAndDefinitions = routesForThisPath.foldLeft(FieldsAndDefinitions()) {
-          case (memoFields, route) => memoFields.add(render(basePath, route))
-        }
-        memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
-    }
+        case (memo, (path, routesForThisPath)) =>
+          val routeFieldsAndDefinitions = routesForThisPath.foldLeft(FieldsAndDefinitions()) {
+            case (memoFields, route) => memoFields.add(render(basePath, route))
+          }
+          memo.add(path -> obj(routeFieldsAndDefinitions.fields), routeFieldsAndDefinitions.definitions)
+      }
 
     Ok(obj(
       "swagger" -> string("2.0"),
       "info" -> render(apiInfo),
       "basePath" -> string("/"),
       "paths" -> obj(pathsAndDefinitions.fields),
+      "securityDefinitions" -> render(security),
       "definitions" -> obj(pathsAndDefinitions.definitions)
     ))
   }
+}
+
+object Swagger2dot0Json {
+
+  case class ApiKeyHeader[T](param: HeaderParameter[T]) extends ApiKey
+
+  case class ApiKeyQuery[T](param: QueryParameter[T]) extends ApiKey
+
 }

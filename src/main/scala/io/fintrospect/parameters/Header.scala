@@ -18,7 +18,6 @@ object Header {
     self: Bindable[T, RequestBinding] =>
   }
 
-
   val required = new Parameters[HeaderParameter, Mandatory] {
     override def apply[T](spec: ParameterSpec[T]) = new HeaderParameter[T](spec)
       with Mandatory[T]

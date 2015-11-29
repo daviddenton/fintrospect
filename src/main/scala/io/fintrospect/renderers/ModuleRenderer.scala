@@ -3,7 +3,7 @@ package io.fintrospect.renderers
 import com.twitter.finagle.http.Response
 import com.twitter.finagle.http.path.Path
 import io.fintrospect.ServerRoute
-import io.fintrospect.parameters.Parameter
+import io.fintrospect.parameters.{Parameter, Security}
 
 /**
  * This is used by the FintrospectModule to render the various standard responses (bad request/the description route).
@@ -12,7 +12,7 @@ import io.fintrospect.parameters.Parameter
 trait ModuleRenderer {
   def badRequest(badParameters: Seq[Parameter]): Response
 
-  def description(basePath: Path, routes: Seq[ServerRoute]): Response
+  def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response
 }
 
 

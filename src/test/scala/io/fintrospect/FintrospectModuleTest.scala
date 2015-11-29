@@ -66,12 +66,12 @@ class FintrospectModuleTest extends FunSpec with ShouldMatchers {
 
       it("at default location at the root of the module") {
         val m = FintrospectModule(Root, SimpleJson())
-        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(Status.Ok, contentFrom(SimpleJson().description(Root, Nil)))
+        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(Status.Ok, contentFrom(SimpleJson().description(Root, NoSecurity, Nil)))
       }
 
       it("at custom location") {
         val m = FintrospectModule(Root, SimpleJson()).withDescriptionPath(_ / "bob")
-        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldEqual(Status.Ok, contentFrom(SimpleJson().description(Root, Nil)))
+        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldEqual(Status.Ok, contentFrom(SimpleJson().description(Root, NoSecurity, Nil)))
 
         Await.result(m.toService(Request("/"))).status shouldEqual Status.NotFound
       }

@@ -7,7 +7,7 @@ import io.fintrospect.ServerRoute
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
-import io.fintrospect.parameters.Parameter
+import io.fintrospect.parameters.{Parameter, Security}
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
 
 /**
@@ -20,7 +20,7 @@ class SimpleJson extends ModuleRenderer {
     route.method.toString() + ":" + route.describeFor(basePath) -> Argo.JsonFormat.string(route.routeSpec.summary)
   }
 
-  override def description(basePath: Path, routes: Seq[ServerRoute]): Response = Ok(obj("resources" -> obj(routes.map(r => render(basePath, r)))))
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = Ok(obj("resources" -> obj(routes.map(r => render(basePath, r)))))
 }
 
 object SimpleJson {

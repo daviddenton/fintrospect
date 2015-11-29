@@ -11,6 +11,7 @@ import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.parameters.Path._
 import io.fintrospect.parameters._
+import io.fintrospect.renderers.swagger2dot0.Swagger2dot0Json.ApiKeyHeader
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -27,6 +28,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
       val customBody = Body.json(Option("the body of the message"), obj("anObject" -> obj("notAStringField" -> number(123))))
 
       val module = FintrospectModule(Root / "basepath", renderer)
+        .securedBy(ApiKeyHeader(Header.required.string("the_api_key")))
         .withRoute(
           RouteSpec("summary of this route", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)
@@ -51,7 +53,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
       val actual = contentFrom(Await.result(module.toService(Request("/basepath"))))
-//                  println(actual)
+                  println(actual)
       parse(actual) shouldEqual expected
     }
   }
