@@ -6,7 +6,7 @@ import io.fintrospect.parameters.{Body, HeaderParameter, QueryParameter}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 
 /**
- * Encapsulates the specification of an HTTP endpoint, for use by either the
+ * Encapsulates the specification of an HTTP endpoint, for use by either a Finagle server or client.
  */
 case class RouteSpec private(summary: String,
                              description: Option[String],

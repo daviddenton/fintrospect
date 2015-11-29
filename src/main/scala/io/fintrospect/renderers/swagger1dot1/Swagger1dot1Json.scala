@@ -7,7 +7,7 @@ import com.twitter.finagle.http.path.Path
 import io.fintrospect.ServerRoute
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
-import io.fintrospect.parameters.Parameter
+import io.fintrospect.parameters.{Parameter, Security}
 import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
 
 import scala.collection.JavaConversions._
@@ -45,7 +45,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     )
   }
 
-  override def description(basePath: Path, routes: Seq[ServerRoute]): Response = {
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = {
     val api = routes
       .groupBy(_.describeFor(basePath))
       .map { case (path, routesForPath) => obj("path" -> string(path), "operations" -> array(routesForPath.map(render(_)._2))) }

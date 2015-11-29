@@ -5,7 +5,10 @@ import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.parameters.PathParameter
 
-abstract class ServerRoute(val routeSpec: RouteSpec, val method: Method, pathFn: Path => Path, val pathParams: PathParameter[_]*) {
+abstract class ServerRoute(val routeSpec: RouteSpec,
+                           val method: Method,
+                           pathFn: Path => Path,
+                           val pathParams: PathParameter[_]*) {
 
   def missingOrFailedFrom(request: Request) = {
     val validations = routeSpec.headerParams.map(_.validate(request)) ++
