@@ -2,8 +2,6 @@ package io.fintrospect.parameters
 
 sealed trait Security
 
-trait ApiKey extends Security {
-  val param: Parameter
-}
+case class ApiKey(param: Parameter) extends Security
 
 object NoSecurity extends Security
