@@ -4,7 +4,10 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 
 #####v11.5.0 (in dev)
 - New example ```full``` and documentation rewrite to show off advanced feature usage of the library.
-- Added ability to bind options to optional parameter values instead of just concrete values.
+- Added ability to bind Scala ```Option``` to optional parameter values instead of just concrete values.
+- Added ```Security``` to module endpoints, specifically ```ApiKey``` which adds a security filter to all requests. Documentation generation is included, but unfortunately the current Swagger UI does not support this properly due to a bug.
+As a workaround until Swagger UI is fixed (if you need it), simply add the required ApiKey "parameter" to every endpoint, which will allow the best of both worlds (although you will not need to check for the presence of the API-Key in your 
+routes since this will already be handled by Fintrospect.
 
 #####v11.4.0
 - Added convenience methods to remove boilerplate for auto marshall/demarshall JSON when creating body and parameters specs.

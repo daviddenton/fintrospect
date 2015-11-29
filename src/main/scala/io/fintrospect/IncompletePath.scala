@@ -3,6 +3,7 @@ package io.fintrospect
 import com.twitter.finagle.http.path.{->, /, Path}
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
+import io.fintrospect.FintrospectModule.ModifyPath
 import io.fintrospect.IncompletePath._
 import io.fintrospect.parameters.{Path => Fp, PathParameter}
 
@@ -21,14 +22,15 @@ object IncompletePath {
 }
 
 trait IncompletePath {
+  type ModifyPath = Path => Path
   val routeSpec: RouteSpec
   val method: Method
-  val pathFn: Path => Path
+  val pathFn: ModifyPath
 
   def bindToClient(service: Service[Request, Response]): RouteClient
 }
 
-class IncompletePath0(val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path) extends IncompletePath {
+class IncompletePath0(val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath) extends IncompletePath {
   def /(part: String) = new IncompletePath0(routeSpec, method, pathFn = pathFn.andThen(_ / part))
 
   def /[T](pp0: PathParameter[T]) = new IncompletePath1(routeSpec, method, pathFn, pp0)
@@ -44,7 +46,7 @@ class IncompletePath0(val routeSpec: RouteSpec, val method: Method, val pathFn: 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service)
 }
 
-class IncompletePath1[A](val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path,
+class IncompletePath1[A](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
                          pp1: PathParameter[A]) extends IncompletePath {
   def /(part: String): IncompletePath2[A, String] = /(Fp.fixed(part))
 
@@ -61,7 +63,7 @@ class IncompletePath1[A](val routeSpec: RouteSpec, val method: Method, val pathF
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1)
 }
 
-class IncompletePath2[A, B](val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path,
+class IncompletePath2[A, B](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
                             pp1: PathParameter[A],
                             pp2: PathParameter[B]) extends IncompletePath {
   def /(part: String): IncompletePath3[A, B, String] = /(Fp.fixed(part))
@@ -79,7 +81,7 @@ class IncompletePath2[A, B](val routeSpec: RouteSpec, val method: Method, val pa
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2)
 }
 
-class IncompletePath3[A, B, C](val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path,
+class IncompletePath3[A, B, C](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
                                pp1: PathParameter[A],
                                pp2: PathParameter[B],
                                pp3: PathParameter[C]) extends IncompletePath {
@@ -98,7 +100,7 @@ class IncompletePath3[A, B, C](val routeSpec: RouteSpec, val method: Method, val
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3)
 }
 
-class IncompletePath4[A, B, C, D](val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path,
+class IncompletePath4[A, B, C, D](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
                                   pp1: PathParameter[A],
                                   pp2: PathParameter[B],
                                   pp3: PathParameter[C],
@@ -119,7 +121,7 @@ class IncompletePath4[A, B, C, D](val routeSpec: RouteSpec, val method: Method, 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4)
 }
 
-class IncompletePath5[A, B, C, D, E](val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path,
+class IncompletePath5[A, B, C, D, E](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
                                      pp1: PathParameter[A],
                                      pp2: PathParameter[B],
                                      pp3: PathParameter[C],
@@ -141,7 +143,7 @@ class IncompletePath5[A, B, C, D, E](val routeSpec: RouteSpec, val method: Metho
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4, pp5)
 }
 
-class IncompletePath6[A, B, C, D, E, F](val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path,
+class IncompletePath6[A, B, C, D, E, F](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
                                         pp1: PathParameter[A],
                                         pp2: PathParameter[B],
                                         pp3: PathParameter[C],
@@ -164,7 +166,7 @@ class IncompletePath6[A, B, C, D, E, F](val routeSpec: RouteSpec, val method: Me
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4, pp5, pp6)
 }
 
-class IncompletePath7[A, B, C, D, E, F, G](val routeSpec: RouteSpec, val method: Method, val pathFn: Path => Path,
+class IncompletePath7[A, B, C, D, E, F, G](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
                                            pp1: PathParameter[A],
                                            pp2: PathParameter[B],
                                            pp3: PathParameter[C],

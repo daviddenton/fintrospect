@@ -51,6 +51,9 @@
         "responses": {},
         "supportedContentTypes": [],
         "security": [
+          {
+            "api_key": []
+          }
         ]
       }
     },
@@ -106,6 +109,9 @@
           "application/json"
         ],
         "security": [
+          {
+            "api_key": []
+          }
         ]
       },
       "get": {
@@ -150,6 +156,9 @@
           "application/json"
         ],
         "security": [
+          {
+            "api_key": []
+          }
         ]
       }
     }
