@@ -50,7 +50,8 @@
         ],
         "responses": {},
         "supportedContentTypes": [],
-        "security": []
+        "security": [
+        ]
       }
     },
     "/basepath/echo/{message}": {
@@ -104,7 +105,8 @@
         "supportedContentTypes": [
           "application/json"
         ],
-        "security": []
+        "security": [
+        ]
       },
       "get": {
         "tags": [
@@ -147,7 +149,8 @@
         "supportedContentTypes": [
           "application/json"
         ],
-        "security": []
+        "security": [
+        ]
       }
     }
   },

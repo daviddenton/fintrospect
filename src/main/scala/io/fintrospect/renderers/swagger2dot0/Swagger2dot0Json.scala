@@ -81,11 +81,11 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   private def render(security: Security) = {
     val fields = security match {
       case NoSecurity => Seq()
-      case apiKey: ApiKey => Seq(
+      case ApiKey(param) => Seq(
         "api_key" -> obj(
           "type" -> string("apiKey"),
-          "in" -> string(apiKey.param.where),
-          "name" -> string(apiKey.param.name)
+          "in" -> string(param.where),
+          "name" -> string(param.name)
         )
       )
     }
@@ -118,12 +118,4 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "definitions" -> obj(pathsAndDefinitions.definitions)
     ))
   }
-}
-
-object Swagger2dot0Json {
-
-  case class ApiKeyHeader[T](param: HeaderParameter[T]) extends ApiKey
-
-  case class ApiKeyQuery[T](param: QueryParameter[T]) extends ApiKey
-
 }
