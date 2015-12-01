@@ -4,6 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Post
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Request, Response}
+import examples.full.main.SecuritySystemAuth._
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters.{ParameterSpec, Query, StringParamType}
 import io.fintrospect.{RouteSpec, ServerRoutes}
@@ -29,7 +30,7 @@ class KnockKnock(inhabitants: Inhabitants, userDirectory: UserDirectory, entryLo
   }
 
   add(RouteSpec("User enters the building")
-    .taking(SimpleAuthChecker.key)
+    .taking(apiKey) // see SecuritySystemApiKey for why this is here
     .taking(username)
     .returning(Ok -> "Access granted")
     .returning(NotFound -> "Unknown user")
