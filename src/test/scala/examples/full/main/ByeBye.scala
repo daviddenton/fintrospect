@@ -4,6 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Post
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Request, Response}
+import examples.full.main.SecuritySystemAuth.apiKey
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters.{ParameterSpec, Query, StringParamType}
 import io.fintrospect.{RouteSpec, ServerRoutes}
@@ -26,7 +27,7 @@ class ByeBye(inhabitants: Inhabitants, entryLogger: EntryLogger) extends ServerR
   }
 
   add(RouteSpec("User exits the building")
-    .taking(SimpleAuthChecker.key)
+    .taking(apiKey) // see SecuritySystemApiKey for why this is here
     .taking(username)
     .returning(Ok -> "Exit granted")
     .returning(NotFound -> "User was not in building")

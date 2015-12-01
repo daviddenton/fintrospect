@@ -11,7 +11,7 @@ class ExitingTest extends FunSpec with ShouldMatchers with RunningTestEnvironmen
 
   describe("exit endpoint") {
     it("rejects missing username in exit endpoint") {
-      exitBuilding(None, "fakeSecret").status shouldBe BadRequest
+      exitBuilding(None, "realSecret").status shouldBe BadRequest
     }
 
     it("is protected with a secret key") {

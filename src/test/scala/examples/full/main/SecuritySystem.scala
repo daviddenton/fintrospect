@@ -20,13 +20,12 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
 
   // use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
   // to all routes in the module
-  private val globalFilter = new HttpFilter(Cors.UnsafePermissivePolicy)
-    .andThen(new SimpleAuthChecker())
-    .andThen(CatchAll)
+  private val globalFilter = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(CatchAll)
 
   private val inhabitants = new Inhabitants
 
   private val securityModule = FintrospectModule(Root / "security", Swagger2dot0Json(apiInfo), globalFilter)
+    .securedBy(SecuritySystemAuth())
     .withDescriptionPath(_ / "api-docs")
     .withRoutes(new KnockKnock(inhabitants, userDirectory, entryLogger))
     .withRoutes(new ByeBye(inhabitants, entryLogger))
