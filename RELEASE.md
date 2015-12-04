@@ -8,6 +8,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Added ```Security``` to module endpoints, specifically ```ApiKey``` which adds a security filter to all requests. Documentation generation is included, but unfortunately the current Swagger UI does not support this properly due to a bug.
 As a workaround until Swagger UI is fixed (if you need it), simply add the required ApiKey "parameter" to every endpoint, which will allow the best of both worlds (although you will not need to check for the presence of the API-Key in your 
 routes since this will already be handled by Fintrospect.
+- Added support GSON JSON library out of the box. See ```Gson``` to get the Format util and ResponseBuilder for this format.
 
 #####v11.4.0
 - Added convenience methods to remove boilerplate for auto marshall/demarshall JSON when creating body and parameters specs.

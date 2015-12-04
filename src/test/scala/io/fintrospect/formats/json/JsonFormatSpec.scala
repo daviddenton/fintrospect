@@ -27,7 +27,7 @@ abstract class JsonFormatSpec[X, Y](val format: JsonFormat[X, Y]) extends FunSpe
 
     describe("Parse blows up when invalid") {
       it("parse blows up when invalid") {
-        Try(format.parse("not json")).isFailure shouldBe true
+        Try(format.parse("<12312>")).isFailure shouldBe true
       }
     }
   }
