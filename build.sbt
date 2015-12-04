@@ -19,6 +19,7 @@ scalacOptions += "-feature"
 
 libraryDependencies ++= Seq(
   "net.sourceforge.argo" % "argo" % "3.12",
+  "com.google.code.gson" % "gson" % "2.5" % "provided",
   "io.spray" %% "spray-json" % "1.3.2" % "provided",
   "io.argonaut" %% "argonaut" % "6.0.4" % "provided",
   "com.typesafe.play" %% "play-json" % "2.4.3" % "provided",
