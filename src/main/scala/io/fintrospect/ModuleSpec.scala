@@ -13,8 +13,9 @@ import io.fintrospect.renderers.ModuleRenderer
 
 import scala.PartialFunction._
 
-object ModuleSpec {
 
+
+object ModuleSpec {
   type ModifyPath = Path => Path
 
   private type Binding = PartialFunction[(Method, Path), Service[Request, Response]]
