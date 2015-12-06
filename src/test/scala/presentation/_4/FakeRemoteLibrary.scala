@@ -7,7 +7,7 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
-import io.fintrospect.ModuleSpec
+import io.fintrospect.FintrospectModule
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.renderers.simplejson.SimpleJson
@@ -22,7 +22,7 @@ class FakeRemoteLibrary(books: Books) {
     }
   }
 
-  val service = ModuleSpec(Root, SimpleJson())
+  val service = FintrospectModule(Root, SimpleJson())
     .withRoute(RemoteBooks.route bindTo search)
     .toService
 
