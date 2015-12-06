@@ -60,7 +60,7 @@ class BookAvailable(books: RemoteBooks) {
 class SearchApp {
   private val apiInfo = ApiInfo("search some books", "1.0", Option("an api for searching our book collection"))
 
-  val service = FintrospectModule(Root, Swagger2dot0Json(apiInfo))
+  val service = ModuleSpec(Root, Swagger2dot0Json(apiInfo))
     .withRoute(new SearchRoute(new RemoteBooks).route)
     .withRoute(new BookAvailable(new RemoteBooks).route)
     .toService

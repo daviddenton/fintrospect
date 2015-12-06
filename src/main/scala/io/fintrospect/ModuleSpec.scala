@@ -5,15 +5,15 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
-import io.fintrospect.FintrospectModule._
 import io.fintrospect.Headers._
+import io.fintrospect.ModuleSpec._
 import io.fintrospect.Routing.fromBinding
 import io.fintrospect.parameters.{NoSecurity, Security}
 import io.fintrospect.renderers.ModuleRenderer
 
 import scala.PartialFunction._
 
-object FintrospectModule {
+object ModuleSpec {
 
   type ModifyPath = Path => Path
 
@@ -24,7 +24,7 @@ object FintrospectModule {
   /**
     * Combines many modules
     */
-  def combine(modules: FintrospectModule*): Binding = modules.map(_.totalBinding).reduce(_.orElse(_))
+  def combine(modules: ModuleSpec*): Binding = modules.map(_.totalBinding).reduce(_.orElse(_))
 
   /**
     * Convert a Binding to a Finagle Service
@@ -34,14 +34,14 @@ object FintrospectModule {
   /**
     * Create a module using the given base-path, renderer.
     */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer): FintrospectModule =
-    new FintrospectModule(basePath, moduleRenderer, identity, Nil, NoSecurity, Filter.mk((in, svc) => svc(in)))
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer): ModuleSpec =
+    new ModuleSpec(basePath, moduleRenderer, identity, Nil, NoSecurity, Filter.mk((in, svc) => svc(in)))
 
   /**
     * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to this module).
     */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, Request, Response]): FintrospectModule = {
-    new FintrospectModule(basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, Request, Response]): ModuleSpec = {
+    new ModuleSpec(basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)
   }
 
   private class ValidateParams(serverRoute: ServerRoute, moduleRenderer: ModuleRenderer) extends SimpleFilter[Request, Response]() {
@@ -64,12 +64,12 @@ object FintrospectModule {
 /**
   * Self-describing module builder (uses the immutable builder pattern).
   */
-class FintrospectModule private(basePath: Path,
-                                moduleRenderer: ModuleRenderer,
-                                descriptionRoutePath: ModifyPath,
-                                routes: Seq[ServerRoute],
-                                security: Security,
-                                moduleFilter: Filter[Request, Response, Request, Response]) {
+class ModuleSpec private(basePath: Path,
+                         moduleRenderer: ModuleRenderer,
+                         descriptionRoutePath: ModifyPath,
+                         routes: Seq[ServerRoute],
+                         security: Security,
+                         moduleFilter: Filter[Request, Response, Request, Response]) {
   private def totalBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
@@ -83,15 +83,15 @@ class FintrospectModule private(basePath: Path,
     * parameter validation takes place, and will return Unauthorized HTTP response codes when a request does
     * not pass authentication.
     */
-  def securedBy(newSecurity: Security): FintrospectModule = {
-    new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, routes, newSecurity, moduleFilter)
+  def securedBy(newSecurity: Security): ModuleSpec = {
+    new ModuleSpec(basePath, moduleRenderer, descriptionRoutePath, routes, newSecurity, moduleFilter)
   }
 
   /**
     * Override the path from the root of this module (incoming) where the default module description will live.
     */
-  def withDescriptionPath(newDefaultRoutePath: ModifyPath): FintrospectModule = {
-    new FintrospectModule(basePath, moduleRenderer, newDefaultRoutePath, routes, security, moduleFilter)
+  def withDescriptionPath(newDefaultRoutePath: ModifyPath): ModuleSpec = {
+    new ModuleSpec(basePath, moduleRenderer, newDefaultRoutePath, routes, security, moduleFilter)
   }
 
   private def withDefault(otherRoutes: PartialFunction[(Method, Path), Service[Request, Response]]) = {
@@ -105,20 +105,20 @@ class FintrospectModule private(basePath: Path,
   /**
     * Attach described Route(s) to the module. Request matching is attempted in the same order as in which this method is called.
     */
-  def withRoute(newRoutes: ServerRoute*): FintrospectModule = new FintrospectModule(basePath, moduleRenderer, descriptionRoutePath, routes ++ newRoutes, security, moduleFilter)
+  def withRoute(newRoutes: ServerRoute*): ModuleSpec = new ModuleSpec(basePath, moduleRenderer, descriptionRoutePath, routes ++ newRoutes, security, moduleFilter)
 
   /**
     * Attach described Route(s) to the module. Request matching is attempted in the same order as in which this method is called.
     */
-  def withRoutes(newRoutes: Iterable[ServerRoute]*): FintrospectModule = newRoutes.flatten.foldLeft(this)(_.withRoute(_))
+  def withRoutes(newRoutes: Iterable[ServerRoute]*): ModuleSpec = newRoutes.flatten.foldLeft(this)(_.withRoute(_))
 
   /**
     * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
     */
-  def combine(that: FintrospectModule): Binding = totalBinding.orElse(that.totalBinding)
+  def combine(that: ModuleSpec): Binding = totalBinding.orElse(that.totalBinding)
 
   /**
     * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.
     */
-  def toService: Service[Request, Response] = FintrospectModule.toService(totalBinding)
+  def toService: Service[Request, Response] = ModuleSpec.toService(totalBinding)
 }

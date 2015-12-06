@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Await
+import io.fintrospect.ServerRoute
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.{FintrospectModule, ServerRoute}
 
 import scala.concurrent.duration.Duration
 
@@ -23,6 +23,6 @@ trait TestingFintrospectRoute {
    * @return response
    */
   def responseFor(request: Request, timeout: Duration = Duration(1, TimeUnit.SECONDS)): Response = {
-    Await.result(FintrospectModule(Root, SimpleJson()).withRoute(route).toService.apply(request))
+    Await.result(ModuleSpec(Root, SimpleJson()).withRoute(route).toService.apply(request))
   }
 }

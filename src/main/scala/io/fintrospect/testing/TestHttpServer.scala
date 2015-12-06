@@ -6,8 +6,8 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Http, ListeningServer, Service, SimpleFilter}
 import com.twitter.util.Future
+import io.fintrospect.ServerRoutes
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.{FintrospectModule, ServerRoutes}
 
 /**
   * Simple, insecure HTTP server which can be used for tests
@@ -24,7 +24,7 @@ class TestHttpServer(port: Int, serverRoutes: ServerRoutes) {
 
   private var server: ListeningServer = null
 
-  private val service = FintrospectModule(Root, SimpleJson()).withRoutes(serverRoutes).toService
+  private val service = ModuleSpec(Root, SimpleJson()).withRoutes(serverRoutes).toService
 
   /**
     * Override the status code returned by the server
