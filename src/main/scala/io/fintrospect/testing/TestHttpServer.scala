@@ -6,8 +6,8 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Http, ListeningServer, Service, SimpleFilter}
 import com.twitter.util.Future
-import io.fintrospect.ServerRoutes
 import io.fintrospect.renderers.simplejson.SimpleJson
+import io.fintrospect.{ModuleSpec, ServerRoutes}
 
 /**
   * Simple, insecure HTTP server which can be used for tests

@@ -7,10 +7,10 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import io.fintrospect.RouteSpec
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
+import io.fintrospect.{ModuleSpec, RouteSpec}
 import presentation.Books
 
 class SearchApp(books: Books) {

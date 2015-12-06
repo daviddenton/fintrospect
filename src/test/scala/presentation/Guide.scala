@@ -6,8 +6,8 @@ import io.fintrospect.RouteSpec
 object Guide {
   /*
     ##Pre-requisites
-    Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it;s broad concepts, which you
-    can find here: http://twitter.github.io/finagle/guide
+    Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it;s broad concepts, which
+    can be found here: http://twitter.github.io/finagle/guide
 
     &tldr; version:
     1. Finagle provides protocol-agnostic RPC and is based on Netty.
@@ -18,8 +18,8 @@ object Guide {
     The types Req and Rep represent the Request and Response types for the protocol in question.
 
     ##Broad concepts
-    Fintrospect is a library to facilitate painless definition of serving and consumption of HTTP APIs. It uses the
-    following concepts:
+    Fintrospect is a library designed to facilitate painless definition of serving and consumption of HTTP APIs.
+    It uses the following main concepts:
 
     - RouteSpec: defines the overall HTTP contract of an endpoint. This contract can then be bound to a Finagle
     Service representing an HTTP client, or bundled into a Module and attached to a Finagle HTTP server.
@@ -30,13 +30,21 @@ object Guide {
     combined and then converted to a Finagle service and attached to a Finagle HTTP server. Each module provides an
     endpoint under which it's own runtime-generated documentation can be served (eg. in Swagger format).
 
-    ##RouteSpec
+    ##Routes
     A RouteSpec object defines the specification of the contract. The simplest and most boring example is:
    */
   val myRoute = RouteSpec().at(Method.Get) / "endpoint"
   /*
 
+  val route = RouteSpec("search for books")
+    .taking(maxPages)
+    .body(form)
+    .returning(Ok -> "we found your book", array(Book("a book", "authorName", 99).toJson))
+    .returning(BadRequest -> "invalid request")
+    .producing(APPLICATION_JSON)
+    .at(Post) / "search" bindTo search
    */
+
   /*
     ##Defining Route endpoints
 
