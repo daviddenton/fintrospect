@@ -2,6 +2,10 @@ Roadmap/Release Notes/Migration Guide
 -----------------------------
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
+#####v12.0.0 (in dev)
+- Rename of ```FintrospectModule``` to ```ModuleSpec``` for consistency.
+- New documentation (and hopefully site)!
+
 #####v11.5.0
 - Upgrade to Finagle ```6.31.0```.
 - Added ability to bind Scala ```Option``` to optional parameter values instead of just concrete values.

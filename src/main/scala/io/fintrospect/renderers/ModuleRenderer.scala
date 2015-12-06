@@ -6,7 +6,7 @@ import io.fintrospect.ServerRoute
 import io.fintrospect.parameters.{Parameter, Security}
 
 /**
- * This is used by the FintrospectModule to render the various standard responses (bad request/the description route).
+ * This is used to render the various standard responses (bad request/the description route).
  * Provide one of these to implement a pluggable custom format for module responses.
  */
 trait ModuleRenderer {

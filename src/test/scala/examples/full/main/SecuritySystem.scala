@@ -7,7 +7,6 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.util.Future
-import io.fintrospect.FintrospectModule
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 
@@ -24,16 +23,16 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
 
   private val inhabitants = new Inhabitants
 
-  private val securityModule = FintrospectModule(Root / "security", Swagger2dot0Json(apiInfo), globalFilter)
+  private val securityModule = ModuleSpec(Root / "security", Swagger2dot0Json(apiInfo), globalFilter)
     .securedBy(SecuritySystemAuth())
     .withDescriptionPath(_ / "api-docs")
     .withRoutes(new KnockKnock(inhabitants, userDirectory, entryLogger))
     .withRoutes(new ByeBye(inhabitants, entryLogger))
 
-  private val statusModule = FintrospectModule(Root / "internal", SimpleJson()).withRoute(new Ping().route)
+  private val statusModule = ModuleSpec(Root / "internal", SimpleJson()).withRoute(new Ping().route)
 
   def start() = {
-    server = Http.serve(s":$serverPort", FintrospectModule.toService(securityModule combine statusModule))
+    server = Http.serve(s":$serverPort", ModuleSpec.toService(securityModule combine statusModule))
     Future.Done
   }
 

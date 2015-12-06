@@ -15,7 +15,7 @@ import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
  *
  * Note the use of the CORS policy filter to allow the endpoints to be called by the Swagger UI. For normal usage,
  * use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
- * to all routes in the module (by being passed as the optional param to the FintrospectModule constructor)
+ * to all routes in the module (by being passed as the optional param to the ModuleSpec constructor)
  */
 object LibraryApp extends App {
 
@@ -28,17 +28,17 @@ object LibraryApp extends App {
   // to all routes in the module
   val globalCorsFilter = new HttpFilter(Cors.UnsafePermissivePolicy)
 
-  val libraryModule = FintrospectModule(Root / "library", renderer, globalCorsFilter)
+  val libraryModule = ModuleSpec(Root / "library", renderer, globalCorsFilter)
     .withRoute(new BookAdd(books).route)
     .withRoute(new BookCollection(books).route)
     .withRoute(new BookLookup(books).route)
     .withRoute(new BookLengthSearch(books).route)
     .withRoute(new BookTermSearch(books).route)
 
-  val statusModule = FintrospectModule(Root / "internal", SimpleJson())
+  val statusModule = ModuleSpec(Root / "internal", SimpleJson())
     .withRoute(new Ping().route)
 
-  Http.serve(":8080", FintrospectModule.toService(libraryModule combine statusModule))
+  Http.serve(":8080", ModuleSpec.toService(libraryModule combine statusModule))
 
   println("See the service description at: http://localhost:8080/library")
 
