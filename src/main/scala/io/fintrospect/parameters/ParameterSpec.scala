@@ -21,7 +21,7 @@ case class ParameterSpec[T](name: String,
                             description: Option[String] = None,
                             paramType: ParamType,
                             deserialize: String => T,
-                            serialize: T => String)
+                            serialize: T => String = (s:T) => s.toString)
 
 /**
  * Predefined ParameterSpec instances for common types

@@ -1,12 +1,19 @@
 package presentation
 
-import com.twitter.finagle.http.Method
-import io.fintrospect.RouteSpec
+import java.time.LocalDate
+
+import com.twitter.finagle.Service
+import com.twitter.finagle.http.{Method, Request, Response, Status}
+import com.twitter.util.Future
+import io.fintrospect.parameters._
+import io.fintrospect.{ContentTypes, RouteSpec}
+
+import scala.language.reflectiveCalls
 
 object Guide {
   /*
-    ##Pre-requisites
-    Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it;s broad concepts, which
+    ##Pre-amble
+    Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it's concepts, which
     can be found here: http://twitter.github.io/finagle/guide
 
     &tldr; version:
@@ -16,6 +23,9 @@ object Guide {
       Service:  def apply(request : Req) : com.twitter.util.Future[Rep]
       Filter:   def apply(request : ReqIn, service : com.twitter.finagle.Service[ReqOut, RepIn]) : com.twitter.util.Future[RepOut]
     The types Req and Rep represent the Request and Response types for the protocol in question.
+
+    Note that in order to aid the reader, the code in this guide has omitted imports that would have made the it read
+    more nicely. The sacrifices we make in the name of learning... :)
 
     ##Broad concepts
     Fintrospect is a library designed to facilitate painless definition of serving and consumption of HTTP APIs.
@@ -30,19 +40,102 @@ object Guide {
     combined and then converted to a Finagle service and attached to a Finagle HTTP server. Each module provides an
     endpoint under which it's own runtime-generated documentation can be served (eg. in Swagger format).
 
-    ##Routes
-    A RouteSpec object defines the specification of the contract. The simplest and most boring example is:
-   */
-  val myRoute = RouteSpec().at(Method.Get) / "endpoint"
-  /*
+    ##Defining routes
+    A RouteSpec object defines the specification of the contract and the API follows the immutable builder pattern.
+    Apart from the path elements (which terminate the builder), all of the "builder-y" calls here are optional, as are
+    the descriptive strings (we'll see how they are used later). Here's the simplest possible RESTy example for
+    getting all users in a system:
+    */
+  RouteSpec("list all users").at(Method.Get) / "user"
 
-  val route = RouteSpec("search for books")
-    .taking(maxPages)
-    .body(form)
-    .returning(Ok -> "we found your book", array(Book("a book", "authorName", 99).toJson))
-    .returning(BadRequest -> "invalid request")
-    .producing(APPLICATION_JSON)
-    .at(Post) / "search" bindTo search
+  /*
+  Notice that example was completely static? If we want an example of a dynamic endpoint, such as listing all users in
+  a particular numerically-identified group, then we need to introduce a Path parameter:
+   */
+  RouteSpec("list all users in a particular group").at(Method.Get) / "user" / Path.integer("groupId")
+
+  /*
+  ... and we can do the same for Header and Query parameters; both optional and mandatory parameters are supported,
+  as are parameters that can appear multiple times:
+     */
+  RouteSpec("list all users in a particular group")
+    .taking(Header.optional.boolean("listOnlyActive"))
+    .taking(Query.required.*.localDate("birthdayDate"))
+    .at(Method.Get) / "user" / Path.integer("groupId")
+
+  /*
+  Moving onto HTTP bodies- for example adding a user via a HTTP Post and declaring the content types that
+  we produce (although this is optional):
+   */
+  RouteSpec("add user", "Insert a new user, failing if it already exists")
+    .producing(ContentTypes.TEXT_PLAIN)
+    .body(Body.form(FormField.required.string("name"), FormField.required.localDate("dateOfBirth")))
+    .at(Method.Post) / "user" / Path.integer("groupId")
+
+  /*
+  ... or via a form submission and declaring possible responses:
+   */
+  RouteSpec("add user", "Insert a new user, failing if it already exists")
+    .body(Body.form(FormField.required.string("name"), FormField.required.localDate("dateOfBirth")))
+    .returning(Status.Created -> "User was created")
+    .returning(Status.Conflict -> "User already exists")
+    .at(Method.Post) / "user" / Path.integer("groupId")
+
+  /*
+  ##Defining request parameters and bodies
+  As can be seen above, request parameters are created in a uniform way using the standardised objects Path,
+  Header, Query, FormField and Body. The general form for definition is:
+
+  <parameter location>.<required|optional>.<param type>("name")
+
+  Since Path and Body parameters are always required, the middle step is omitted from this form.
+
+  There are convenience methods for a standard set of "primitive" types, plus extensions for other common formats
+  such as native Scala XML, Forms (body only) and JSON (more on this later).
+
+  ##Custom formats
+  These can be implemented by defining a ParameterSpec or BodySpec and passing this in instead of calling the
+  <param type method> in the form above. These Spec objects define the serialization and deserialization mechanisms
+  from the String format that comes in on the wire. An example for a simple domain case class Birthday:
+   */
+  case class Birthday(value: LocalDate) {
+    override def toString = value.toString
+  }
+
+  object Birthday {
+    def from(s: String) = Birthday(LocalDate.parse(s))
+  }
+
+  val birthdayAsAQueryParam = Query.required(
+    ParameterSpec[Birthday]("DOB", None, StringParamType, Birthday.from, _.toString)
+  )
+
+  val birthdayAsABody = Body(BodySpec[Birthday](Option("DOB"), ContentTypes.TEXT_PLAIN, Birthday.from, _.toString))
+
+  /*
+  Note that in the above we are only concerned with the happy case on-the-wire values. The serialize and deserialize
+  methods should blow up if unsuccessful.
+   */
+
+  /*
+  ##Using routes
+  Once the RouteSpec has been defined, it can be bound to either as an HTTP Endpoint or in a Client.
+
+  ##Serverside
+  Once a RouteSpec is defined, it needs to be bound to a standard Finagle Service to receive requests. Since
+  these are very lightweight we create a new instance of the Service for every request, and bind the RouteSpec
+  to a factory method which receives the dynamic Path parameters and returns the Service. Taking the earlier
+  example of looking up Users by numeric Group ID:
+  */
+
+  def listUsersForGroup(groupId: Int) = new Service[Request, Response] {
+    override def apply(request: Request): Future[Response] = Future.value(Response())
+  }
+
+  RouteSpec().at(Method.Get) / "user" / Path.int("groupId") bindTo listUsersForGroup
+
+  /*
+  Parameter retrieval
    */
 
   /*

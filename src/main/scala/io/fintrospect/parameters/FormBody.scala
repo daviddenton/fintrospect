@@ -11,6 +11,9 @@ import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import scala.util.{Failure, Success, Try}
 
 
+/**
+  * Forms are effectively modelled as a collection of fields.
+  */
 class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
   extends Body[Form](FormBody.spec)
   with Bindable[Form, Binding]
