@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Await
-import io.fintrospect.ServerRoute
 import io.fintrospect.renderers.simplejson.SimpleJson
+import io.fintrospect.{ModuleSpec, ServerRoute}
 
 import scala.concurrent.duration.Duration
 
