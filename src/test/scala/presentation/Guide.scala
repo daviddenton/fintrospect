@@ -86,8 +86,8 @@ object Guide {
 
   /*
   ##Defining request parameters and bodies
-  As can be seen above, request parameters are created in a uniform way using the standardised objects Path,
-Header, Query, FormField and Body. The general form for definition is:
+  As can be seen above, request parameters are created in a uniform way using the standardised objects Path, Header, Query,
+  FormField and Body. The general form for definition is:
 
   <parameter location>.<required|optional>.<param type>("name")
 
@@ -134,7 +134,7 @@ Header, Query, FormField and Body. The general form for definition is:
   val holidays = Query.required.*.localDate("datesTakenAsHoliday")
   val includeManagement = Header.optional.boolean("includeManagement")
 
-  def findUsersOnHoliday(departmentId: Integer) = new Service[Request, Response] {
+  def findEmployeesOnHoliday(departmentId: Integer) = new Service[Request, Response] {
     override def apply(request: Request): Future[Response] = {
       val holidayDates: Seq[LocalDate] = holidays <-- request
       val includeManagementFlag: Option[Boolean] = includeManagement <-- request
@@ -145,7 +145,7 @@ Header, Query, FormField and Body. The general form for definition is:
     }
   }
 
-  RouteSpec().taking(holidays).taking(includeManagement).at(Method.Get) / "employee" / Path.integer("departmentId") bindTo findUsersOnHoliday
+  RouteSpec().taking(holidays).taking(includeManagement).at(Method.Get) / "employee" / Path.integer("departmentId") bindTo findEmployeesOnHoliday
 
   /*
   ###Modules
@@ -167,26 +167,29 @@ Header, Query, FormField and Body. The general form for definition is:
 
   /*
   ####Self-describing Module APIs
-  A big feature of the Fintrospect library is the ability to generate API documentation at runtime. This can be activated by passing
-   in a ModuleRenderer implementation when creating the ModuleSpec and when this is done, a new endpoint is created at the root
-   of the module context (overridable) which serves this documentation. Bundled with Fintrospect are Swagger (1.1 and 2.0) JSON and
-   a simple JSON format. Other implementations are pluggable by implementing a Trait - see the example code for a simple XML implementation.
+  A big feature of the Fintrospect library is the ability to generate API documentation at runtime. This can be activated
+  by passing in a ModuleRenderer implementation when creating the ModuleSpec and when this is done, a new endpoint is created
+  at the root of the module context (overridable) which serves this documentation. Bundled with Fintrospect are Swagger (1.1
+  and 2.0) JSON and a simple JSON format. Other implementations are pluggable by implementing a Trait - see the example code
+  for a simple XML implementation.
    */
   ModuleSpec(Root / "employee", Swagger2dot0Json(ApiInfo("an employee discovery API", "3.0")))
 
   /*
   ####Security
-  Module routes can secured by adding an implementation of the Security trait - this essentially provides a filter through which all
-  requests will be passed. An ApiKey implementation is bundled with the library which return an unauthorized HTTP response code when a
-  request does not pass authentication. */
+  Module routes can secured by adding an implementation of the Security trait - this essentially provides a filter through
+  which all requests will be passed. An ApiKey implementation is bundled with the library which return an unauthorized HTTP
+  response code when a request does not pass authentication.
+  */
   ModuleSpec(Root / "employee").securedBy(ApiKey(Header.required.string("api_key"), (key) => Future.value(key == "extremelySecretThing")))
 
   /*
   ###Clientside
-  A RouteSpec can also be bound to a standard Finagle HTTP client and then called as a function, passing in the parameters which are
-   bound to values by using the -->() or of() method. The client marshalls the passed parameters into an HTTP request and returns a
-   Twitter Future containing the response. Any required manipulation of the Request (such as adding timeouts or caching headers) can
-   be done in the standard way by chaining Filters to the Finagle HTTP client: */
+  A RouteSpec can also be bound to a standard Finagle HTTP client and then called as a function, passing in the parameters
+  which are bound to values by using the -->() or of() method. The client marshalls the passed parameters into an HTTP
+  request and returns a Twitter Future containing the response. Any required manipulation of the Request (such as adding
+   timeouts or caching headers) can be done in the standard way by chaining Filters to the Finagle HTTP client:
+    */
   val employeeId = Path.integer("employeeId")
   val name = Query.required.string("name")
   val client: RouteClient = RouteSpec().taking(name).at(Get) / "employee" / employeeId bindToClient Http.newService("localhost:10000")
@@ -194,14 +197,15 @@ Header, Query, FormField and Body. The general form for definition is:
 
   /*
   ###Super-cool feature time: Auto-generation of Fake HTTP contracts
-  Because the RouteSpec objects can be used to bind to either a Server OR a Client, we can be spectacularly smug and use them on BOTH
-  sides of an HTTP boundary to provide a typesafe remote contract, to either:
-  1. Auto-generate fake HTTP server implementations for remote HTTP dependencies. In this case, defining the RouteSpecs as part of an
-  HTTP client contract and then simply reusing them as the server-side contract of a testing fake - see the "full" example code for -
-  erm - an example! :)
-  2. Use a shared library approach to define a contract and the data objects that go across it for reuse in multiple applications, each
-  of which import the shared library. This obviously binary-couples the applications together to a certain degree, so utmost care should
-  be taken, backed up with sufficient CDC-style testing to ensure that the version of the contract deployed is valid on both ends.
+  Because the RouteSpec objects can be used to bind to either a Server OR a Client, we can be spectacularly smug and use
+  them on BOTH sides of an HTTP boundary to provide a typesafe remote contract, to either:
+  1. Auto-generate fake HTTP server implementations for remote HTTP dependencies. In this case, defining the RouteSpecs
+  as part of an HTTP client contract and then simply reusing them as the server-side contract of a testing fake - see the
+  "full" example code for - erm - an example! :)
+  2. Use a shared library approach to define a contract and the data objects that go across it for reuse in multiple applications,
+  each of which import the shared library. This obviously binary-couples the applications together to a certain degree, so utmost
+  care should be taken, backed up with sufficient CDC-style testing to ensure that the version of the contract deployed is valid
+  on both ends.
    */
 
   //
