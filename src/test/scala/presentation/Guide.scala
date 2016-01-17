@@ -7,6 +7,7 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
+import io.fintrospect.formats.{PlainText, ResponseBuilder}
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import io.fintrospect.{ContentTypes, ModuleSpec, RouteClient, RouteSpec}
@@ -25,7 +26,7 @@ object Guide {
     3. It defines identical Service and Filter interfaces for both client and server APIs that contain a single method:
       Service:  def apply(request : Req) : com.twitter.util.Future[Rep]
       Filter:   def apply(request : ReqIn, service : com.twitter.finagle.Service[ReqOut, RepIn]) : com.twitter.util.Future[RepOut]
-    The types Req and Rep represent the Request and Response types for the protocol in question.
+    where the types Req and Rep represent the Request and Response types for the protocol in question.
 
     Note that in order to aid the reader, the code in this guide has omitted imports that would have made the it read
     more nicely. The sacrifices we make in the name of learning... :)
@@ -181,7 +182,7 @@ object Guide {
   which all requests will be passed. An ApiKey implementation is bundled with the library which return an unauthorized HTTP
   response code when a request does not pass authentication.
   */
-  ModuleSpec(Root / "employee").securedBy(ApiKey(Header.required.string("api_key"), (key) => Future.value(key == "extremelySecretThing")))
+  ModuleSpec(Root / "employee").securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future.value(key == "extremelySecretThing")))
 
   /*
   ###Clientside
@@ -208,6 +209,41 @@ object Guide {
   on both ends.
    */
 
+
+  /*
+  ##Building HTTP Responses
+  It's all very well being able to extract pieces of data from HTTP requests, but that's only half the story - we also want to be
+  able to easily build responses. Fintrospect comes bundled with a extensible set of HTTP Response Builders to do this. These live in
+  the io.fintrospect.formats package. Currently bundled formats are in the table below:
+
+| Library      | Content Type     | Impl Language | Version | Format Class                                                                                                                                                                          |
+|--------------|------------------|---------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Argo         | application/json | Java          | 3.12    | io.fintrospect.formats.json.Argo                                                                                                                                                      |
+| Argonaut     | application/json | Scala         | 6.0.X   | io.fintrospect.formats.json.Argonaut                                                                                                                                                  |
+| GSON         | application/json | Scala         | 2.5     | io.fintrospect.formats.json.Gson                                                                                                                                                      |
+| Json4S       | application/json | Scala         | 3.2.X   | io.fintrospect.formats.json.Json.Native
+|              |                  |               |         | io.fintrospect.formats.json.Json.NativeDoubleMode
+|              |                  |               |         | io.fintrospect.formats.json.Json.Jackson
+|              |                  |               |         | io.fintrospect.formats.json.Json.JacksonDoubleMode
+| (Plain Text) | text/plain       | Scala         | -       | io.fintrospect.formats.PlainText                                                                                                                                                      |
+| Play         | application/json | Scala         | 2.4.1   | io.fintrospect.formats.json.Play                                                                                                                                                      |
+| (Scala XML)  | application/xml  | Scala         | -       | io.fintrospect.formats.Xml                                                                                                                                                            |
+| Spray        | application/json | Scala         | 1.3.X   | io.fintrospect.formats.json.Spray                                                                                                                                                     |
+| (XHtml)      | application/html | Scala         | -       | io.fintrospect.formats.XHrml
+
+  Note that to avoid dependency bloat, Fintrospect only ships with the above JSON library bindings - you'll need to bring in the
+  library of your choice as an additional dependency.
+
+  The simplest (least concise) way to invoke a Response builder is along the lines of:
+  */
+  val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(PlainText.ResponseBuilder.HttpResponse(Status.Ok).withContent("some text"))
+
+  /*
+  ... although with a little implicit magic (boo-hiss!), you can reduce this to:
+  */
+  import io.fintrospect.formats.PlainText.ResponseBuilder._
+
+  val responseViaImplicits: Future[Response] = Status.Ok("some text")
   //
   //  Body
   //  Form

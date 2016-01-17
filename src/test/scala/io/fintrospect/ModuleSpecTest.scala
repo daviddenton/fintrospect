@@ -8,9 +8,9 @@ import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Await._
 import com.twitter.util.{Await, Future}
 import io.fintrospect.ModuleSpec._
+import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.formats.json.Argo
-import io.fintrospect.formats.text.PlainTextResponseBuilder._
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.HttpRequestResponseUtil

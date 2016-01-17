@@ -6,7 +6,7 @@ import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.RouteClient.Identify
-import io.fintrospect.formats.text.PlainTextResponseBuilder._
+import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters._
 
 
