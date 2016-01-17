@@ -8,6 +8,7 @@ import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
 import io.fintrospect.parameters._
+import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import io.fintrospect.{ContentTypes, ModuleSpec, RouteClient, RouteSpec}
 
 import scala.language.reflectiveCalls
@@ -167,16 +168,25 @@ object Guide {
 
   /*
   ####Self-describing Module APIs
-  Additionally to the above,
-
+  A big feature of the Fintrospect library is the ability to generate API documentation at runtime. This can be activated by passing in a ModuleRenderer
+  implementation when creating the ModuleSpec and when this is done, a new endpoint is created at the root of the module context (overridable) which serves this
+  documentation. Bundled with Fintrospect are Swagger (1.1 and 2.0) JSON and a simple JSON format. Implementations are pluggable by implementing a Trait - see
+  the example code for a simple XML implementation.
    */
+  ModuleSpec(Root / "employee", Swagger2dot0Json(ApiInfo("an employee discovery API", "3.0")))
+
+  /*
+  ####Security
+  Module routes can secured by adding an implementation of the Security trait - this essentially provides a filter through which all requests will be passed.
+  An ApiKey implementation is bundled with the library which return an unauthorized HTTP response code when a request does not pass authentication.
+   */
+  ModuleSpec(Root / "employee").securedBy(ApiKey(Header.required.string("api_key"), (key) => Future.value(key == "extremelySecretThing")))
 
   /*
   ###Clientside
-  A RouteSpec can also be bound to a standard Finagle HTTP client and then called as a function, passing in the parameters
-  which are bound to values by using the -->() or of() method. The client marshalls the passed parameters into an HTTP
-  request and returns a Twitter Future containing the response. Any required manipulation of the Request (such as adding
-   timeouts or caching headers) can be done in the standard way by chaining Filters to the Finagle HTTP client:
+  A RouteSpec can also be bound to a standard Finagle HTTP client and then called as a function, passing in the parameters which are bound to values by using
+  the -->() or of() method. The client marshalls the passed parameters into an HTTP request and returns a Twitter Future containing the response. Any required
+  manipulation of the Request (such as adding timeouts or caching headers) can be done in the standard way by chaining Filters to the Finagle HTTP client:
  */
   val employeeId = Path.integer("employeeId")
   val name = Query.required.string("name")
@@ -192,11 +202,8 @@ object Guide {
   //
   //  Servers
   //  Module
-  //  Parameter Validation
-  //    Security
+  //  Security
   //
-  //  API Documentation
-  //    Swagger
   //  Custom
   //
   //  Responses
