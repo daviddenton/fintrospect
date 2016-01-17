@@ -193,16 +193,22 @@ object Guide {
   val client: RouteClient = RouteSpec().taking(name).at(Get) / "employee" / employeeId bindToClient Http.newService("localhost:10000")
   val response: Future[Response] = client(employeeId --> 1, name --> "")
 
+  /*
+  ###Super-cool feature time: Auto-generation of Fake HTTP contracts
+  Because the RouteSpec objects can be used to bind to either a Server OR a Client, we can be spectacularly smug and use them on BOTH sides of an HTTP boundary to
+  provide a typesafe remote contract, to either:
+  1. Auto-generate fake HTTP server implementations for remote HTTP dependencies. In this case, defining the RouteSpecs as part of an HTTP client contract and then
+  simply reusing them as the server-side contract of a testing fake - see the "full" example code for - erm - an example! :)
+  2. Use a shared library approach to define a contract and the data objects that go across it for reuse in multiple applications, each of which import the shared
+  library. This obviously binary-couples the applications together to a certain degree, so utmost care should be taken, backed up with sufficient CDC-style testing
+  to ensure that the version of the contract deployed is valid on both ends.
+   */
 
   //
   //  Body
   //  Form
   //  Json
   //  Custom
-  //
-  //  Servers
-  //  Module
-  //  Security
   //
   //  Custom
   //
@@ -214,12 +220,6 @@ object Guide {
   //  binding
   //  custom
   //  Custom
-  //
-  //  Clients
-  //  Creating
-  //  Binding parameters
-  //    Advanced re-usage
-  //
   //
   //  Using this library, you can:
   //    - Define individual HTTP routes and compose them into sensible context-based modules.
