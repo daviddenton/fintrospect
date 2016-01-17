@@ -2,11 +2,12 @@ package presentation
 
 import java.time.LocalDate
 
-import com.twitter.finagle.Service
+import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.{Method, Request, Response, Status}
+import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
 import io.fintrospect.parameters._
-import io.fintrospect.{ContentTypes, RouteSpec}
+import io.fintrospect.{ContentTypes, RouteClient, RouteSpec}
 
 import scala.language.reflectiveCalls
 
@@ -146,14 +147,26 @@ object Guide {
   RouteSpec().taking(holidays).taking(includeManagement).at(Method.Get) / "employee" / Path.integer("departmentId") bindTo findUsersOnHoliday
 
   /*
-    ##Defining Route endpoints
+  ###Modules
+  A Module is a collection of Routes that share a common root context. Modules can be combined with one another and
+  ultimately converted into a Finagle Service object which is then attached in the normal way to an HTTP server.
+  */
+
+  /*
+  ###Clientside
+  A RouteSpec can also be bound to a standard Finagle HTTP client and then called as a function, passing in the parameters
+  which are bound to values by using the -->() or of() method. The client marshalls the passed parameters into an HTTP
+  request and returns a Twitter Future containing the response. Any required manipulation of the Request (such as adding
+   timeouts or caching headers) can be done in the standard way chaining Filters to the Finagle HTTP client:
+ */
+
+  val employeeId = Path.integer("employeeId")
+  val name = Query.required.string("name")
+  val client: RouteClient = RouteSpec().taking(name).at(Get) / "employee" / employeeId bindToClient Http.newService("localhost:10000")
+
+  val theCall: Future[Response] = client(employeeId --> 1, name --> "")
 
 
-      RouteSpec
-      Parameters
-      ParameterSpec
-      Custom
-     */
   //
   //  Body
   //  Form
