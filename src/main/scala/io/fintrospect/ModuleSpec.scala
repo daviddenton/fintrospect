@@ -1,6 +1,7 @@
 package io.fintrospect
 
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status.{BadRequest, NotFound}
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
@@ -8,11 +9,10 @@ import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.ModuleSpec._
 import io.fintrospect.Routing.fromBinding
-import io.fintrospect.parameters.{NoSecurity, Security}
+import io.fintrospect.parameters.{NoSecurity, Parameter, Security}
 import io.fintrospect.renderers.ModuleRenderer
 
 import scala.PartialFunction._
-
 
 
 object ModuleSpec {
@@ -31,6 +31,14 @@ object ModuleSpec {
     * Convert a Binding to a Finagle Service
     */
   def toService(binding: Binding): Service[Request, Response] = fromBinding(binding)
+
+  /**
+    * Create a module using the given base-path without any Module API Renderering.
+    */
+  def apply(basePath: Path): ModuleSpec = apply(basePath, new ModuleRenderer {
+    override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = Response(NotFound)
+    override def badRequest(badParameters: Seq[Parameter]): Response = Response(BadRequest)
+  })
 
   /**
     * Create a module using the given base-path, renderer.
