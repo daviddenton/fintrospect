@@ -12,7 +12,9 @@ This is a complete example application which uses all the features of Fintrospec
 - Swagger 2.0 documentation creation
 
 It has been developed in a London-TDD style with outside-in acceptance testing and CDCs for outside dependencies,
-to give a complete overview of how the app would look when finished.
+to give a complete overview of how the app would look when finished. The code itself has been left without optimisiation of
+imports in order to aid comprehension - which is a little frustrating from a maintainer perspective (as you always want your 
+code looking as awesome as possible! :).
 
 ####Requirements
 

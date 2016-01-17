@@ -10,6 +10,6 @@ object CatchAll extends SimpleFilter[Request, Response] {
     service(request)
       .handle {
         case e: RemoteSystemProblem => ServiceUnavailable(e.getMessage)
-        case e: Exception => InternalServerError(e.getMessage)
+        case e => InternalServerError(e.getMessage)
       }
 }
