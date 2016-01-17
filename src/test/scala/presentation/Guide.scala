@@ -244,22 +244,11 @@ object Guide {
   import io.fintrospect.formats.PlainText.ResponseBuilder._
 
   val responseViaImplicits: Future[Response] = Status.Ok("some text")
+
   //
   //  Body
   //  Form
   //  Json
-  //  Custom
-  //
-  //  Custom
-  //
-  //  Responses
-  //  Builders
-  //
-  //  JSON Formats
-  //    Json4S
-  //  binding
-  //  custom
-  //  Custom
   //
   //  Using this library, you can:
   //    - Define individual HTTP routes and compose them into sensible context-based modules.
