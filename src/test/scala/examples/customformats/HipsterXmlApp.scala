@@ -7,7 +7,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import examples.customformats.HipsterXmlResponseBuilder._
+import examples.customformats.HipsterXml.ResponseBuilder._
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.parameters._
@@ -27,7 +27,7 @@ object HipsterXmlApp extends App {
     .body(Body(xmlAsABody))
     .at(Get) / "view" / Path(HipsterBeardStyle) bindTo aService
 
-  val module = FintrospectModule(Root / "xml", HipsterXml).withRoute(route)
+  val module = ModuleSpec(Root / "xml", HipsterXmlModuleRenderer).withRoute(route)
 
   Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(module.toService))
 

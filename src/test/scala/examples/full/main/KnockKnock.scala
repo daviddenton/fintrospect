@@ -5,7 +5,7 @@ import com.twitter.finagle.http.Method.Post
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Request, Response}
 import examples.full.main.SecuritySystemAuth._
-import io.fintrospect.formats.text.PlainTextResponseBuilder._
+import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters.{ParameterSpec, Query, StringParamType}
 import io.fintrospect.{RouteSpec, ServerRoutes}
 

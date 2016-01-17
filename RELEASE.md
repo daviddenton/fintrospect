@@ -2,7 +2,8 @@ Roadmap/Release Notes/Migration Guide
 -----------------------------
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
-#####v11.6.0 (in dev)
+#####v12.0.0 (in dev)
+- Breaking change: Moved non-JSON ResponseBuilder classes to be consistent with other codecs. E.g. ```io.fintrospect.formats.xml.XmlResponseBuilder``` moves to ```io.fintrospect.formats.Xml.ResponseBuilder```.
 - Deprecation of ```FintrospectModule``` to be replaced with ```ModuleSpec``` for consistency.
 - New documentation (and hopefully site)!
 

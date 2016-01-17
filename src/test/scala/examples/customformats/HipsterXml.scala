@@ -1,25 +1,21 @@
 package examples.customformats
 
-import com.twitter.finagle.http.Status._
-import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.http.{Response, Status}
-import io.fintrospect.ServerRoute
-import io.fintrospect.formats.json.Argo.ResponseBuilder._
-import io.fintrospect.parameters.{Parameter, Security}
-import io.fintrospect.renderers.ModuleRenderer
+import io.fintrospect.ContentTypes
+import io.fintrospect.formats.{ResponseBuilder, ResponseBuilderMethods}
 
-/**
- * Hyper-cool, next-gen, markup used by all true rockstar coderzzzz
- */
-object HipsterXml extends ModuleRenderer {
+object HipsterXml {
 
-  override def badRequest(badParameters: Seq[Parameter]): Response = Error(Status.BadRequest, badParameters.toString())
+  /**
+    * Custom response builder for some imaginary XML format.
+    */
+  object ResponseBuilder extends ResponseBuilderMethods[HipsterXmlFormat] {
+    private def customToString(format: HipsterXmlFormat): String = format.asXmlMessage
 
-  private def renderRoute(basePath: Path, route: ServerRoute): HipsterXmlFormat = HipsterXmlFormat(s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")
+    private def errorMessageToString(errorMessage: String): HipsterXmlFormat = HipsterXmlFormat(s"<message>oh noes!, an error: $errorMessage</message>")
 
-  private def renderRoutes(basePath: Path, routes: Seq[ServerRoute]): String = HipsterXmlFormat(routes.map(renderRoute(basePath, _)): _*).toString()
+    private def errorToString(throwable: Throwable): HipsterXmlFormat = HipsterXmlFormat(s"<error>oh noes!, an error: ${throwable.getMessage}</error>")
 
-  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = {
-    Ok(HipsterXmlFormat(s"<paths>${renderRoutes(basePath, routes)}</paths>").value)
+    override def HttpResponse() = new ResponseBuilder[HipsterXmlFormat](customToString, errorMessageToString, errorToString, ContentTypes.APPLICATION_XML)
   }
+
 }

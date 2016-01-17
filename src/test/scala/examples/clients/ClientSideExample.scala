@@ -8,7 +8,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.text.PlainTextResponseBuilder._
+import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil._
 
