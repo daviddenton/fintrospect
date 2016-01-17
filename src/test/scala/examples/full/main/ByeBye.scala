@@ -27,7 +27,7 @@ class ByeBye(inhabitants: Inhabitants, entryLogger: EntryLogger) extends ServerR
   }
 
   add(RouteSpec("User exits the building")
-    .taking(apiKey) // see SecuritySystemApiKey for why this is here
+    .taking(apiKey) // see SecuritySystemAuth for why this is here
     .taking(username)
     .returning(Ok -> "Exit granted")
     .returning(NotFound -> "User was not in building")

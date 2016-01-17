@@ -39,7 +39,8 @@ object ModuleSpec {
     new ModuleSpec(basePath, moduleRenderer, identity, Nil, NoSecurity, Filter.mk((in, svc) => svc(in)))
 
   /**
-    * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to this module).
+    * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to
+    * this module APART from the documentation route).
     */
   def apply(basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, Request, Response]): ModuleSpec = {
     new ModuleSpec(basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)

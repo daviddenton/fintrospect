@@ -24,7 +24,7 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
 
   private val inhabitants = new Inhabitants
 
-  private val securityModule = FintrospectModule(Root / "security", Swagger2dot0Json(apiInfo), globalFilter)
+  private val securityModule = FintrospectModule(Root / "security", Swagger2dot0Json(apiInfo))
     .securedBy(SecuritySystemAuth())
     .withDescriptionPath(_ / "api-docs")
     .withRoutes(new KnockKnock(inhabitants, userDirectory, entryLogger))
@@ -33,7 +33,7 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
   private val statusModule = FintrospectModule(Root / "internal", SimpleJson()).withRoute(new Ping().route)
 
   def start() = {
-    server = Http.serve(s":$serverPort", ModuleSpec.toService(securityModule combine statusModule))
+    server = Http.serve(s":$serverPort", globalFilter.andThen(ModuleSpec.toService(securityModule combine statusModule)))
     Future.Done
   }
 

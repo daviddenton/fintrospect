@@ -30,7 +30,7 @@ class KnockKnock(inhabitants: Inhabitants, userDirectory: UserDirectory, entryLo
   }
 
   add(RouteSpec("User enters the building")
-    .taking(apiKey) // see SecuritySystemApiKey for why this is here
+    .taking(apiKey) // see SecuritySystemAuth for why this is here
     .taking(username)
     .returning(Ok -> "Access granted")
     .returning(NotFound -> "Unknown user")
