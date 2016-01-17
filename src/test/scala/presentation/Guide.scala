@@ -28,12 +28,12 @@ object Guide {
     more nicely. The sacrifices we make in the name of learning... :)
 
     ##Broad concepts
-    Fintrospect is a library designed to facilitate painless definition of serving and consumption of HTTP APIs.
+    Fintrospect is a library designed to facilitate painless definition, serving and consumption of HTTP APIs.
     It uses the following main concepts:
 
     - RouteSpec: defines the overall HTTP contract of an endpoint. This contract can then be bound to a Finagle
     Service representing an HTTP client, or bundled into a Module and attached to a Finagle HTTP server.
-    - ParameterSpec: defines the acceptable formats for request parameters (Path/Query/Header/Form-field). Provides
+    - ParameterSpec: defines the acceptable format for a request parameter (Path/Query/Header/Form-field). Provides
     the auto-marshalling mechanic for serializing and deserializing objects to and from HTTP message.
     - BodySpec: similar to ParameterSpec, but applied to the body of an HTTP message.
     - ModuleSpec: defines a set of Routes which are grouped under a particular request path. These modules can be
@@ -43,43 +43,43 @@ object Guide {
     ##Defining routes
     A RouteSpec object defines the specification of the contract and the API follows the immutable builder pattern.
     Apart from the path elements (which terminate the builder), all of the "builder-y" calls here are optional, as are
-    the descriptive strings (we'll see how they are used later). Here's the simplest possible RESTy example for
-    getting all users in a system:
+    the descriptive strings (we'll see how they are used later). Here's the simplest possible REST-like example for
+    getting all employees in a system:
     */
-  RouteSpec("list all users").at(Method.Get) / "user"
+  RouteSpec("list all employees").at(Method.Get) / "employee"
 
   /*
-  Notice that example was completely static? If we want an example of a dynamic endpoint, such as listing all users in
-  a particular numerically-identified group, then we need to introduce a Path parameter:
+  Notice that the request in that  example was completely static? If we want an example of a dynamic endpoint, such as
+  listing all users in a particular numerically-identified department, then we can introduce a Path parameter:
    */
-  RouteSpec("list all users in a particular group").at(Method.Get) / "user" / Path.integer("groupId")
+  RouteSpec("list all employees in a particular group").at(Method.Get) / "employee" / Path.integer("departmentId")
 
   /*
   ... and we can do the same for Header and Query parameters; both optional and mandatory parameters are supported,
-  as are parameters that can appear multiple times:
+  as are parameters that can appear multiple times.:
      */
-  RouteSpec("list all users in a particular group")
+  RouteSpec("list all employees in a particular group")
     .taking(Header.optional.boolean("listOnlyActive"))
-    .taking(Query.required.*.localDate("birthdayDate"))
-    .at(Method.Get) / "user" / Path.integer("groupId")
+    .taking(Query.required.*.localDate("datesTakenAsHoliday"))
+    .at(Method.Get) / "employee" / Path.integer("departmentId")
 
   /*
-  Moving onto HTTP bodies- for example adding a user via a HTTP Post and declaring the content types that
+  Moving onto HTTP bodies - for example adding an employee via a HTTP Post and declaring the content types that
   we produce (although this is optional):
    */
-  RouteSpec("add user", "Insert a new user, failing if it already exists")
+  RouteSpec("add employee", "Insert a new employee, failing if it already exists")
     .producing(ContentTypes.TEXT_PLAIN)
     .body(Body.form(FormField.required.string("name"), FormField.required.localDate("dateOfBirth")))
-    .at(Method.Post) / "user" / Path.integer("groupId")
+    .at(Method.Post) / "user" / Path.integer("departmentId")
 
   /*
   ... or via a form submission and declaring possible responses:
    */
-  RouteSpec("add user", "Insert a new user, failing if it already exists")
+  RouteSpec("add user", "Insert a new employee, failing if it already exists")
     .body(Body.form(FormField.required.string("name"), FormField.required.localDate("dateOfBirth")))
-    .returning(Status.Created -> "User was created")
-    .returning(Status.Conflict -> "User already exists")
-    .at(Method.Post) / "user" / Path.integer("groupId")
+    .returning(Status.Created -> "Employee was created")
+    .returning(Status.Conflict -> "Employee already exists")
+    .at(Method.Post) / "user" / Path.integer("departmentId")
 
   /*
   ##Defining request parameters and bodies
@@ -88,15 +88,15 @@ object Guide {
 
   <parameter location>.<required|optional>.<param type>("name")
 
-  Since Path and Body parameters are always required, the middle step is omitted from this form.
+  Since Path and Body parameters are always required, the middle step is omitted from this form for these types.
 
   There are convenience methods for a standard set of "primitive" types, plus extensions for other common formats
   such as native Scala XML, Forms (body only) and JSON (more on this later).
 
   ##Custom formats
   These can be implemented by defining a ParameterSpec or BodySpec and passing this in instead of calling the
-  <param type method> in the form above. These Spec objects define the serialization and deserialization mechanisms
-  from the String format that comes in on the wire. An example for a simple domain case class Birthday:
+  <param type> method in the form above. These Spec objects define the serialization and deserialization mechanisms
+  from the String format that comes in on the request. An example for a simple domain case class Birthday:
    */
   case class Birthday(value: LocalDate) {
     override def toString = value.toString
@@ -106,37 +106,44 @@ object Guide {
     def from(s: String) = Birthday(LocalDate.parse(s))
   }
 
-  val birthdayAsAQueryParam = Query.required(
-    ParameterSpec[Birthday]("DOB", None, StringParamType, Birthday.from, _.toString)
-  )
+  val birthdayAsAQueryParam = Query.required(ParameterSpec[Birthday]("DOB", None, StringParamType, Birthday.from, _.toString))
 
   val birthdayAsABody = Body(BodySpec[Birthday](Option("DOB"), ContentTypes.TEXT_PLAIN, Birthday.from, _.toString))
 
   /*
   Note that in the above we are only concerned with the happy case on-the-wire values. The serialize and deserialize
-  methods should blow up if unsuccessful.
+  methods should throw exceptions if unsuccessful - these are caught by the request validation mechanism and turned into
+  a rejected BadRequest (400) response which is returned to the caller.
    */
 
   /*
   ##Using routes
-  Once the RouteSpec has been defined, it can be bound to either as an HTTP Endpoint or in a Client.
+  Once the RouteSpec has been defined, it can be bound to either an HTTP Endpoint or to an HTTP Client.
 
-  ##Serverside
-  Once a RouteSpec is defined, it needs to be bound to a standard Finagle Service to receive requests. Since
-  these are very lightweight we create a new instance of the Service for every request, and bind the RouteSpec
-  to a factory method which receives the dynamic Path parameters and returns the Service. Taking the earlier
-  example of looking up Users by numeric Group ID:
-  */
+  ###Serverside
+  A RouteSpec needs to be bound to a standard Finagle Service to receive requests. Since these are very lightweight,
+  we create a new instance of the Service for every request, and bind the RouteSpec to a factory method which receives
+  the dynamic Path parameters and returns the Service. Other parameters can be retrieved directly in a typesafe manner from
+  the HTTP request by using <--() or from() method on the parameter declaration.
 
-  def listUsersForGroup(groupId: Int) = new Service[Request, Response] {
-    override def apply(request: Request): Future[Response] = Future.value(Response())
+  Note that the validity of ALL parameters which are attached to a RouteSpec is verified by Fintrospect before requests
+  make it to these bound Services, so you do not need to worry about implementing any validation at this point.
+   */
+  val holidays = Query.required.*.localDate("datesTakenAsHoliday")
+  val includeManagement = Header.optional.boolean("includeManagement")
+
+  def findUsersOnHoliday(departmentId: Integer) = new Service[Request, Response] {
+    override def apply(request: Request): Future[Response] = {
+      val holidayDates: Seq[LocalDate] = holidays <-- request
+      val includeManagementFlag: Option[Boolean] = includeManagement <-- request
+      val response = Response(Status.Ok)
+      val baseMsg = s"Everyone from department $departmentId was at work on $holidayDates"
+      response.contentString = baseMsg + (if(includeManagementFlag.getOrElse(false)) "" else ", even the management")
+      Future.value(response)
+    }
   }
 
-  RouteSpec().at(Method.Get) / "user" / Path.int("groupId") bindTo listUsersForGroup
-
-  /*
-  Parameter retrieval
-   */
+  RouteSpec().taking(holidays).taking(includeManagement).at(Method.Get) / "employee" / Path.integer("departmentId") bindTo findUsersOnHoliday
 
   /*
     ##Defining Route endpoints
