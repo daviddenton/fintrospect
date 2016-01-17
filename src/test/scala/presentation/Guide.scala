@@ -170,7 +170,7 @@ object Guide {
   ####Self-describing Module APIs
   A big feature of the Fintrospect library is the ability to generate API documentation at runtime. This can be activated by passing in a ModuleRenderer
   implementation when creating the ModuleSpec and when this is done, a new endpoint is created at the root of the module context (overridable) which serves this
-  documentation. Bundled with Fintrospect are Swagger (1.1 and 2.0) JSON and a simple JSON format. Implementations are pluggable by implementing a Trait - see
+  documentation. Bundled with Fintrospect are Swagger (1.1 and 2.0) JSON and a simple JSON format. Other implementations are pluggable by implementing a Trait - see
   the example code for a simple XML implementation.
    */
   ModuleSpec(Root / "employee", Swagger2dot0Json(ApiInfo("an employee discovery API", "3.0")))
