@@ -213,14 +213,24 @@ object Guide {
   /*
   ##Building HTTP Responses
   It's all very well being able to extract pieces of data from HTTP requests, but that's only half the story - we also want to be
-  able to easily build responses. Fintrospect comes bundled with a extensible set of HTTP Response Builders to do this. These live in
-  the io.fintrospect.formats package. Currently bundled formats are in the table below:
+  able to easily build responses. Fintrospect comes bundled with a extensible set of HTTP Response Builders to do this. The very
+  simplest way is by using a ResponseBuilder object directly...
+  */
+  ResponseBuilder.toFuture(
+    ResponseBuilder.HttpResponse(ContentTypes.APPLICATION_JSON).withCode(Status.Ok).withContent("some text").build()
+  )
 
-| Library      | Content Type     | Impl Language | Version | Format Class                                                                                                                                                                          |
+  /*
+  However, this only handles Strings and Buffer types directly. Also bundled are a set of bindings which provide ResponseBuilders for
+  handling content types like JSON or XML in a set of popular OSS libraries. These live in the io.fintrospect.formats package. Currently
+  supported formats are in the table below:
+
+| Library      | Content-Type     | Impl Language | Version | Format Class                                                                                                                                                                          |
 |--------------|------------------|---------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Argo         | application/json | Java          | 3.12    | io.fintrospect.formats.json.Argo                                                                                                                                                      |
 | Argonaut     | application/json | Scala         | 6.0.X   | io.fintrospect.formats.json.Argonaut                                                                                                                                                  |
 | GSON         | application/json | Scala         | 2.5     | io.fintrospect.formats.json.Gson                                                                                                                                                      |
+| (Html)       | text/html        | Scala         | -       | io.fintrospect.formats.Html
 | Json4S       | application/json | Scala         | 3.2.X   | io.fintrospect.formats.json.Json.Native
 |              |                  |               |         | io.fintrospect.formats.json.Json.NativeDoubleMode
 |              |                  |               |         | io.fintrospect.formats.json.Json.Jackson
@@ -229,18 +239,25 @@ object Guide {
 | Play         | application/json | Scala         | 2.4.1   | io.fintrospect.formats.json.Play                                                                                                                                                      |
 | (Scala XML)  | application/xml  | Scala         | -       | io.fintrospect.formats.Xml                                                                                                                                                            |
 | Spray        | application/json | Scala         | 1.3.X   | io.fintrospect.formats.json.Spray                                                                                                                                                     |
-| (XHtml)      | application/html | Scala         | -       | io.fintrospect.formats.XHrml
+| (XHtml)      | application/html | Scala         | -       | io.fintrospect.formats.XHtml
 
   Note that to avoid dependency bloat, Fintrospect only ships with the above JSON library bindings - you'll need to bring in the
   library of your choice as an additional dependency.
 
-  The simplest (least concise) way to invoke a Response builder is along the lines of:
+  The simplest (least concise) way to invoke a "Content-type" ResponseBuilder is along the lines of:
   */
-  val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(PlainText.ResponseBuilder.HttpResponse(Status.Ok).withContent("some text"))
+  val simplestNonCase: Future[Response] = ResponseBuilder.toFuture(
+    ResponseBuilder.HttpResponse(ContentTypes.APPLICATION_JSON).withCode(Status.Ok).withContent("some text").build()
+  )
+
+  val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(
+    PlainText.ResponseBuilder.HttpResponse(Status.Ok).withContent("some text")
+  )
 
   /*
-  ... although with a little implicit magic (boo-hiss!), you can reduce this to:
+  ... although with a little implicit magic (boo-hiss!), you can reduce this to the rather more concise:
   */
+
   import io.fintrospect.formats.PlainText.ResponseBuilder._
 
   val responseViaImplicits: Future[Response] = Status.Ok("some text")

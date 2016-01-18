@@ -5,7 +5,7 @@ import java.math.BigInteger
 import com.google.gson._
 
 /**
-  * GSON JSON support.
+  * GSON JSON support (application/json content type)
   */
 object Gson extends JsonLibrary[JsonElement, JsonElement] {
 

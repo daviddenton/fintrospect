@@ -2,10 +2,15 @@ package io.fintrospect.formats
 
 import io.fintrospect.ContentTypes
 
-case class PlainTextValue(value: String)
 
+/**
+  * Native (string-based) Text support (text/plain content type)
+  */
 object PlainText {
-  object ResponseBuilder extends ResponseBuilderMethods[PlainTextValue] {
-    override def HttpResponse() = new ResponseBuilder[PlainTextValue](_.value, PlainTextValue, e => PlainTextValue(e.getMessage), ContentTypes.TEXT_PLAIN)
+
+  case class $ private[PlainText](value: String)
+
+  object ResponseBuilder extends ResponseBuilderMethods[$] {
+    def HttpResponse(): ResponseBuilder[$] = new ResponseBuilder[$](_.value, $, e => $(e.getMessage), ContentTypes.TEXT_PLAIN)
   }
 }

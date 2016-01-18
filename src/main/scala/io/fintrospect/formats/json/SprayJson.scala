@@ -6,7 +6,7 @@ import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 /**
- * Argo JSON support.
+ * Argo JSON support (application/json content type)
  */
 object SprayJson extends JsonLibrary[JsValue, JsValue] {
 

@@ -72,12 +72,20 @@ class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
     this
   }
 
-  def build: Response = response
+  override def build(): Response = response
 
-  def toFuture: Future[Response] = Future.value(build)
+  def toFuture: Future[Response] = Future.value(build())
 }
 
+/**
+  * Generic ResponseBuilder support
+  */
 object ResponseBuilder {
+
+  private case class HIDDEN(value: String)
+
+  def HttpResponse(contentType: ContentType): ResponseBuilder[_] = new ResponseBuilder[HIDDEN](_.value, HIDDEN, e => HIDDEN(e.getMessage), contentType)
+
   implicit def toFuture(builder: ResponseBuilder[_]): Future[Response] = builder.toFuture
 
   implicit def toFuture(response: Response): Future[Response] = Future.value(response)

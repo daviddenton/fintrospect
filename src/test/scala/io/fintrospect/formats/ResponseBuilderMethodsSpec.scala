@@ -85,7 +85,7 @@ abstract class ResponseBuilderMethodsSpec[T](bldr: ResponseBuilderMethods[T]) ex
     }
 
     it("errors - message") {
-      statusAndContentFrom(bldr.HttpResponse(BadGateway).withErrorMessage(message).build) shouldEqual(BadGateway, expectedErrorContent)
+      statusAndContentFrom(bldr.HttpResponse(BadGateway).withErrorMessage(message).build()) shouldEqual(BadGateway, expectedErrorContent)
       statusAndContentFrom(bldr.Error(NotFound, message)) shouldEqual(NotFound, expectedErrorContent)
       statusAndContentFrom(NotFound(message)) shouldEqual(NotFound, expectedErrorContent)
     }
