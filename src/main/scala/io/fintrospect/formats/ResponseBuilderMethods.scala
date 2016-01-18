@@ -36,7 +36,7 @@ trait ResponseBuilderMethods[T] {
    */
   implicit def toResponseBuilder(status: Status): ResponseBuilderConfig = new ResponseBuilderConfig(status)
 
-  implicit def toResponse(builder: ResponseBuilder[T]): Response = builder.build
+  implicit def toResponse(builder: ResponseBuilder[T]): Response = builder.build()
 
   def HttpResponse(): ResponseBuilder[T]
 
@@ -64,5 +64,5 @@ trait ResponseBuilderMethods[T] {
 
   def Error(status: Status, message: String) = toResponseBuilder(status)().withErrorMessage(message)
 
-  def Error(status: Status, error: Throwable) = toResponseBuilder(status)().withError(error).build
+  def Error(status: Status, error: Throwable) = toResponseBuilder(status)().withError(error).build()
 }

@@ -8,7 +8,7 @@ import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 import play.api.libs.json.{Json, _}
 
 /**
- * Play JSON support.
+ * Play JSON support (application/json content type)
  */
 object Play extends JsonLibrary[JsValue, JsValue] {
 

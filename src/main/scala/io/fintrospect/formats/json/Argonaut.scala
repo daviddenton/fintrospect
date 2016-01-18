@@ -9,7 +9,7 @@ import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecodi
 import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 
 /**
- * Argonaut JSON support.
+ * Argonaut JSON support (application/json content type)
  */
 object Argonaut extends JsonLibrary[Json, Json] {
 

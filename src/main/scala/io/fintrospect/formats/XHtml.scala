@@ -4,6 +4,9 @@ import io.fintrospect.ContentTypes
 
 import scala.xml.Elem
 
+/**
+  * Native (Elem-based) XHtml support (application/xhtml+xml content type)
+  */
 object XHtml {
 
   object ResponseBuilder extends ResponseBuilderMethods[Elem] {

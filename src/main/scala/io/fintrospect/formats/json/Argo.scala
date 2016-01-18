@@ -7,7 +7,7 @@ import argo.jdom.JsonNodeFactories._
 import argo.jdom._
 
 /**
- * Argo JSON support.
+ * Argo JSON support (application/json content type)
  */
 object Argo extends JsonLibrary[JsonRootNode, JsonNode] {
   object JsonFormat extends JsonFormat[JsonRootNode, JsonNode] {

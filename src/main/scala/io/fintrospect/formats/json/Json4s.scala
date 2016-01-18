@@ -8,7 +8,7 @@ import org.json4s.Extraction.decompose
 import org.json4s._
 
 /**
- * Json4S support
+ * Json4S support (application/json content type)
  */
 object Json4s {
 
