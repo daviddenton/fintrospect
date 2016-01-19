@@ -19,6 +19,7 @@ the HTTP API of a downstream servers (for a fake) to be created with no effort, 
 - A set of HTTP Response builders with pluggable extension points for custom formats; currently supported are:
   - Argo JSON (3.12 compatible)
   - Argonaut JSON (v6.0.X compatible)
+  - Circe JSON (v0.2.X compatible)
   - GSON (v2.5 compatible)
   - Json4s (v3.2.X compatible) Native & Jackson
   - Play JSON (v2.4.X compatible)
