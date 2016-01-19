@@ -229,6 +229,7 @@ object Guide {
 |--------------|------------------|---------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Argo         | application/json | Java          | 3.12    | io.fintrospect.formats.json.Argo                                                                                                                                                      |
 | Argonaut     | application/json | Scala         | 6.0.X   | io.fintrospect.formats.json.Argonaut                                                                                                                                                  |
+| Circe        | application/json | Scala         | 0.2.X   | io.fintrospect.formats.json.Circe                                                                                                                                                  |
 | GSON         | application/json | Scala         | 2.5     | io.fintrospect.formats.json.Gson                                                                                                                                                      |
 | (Html)       | text/html        | Scala         | -       | io.fintrospect.formats.Html
 | Json4S       | application/json | Scala         | 3.2.X   | io.fintrospect.formats.json.Json.Native
