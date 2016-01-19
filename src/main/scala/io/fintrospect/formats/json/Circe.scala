@@ -8,6 +8,11 @@ import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecodi
 import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 import io.circe._, io.circe.generic.auto._, io.circe.jawn._, io.circe.syntax._
 import cats.data.Xor
+import io.circe._, io.circe.generic.auto._, io.circe.parse._, io.circe.syntax._
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parse._
+import io.circe.syntax._
 
 /**
  * Circe JSON support (application/json content type)
@@ -43,5 +48,10 @@ object Circe extends JsonLibrary[Json, Json] {
     override def boolean(value: Boolean) = Json.bool(value)
 
     override def nullNode() = Json.empty
+
+    def encode[T](in: T)(implicit e: Encoder[T]) = e(in)
+
+    def decode[T](in: Json)(implicit d: Decoder[T]) = d.decodeJson(in).getOrElse(throw new InvalidJsonForDecoding)
+
   }
 }
