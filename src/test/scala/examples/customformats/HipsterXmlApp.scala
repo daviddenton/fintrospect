@@ -27,7 +27,7 @@ object HipsterXmlApp extends App {
     .body(Body(xmlAsABody))
     .at(Get) / "view" / Path(HipsterBeardStyle) bindTo aService
 
-  val module = ModuleSpec(Root / "xml", HipsterXmlModuleRenderer).withRoute(route)
+  val module = FintrospectModule(Root / "xml", HipsterXmlModuleRenderer).withRoute(route)
 
   Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(module.toService))
 

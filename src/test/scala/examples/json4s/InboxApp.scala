@@ -18,7 +18,7 @@ object InboxApp extends App {
 
   private val emails = new InMemoryEmails()
 
-  private val inboxModule = ModuleSpec(Root / "inbox", Swagger2dot0Json(ApiInfo("Inbox Example", "1.0")))
+  private val inboxModule = FintrospectModule(Root / "inbox", Swagger2dot0Json(ApiInfo("Inbox Example", "1.0")))
     .withRoute(new AddMessage(emails).route)
     .withRoute(new EmailList(emails).route)
     .withRoute(new UserList(emails).route)
