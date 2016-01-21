@@ -7,7 +7,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.util.Future
-import io.fintrospect.ModuleSpec
+import io.fintrospect.{FintrospectModule, ModuleSpec}
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 
