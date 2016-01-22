@@ -10,7 +10,7 @@ import scala.language.implicitConversions
 /**
  * Convenience methods for building Http Responses
  */
-trait ResponseBuilderMethods[T] {
+trait AbstractResponseBuilder[T] {
 
   /**
    * Intermediate object used when constructing a ResponseBuilder from a Status object (via implicit conversion)

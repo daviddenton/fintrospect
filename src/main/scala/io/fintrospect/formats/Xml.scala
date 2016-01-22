@@ -8,7 +8,7 @@ import scala.xml.Elem
   * Native (Elem-based) Xml support (application/xml content type)
   */
 object Xml {
-  object ResponseBuilder extends ResponseBuilderMethods[Elem] {
+  object ResponseBuilder extends AbstractResponseBuilder[Elem] {
 
     private def format(node: Elem): String = node.toString()
 

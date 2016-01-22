@@ -1,14 +1,14 @@
 package examples.customformats
 
 import io.fintrospect.ContentTypes
-import io.fintrospect.formats.{ResponseBuilder, ResponseBuilderMethods}
+import io.fintrospect.formats.{ResponseBuilder, AbstractResponseBuilder}
 
 object HipsterXml {
 
   /**
     * Custom response builder for some imaginary XML format.
     */
-  object ResponseBuilder extends ResponseBuilderMethods[HipsterXmlFormat] {
+  object ResponseBuilder extends AbstractResponseBuilder[HipsterXmlFormat] {
     private def customToString(format: HipsterXmlFormat): String = format.asXmlMessage
 
     private def errorMessageToString(errorMessage: String): HipsterXmlFormat = HipsterXmlFormat(s"<message>oh noes!, an error: $errorMessage</message>")

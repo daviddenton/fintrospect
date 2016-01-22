@@ -1,7 +1,7 @@
 package io.fintrospect.formats.json
 
 import io.fintrospect.ContentTypes
-import io.fintrospect.formats.{ResponseBuilder, ResponseBuilderMethods}
+import io.fintrospect.formats.{ResponseBuilder, AbstractResponseBuilder}
 
 /**
  * Defines a supported JSON library format (e.g. Argo or Json4s).
@@ -18,7 +18,7 @@ trait JsonLibrary[R, N] {
   /**
    * Use this to create JSON-format Responses
    */
-  object ResponseBuilder extends ResponseBuilderMethods[R] {
+  object ResponseBuilder extends AbstractResponseBuilder[R] {
     private def formatJson(node: R): String = JsonFormat.pretty(node)
 
     private def formatErrorMessage(errorMessage: String): R = JsonFormat.obj("message" -> JsonFormat.string(errorMessage))
