@@ -9,7 +9,7 @@ import io.fintrospect.util.HttpRequestResponseUtil._
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-abstract class ResponseBuilderMethodsSpec[T](bldr: AbstractResponseBuilder[T]) extends FunSpec with ShouldMatchers {
+abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) extends FunSpec with ShouldMatchers {
 
   import bldr._
 
