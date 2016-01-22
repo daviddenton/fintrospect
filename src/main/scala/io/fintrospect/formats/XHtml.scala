@@ -9,7 +9,7 @@ import scala.xml.Elem
   */
 object XHtml {
 
-  object ResponseBuilder extends ResponseBuilderMethods[Elem] {
+  object ResponseBuilder extends AbstractResponseBuilder[Elem] {
 
     private def format(node: Elem): String = node.toString()
 
