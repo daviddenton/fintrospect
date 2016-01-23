@@ -9,7 +9,7 @@ import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.ModuleSpec._
 import io.fintrospect.Routing.fromBinding
-import io.fintrospect.Types.ServiceBinding
+import io.fintrospect.Types.{FFilter, ServiceBinding}
 import io.fintrospect.parameters.{NoSecurity, Parameter, Security}
 import io.fintrospect.renderers.ModuleRenderer
 
@@ -41,15 +41,14 @@ object ModuleSpec {
     * Create a module using the given base-path, renderer.
     */
   def apply(basePath: Path, moduleRenderer: ModuleRenderer): ModuleSpec[Response] = {
-    val filter: Filter[Request, Response, Request, Response] = Filter.mk[Request, Response, Request, Response]((r, svc) => svc(r))
-    new ModuleSpec[Response](basePath, moduleRenderer, identity, Nil, NoSecurity, filter)
+    new ModuleSpec[Response](basePath, moduleRenderer, identity, Nil, NoSecurity, Filter.identity)
   }
 
   /**
     * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to
     * this module APART from the documentation route).
     */
-  def apply[RS](basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, Request, RS]): ModuleSpec[RS] = {
+  def apply[RS](basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: FFilter[RS]): ModuleSpec[RS] = {
     new ModuleSpec[RS](basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)
   }
 
@@ -78,7 +77,7 @@ class ModuleSpec[RS] private(basePath: Path,
                              descriptionRoutePath: ModifyPath,
                              routes: Seq[ServerRoute[RS]],
                              security: Security,
-                             moduleFilter: Filter[Request, Response, Request, RS]) {
+                             moduleFilter: FFilter[RS]) {
   private def totalBinding: ServiceBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
@@ -108,8 +107,7 @@ class ModuleSpec[RS] private(basePath: Path,
       override def apply(request: Request) = Future.value(moduleRenderer.description(basePath, security, routes))
     })
 
-    val default: Filter[Request, Response, Request, Response] = Filter.identity
-    otherRoutes.orElse(descriptionRoute.toPf(default, basePath)(new Identify(descriptionRoute, basePath)))
+    otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(new Identify(descriptionRoute, basePath)))
   }
 
   /**
