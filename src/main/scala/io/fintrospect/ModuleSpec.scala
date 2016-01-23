@@ -3,32 +3,30 @@ package io.fintrospect
 import com.twitter.finagle.http.Method._
 import com.twitter.finagle.http.Status.{BadRequest, NotFound}
 import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.http.{Response, Method, Request}
+import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.ModuleSpec._
 import io.fintrospect.Routing.fromBinding
+import io.fintrospect.Types.ServiceBinding
 import io.fintrospect.parameters.{NoSecurity, Parameter, Security}
 import io.fintrospect.renderers.ModuleRenderer
 
 import scala.PartialFunction._
 
-
 object ModuleSpec {
   type ModifyPath = Path => Path
-
-  private type Binding = PartialFunction[(Method, Path), Service[Request, Response]]
 
   /**
     * Combines many modules
     */
-  def combine(modules: ModuleSpec[_]*): Binding = modules.map(_.totalBinding).reduce(_.orElse(_))
+  def combine(modules: ModuleSpec[_]*): ServiceBinding = modules.map(_.totalBinding).reduce(_.orElse(_))
 
   /**
     * Convert a Binding to a Finagle Service
     */
-  def toService(binding: Binding): Service[Request, Response] = fromBinding(binding)
+  def toService(binding: ServiceBinding): Service[Request, Response] = fromBinding(binding)
 
   /**
     * Create a module using the given base-path without any Module API Renderering.
@@ -81,7 +79,7 @@ class ModuleSpec[RS] private(basePath: Path,
                              routes: Seq[ServerRoute[RS]],
                              security: Security,
                              moduleFilter: Filter[Request, Response, Request, RS]) {
-  private def totalBinding: PartialFunction[(Method, Path), Service[Request, Response]] = {
+  private def totalBinding: ServiceBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
         val filters = new Identify(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: Nil
@@ -105,7 +103,7 @@ class ModuleSpec[RS] private(basePath: Path,
     new ModuleSpec[RS](basePath, moduleRenderer, newDefaultRoutePath, routes, security, moduleFilter)
   }
 
-  private def withDefault(otherRoutes: PartialFunction[(Method, Path), Service[Request, Response]]) = {
+  private def withDefault(otherRoutes: ServiceBinding) = {
     val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo(() => new Service[Request, Response] {
       override def apply(request: Request) = Future.value(moduleRenderer.description(basePath, security, routes))
     })
@@ -127,7 +125,7 @@ class ModuleSpec[RS] private(basePath: Path,
   /**
     * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
     */
-  def combine(that: ModuleSpec[_]): Binding = totalBinding.orElse(that.totalBinding)
+  def combine(that: ModuleSpec[_]): ServiceBinding = totalBinding.orElse(that.totalBinding)
 
   /**
     * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.
