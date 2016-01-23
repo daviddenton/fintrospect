@@ -38,7 +38,7 @@ object LibraryApp extends App {
   val statusModule = ModuleSpec(Root / "internal", SimpleJson())
     .withRoute(new Ping().route)
 
-  Http.serve(":8080", globalCorsFilter.andThen(ModuleSpec.toService(libraryModule combine statusModule)))
+  Http.serve(":8080", globalCorsFilter.andThen(Module.toService(libraryModule combine statusModule)))
 
   println("See the service description at: http://localhost:8080/library")
 

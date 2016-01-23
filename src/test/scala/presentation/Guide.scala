@@ -9,12 +9,12 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
+import io.fintrospect._
 import io.fintrospect.formats.{Html, ResponseBuilder, Xml}
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.SiteMapModuleRenderer
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import io.fintrospect.templating.{RenderMustacheView, View}
-import io.fintrospect.{ContentTypes, ModuleSpec, RouteClient, RouteSpec}
 
 import scala.language.reflectiveCalls
 
@@ -167,7 +167,7 @@ object Guide {
   /*
   Modules with different root contexts can also be combined with one another and then converted to a Service:
    */
-  ModuleSpec.toService(ModuleSpec(Root / "a").combine(ModuleSpec(Root / "b")))
+  Module.toService(ModuleSpec(Root / "a").combine(ModuleSpec(Root / "b")))
 
   /*
   ####Self-describing Module APIs

@@ -8,7 +8,6 @@ import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.ModuleSpec._
-import io.fintrospect.Routing.fromBinding
 import io.fintrospect.Types.{FFilter, ServiceBinding}
 import io.fintrospect.parameters.{NoSecurity, Parameter, Security}
 import io.fintrospect.renderers.ModuleRenderer
@@ -17,16 +16,6 @@ import scala.PartialFunction._
 
 object ModuleSpec {
   type ModifyPath = Path => Path
-
-  /**
-    * Combines many modules
-    */
-  def combine(modules: ModuleSpec[_]*): ServiceBinding = modules.map(_.totalBinding).reduce(_.orElse(_))
-
-  /**
-    * Convert a Binding to a Finagle Service
-    */
-  def toService(binding: ServiceBinding): Service[Request, Response] = fromBinding(binding)
 
   /**
     * Create a module using the given base-path without any Module API Renderering.
@@ -53,6 +42,7 @@ object ModuleSpec {
   }
 }
 
+
 /**
   * Self-describing module builder (uses the immutable builder pattern).
   */
@@ -61,8 +51,8 @@ class ModuleSpec[RS] private(basePath: Path,
                              descriptionRoutePath: ModifyPath,
                              routes: Seq[ServerRoute[RS]],
                              security: Security,
-                             moduleFilter: FFilter[RS]) {
-  private def totalBinding: ServiceBinding = {
+                             moduleFilter: FFilter[RS]) extends Module {
+  override protected def serviceBinding: ServiceBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
         val filters = identify(route) +: security.filter +: validateParams(route) +: Nil
@@ -95,16 +85,6 @@ class ModuleSpec[RS] private(basePath: Path,
     * Attach described Route(s) to the module. Request matching is attempted in the same order as in which this method is called.
     */
   def withRoutes(newRoutes: Iterable[ServerRoute[RS]]*): ModuleSpec[RS] = newRoutes.flatten.foldLeft(this)(_.withRoute(_))
-
-  /**
-    * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
-    */
-  def combine(that: ModuleSpec[_]): ServiceBinding = totalBinding.orElse(that.totalBinding)
-
-  /**
-    * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.
-    */
-  def toService: Service[Request, Response] = ModuleSpec.toService(totalBinding)
 
   private def withDefault(otherRoutes: ServiceBinding) = {
     val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo {

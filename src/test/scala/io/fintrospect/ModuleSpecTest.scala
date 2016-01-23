@@ -7,7 +7,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Await._
 import com.twitter.util.{Await, Future}
-import io.fintrospect.ModuleSpec._
+import io.fintrospect.Module._
 import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.formats.json.Argo
@@ -89,7 +89,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
         def module(path: String) = {
           ModuleSpec(Root / path).withRoute(RouteSpec("").at(Get) / "echo" bindTo (() => Service.mk[Request, Response] {_ => Ok(path)}))
         }
-        val totalService = ModuleSpec.toService(combine(module("rita"), module("bob"), module("sue")))
+        val totalService = toService(combine(module("rita"), module("bob"), module("sue")))
 
         statusAndContentFrom(result(totalService(Request("/rita/echo")))) shouldEqual(Status.Ok, "rita")
         statusAndContentFrom(result(totalService(Request("/bob/echo")))) shouldEqual(Status.Ok, "bob")
