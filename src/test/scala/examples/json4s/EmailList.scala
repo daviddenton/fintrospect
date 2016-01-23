@@ -16,9 +16,7 @@ class EmailList(emails: Emails) {
 
   private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", 250)
 
-  private def forUser(emailAddress: EmailAddress) = new Service[Request, Response] {
-    override def apply(request: Request) = Ok(encode(emails.forUser(emailAddress)))
-  }
+  private def forUser(emailAddress: EmailAddress) = Service.mk[Request, Response] { _ => Ok(encode(emails.forUser(emailAddress))) }
 
   val route = RouteSpec("list the inbox contents")
     .returning(ResponseSpec.json(Ok -> "list of emails for a user", encode(Seq(exampleEmail)), JsonFormat))

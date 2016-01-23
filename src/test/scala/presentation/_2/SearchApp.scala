@@ -1,11 +1,11 @@
 package presentation._2
 
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.{Response, Request}
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder._
@@ -14,9 +14,7 @@ import io.fintrospect.{ModuleSpec, RouteSpec}
 import presentation.Books
 
 class SearchApp(books: Books) {
-  def search() = new Service[Request, Response] {
-    override def apply(request: Request) = Ok(books.titles().toString())
-  }
+  def search() = Service.mk[Request, Response] { _ => Ok(books.titles().toString()) }
 
   private val apiInfo = ApiInfo("search some books", "1.0", Option("an api for searching our book collection"))
 
@@ -35,5 +33,5 @@ object Environment extends App {
 }
 
 /**
- * showcase: api and retrieve list of titles
- */
+  * showcase: api and retrieve list of titles
+  */

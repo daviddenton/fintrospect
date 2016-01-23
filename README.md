@@ -68,8 +68,8 @@ class BookSearch(books: Books) {
   private val titleTerm = FormField.required.string("term", "the part of the title to look for")
   private val form = Body.form(minPages, titleTerm)
 
-  private def search() = new Service[Request, Response] {
-    override def apply(request: Request): Future[Response] = {
+  private def search() = Service.mk[Request, Response] { 
+    request => {
       val requestForm = form.from(request)
       Ok(array(books.search(minPages.from(requestForm).getOrElse(MIN_VALUE),
         maxPages.from(request).getOrElse(MAX_VALUE),

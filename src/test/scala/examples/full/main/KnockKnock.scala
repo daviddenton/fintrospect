@@ -15,8 +15,8 @@ import scala.language.reflectiveCalls
 class KnockKnock(inhabitants: Inhabitants, userDirectory: UserDirectory, entryLogger: EntryLogger) extends ServerRoutes[Response] {
   private val username = Query.required(ParameterSpec[Username]("username", None, StringParamType, s => Username(s), _.value.toString))
 
-  private def userEntry() = new Service[Request, Response] {
-    override def apply(request: Request) = {
+  private def userEntry() = Service.mk[Request, Response] {
+    request =>
       userDirectory.lookup(username <-- request)
         .flatMap {
           case Some(user) =>
@@ -27,7 +27,6 @@ class KnockKnock(inhabitants: Inhabitants, userDirectory: UserDirectory, entryLo
             else BadRequest()
           case None => NotFound()
         }
-    }
   }
 
   add(RouteSpec("User enters the building")

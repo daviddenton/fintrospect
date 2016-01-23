@@ -103,9 +103,9 @@ class ModuleSpec[RS] private(basePath: Path,
   }
 
   private def withDefault(otherRoutes: ServiceBinding) = {
-    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo(() => new Service[Request, Response] {
-      override def apply(request: Request) = Future.value(moduleRenderer.description(basePath, security, routes))
-    })
+    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo {
+      () => Service.mk { r => Future.value(moduleRenderer.description(basePath, security, routes)) }
+    }
 
     otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(new Identify(descriptionRoute, basePath)))
   }

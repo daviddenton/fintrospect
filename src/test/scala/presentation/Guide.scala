@@ -4,8 +4,9 @@ import java.net.URL
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Method.Get
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Method, Request, Response, Status}
+import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
 import io.fintrospect.formats.{Html, ResponseBuilder, Xml}
@@ -84,8 +85,8 @@ object Guide {
    */
   RouteSpec("add user", "Insert a new employee, failing if it already exists")
     .body(Body.form(FormField.required.string("name"), FormField.required.localDate("dateOfBirth")))
-    .returning(Status.Created -> "Employee was created")
-    .returning(Status.Conflict -> "Employee already exists")
+    .returning(Created -> "Employee was created")
+    .returning(Conflict -> "Employee already exists")
     .at(Method.Post) / "user" / Path.integer("departmentId")
 
   /*
@@ -138,15 +139,14 @@ object Guide {
   val holidays = Query.required.*.localDate("datesTakenAsHoliday")
   val includeManagement = Header.optional.boolean("includeManagement")
 
-  def findEmployeesOnHoliday(departmentId: Integer) = new Service[Request, Response] {
-    override def apply(request: Request): Future[Response] = {
+  def findEmployeesOnHoliday(departmentId: Integer) = Service.mk[Request, Response] {
+    request =>
       val holidayDates: Seq[LocalDate] = holidays <-- request
       val includeManagementFlag: Option[Boolean] = includeManagement <-- request
-      val response = Response(Status.Ok)
+      val response = Response(Ok)
       val baseMsg = s"Everyone from department $departmentId was at work on $holidayDates"
       response.contentString = baseMsg + (if (includeManagementFlag.getOrElse(false)) "" else ", even the management")
       Future.value(response)
-    }
   }
 
   RouteSpec().taking(holidays).taking(includeManagement).at(Method.Get) / "employee" / Path.integer("departmentId") bindTo findEmployeesOnHoliday
@@ -220,7 +220,7 @@ object Guide {
   simplest way is by using a ResponseBuilder object directly...
   */
   ResponseBuilder.toFuture(
-    ResponseBuilder.HttpResponse(ContentTypes.APPLICATION_JSON).withCode(Status.Ok).withContent("some text").build()
+    ResponseBuilder.HttpResponse(ContentTypes.APPLICATION_JSON).withCode(Ok).withContent("some text").build()
   )
 
   /*
@@ -228,7 +228,7 @@ object Guide {
   handling content types like JSON or XML in a set of popular OSS libraries. These live in the io.fintrospect.formats package. Currently
   supported formats are in the table below:
 
-<table border="1px">
+  <table border="1px">
     <tr>
         <td>Library</td>
         <td>Content-Type</td>
@@ -307,7 +307,7 @@ object Guide {
         <td>-</td>
         <td>io.fintrospect.formats.Xml</td>
     </tr>
-</table>
+  </table>
 
   Note that to avoid dependency bloat, Fintrospect only ships with the above JSON library bindings - you'll need to bring in the
   library of your choice as an additional dependency.
@@ -315,15 +315,16 @@ object Guide {
   The simplest (least concise) way to invoke an auto-marshalling (ie. typesafe) ResponseBuilder is along the lines of:
   */
   val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(
-    Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashings of wonderful</xml>)
+    Xml.ResponseBuilder.HttpResponse(Ok).withContent(<xml>
+      lashings and lashings of wonderful
+    </xml>)
   )
 
   /*
   ... although with tiny bit of implicit magic (boo-hiss!), you can reduce this to the rather more concise:
   */
 
-  import Status.Ok
-  import io.fintrospect.formats.Xml.ResponseBuilder._
+  import Xml.ResponseBuilder._
 
   val responseViaImplicits: Future[Response] = Ok(<xml>lashings and lashings of wonderful</xml>)
 
@@ -335,9 +336,7 @@ object Guide {
     */
   case class ViewMessage(value: String) extends View
 
-  def showMessage() = new Service[Request, View]() {
-    override def apply(request: Request) = Future.value(ViewMessage("some value to be displayed"))
-  }
+  def showMessage() = Service.mk[Request, View] { _ => Future.value(ViewMessage("some value to be displayed")) }
 
   val webModule: ModuleSpec[View] = ModuleSpec[View](Root / "web",
     new SiteMapModuleRenderer(new URL("http://root.com")),
@@ -346,7 +345,7 @@ object Guide {
 
   /*
   Similarly to how the ResponseBuilders work, no 3rd-party dependencies are bundled with Fintrospect - simply import the extra SBT dependencies as required:
-<table border="1px">
+  <table border="1px">
   <tr>
       <td>Library</td>
       <td>Template filename suffix</td>
@@ -365,7 +364,7 @@ object Guide {
       <td>"com.github.spullara.mustache.java" % "compiler" % "0.9.1"<br/>"com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"</td>
       <td>io.fintrospect.templating.RenderMustacheView</td>
   </tr>
-</table>
+  </table>
   *
   */
 
