@@ -50,20 +50,14 @@ object Argonaut extends JsonLibrary[Json, Json] {
     /**
      * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
      */
-    def bodySpec[R](description: Option[String] = None)
-                   (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-      BodySpec[R](description, APPLICATION_JSON,
-        s => decode[R](parse(s))(decodec),
-        (u: R) => compact(encode(u)(encodec)))
+    def bodySpec[R](description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
+      BodySpec[R](description, APPLICATION_JSON, s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
 
     /**
      * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
      */
-    def parameterSpec[R](name: String, description: Option[String] = None)
-                    (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-      ParameterSpec[R](name, description, ObjectParamType,
-        s => decode[R](parse(s))(decodec),
-        (u: R) => compact(encode(u)(encodec)))
+    def parameterSpec[R](name: String, description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
+      ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
   }
 
 }

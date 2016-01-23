@@ -5,7 +5,7 @@ import java.math.BigInteger
 import io.circe._
 import io.fintrospect.ContentTypes._
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{ObjectParamType, ParameterSpec, BodySpec}
+import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 
 /**
  * Circe JSON support (application/json content type)
@@ -49,19 +49,13 @@ object Circe extends JsonLibrary[Json, Json] {
     /**
      * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
      */
-    def bodySpec[R](description: Option[String] = None)
-                   (implicit encodec: Encoder[R], decodec: Decoder[R]) =
-      BodySpec[R](description, APPLICATION_JSON,
-        s => decode[R](parse(s))(decodec),
-        (u: R) => compact(encode(u)(encodec)))
+    def bodySpec[R](description: Option[String] = None)(implicit encodec: Encoder[R], decodec: Decoder[R]) =
+      BodySpec[R](description, APPLICATION_JSON, s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
 
     /**
      * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
      */
-    def parameterSpec[R](name: String, description: Option[String] = None)
-                        (implicit encodec: Encoder[R], decodec: Decoder[R]) =
-      ParameterSpec[R](name, description, ObjectParamType,
-        s => decode[R](parse(s))(decodec),
-        (u: R) => compact(encode(u)(encodec)))
+    def parameterSpec[R](name: String, description: Option[String] = None)(implicit encodec: Encoder[R], decodec: Decoder[R]) =
+      ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
   }
 }
