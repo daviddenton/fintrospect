@@ -22,7 +22,7 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
   private val entryLogger = new EntryLogger(s"localhost:$entryLoggerPort", clock)
 
   // use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
-  // to all routes in the module
+  // to all routes in the system
   private val globalFilter = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(CatchAll)
 
   private val inhabitants = new Inhabitants
