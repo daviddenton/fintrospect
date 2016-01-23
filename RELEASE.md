@@ -6,7 +6,7 @@ The main API is fairly stable now, but expect some amount of breaking changes ar
 - Breaking change: Moved non-JSON ResponseBuilder classes to be consistent with other codecs. E.g. ```io.fintrospect.formats.xml.XmlResponseBuilder``` moves to ```io.fintrospect.formats.Xml.ResponseBuilder```.
 - Deprecation of ```FintrospectModule``` to be replaced with ```ModuleSpec``` for consistency.
 - Added support Circe JSON library out of the box. See ```Circe``` to get the Format util and ResponseBuilder for this format.
-- Added Mustache templating and SiteMapModuleRenderer for XML descriptions of web modules.
+- Added templating support for Mustache and Handlebars, and SiteMapModuleRenderer for XML descriptions of web modules.
 - Added parenthesis for ```ResponseBuilder``` ```build()``` method for consistency.
 - Rename of ```ResponseBuilderMethods``` trait to ```AbstractResponseBuilder```. Still terrible.. :(
 - New documentation (and hopefully site)!
