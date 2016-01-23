@@ -1,8 +1,8 @@
 package io.fintrospect
 
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.path.{->, /, Path}
 import com.twitter.finagle.http.{Method, Request, Response}
-import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.IncompletePath._
 import io.fintrospect.ModuleSpec.ModifyPath
 import io.fintrospect.ServerRoute.Filt
@@ -135,7 +135,7 @@ class IncompletePath5[A, B, C, D, E](val routeSpec: RouteSpec, val method: Metho
   def /[F](pp6: PathParameter[F]): IncompletePath6[A, B, C, D, E, F] = new IncompletePath6(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6)
 
   def bindTo[RS](fn: (A, B, C, D, E) => Service[Request, RS]): ServerRoute[RS] = new ServerRoute[RS](routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5) {
-    override def toPf(filter: Filt[RS], basePath: Path): (Filter[Request, Response, Request, Response]) => PartialFunction[(Method, Path), Service[Request, Response]] = {
+    override def toPf(filter: Filt[RS], basePath: Path) = {
       filtered: Filt[Response] => {
         case actualMethod -> path / pp1(s1) / pp2(s2) / pp3(s3) / pp4(s4) / pp5(s5) if matches(actualMethod, basePath, path) => filtered.andThen(filter).andThen(fn(s1, s2, s3, s4, s5))
       }
@@ -158,7 +158,7 @@ class IncompletePath6[A, B, C, D, E, F](val routeSpec: RouteSpec, val method: Me
   def /[G](pp7: PathParameter[G]): IncompletePath7[A, B, C, D, E, F, G] = new IncompletePath7(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6, pp7)
 
   def bindTo[RS](fn: (A, B, C, D, E, F) => Service[Request, RS]): ServerRoute[RS] = new ServerRoute[RS](routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6) {
-    override def toPf(filter: Filt[RS], basePath: Path): (Filter[Request, Response, Request, Response]) => PartialFunction[(Method, Path), Service[Request, Response]] = {
+    override def toPf(filter: Filt[RS], basePath: Path) = {
       filtered: Filt[Response] => {
         case actualMethod -> path / pp1(s1) / pp2(s2) / pp3(s3) / pp4(s4) / pp5(s5) / pp6(s6) if matches(actualMethod, basePath, path) => filtered.andThen(filter).andThen(fn(s1, s2, s3, s4, s5, s6))
       }
@@ -178,7 +178,7 @@ class IncompletePath7[A, B, C, D, E, F, G](val routeSpec: RouteSpec, val method:
                                            pp7: PathParameter[G]
                                           ) extends IncompletePath {
   def bindTo[RS](fn: (A, B, C, D, E, F, G) => Service[Request, RS]): ServerRoute[RS] = new ServerRoute[RS](routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6, pp7) {
-    override def toPf(filter: Filt[RS], basePath: Path): (Filter[Request, Response, Request, Response]) => PartialFunction[(Method, Path), Service[Request, Response]] = {
+    override def toPf(filter: Filt[RS], basePath: Path) = {
       filtered: Filt[Response] => {
         case actualMethod -> path / pp1(s1) / pp2(s2) / pp3(s3) / pp4(s4) / pp5(s5) / pp6(s6) / pp7(s7) if matches(actualMethod, basePath, path) => filtered.andThen(filter).andThen(fn(s1, s2, s3, s4, s5, s6, s7))
       }

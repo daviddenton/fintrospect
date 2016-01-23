@@ -62,7 +62,7 @@ object ModuleSpec {
     }
   }
 
-  private class Identify2(route: ServerRoute[_], basePath: Path) extends SimpleFilter[Request, Response]() {
+  private class Identify(route: ServerRoute[_], basePath: Path) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
       val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
       request.headerMap.set(IDENTIFY_SVC_HEADER, request.method + ":" + url)
@@ -84,7 +84,7 @@ class ModuleSpec[RS] private(basePath: Path,
   private def totalBinding: PartialFunction[(Method, Path), Service[Request, Response]] = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
-        val filters = new Identify2(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: Nil
+        val filters = new Identify(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: Nil
         currentBinding.orElse(route.toPf(moduleFilter, basePath)(filters.reduce(_.andThen(_))))
     })
   }
@@ -111,7 +111,7 @@ class ModuleSpec[RS] private(basePath: Path,
     })
 
     val default: Filter[Request, Response, Request, Response] = Filter.identity
-    otherRoutes.orElse(descriptionRoute.toPf(default, basePath)(new Identify2(descriptionRoute, basePath)))
+    otherRoutes.orElse(descriptionRoute.toPf(default, basePath)(new Identify(descriptionRoute, basePath)))
   }
 
   /**
