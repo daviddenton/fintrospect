@@ -339,7 +339,7 @@ object Guide {
     override def apply(request: Request) = Future.value(ViewMessage("some value to be displayed"))
   }
 
-  val webModule: ModuleSpec[View] = ModuleSpec(Root / "web",
+  val webModule: ModuleSpec[View] = ModuleSpec[View](Root / "web",
     new SiteMapModuleRenderer(new URL("http://root.com")),
     new RenderMustacheView(Html.ResponseBuilder))
     .withRoute(RouteSpec().at(Get) / "message" bindTo showMessage)

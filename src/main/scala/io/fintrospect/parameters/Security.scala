@@ -4,6 +4,7 @@ import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
+import io.fintrospect.Types._
 import io.fintrospect.parameters.ApiKey.ValidateKey
 
 import scala.util.{Failure, Success, Try}
@@ -12,7 +13,7 @@ import scala.util.{Failure, Success, Try}
   * Endpoint security. Provides filter to be applied to endpoints for all requests.
   */
 sealed trait Security {
-  val filter: Filter[Request, Response, Request, Response]
+  val filter: FFilter[Response]
 }
 
 /**

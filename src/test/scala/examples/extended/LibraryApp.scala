@@ -28,14 +28,14 @@ object LibraryApp extends App {
   // to all routes in the module
   val globalCorsFilter = new HttpFilter(Cors.UnsafePermissivePolicy)
 
-  val libraryModule = FintrospectModule(Root / "library", renderer)
+  val libraryModule = ModuleSpec(Root / "library", renderer)
     .withRoute(new BookAdd(books).route)
     .withRoute(new BookCollection(books).route)
     .withRoute(new BookLookup(books).route)
     .withRoute(new BookLengthSearch(books).route)
     .withRoute(new BookTermSearch(books).route)
 
-  val statusModule = FintrospectModule(Root / "internal", SimpleJson())
+  val statusModule = ModuleSpec(Root / "internal", SimpleJson())
     .withRoute(new Ping().route)
 
   Http.serve(":8080", globalCorsFilter.andThen(ModuleSpec.toService(libraryModule combine statusModule)))

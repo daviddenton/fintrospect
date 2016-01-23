@@ -10,10 +10,10 @@ import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.util.Future
 import io.fintrospect.ModuleSpec
 import io.fintrospect.formats.Html
+import io.fintrospect.renderers.SiteMapModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
-import io.fintrospect.renderers.SiteMapModuleRenderer
-import io.fintrospect.templating.RenderMustacheView
+import io.fintrospect.templating.{RenderMustacheView, View}
 
 class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: Int, clock: Clock) {
 
@@ -34,7 +34,7 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
     .withRoutes(new KnockKnock(inhabitants, userDirectory, entryLogger))
     .withRoutes(new ByeBye(inhabitants, entryLogger))
 
-  private val webModule = ModuleSpec(Root / "web",
+  private val webModule = ModuleSpec[View](Root / "web",
     new SiteMapModuleRenderer(new URL("http://my.security.system")),
     new RenderMustacheView(Html.ResponseBuilder)
   ).withRoutes(new ShowKnownUsers(userDirectory))
