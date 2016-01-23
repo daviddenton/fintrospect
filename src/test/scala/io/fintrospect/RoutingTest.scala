@@ -6,6 +6,7 @@ import com.twitter.finagle.http.Method._
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.util.Await._
+import io.fintrospect.Aliases.SvcBinding
 import io.fintrospect.util.HttpRequestResponseUtil._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -24,7 +25,7 @@ class RoutingTest extends FunSpec with ShouldMatchers {
   }
 
   private def routingWhichMatches(methodAndPath: (Method, Path)): Routing = {
-    Routing.fromBinding(new PartialFunction[(Method, Path), Service[Request, Response]] {
+    Routing.fromBinding(new SvcBinding {
       override def isDefinedAt(x: (Method, Path)): Boolean = x === methodAndPath
 
       override def apply(v1: (Method, Path)): Service[Request, Response] = Echo()

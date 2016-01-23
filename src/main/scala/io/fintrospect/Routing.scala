@@ -5,6 +5,7 @@ import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http._
 import com.twitter.finagle.http.path.Path
 import com.twitter.util.Future
+import io.fintrospect.Aliases.SvcBinding
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 
 class Routing private(routes: PartialFunction[Request, Service[Request, Response]]) extends Service[Request, Response] {
@@ -20,9 +21,7 @@ class Routing private(routes: PartialFunction[Request, Service[Request, Response
 
 object Routing {
 
-  private[fintrospect] type RouteBinding = PartialFunction[(Method, Path), Service[Request, Response]]
-
-  def fromBinding(binding: RouteBinding) =
+  def fromBinding(binding: SvcBinding) =
     new Routing(
       new PartialFunction[Request, Service[Request, Response]] {
         def apply(request: Request) = {

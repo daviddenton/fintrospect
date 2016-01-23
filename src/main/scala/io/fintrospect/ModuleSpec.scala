@@ -3,9 +3,10 @@ package io.fintrospect
 import com.twitter.finagle.http.Method._
 import com.twitter.finagle.http.Status.{BadRequest, NotFound}
 import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.http.{Response, Method, Request}
-import com.twitter.finagle.{Filter, Service, SimpleFilter}
+import com.twitter.finagle.http.{Method, Request, Response}
+import com.twitter.finagle.{Filter => FinFilter, Service, SimpleFilter}
 import com.twitter.util.Future
+import io.fintrospect.Aliases.{Filter, SvcBinding}
 import io.fintrospect.Headers._
 import io.fintrospect.ModuleSpec._
 import io.fintrospect.Routing.fromBinding
@@ -18,17 +19,15 @@ import scala.PartialFunction._
 object ModuleSpec {
   type ModifyPath = Path => Path
 
-  private type Binding = PartialFunction[(Method, Path), Service[Request, Response]]
-
   /**
     * Combines many modules
     */
-  def combine(modules: ModuleSpec[_]*): Binding = modules.map(_.totalBinding).reduce(_.orElse(_))
+  def combine(modules: ModuleSpec[_]*): SvcBinding = modules.map(_.totalBinding).reduce(_.orElse(_))
 
   /**
     * Convert a Binding to a Finagle Service
     */
-  def toService(binding: Binding): Service[Request, Response] = fromBinding(binding)
+  def toService(binding: SvcBinding): Service[Request, Response] = fromBinding(binding)
 
   /**
     * Create a module using the given base-path without any Module API Renderering.
@@ -43,7 +42,7 @@ object ModuleSpec {
     * Create a module using the given base-path, renderer.
     */
   def apply(basePath: Path, moduleRenderer: ModuleRenderer): ModuleSpec[Response] = {
-    val filter: Filter[Request, Response, Request, Response] = Filter.mk[Request, Response, Request, Response]((r, svc) => svc(r))
+    val filter: Filter[Response] = FinFilter.mk[Request, Response, Request, Response]((r, svc) => svc(r))
     new ModuleSpec[Response](basePath, moduleRenderer, identity, Nil, NoSecurity, filter)
   }
 
@@ -51,7 +50,7 @@ object ModuleSpec {
     * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to
     * this module APART from the documentation route).
     */
-  def apply[RS](basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, Request, RS]): ModuleSpec[RS] = {
+  def apply[RS](basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[RS]): ModuleSpec[RS] = {
     new ModuleSpec[RS](basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)
   }
 
@@ -80,8 +79,8 @@ class ModuleSpec[RS] private(basePath: Path,
                              descriptionRoutePath: ModifyPath,
                              routes: Seq[ServerRoute[RS]],
                              security: Security,
-                             moduleFilter: Filter[Request, Response, Request, RS]) {
-  private def totalBinding: PartialFunction[(Method, Path), Service[Request, Response]] = {
+                             moduleFilter: Filter[RS]) {
+  private def totalBinding: SvcBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
         val filters = new Identify2(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: Nil
@@ -105,13 +104,12 @@ class ModuleSpec[RS] private(basePath: Path,
     new ModuleSpec[RS](basePath, moduleRenderer, newDefaultRoutePath, routes, security, moduleFilter)
   }
 
-  private def withDefault(otherRoutes: PartialFunction[(Method, Path), Service[Request, Response]]) = {
+  private def withDefault(otherRoutes: SvcBinding) = {
     val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo(() => new Service[Request, Response] {
       override def apply(request: Request) = Future.value(moduleRenderer.description(basePath, security, routes))
     })
 
-    val default: Filter[Request, Response, Request, Response] = Filter.identity
-    otherRoutes.orElse(descriptionRoute.toPf(default, basePath)(new Identify2(descriptionRoute, basePath)))
+    otherRoutes.orElse(descriptionRoute.toPf(FinFilter.identity, basePath)(new Identify2(descriptionRoute, basePath)))
   }
 
   /**
@@ -127,7 +125,7 @@ class ModuleSpec[RS] private(basePath: Path,
   /**
     * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
     */
-  def combine(that: ModuleSpec[_]): Binding = totalBinding.orElse(that.totalBinding)
+  def combine(that: ModuleSpec[_]): SvcBinding = totalBinding.orElse(that.totalBinding)
 
   /**
     * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.
