@@ -4,7 +4,7 @@ import com.twitter.finagle.http.Method._
 import com.twitter.finagle.http.Status.{BadRequest, NotFound}
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response}
-import com.twitter.finagle.{Filter, Service, SimpleFilter}
+import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.ModuleSpec._
@@ -51,22 +51,6 @@ object ModuleSpec {
   def apply[RS](basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: FFilter[RS]): ModuleSpec[RS] = {
     new ModuleSpec[RS](basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)
   }
-
-  private class ValidateParams(serverRoute: ServerRoute[_], moduleRenderer: ModuleRenderer) extends SimpleFilter[Request, Response]() {
-    override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-      val missingOrFailed = serverRoute.missingOrFailedFrom(request)
-      if (missingOrFailed.isEmpty) service(request) else Future.value(moduleRenderer.badRequest(missingOrFailed))
-    }
-  }
-
-  private class Identify(route: ServerRoute[_], basePath: Path) extends SimpleFilter[Request, Response]() {
-    override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-      val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
-      request.headerMap.set(IDENTIFY_SVC_HEADER, request.method + ":" + url)
-      service(request)
-    }
-  }
-
 }
 
 /**
@@ -81,7 +65,7 @@ class ModuleSpec[RS] private(basePath: Path,
   private def totalBinding: ServiceBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
-        val filters = new Identify(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: Nil
+        val filters = identify(route) +: security.filter +: validateParams(route) +: Nil
         currentBinding.orElse(route.toPf(moduleFilter, basePath)(filters.reduce(_.andThen(_))))
     })
   }
@@ -100,14 +84,6 @@ class ModuleSpec[RS] private(basePath: Path,
     */
   def withDescriptionPath(newDefaultRoutePath: ModifyPath): ModuleSpec[RS] = {
     new ModuleSpec[RS](basePath, moduleRenderer, newDefaultRoutePath, routes, security, moduleFilter)
-  }
-
-  private def withDefault(otherRoutes: ServiceBinding) = {
-    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo {
-      () => Service.mk { r => Future.value(moduleRenderer.description(basePath, security, routes)) }
-    }
-
-    otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(new Identify(descriptionRoute, basePath)))
   }
 
   /**
@@ -129,4 +105,27 @@ class ModuleSpec[RS] private(basePath: Path,
     * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.
     */
   def toService: Service[Request, Response] = ModuleSpec.toService(totalBinding)
+
+  private def withDefault(otherRoutes: ServiceBinding) = {
+    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo {
+      () => Service.mk { r => Future.value(moduleRenderer.description(basePath, security, routes)) }
+    }
+
+    otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(identify(descriptionRoute)))
+  }
+
+  private def validateParams(serverRoute: ServerRoute[_]) = Filter.mk[Request, Response, Request, Response] {
+    (request, svc) => {
+      val missingOrFailed = serverRoute.missingOrFailedFrom(request)
+      if (missingOrFailed.isEmpty) svc(request) else Future.value(moduleRenderer.badRequest(missingOrFailed))
+    }
+  }
+
+  private def identify(route: ServerRoute[_]) = Filter.mk[Request, Response, Request, Response] {
+    (request, svc) => {
+      val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
+      request.headerMap.set(IDENTIFY_SVC_HEADER, request.method + ":" + url)
+      svc(request)
+    }
+  }
 }
