@@ -3,9 +3,10 @@ package io.fintrospect
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Method, Request, Response}
 import io.fintrospect.Types.ServiceBinding
-import io.fintrospect.formats.json.Argo.ResponseBuilder._
+import io.fintrospect.formats.AbstractResponseBuilder
+import io.fintrospect.formats.json.Argo
 
 object Module {
   /**
@@ -16,7 +17,9 @@ object Module {
   /**
     * Convert a ServiceBinding to a Finagle Service
     */
-  def toService(binding: ServiceBinding): Service[Request, Response] = {
+  def toService(binding: ServiceBinding, responseBuilder: AbstractResponseBuilder[_] = Argo.ResponseBuilder): Service[Request, Response] = {
+    import responseBuilder._
+
     def pathFrom(req: Request) = {
       val u = req.uri
       u.indexOf('?') match {
@@ -25,25 +28,10 @@ object Module {
       }
     }
 
-    val routes = new PartialFunction[Request, Service[Request, Response]] {
-      def apply(request: Request) = {
-        binding((request.method, Path(pathFrom(request))))
-      }
+    val routes: ServiceBinding = { case a if binding.isDefinedAt(a) => binding(a)}
+    val notFoundPf: ServiceBinding = { case _ => Service.mk { r => NotFound("No route found on this path. Have you used the correct HTTP verb?") }}
 
-      def isDefinedAt(request: Request) = binding.isDefinedAt((request.method, Path(pathFrom(request))))
-    }
-
-    val notFoundPf: PartialFunction[Request, Service[Request, Response]] = {
-      case _ => Service.mk { r => NotFound("No route found on this path. Have you used the correct HTTP verb?") }
-    }
-
-    val requestToService = routes orElse notFoundPf
-
-    Service.mk {
-      request => {
-        requestToService(request)(request)
-      }
-    }
+    Service.mk { request => (routes orElse notFoundPf) ((request.method, Path(pathFrom(request))))(request) }
   }
 }
 
