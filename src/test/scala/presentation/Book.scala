@@ -1,7 +1,6 @@
 package presentation
 
 import argo.jdom.JsonNode
-import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 
 case class Book(title: String) {

@@ -3,7 +3,7 @@ package examples.extended
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method._
 import com.twitter.finagle.http.Status._
-import com.twitter.finagle.http.{Response, Request, Status}
+import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._

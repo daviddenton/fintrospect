@@ -5,7 +5,7 @@ import java.net.URL
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Status, Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 import io.fintrospect.RouteSpec
 import io.fintrospect.parameters.NoSecurity

@@ -3,8 +3,8 @@ package examples.clients
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.{Response, Request}
 import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await
 import io.fintrospect.RouteSpec

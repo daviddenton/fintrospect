@@ -1,7 +1,7 @@
 package examples.customformats
 
 import io.fintrospect.ContentTypes
-import io.fintrospect.formats.{ResponseBuilder, AbstractResponseBuilder}
+import io.fintrospect.formats.{AbstractResponseBuilder, ResponseBuilder}
 
 object HipsterXml {
 

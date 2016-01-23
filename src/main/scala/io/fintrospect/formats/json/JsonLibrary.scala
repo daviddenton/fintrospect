@@ -1,7 +1,7 @@
 package io.fintrospect.formats.json
 
 import io.fintrospect.ContentTypes
-import io.fintrospect.formats.{ResponseBuilder, AbstractResponseBuilder}
+import io.fintrospect.formats.{AbstractResponseBuilder, ResponseBuilder}
 
 /**
  * Defines a supported JSON library format (e.g. Argo or Json4s).
