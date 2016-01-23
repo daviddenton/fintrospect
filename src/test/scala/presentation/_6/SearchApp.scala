@@ -7,7 +7,6 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import com.twitter.util.Future
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
 import io.fintrospect.formats.json.Argo.JsonFormat._

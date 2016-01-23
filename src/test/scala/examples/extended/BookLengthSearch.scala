@@ -4,8 +4,8 @@ import java.lang.Integer._
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.{Response, Request}
 import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._

@@ -1,6 +1,5 @@
 package io.fintrospect.renderers.util
 
-import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import org.scalatest.{FunSpec, ShouldMatchers}
 

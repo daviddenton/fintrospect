@@ -1,6 +1,6 @@
 package examples.full.test.env
 
-import examples.full.main.{EmailAddress, Username, Id, User}
+import examples.full.main.{EmailAddress, Id, User, Username}
 
 object RunnableEnvironment extends App {
   val serverPort = 9999

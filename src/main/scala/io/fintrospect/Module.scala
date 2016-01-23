@@ -3,7 +3,7 @@ package io.fintrospect
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.http.{Method, Request, Response}
+import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.Types.ServiceBinding
 import io.fintrospect.formats.AbstractResponseBuilder
 import io.fintrospect.formats.json.Argo

@@ -2,6 +2,7 @@ package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
 import org.scalatest.{FunSpec, ShouldMatchers}
+
 import scala.language.reflectiveCalls
 
 class ParameterTest extends FunSpec with ShouldMatchers {
