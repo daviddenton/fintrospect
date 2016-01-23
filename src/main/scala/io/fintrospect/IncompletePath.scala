@@ -9,8 +9,6 @@ import io.fintrospect.ServerRoute.Filt
 import io.fintrospect.parameters.{Path => Fp, PathParameter}
 
 object IncompletePath {
-  private[fintrospect] type Binding = PartialFunction[(Method, Path), Service[Request, Response]]
-
   def apply(routeSpec: RouteSpec, method: Method): IncompletePath0 = new IncompletePath0(routeSpec, method, identity)
 
   private[fintrospect] def clientFor(ip: IncompletePath,
