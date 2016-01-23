@@ -22,12 +22,12 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
   private val entryLogger = new EntryLogger(s"localhost:$entryLoggerPort", clock)
 
   // use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
-  // to all routes in the system
+  // to all routes in the module
   private val globalFilter = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(CatchAll)
 
   private val inhabitants = new Inhabitants
 
-  private val servicesModule = ModuleSpec(Root / "security", Swagger2dot0Json(apiInfo))
+  private val securityModule = ModuleSpec(Root / "security", Swagger2dot0Json(apiInfo))
     .securedBy(SecuritySystemAuth())
     .withDescriptionPath(_ / "api-docs")
     .withRoutes(new KnockKnock(inhabitants, userDirectory, entryLogger))
@@ -41,7 +41,7 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
   private val statusModule = ModuleSpec(Root / "internal", SimpleJson()).withRoute(new Ping().route)
 
   def start() = {
-    server = Http.serve(s":$serverPort", globalFilter.andThen(ModuleSpec.toService(ModuleSpec.combine(webModule, servicesModule, statusModule))))
+    server = Http.serve(s":$serverPort", globalFilter.andThen(ModuleSpec.toService(ModuleSpec.combine(webModule, securityModule, statusModule))))
     Future.Done
   }
 
