@@ -82,15 +82,11 @@ class ModuleSpec[RS] private(basePath: Path,
                              security: Security,
                              moduleFilter: Filter[Request, Response, Request, RS]) {
   private def totalBinding: PartialFunction[(Method, Path), Service[Request, Response]] = {
-    val a: PartialFunction[(Method, Path), Service[Request, Response]] = empty[(Method, Path), Service[Request, Response]]
-    val bob: PartialFunction[(Method, Path), Service[Request, Response]] = routes.foldLeft(a) {
+    withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
-        val filters: List[Filter[Request, Response, Request, Response]] = new Identify2(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: Nil
-        val rita: Filter[Request, Response, Request, Response] = Filter.identity
-        val sue: PartialFunction[(Method, Path), Service[Request, Response]] = route.toPf(moduleFilter, basePath)(filters.reduce(_.andThen(_)))
-        currentBinding.orElse(sue)
-    }
-    withDefault(bob)
+        val filters = new Identify2(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: Nil
+        currentBinding.orElse(route.toPf(moduleFilter, basePath)(filters.reduce(_.andThen(_))))
+    })
   }
 
   /**

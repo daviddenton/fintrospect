@@ -5,6 +5,9 @@ import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.parameters.PathParameter
 
+object ServerRoute {
+  type Filt[T] = Filter[Request, Response, Request, T]
+}
 abstract class ServerRoute[RS](val routeSpec: RouteSpec,
                            val method: Method,
                            pathFn: Path => Path,
