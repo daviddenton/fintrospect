@@ -12,13 +12,13 @@ import org.jboss.netty.buffer.ChannelBuffer
 import scala.language.implicitConversions
 
 /**
- * Builds Http Responses using a particular custom format object. Plugs into the rest of the library.
- * @param toFormat renders the custom format object to a string
- * @param errorFormat renders an error message as the custom format
- * @param exceptionFormat renders an exception as the custom format
- * @param contentType the content type to return in all responses
- * @tparam T The custom format object type
- */
+  * Builds Http Responses using a particular custom format object. Plugs into the rest of the library.
+  * @param toFormat renders the custom format object to a string
+  * @param errorFormat renders an error message as the custom format
+  * @param exceptionFormat renders an exception as the custom format
+  * @param contentType the content type to return in all responses
+  * @tparam T The custom format object type
+  */
 class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
                          exceptionFormat: Throwable => T,
                          contentType: ContentType) extends Builder[Response] {

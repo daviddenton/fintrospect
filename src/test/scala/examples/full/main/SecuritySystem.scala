@@ -13,7 +13,7 @@ import io.fintrospect.renderers.SiteMapModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import io.fintrospect.templating.{RenderMustacheView, View}
-import io.fintrospect.{Module, ModuleSpec}
+import io.fintrospect.{Module, ModuleSpec, StaticModule}
 
 class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: Int, clock: Clock) {
 
@@ -34,6 +34,8 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
     .withRoutes(new KnockKnock(inhabitants, userDirectory, entryLogger))
     .withRoutes(new ByeBye(inhabitants, entryLogger))
 
+  private val publicModule = StaticModule(Root / "public", "public")
+
   private val webModule = ModuleSpec[View](Root / "web",
     new SiteMapModuleRenderer(new URL("http://my.security.system")),
     new RenderMustacheView(Html.ResponseBuilder)
@@ -42,7 +44,7 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
   private val statusModule = ModuleSpec(Root / "internal", SimpleJson()).withRoute(new Ping().route)
 
   def start() = {
-    server = Http.serve(s":$serverPort", globalFilter.andThen(Module.toService(Module.combine(webModule, serviceModule, statusModule))))
+    server = Http.serve(s":$serverPort", globalFilter.andThen(Module.toService(Module.combine(publicModule, webModule, serviceModule, statusModule))))
     Future.Done
   }
 

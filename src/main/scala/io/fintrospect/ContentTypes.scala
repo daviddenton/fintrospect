@@ -1,6 +1,13 @@
 package io.fintrospect
 
+import javax.activation.MimetypesFileTypeMap
+
 case class ContentType(value: String)
+
+object ContentType {
+  private lazy val extMap = new MimetypesFileTypeMap(getClass.getResourceAsStream("/META-INF/mime.types"))
+  def lookup(name: String): ContentType = ContentType(extMap.getContentType(name))
+}
 
 object ContentTypes {
 
