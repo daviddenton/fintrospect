@@ -2,8 +2,9 @@ package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Request, Response}
-import com.twitter.finagle.{Filter, Service, SimpleFilter}
+import com.twitter.finagle.{Service, SimpleFilter, Filter => FinFilter}
 import com.twitter.util.Future
+import io.fintrospect.Aliases._
 import io.fintrospect.parameters.ApiKey.ValidateKey
 
 import scala.util.{Failure, Success, Try}
@@ -12,7 +13,7 @@ import scala.util.{Failure, Success, Try}
   * Endpoint security. Provides filter to be applied to endpoints for all requests.
   */
 sealed trait Security {
-  val filter: Filter[Request, Response, Request, Response]
+  val filter: Filter[Response]
 }
 
 /**
@@ -40,5 +41,5 @@ object ApiKey {
   * Default NoOp security filter. Filter allows all traffic through.
   */
 object NoSecurity extends Security {
-  val filter = Filter.identity[Request, Response]
+  val filter = FinFilter.identity[Request, Response]
 }
