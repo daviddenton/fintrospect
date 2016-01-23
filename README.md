@@ -26,6 +26,7 @@ the HTTP API of a downstream servers (for a fake) to be created with no effort, 
   - Scala native XML
   - Spray JSON (v1.3.X compatible)
 - Template responses using Mustache (2.11 only) or Handlebars
+- Serve static resources
 
 ###Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,

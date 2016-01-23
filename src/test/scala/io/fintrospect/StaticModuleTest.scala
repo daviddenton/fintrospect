@@ -1,5 +1,6 @@
 package io.fintrospect
 
+import com.twitter.finagle.Filter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await
@@ -27,6 +28,19 @@ class StaticModuleTest extends FunSpec with ShouldMatchers {
     val module = StaticModule(Root / "svc", "io/fintrospect")
     val result = Await.result(module.toService(Request("/svc/StaticModule.js")))
     result.status shouldEqual Status.Ok
+    result.contentString shouldEqual "function hearMeNow() { }"
+    result.contentType.map(_.split(";")(0)) shouldEqual Option(ContentType("application/javascript").value)
+  }
+
+  it("can add a filter") {
+    val module = StaticModule(Root / "svc", "io/fintrospect", Filter.mk {
+      (request, svc) => svc(request).map(rsp => {
+        rsp.setStatusCode(Status.ExpectationFailed.code)
+        rsp
+      })
+    })
+    val result = Await.result(module.toService(Request("/svc/StaticModule.js")))
+    result.status shouldEqual Status.ExpectationFailed
     result.contentString shouldEqual "function hearMeNow() { }"
     result.contentType.map(_.split(";")(0)) shouldEqual Option(ContentType("application/javascript").value)
   }

@@ -22,10 +22,10 @@ class StaticModule private(basePath: Path, baseDir: String, moduleFilter: FFilte
 
   override protected def serviceBinding: ServiceBinding = {
     case method -> path if method == Get && exists(path) =>
-      Service.mk[Request, Response] {
+      moduleFilter.andThen(Service.mk[Request, Response] {
         val subPath = baseDir + path.toString.replace(basePath.toString + "/", "")
         request => HttpResponse(ContentType.lookup(subPath)).withCode(Ok).withContent(Owned(toByteArray(getClass.getResource(subPath))))
-      }
+      })
   }
 
   private def exists(path: Path): Boolean = {
