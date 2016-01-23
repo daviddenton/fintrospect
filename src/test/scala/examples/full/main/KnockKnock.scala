@@ -12,7 +12,7 @@ import io.fintrospect.{RouteSpec, ServerRoutes}
 import scala.language.reflectiveCalls
 
 
-class KnockKnock(inhabitants: Inhabitants, userDirectory: UserDirectory, entryLogger: EntryLogger) extends ServerRoutes {
+class KnockKnock(inhabitants: Inhabitants, userDirectory: UserDirectory, entryLogger: EntryLogger) extends ServerRoutes[Response] {
   private val username = Query.required(ParameterSpec[Username]("username", None, StringParamType, s => Username(s), _.value.toString))
 
   private def userEntry() = new Service[Request, Response] {

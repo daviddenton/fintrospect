@@ -3,7 +3,7 @@ package io.fintrospect
 import com.twitter.finagle.http.Method._
 import com.twitter.finagle.http.Status.{BadRequest, NotFound}
 import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.http.{Method, Request, Response}
+import com.twitter.finagle.http.{Response, Method, Request}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
@@ -20,12 +20,10 @@ object ModuleSpec {
 
   private type Binding = PartialFunction[(Method, Path), Service[Request, Response]]
 
-  private type TFilter = Filter[Request, Response, Request, Response]
-
   /**
     * Combines many modules
     */
-  def combine(modules: ModuleSpec*): Binding = modules.map(_.totalBinding).reduce(_.orElse(_))
+  def combine(modules: ModuleSpec[_]*): Binding = modules.map(_.totalBinding).reduce(_.orElse(_))
 
   /**
     * Convert a Binding to a Finagle Service
@@ -35,33 +33,36 @@ object ModuleSpec {
   /**
     * Create a module using the given base-path without any Module API Renderering.
     */
-  def apply(basePath: Path): ModuleSpec = apply(basePath, new ModuleRenderer {
-    override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = Response(NotFound)
+  def apply(basePath: Path): ModuleSpec[Response] = apply(basePath, new ModuleRenderer {
+    override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response = Response(NotFound)
+
     override def badRequest(badParameters: Seq[Parameter]): Response = Response(BadRequest)
   })
 
   /**
     * Create a module using the given base-path, renderer.
     */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer): ModuleSpec =
-    new ModuleSpec(basePath, moduleRenderer, identity, Nil, NoSecurity, Filter.mk((in, svc) => svc(in)))
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer): ModuleSpec[Response] = {
+    val filter: Filter[Request, Response, Request, Response] = Filter.mk[Request, Response, Request, Response]((r, svc) => svc(r))
+    new ModuleSpec[Response](basePath, moduleRenderer, identity, Nil, NoSecurity, filter)
+  }
 
   /**
     * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to
     * this module APART from the documentation route).
     */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, Request, Response]): ModuleSpec = {
-    new ModuleSpec(basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)
+  def apply[RS](basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, Request, RS]): ModuleSpec[RS] = {
+    new ModuleSpec[RS](basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)
   }
 
-  private class ValidateParams(serverRoute: ServerRoute, moduleRenderer: ModuleRenderer) extends SimpleFilter[Request, Response]() {
+  private class ValidateParams(serverRoute: ServerRoute[_], moduleRenderer: ModuleRenderer) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
       val missingOrFailed = serverRoute.missingOrFailedFrom(request)
       if (missingOrFailed.isEmpty) service(request) else Future.value(moduleRenderer.badRequest(missingOrFailed))
     }
   }
 
-  private class Identify(route: ServerRoute, basePath: Path) extends SimpleFilter[Request, Response]() {
+  private class Identify2(route: ServerRoute[_], basePath: Path) extends SimpleFilter[Request, Response]() {
     override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
       val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
       request.headerMap.set(IDENTIFY_SVC_HEADER, request.method + ":" + url)
@@ -74,18 +75,22 @@ object ModuleSpec {
 /**
   * Self-describing module builder (uses the immutable builder pattern).
   */
-class ModuleSpec private(basePath: Path,
-                         moduleRenderer: ModuleRenderer,
-                         descriptionRoutePath: ModifyPath,
-                         routes: Seq[ServerRoute],
-                         security: Security,
-                         moduleFilter: Filter[Request, Response, Request, Response]) {
-  private def totalBinding = {
-    withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
+class ModuleSpec[RS] private(basePath: Path,
+                             moduleRenderer: ModuleRenderer,
+                             descriptionRoutePath: ModifyPath,
+                             routes: Seq[ServerRoute[RS]],
+                             security: Security,
+                             moduleFilter: Filter[Request, Response, Request, RS]) {
+  private def totalBinding: PartialFunction[(Method, Path), Service[Request, Response]] = {
+    val a: PartialFunction[(Method, Path), Service[Request, Response]] = empty[(Method, Path), Service[Request, Response]]
+    val bob: PartialFunction[(Method, Path), Service[Request, Response]] = routes.foldLeft(a) {
       (currentBinding, route) =>
-        val filters = new Identify(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: moduleFilter +: Nil
-        currentBinding.orElse(route.toPf(basePath)(filters.reduce(_.andThen(_))))
-    })
+        val filters: List[Filter[Request, Response, Request, Response]] = new Identify2(route, basePath) +: security.filter +: new ValidateParams(route, moduleRenderer) +: Nil
+        val rita: Filter[Request, Response, Request, Response] = Filter.identity
+        val sue: PartialFunction[(Method, Path), Service[Request, Response]] = route.toPf(moduleFilter, basePath)(filters.reduce(_.andThen(_)))
+        currentBinding.orElse(sue)
+    }
+    withDefault(bob)
   }
 
   /**
@@ -93,15 +98,15 @@ class ModuleSpec private(basePath: Path,
     * parameter validation takes place, and will return Unauthorized HTTP response codes when a request does
     * not pass authentication.
     */
-  def securedBy(newSecurity: Security): ModuleSpec = {
-    new ModuleSpec(basePath, moduleRenderer, descriptionRoutePath, routes, newSecurity, moduleFilter)
+  def securedBy(newSecurity: Security): ModuleSpec[RS] = {
+    new ModuleSpec[RS](basePath, moduleRenderer, descriptionRoutePath, routes, newSecurity, moduleFilter)
   }
 
   /**
     * Override the path from the root of this module (incoming) where the default module description will live.
     */
-  def withDescriptionPath(newDefaultRoutePath: ModifyPath): ModuleSpec = {
-    new ModuleSpec(basePath, moduleRenderer, newDefaultRoutePath, routes, security, moduleFilter)
+  def withDescriptionPath(newDefaultRoutePath: ModifyPath): ModuleSpec[RS] = {
+    new ModuleSpec[RS](basePath, moduleRenderer, newDefaultRoutePath, routes, security, moduleFilter)
   }
 
   private def withDefault(otherRoutes: PartialFunction[(Method, Path), Service[Request, Response]]) = {
@@ -109,23 +114,24 @@ class ModuleSpec private(basePath: Path,
       override def apply(request: Request) = Future.value(moduleRenderer.description(basePath, security, routes))
     })
 
-    otherRoutes.orElse(descriptionRoute.toPf(basePath)(new Identify(descriptionRoute, basePath)))
+    val default: Filter[Request, Response, Request, Response] = Filter.identity
+    otherRoutes.orElse(descriptionRoute.toPf(default, basePath)(new Identify2(descriptionRoute, basePath)))
   }
 
   /**
     * Attach described Route(s) to the module. Request matching is attempted in the same order as in which this method is called.
     */
-  def withRoute(newRoutes: ServerRoute*): ModuleSpec = new ModuleSpec(basePath, moduleRenderer, descriptionRoutePath, routes ++ newRoutes, security, moduleFilter)
+  def withRoute(newRoutes: ServerRoute[RS]*): ModuleSpec[RS] = new ModuleSpec(basePath, moduleRenderer, descriptionRoutePath, routes ++ newRoutes, security, moduleFilter)
 
   /**
     * Attach described Route(s) to the module. Request matching is attempted in the same order as in which this method is called.
     */
-  def withRoutes(newRoutes: Iterable[ServerRoute]*): ModuleSpec = newRoutes.flatten.foldLeft(this)(_.withRoute(_))
+  def withRoutes(newRoutes: Iterable[ServerRoute[RS]]*): ModuleSpec[RS] = newRoutes.flatten.foldLeft(this)(_.withRoute(_))
 
   /**
     * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
     */
-  def combine(that: ModuleSpec): Binding = totalBinding.orElse(that.totalBinding)
+  def combine(that: ModuleSpec[_]): Binding = totalBinding.orElse(that.totalBinding)
 
   /**
     * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.

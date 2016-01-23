@@ -12,7 +12,7 @@ import io.fintrospect.{ModuleSpec, ServerRoutes}
 /**
   * Simple, insecure HTTP server which can be used for tests
   */
-class TestHttpServer(port: Int, serverRoutes: ServerRoutes) {
+class TestHttpServer(port: Int, serverRoutes: ServerRoutes[Response]) {
 
   private var overrideStatus: Option[Status] = Option.empty
 

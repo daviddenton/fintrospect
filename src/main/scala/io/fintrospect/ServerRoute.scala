@@ -5,7 +5,7 @@ import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.parameters.PathParameter
 
-abstract class ServerRoute(val routeSpec: RouteSpec,
+abstract class ServerRoute[RS](val routeSpec: RouteSpec,
                            val method: Method,
                            pathFn: Path => Path,
                            val pathParams: PathParameter[_]*) {
@@ -19,7 +19,7 @@ abstract class ServerRoute(val routeSpec: RouteSpec,
 
   def matches(actualMethod: Method, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
 
-  def toPf(basePath: Path): Filter[Request, Response, Request, Response] => PartialFunction[(Method, Path), Service[Request, Response]]
+  def toPf(filter: Filter[Request, Response, Request, RS], basePath: Path): Filter[Request, Response, Request, Response] => PartialFunction[(Method, Path), Service[Request, Response]]
 
   def describeFor(basePath: Path): String = (pathFn(basePath).toString +: pathParams.map(_.toString())).mkString("/")
 }

@@ -13,8 +13,8 @@ class SiteMapModuleRenderer(baseUrl: URL) extends ModuleRenderer {
 
   override def badRequest(badParameters: Seq[Parameter]): Response = Error(Status.BadRequest, badParameters.toString())
 
-  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = {
-    def buildUrl(route: ServerRoute) = {
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response = {
+    def buildUrl(route: ServerRoute[_]) = {
       <url>
         <loc>
           {baseUrl + route.describeFor(basePath)}
