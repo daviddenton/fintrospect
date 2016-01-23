@@ -2,25 +2,21 @@ package io.fintrospect
 
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Method, Request, Response}
-import com.twitter.finagle.{Service, SimpleFilter}
+import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
-import io.fintrospect.RouteClient.Identify
 import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters._
 
 
 object RouteClient {
-
-  private case class Identify(method: Method, pathParams: Seq[PathParameter[_]]) extends SimpleFilter[Request, Response]() {
-    private val description = method + ":" + pathParams.map(_.toString()).mkString("/")
-
-    override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
+  private def identify(method: Method, pathParams: Seq[PathParameter[_]]) = Filter.mk[Request, Response, Request ,Response] {
+    (request, svc) => {
+      val description = method + ":" + pathParams.map(_.toString()).mkString("/")
       request.headerMap.set(IDENTIFY_SVC_HEADER, description)
-      service(request)
+      svc(request)
     }
   }
-
 }
 
 /**
@@ -38,7 +34,7 @@ class RouteClient(method: Method,
   private val providedBindings = pathParams.filter(_.isFixed).map(p => new PathBinding(p, p.name))
   private val allPossibleParams = pathParams ++ routeSpec.headerParams ++ routeSpec.queryParams ++ routeSpec.body.toSeq.flatMap(_.iterator)
   private val requiredParams = allPossibleParams.filter(_.required)
-  private val service = Identify(method, pathParams).andThen(underlyingService)
+  private val service = RouteClient.identify(method, pathParams).andThen(underlyingService)
 
   /**
     * Make a request to this client route using the passed bindings
