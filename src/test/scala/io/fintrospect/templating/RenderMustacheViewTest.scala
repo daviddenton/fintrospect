@@ -4,7 +4,6 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Request
 import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.Html
-import io.fintrospect.templating.{View, RenderMustacheView}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.scalatest.{FunSpec, ShouldMatchers}
 
