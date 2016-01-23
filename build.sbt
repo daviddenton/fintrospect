@@ -18,6 +18,7 @@ scalacOptions += "-feature"
 
 libraryDependencies ++= Seq(
   "net.sourceforge.argo" % "argo" % "3.12",
+  "com.gilt" %% "handlebars-scala" % "2.0.1",
   "com.github.spullara.mustache.java" % "compiler" % "0.9.1",
   "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1",
   "com.google.code.gson" % "gson" % "2.5" % "provided",

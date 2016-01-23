@@ -1,4 +1,4 @@
-package io.fintrospect.renderers
+package io.fintrospect.templating
 
 import java.io.{ByteArrayOutputStream, OutputStreamWriter}
 import java.nio.charset.StandardCharsets
