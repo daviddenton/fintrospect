@@ -54,7 +54,7 @@ val apiInfo = ApiInfo("Library Example", "1.0", Option("Simple description"))
 val renderer = Swagger2dot0Json(apiInfo) // choose your renderer implementation
 val libraryModule = ModuleSpec(Root / "library", renderer)
     .withRoute(new BookSearch(new BookRepo()).route)
-val service = ModuleSpec.toService(libraryModule)
+val service = Module.toService(libraryModule)
 Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)) // remember to make your own Cors Policy for prod!
 ```
 
