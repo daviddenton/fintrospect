@@ -16,11 +16,11 @@ import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
 class SimpleJson extends ModuleRenderer {
   override def badRequest(badParameters: Seq[Parameter]): Response = JsonBadRequestRenderer(badParameters)
 
-  private def render(basePath: Path, route: ServerRoute): Field = {
+  private def render(basePath: Path, route: ServerRoute[_]): Field = {
     route.method.toString() + ":" + route.describeFor(basePath) -> Argo.JsonFormat.string(route.routeSpec.summary)
   }
 
-  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = Ok(obj("resources" -> obj(routes.map(r => render(basePath, r)))))
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response = Ok(obj("resources" -> obj(routes.map(r => render(basePath, r)))))
 }
 
 object SimpleJson {

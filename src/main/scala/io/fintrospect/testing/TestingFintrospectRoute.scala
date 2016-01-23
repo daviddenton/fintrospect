@@ -3,7 +3,7 @@ package io.fintrospect.testing
 import java.util.concurrent.TimeUnit
 
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Response, Request}
 import com.twitter.util.Await
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{ModuleSpec, ServerRoute}
@@ -14,7 +14,7 @@ import scala.concurrent.duration.Duration
  * Mixin this and provide the route under test.
  */
 trait TestingFintrospectRoute {
-  val route: ServerRoute
+  val route: ServerRoute[Response]
 
   /**
    * get the response from the Route under test for this response. Default timeout is massively generous

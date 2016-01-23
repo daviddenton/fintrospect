@@ -25,7 +25,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     "dataType" -> string(parameter.paramType.name)
   )
 
-  private def render(route: ServerRoute): Field = route.method.toString().toLowerCase -> {
+  private def render(route: ServerRoute[_]): Field = route.method.toString().toLowerCase -> {
     val allParams: Seq[Parameter] =
       route.pathParams.flatMap(identity) ++
       route.routeSpec.queryParams ++
@@ -45,7 +45,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     )
   }
 
-  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = {
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response = {
     val api = routes
       .groupBy(_.describeFor(basePath))
       .map { case (path, routesForPath) => obj("path" -> string(path), "operations" -> array(routesForPath.map(render(_)._2))) }

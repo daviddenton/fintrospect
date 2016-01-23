@@ -12,7 +12,7 @@ import io.fintrospect.parameters.{Parameter, Security}
 trait ModuleRenderer {
   def badRequest(badParameters: Seq[Parameter]): Response
 
-  def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response
+  def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response
 }
 
 

@@ -15,11 +15,11 @@ object HipsterXmlModuleRenderer extends ModuleRenderer {
 
   override def badRequest(badParameters: Seq[Parameter]): Response = Error(Status.BadRequest, badParameters.toString())
 
-  private def renderRoute(basePath: Path, route: ServerRoute): HipsterXmlFormat = HipsterXmlFormat(s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")
+  private def renderRoute(basePath: Path, route: ServerRoute[_]): HipsterXmlFormat = HipsterXmlFormat(s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")
 
-  private def renderRoutes(basePath: Path, routes: Seq[ServerRoute]): String = HipsterXmlFormat(routes.map(renderRoute(basePath, _)): _*).toString()
+  private def renderRoutes(basePath: Path, routes: Seq[ServerRoute[_]]): String = HipsterXmlFormat(routes.map(renderRoute(basePath, _)): _*).toString()
 
-  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute]): Response = {
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response = {
     Ok(HipsterXmlFormat(s"<paths>${renderRoutes(basePath, routes)}</paths>").value)
   }
 }
