@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap
 import com.twitter.io.Buf
 import com.twitter.util.Future
 import io.fintrospect.formats.AbstractResponseBuilder
-import io.fintrospect.templating.View
 
 import scala.collection.JavaConverters._
 import scala.io.Source._
