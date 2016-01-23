@@ -1,5 +1,6 @@
 package presentation
 
+import java.net.URL
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Method.Get
@@ -7,9 +8,11 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
-import io.fintrospect.formats.{ResponseBuilder, Xml}
+import io.fintrospect.formats.{Html, ResponseBuilder, Xml}
 import io.fintrospect.parameters._
+import io.fintrospect.renderers.SiteMapModuleRenderer
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
+import io.fintrospect.templating.{RenderMustacheView, View}
 import io.fintrospect.{ContentTypes, ModuleSpec, RouteClient, RouteSpec}
 
 import scala.language.reflectiveCalls
@@ -225,22 +228,86 @@ object Guide {
   handling content types like JSON or XML in a set of popular OSS libraries. These live in the io.fintrospect.formats package. Currently
   supported formats are in the table below:
 
-| Library      | Content-Type     | Impl Language | Version | Format Class                                                                                                                                                                          |
-|--------------|------------------|---------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Argo         | application/json | Java          | 3.12    | io.fintrospect.formats.json.Argo                                                                                                                                                      |
-| Argonaut     | application/json | Scala         | 6.0.X   | io.fintrospect.formats.json.Argonaut                                                                                                                                                  |
-| Circe        | application/json | Scala         | 0.2.X   | io.fintrospect.formats.json.Circe                                                                                                                                                  |
-| GSON         | application/json | Scala         | 2.5     | io.fintrospect.formats.json.Gson                                                                                                                                                      |
-| (Html)       | text/html        | Scala         | -       | io.fintrospect.formats.Html
-| Json4S       | application/json | Scala         | 3.2.X   | io.fintrospect.formats.json.Json.Native
-|              |                  |               |         | io.fintrospect.formats.json.Json.NativeDoubleMode
-|              |                  |               |         | io.fintrospect.formats.json.Json.Jackson
-|              |                  |               |         | io.fintrospect.formats.json.Json.JacksonDoubleMode
-| (Plain Text) | text/plain       | Scala         | -       | io.fintrospect.formats.PlainText                                                                                                                                                      |
-| Play         | application/json | Scala         | 2.4.1   | io.fintrospect.formats.json.Play                                                                                                                                                      |
-| (Scala XML)  | application/xml  | Scala         | -       | io.fintrospect.formats.Xml                                                                                                                                                            |
-| Spray        | application/json | Scala         | 1.3.X   | io.fintrospect.formats.json.Spray                                                                                                                                                     |
-| (XHtml)      | application/html | Scala         | -       | io.fintrospect.formats.XHtml
+<table border="1px">
+    <tr>
+        <td>Library</td>
+        <td>Content-Type</td>
+        <td>Additional SBT depdendencies</td>
+        <td>Fintrospect class</td>
+    </tr>
+    <tr>
+        <td>Argo</td>
+        <td>application/json</td>
+        <td>"net.sourceforge.argo" % "argo" % "3.12"</td>
+        <td>io.fintrospect.formats.json.Argo</td>
+    </tr>
+    <tr>
+        <td>Argonaut</td>
+        <td>application/json</td>
+        <td>"io.argonaut" %% "argonaut" % "6.0.4"</td>
+        <td>io.fintrospect.formats.json.Argonaut</td>
+    </tr>
+    <tr>
+        <td>Circe</td>
+        <td>application/json</td>
+        <td>"io.circe" %% "circe-core" % "0.2.1"<br/>"io.circe" %% "circe-parse" % "0.2.1"<br/>"io.circe" %% "circe-generic" % "0.2.1" </td>
+        <td>io.fintrospect.formats.json.Circe</td>
+    </tr>
+    <tr>
+        <td>GSON</td>
+        <td>application/json</td>
+        <td>"com.google.code.gson" % "gson" % "2.5"</td>
+        <td>io.fintrospect.formats.json.Gson</td>
+    </tr>
+    <tr>
+        <td>HTML</td>
+        <td>text/html</td>
+        <td>-</td>
+        <td>io.fintrospect.formats.Html</td>
+    </tr>
+    <tr>
+        <td>Json4S Native</td>
+        <td>application/json</td>
+        <td>"org.json4s" %% "json4s-native" % "3.3.0"</td>
+        <td>io.fintrospect.formats.json.Json.Native<br/>io.fintrospect.formats.json.Json.NativeDoubleMode</td>
+    </tr>
+    <tr>
+        <td>Json4S Jackson</td>
+        <td>application/json</td>
+        <td>"org.json4s" %% "json4s-jackson" % "3.3.0"</td>
+        <td>io.fintrospect.formats.json.Json.Jackson<br/>io.fintrospect.formats.json.Json.JacksonDoubleMode</td>
+    </tr>
+    <tr>
+        <td>Plain Text</td>
+        <td>text/plain</td>
+        <td>-</td>
+        <td>io.fintrospect.formats.PlainText</td>
+    </tr>
+    <tr>
+        <td>Play</td>
+        <td>application/json</td>
+        <td>"com.typesafe.play" %% "play-json" % "2.4.3"</td>
+        <td>io.fintrospect.formats.json.Play</td>
+    </tr>
+    <tr>
+        <td>Spray</td>
+        <td>application/json</td>
+        <td>"io.spray" %% "spray-json" % "1.3.2"</td>
+        <td>io.fintrospect.formats.json.Spray</td>
+    </tr>
+    <tr>
+        <td>(XHTML)</td>
+        <td>application/xhtml+xml</td>
+        <td>-</td>
+        <td>io.fintrospect.formats.XHtml</td>
+    </tr>
+    <tr>
+        <td>(XML)</td>
+        <td>application/xml</td>
+        <td>-</td>
+        <td>io.fintrospect.formats.Xml</td>
+    </tr>
+</table>
 
   Note that to avoid dependency bloat, Fintrospect only ships with the above JSON library bindings - you'll need to bring in the
   library of your choice as an additional dependency.
@@ -255,10 +322,53 @@ object Guide {
   ... although with tiny bit of implicit magic (boo-hiss!), you can reduce this to the rather more concise:
   */
 
-  import io.fintrospect.formats.Xml.ResponseBuilder._
   import Status.Ok
+  import io.fintrospect.formats.Xml.ResponseBuilder._
 
-  val responseViaImplicits: Future[Response] = Ok(<xml> lashings and lashings of wonderful </xml>)
+  val responseViaImplicits: Future[Response] = Ok(<xml>lashings and lashings of wonderful</xml>)
+
+  /*
+    *   ##Templating
+    *   Templates are applied by using custom Filters to convert View instances into standard Http Responses. Simply implement the View trait and then
+    *   put a matching template file onto the classpath, and chain the output of the model-creating Service into the Filter. You can do this for entire
+    *   modules by making the ModuleSpec itself generified on View and using the templating Filter as a Module-level filter:
+    */
+  case class ViewMessage(value: String) extends View
+
+  def showMessage() = new Service[Request, View]() {
+    override def apply(request: Request) = Future.value(ViewMessage("some value to be displayed"))
+  }
+
+  val webModule: ModuleSpec[View] = ModuleSpec(Root / "web",
+    new SiteMapModuleRenderer(new URL("http://root.com")),
+    new RenderMustacheView(Html.ResponseBuilder))
+    .withRoute(RouteSpec().at(Get) / "message" bindTo showMessage)
+
+  /*
+  Similarly to how the ResponseBuilders work, no 3rd-party dependencies are bundled with Fintrospect - simply import the extra SBT dependencies as required:
+<table border="1px">
+  <tr>
+      <td>Library</td>
+      <td>Template filename suffix</td>
+      <td>Additional SBT depdendencies</td>
+      <td>Filter class</td>
+  </tr>
+  <tr>
+      <td>Handlebars</td>
+      <td>.hbs</td>
+      <td>"com.gilt" %% "handlebars-scala" % "2.0.1"</td>
+      <td>io.fintrospect.templating.RenderHandlebarsView</td>
+  </tr>
+  <tr>
+      <td>Mustache (v2.11 only)</td>
+      <td>.mustache</td>
+      <td>"com.github.spullara.mustache.java" % "compiler" % "0.9.1"<br/>"com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"</td>
+      <td>io.fintrospect.templating.RenderMustacheView</td>
+  </tr>
+</table>
+  *
+  */
+
 
   //
   //

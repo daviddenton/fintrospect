@@ -7,8 +7,8 @@ Fintrospect
 
 Fintrospect is a bolt-on HTTP routing library for use with the <a href="http://twitter.github.io/finagle/" target="_top">Finagle</a>  RPC framework from Twitter. It was developed out of a desire to provide a pleasant API for describing HTTP request routing in combination with statically-typed documentation which could be verified at compile time and auto-generated at runtime (and thus avoiding the stale documentation risk that exists with manually written docs).
 
-Using this library, you can:
-- Define individual HTTP routes and compose them into sensible context-based modules.
+Features:
+- Define individual HTTP routes and combine them into sensible context-based modules.
 - Declare both required and optional parameters to be used in the following locations: ```Path/Header/Query/Form/Body```. Retrieval of the parameters is simple and type-safe (```[T]``` for required, ```Option[T]``` for optional). Custom datatypes
 for parameters are supported. Also support for typesafe conversions of custom types.
 - Automatically generate documentation in a variety of formats (e.g. <a href="http://swagger.io/" target="_top">Swagger</a> v1.1 and v2.0). Pluggable architecture for adding your own format renderers (e.g other JSON, XML).
@@ -25,6 +25,7 @@ the HTTP API of a downstream servers (for a fake) to be created with no effort, 
   - Play JSON (v2.4.X compatible)
   - Scala native XML
   - Spray JSON (v1.3.X compatible)
+- Template responses using Mustache (2.11 only) or Handlebars
 
 ###Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,
@@ -116,5 +117,5 @@ Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you 
 See the <a href="https://github.com/daviddenton/fintrospect/blob/master/RELEASE.md" target="_top">Roadmap</a>.
 
 ###Contributions
-If there are any message format libraries bindings that you'd like to see included, then please feel free to suggest them or provide a PR. For JSON formats, this
+If there are any message format library or templating engine bindings that you'd like to see included, then please feel free to suggest them or provide a PR. For JSON formats, this
 is particularly easy to implement - just provide an implementation of ```JsonLibrary``` by following the ```Argo``` example in the source.
