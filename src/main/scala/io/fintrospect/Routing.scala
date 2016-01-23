@@ -10,9 +10,7 @@ import io.fintrospect.formats.json.Argo.ResponseBuilder._
 
 class Routing private(routes: PartialFunction[Request, Service[Request, Response]]) extends Service[Request, Response] {
   private val notFoundPf: PartialFunction[Request, Service[Request, Response]] = {
-    case _ => new Service[Request, Response] {
-      def apply(request: Request): Future[Response] = NotFound("No route found on this path. Have you used the correct HTTP verb?")
-    }
+    case _ => Service.mk { r => NotFound("No route found on this path. Have you used the correct HTTP verb?") }
   }
   private val requestToService = routes orElse notFoundPf
 

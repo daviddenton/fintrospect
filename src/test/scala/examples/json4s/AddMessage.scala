@@ -2,8 +2,8 @@ package examples.json4s
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.{Response, Request}
 import com.twitter.finagle.http.Status._
-import com.twitter.finagle.http._
 import io.fintrospect.ContentTypes._
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._
@@ -17,13 +17,14 @@ class AddMessage(emails: Emails) {
 
   private val email = Body(BodySpec[Email](Option("email"), APPLICATION_JSON, s => decode[Email](parse(s)), e => compact(encode(e))), exampleEmail, ObjectParamType)
 
-  private def addEmail() = new Service[Request, Response] {
-    override def apply(request: Request) = {
+  private def addEmail() = Service.mk[Request, Response] {
+    request => {
       val newEmail = email <-- request
       emails.add(newEmail)
       Ok(encode(emails.forUser(newEmail.to)))
     }
   }
+
 
   val route = RouteSpec("add an email and return the new inbox contents for the receiver")
     .body(email)

@@ -4,9 +4,8 @@ import java.lang.Integer._
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.{Response, Request}
 import com.twitter.finagle.http.Status._
-import com.twitter.finagle.http.{Request, Response}
-import com.twitter.util.Future
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect._
 import io.fintrospect.formats.ResponseBuilder._
@@ -19,8 +18,8 @@ class BookLengthSearch(books: Books) {
   private val maxPages = FormField.required.int("maxPages", "max number of pages in book")
   private val form = Body.form(minPages, maxPages)
 
-  private def search() = new Service[Request, Response] {
-    override def apply(request: Request): Future[Response] = {
+  private def search() = Service.mk[Request, Response] {
+    request => {
       val requestForm = form <-- request
       Ok(array(books.search(minPages <-- requestForm getOrElse MIN_VALUE, maxPages <-- requestForm, Seq("")).map(_.toJson)))
     }

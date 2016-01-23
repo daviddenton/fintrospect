@@ -22,8 +22,8 @@ class FakeUserDirectoryState extends ServerRoutes[Response] {
 
   def reset() = users = mutable.Map[Id, User]()
 
-  private def create() = new Service[Request, Response] {
-    override def apply(request: Request) = {
+  private def create() = Service.mk[Request, Response] {
+    request => {
       val form = Create.form <-- request
       val (username, email) = form <--(Create.username, Create.email)
       val newUser = User(Id(users.size), Username(username), EmailAddress(email))
@@ -34,8 +34,8 @@ class FakeUserDirectoryState extends ServerRoutes[Response] {
 
   add(Create.route.bindTo(create))
 
-  private def delete(id: Id) = new Service[Request, Response] {
-    override def apply(request: Request) = users
+  private def delete(id: Id) = Service.mk[Request, Response] {
+    request => users
       .get(id)
       .map { user => users -= id; Ok().toFuture }
       .getOrElse(NotFound())
@@ -43,19 +43,18 @@ class FakeUserDirectoryState extends ServerRoutes[Response] {
 
   add(Delete.route.bindTo(delete))
 
-  private def lookup(username: Username) = new Service[Request, Response] {
-    override def apply(request: Request) = users
-      .values
-      .find(_.name == username)
-      .map { found => Ok(encode(found)).toFuture }
-      .getOrElse(NotFound())
+  private def lookup(username: Username) = Service.mk[Request, Response] {
+    request =>
+      users
+        .values
+        .find(_.name == username)
+        .map { found => Ok(encode(found)).toFuture }
+        .getOrElse(NotFound())
   }
 
   add(Lookup.route.bindTo(lookup))
 
-  private def userList() = new Service[Request, Response] {
-    override def apply(request: Request) = Ok(encode(users.values))
-  }
+  private def userList() = Service.mk[Request, Response] { _ =>  Ok(encode(users.values)) }
 
   add(UserList.route.bindTo(userList))
 

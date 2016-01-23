@@ -85,10 +85,9 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
 
     describe("can combine more than 2 modules") {
       it("can get to all routes") {
+
         def module(path: String) = {
-          ModuleSpec(Root / path).withRoutes(Seq(RouteSpec("").at(Get) / "echo" bindTo (() => new Service[Request, Response] {
-            def apply(request: Request): Future[Response] = Ok(path)
-          })))
+          ModuleSpec(Root / path).withRoute(RouteSpec("").at(Get) / "echo" bindTo (() => Service.mk[Request, Response] {_ => Ok(path)}))
         }
         val totalService = ModuleSpec.toService(combine(module("rita"), module("bob"), module("sue")))
 

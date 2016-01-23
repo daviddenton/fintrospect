@@ -1,13 +1,12 @@
 package presentation._3
 
-import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import com.twitter.util.Future
 import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder._
 import io.fintrospect.parameters.Query
@@ -18,8 +17,8 @@ import presentation.Books
 class SearchRoute(books: Books) {
   private val titlePartParam = Query.required.string("titlePart")
 
-  def search() = new Service[Request, Response] {
-    override def apply(request: Request): Future[Response] = {
+  def search() = Service.mk[Request, Response] {
+    request => {
       val titlePart = titlePartParam <-- request
       val results = books.titles().filter(_.toLowerCase.contains(titlePart.toLowerCase))
       Ok(results.toString())
@@ -50,5 +49,5 @@ object Environment extends App {
 }
 
 /**
- * showcase: missing query param and successful search
- */
+  * showcase: missing query param and successful search
+  */
