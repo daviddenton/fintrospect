@@ -14,6 +14,12 @@ import io.fintrospect.formats.AbstractResponseBuilder
 
 import scala.collection.JavaConverters._
 
+/**
+  * Used to convert View objects to Mustache View files. This template caching Filter can be added as a module filter
+  * to be applied to all routes in that module.
+  * @param responseBuilder The ResponseBuilder to use - this identifies the content type that will be used.
+  * @param baseTemplateDir base template directory to load resources from.
+  */
 class RenderMustacheView(responseBuilder: AbstractResponseBuilder[_], baseTemplateDir: String = ".")
   extends Filter[Request, Response, Request, View] {
 
