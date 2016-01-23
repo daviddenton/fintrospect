@@ -10,7 +10,7 @@ class StaticModuleTest extends FunSpec with ShouldMatchers {
 
   it("looks up contents of existing root file") {
     val module = StaticModule(Root / "svc")
-    val result = Await.result(module.toService(Request("/svc/Bob.xml")))
+    val result = Await.result(module.toService(Request("/svc/mybob.xml")))
     result.status shouldEqual Status.Ok
     result.contentString shouldEqual "<xml>content</xml>"
     result.contentType.map(_.split(";")(0)) shouldEqual Option(ContentTypes.APPLICATION_XML.value)
