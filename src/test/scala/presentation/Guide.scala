@@ -7,7 +7,7 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Future
-import io.fintrospect.formats.{PlainText, ResponseBuilder}
+import io.fintrospect.formats.{ResponseBuilder, Xml}
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import io.fintrospect.{ContentTypes, ModuleSpec, RouteClient, RouteSpec}
@@ -245,25 +245,24 @@ object Guide {
   Note that to avoid dependency bloat, Fintrospect only ships with the above JSON library bindings - you'll need to bring in the
   library of your choice as an additional dependency.
 
-  The simplest (least concise) way to invoke a "Content-type" ResponseBuilder is along the lines of:
+  The simplest (least concise) way to invoke an auto-marshalling (ie. typesafe) ResponseBuilder is along the lines of:
   */
-  val simplestNonCase: Future[Response] = ResponseBuilder.toFuture(
-    ResponseBuilder.HttpResponse(ContentTypes.APPLICATION_JSON).withCode(Status.Ok).withContent("some text").build()
-  )
-
   val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(
-    PlainText.ResponseBuilder.HttpResponse(Status.Ok).withContent("some text")
+    Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashings of wonderful</xml>)
   )
 
   /*
-  ... although with a little implicit magic (boo-hiss!), you can reduce this to the rather more concise:
+  ... although with tiny bit of implicit magic (boo-hiss!), you can reduce this to the rather more concise:
   */
 
-  import io.fintrospect.formats.PlainText.ResponseBuilder._
+  import io.fintrospect.formats.Xml.ResponseBuilder._
+  import Status.Ok
 
-  val responseViaImplicits: Future[Response] = Status.Ok("some text")
+  val responseViaImplicits: Future[Response] = Ok(<xml> lashings and lashings of wonderful </xml>)
 
   //
+  //
+  // Templating
   //  Body
   //  Form
   //  Json
