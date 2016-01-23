@@ -12,7 +12,8 @@ import io.fintrospect.ModuleSpec
 import io.fintrospect.formats.Html
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
-import io.fintrospect.renderers.{RenderMustacheView, SiteMapModuleRenderer}
+import io.fintrospect.renderers.SiteMapModuleRenderer
+import io.fintrospect.templating.RenderMustacheView
 
 class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: Int, clock: Clock) {
 

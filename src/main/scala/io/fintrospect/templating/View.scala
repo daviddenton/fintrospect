@@ -1,4 +1,4 @@
-package io.fintrospect.renderers
+package io.fintrospect.templating
 
 /**
   * View model for use with templating system.
