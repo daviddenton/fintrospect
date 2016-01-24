@@ -1,15 +1,14 @@
 package io.fintrospect
 
-import com.twitter.finagle.Service
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response}
-import io.fintrospect.Types.FFilter
+import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.parameters.PathParameter
 
 abstract class ServerRoute[RS](val routeSpec: RouteSpec,
-                           val method: Method,
-                           pathFn: Path => Path,
-                           val pathParams: PathParameter[_]*) {
+                               val method: Method,
+                               pathFn: Path => Path,
+                               val pathParams: PathParameter[_]*) {
 
   def missingOrFailedFrom(request: Request) = {
     val validations = routeSpec.headerParams.map(_.validate(request)) ++
@@ -20,7 +19,7 @@ abstract class ServerRoute[RS](val routeSpec: RouteSpec,
 
   def matches(actualMethod: Method, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
 
-  def toPf(filter: FFilter[RS], basePath: Path): FFilter[Response] => PartialFunction[(Method, Path), Service[Request, Response]]
+  def toPf(filter: Filter[Request, Response, Request, RS], basePath: Path): Filter[Request, Response, Request, Response] => PartialFunction[(Method, Path), Service[Request, Response]]
 
   def describeFor(basePath: Path): String = (pathFn(basePath).toString +: pathParams.map(_.toString())).mkString("/")
 }
