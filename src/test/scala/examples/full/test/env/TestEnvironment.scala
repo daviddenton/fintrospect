@@ -21,7 +21,7 @@ class TestEnvironment(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: 
 
   def responseTo(request: Request) = {
     val msg = Await.result(Http.newService(s"localhost:$serverPort")(request))
-    ResponseStatusAndContent(msg.status, msg.contentString)
+    ResponseStatusAndContent(msg.status, msg.headerMap.getOrElse("Content-type", null), msg.contentString)
   }
 
   def start() = {
