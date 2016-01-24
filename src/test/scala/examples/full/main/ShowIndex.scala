@@ -13,7 +13,7 @@ case class Index(time: String, browser: String) extends View
 class ShowIndex(userDirectory: UserDirectory) extends ServerRoutes[View] {
 
   private def index() = Service.mk[Request, View] {
-    request => Index(LocalDateTime.now().toString, request.headerMap("User-Agent"))
+    request => Index(LocalDateTime.now().toString, request.headerMap.getOrElse("User-Agent", "unknown"))
   }
 
   add(RouteSpec("Index").at(Get) bindTo index)
