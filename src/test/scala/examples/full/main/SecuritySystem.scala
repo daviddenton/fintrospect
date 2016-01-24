@@ -18,36 +18,38 @@ import io.fintrospect.{Module, ModuleSpec, StaticModule}
 class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: Int, clock: Clock) {
 
   private var server: ListeningServer = null
-  private val apiInfo = ApiInfo("Security System", "1.0", Option("Building security system"))
+
   private val userDirectory = new UserDirectory(s"localhost:$userDirectoryPort")
   private val entryLogger = new EntryLogger(s"localhost:$entryLoggerPort", clock)
-
-  // use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
-  // to all routes in the system
-  private val globalFilter = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(CatchAll)
-
   private val inhabitants = new Inhabitants
 
-  private val serviceModule = ModuleSpec(Root / "security", Swagger2dot0Json(apiInfo))
-    .securedBy(SecuritySystemAuth())
+  private val serviceModule = ModuleSpec(Root / "security",
+    Swagger2dot0Json(ApiInfo("Security System", "1.0", Option("Building security system")))
+  )
     .withDescriptionPath(_ / "api-docs")
+    .securedBy(SecuritySystemAuth())
     .withRoutes(new KnockKnock(inhabitants, userDirectory, entryLogger))
     .withRoutes(new ByeBye(inhabitants, entryLogger))
 
-  private val statusModule = ModuleSpec(Root / "internal", SimpleJson()).withRoute(new Ping().route)
+  private val internalModule = ModuleSpec(Root / "internal", SimpleJson()).withRoute(new Ping().route)
 
   private val webModule = ModuleSpec[View](Root,
     new SiteMapModuleRenderer(new URL("http://my.security.system")),
     new RenderMustacheView(Html.ResponseBuilder, "examples/full/main/resources/templates")
   )
     .withDescriptionPath(_ / "sitemap.xml")
-    .withRoutes(new Pages(userDirectory))
+    .withRoutes(new ShowKnownUsers(userDirectory))
+    .withRoutes(new ShowIndex(userDirectory))
 
   private val publicModule = StaticModule(Root, "examples/full/main/resources/public")
 
+  // use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
+  // to all routes in the system
+  private val globalFilter = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(CatchAll)
+
   def start() = {
     server = Http.serve(s":$serverPort", globalFilter.andThen(Module.toService(
-      Module.combine(serviceModule, statusModule, webModule, publicModule))))
+      Module.combine(serviceModule, internalModule, webModule, publicModule))))
     Future.Done
   }
 
