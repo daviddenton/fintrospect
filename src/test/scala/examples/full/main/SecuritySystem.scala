@@ -34,17 +34,20 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
     .withRoutes(new KnockKnock(inhabitants, userDirectory, entryLogger))
     .withRoutes(new ByeBye(inhabitants, entryLogger))
 
-  private val publicModule = StaticModule(Root / "public", "public")
-
-  private val webModule = ModuleSpec[View](Root / "web",
-    new SiteMapModuleRenderer(new URL("http://my.security.system")),
-    new RenderMustacheView(Html.ResponseBuilder)
-  ).withRoutes(new ShowKnownUsers(userDirectory))
-
   private val statusModule = ModuleSpec(Root / "internal", SimpleJson()).withRoute(new Ping().route)
 
+  private val webModule = ModuleSpec[View](Root,
+    new SiteMapModuleRenderer(new URL("http://my.security.system")),
+    new RenderMustacheView(Html.ResponseBuilder, "examples/full/main/resources/templates")
+  )
+    .withDescriptionPath(_ / "sitemap.xml")
+    .withRoutes(new Pages(userDirectory))
+
+  private val publicModule = StaticModule(Root, "examples/full/main/resources/public")
+
   def start() = {
-    server = Http.serve(s":$serverPort", globalFilter.andThen(Module.toService(Module.combine(publicModule, webModule, serviceModule, statusModule))))
+    server = Http.serve(s":$serverPort", globalFilter.andThen(Module.toService(
+      Module.combine(serviceModule, statusModule, webModule, publicModule))))
     Future.Done
   }
 
