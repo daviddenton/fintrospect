@@ -8,7 +8,7 @@ import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 import io.fintrospect.Headers._
 import io.fintrospect.ModuleSpec._
-import io.fintrospect.Types.{FFilter, ServiceBinding}
+import io.fintrospect.Types.ServiceBinding
 import io.fintrospect.parameters.{NoSecurity, Parameter, Security}
 import io.fintrospect.renderers.ModuleRenderer
 
@@ -37,7 +37,7 @@ object ModuleSpec {
     * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to
     * this module APART from the documentation route).
     */
-  def apply[RS](basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: FFilter[RS]): ModuleSpec[RS] = {
+  def apply[RS](basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, Request, RS]): ModuleSpec[RS] = {
     new ModuleSpec[RS](basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)
   }
 }
@@ -51,7 +51,7 @@ class ModuleSpec[RS] private(basePath: Path,
                              descriptionRoutePath: ModifyPath,
                              routes: Seq[ServerRoute[RS]],
                              security: Security,
-                             moduleFilter: FFilter[RS]) extends Module {
+                             moduleFilter: Filter[Request, Response, Request, RS]) extends Module {
   override protected def serviceBinding: ServiceBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>

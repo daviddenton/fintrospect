@@ -11,14 +11,14 @@ import io.fintrospect.Types._
 import io.fintrospect.formats.ResponseBuilder._
 
 object StaticModule {
-  def apply(basePath: Path, baseDir: String = "/", moduleFilter: FFilter[Response] = Filter.identity) = {
+  def apply(basePath: Path, baseDir: String = "/", moduleFilter: Filter[Request, Response, Request, Response] = Filter.identity) = {
     val withStarting = if (baseDir.startsWith("/")) baseDir else "/" + baseDir
     val withEnding = if (withStarting.endsWith("/")) withStarting else withStarting + "/"
     new StaticModule(basePath, withEnding, moduleFilter)
   }
 }
 
-class StaticModule private(basePath: Path, baseDir: String, moduleFilter: FFilter[Response]) extends Module {
+class StaticModule private(basePath: Path, baseDir: String, moduleFilter: Filter[Request, Response, Request, Response]) extends Module {
 
   override protected def serviceBinding: ServiceBinding = {
     case method -> path if method == Get && exists(path) =>

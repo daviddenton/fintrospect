@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
   * Endpoint security. Provides filter to be applied to endpoints for all requests.
   */
 sealed trait Security {
-  val filter: FFilter[Response]
+  val filter: Filter[Request, Response, Request, Response]
 }
 
 /**
