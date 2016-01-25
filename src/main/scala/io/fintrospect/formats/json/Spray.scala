@@ -8,7 +8,7 @@ import spray.json._
 /**
  * Argo JSON support (application/json content type)
  */
-object SprayJson extends JsonLibrary[JsValue, JsValue] {
+object Spray extends JsonLibrary[JsValue, JsValue] {
 
  object JsonFormat extends JsonFormat[JsValue, JsValue] {
 
