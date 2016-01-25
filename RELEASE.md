@@ -2,16 +2,18 @@ Roadmap/Release Notes/Migration Guide
 -----------------------------
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
-#####v12.0.0 (in dev)
+#####v12.1.0 (in dev)
+- New documentation (and hopefully site)!
+
+#####v12.0.1
 - Breaking change: Moved non-JSON ResponseBuilder classes to be consistent with other codecs. E.g. ```io.fintrospect.formats.xml.XmlResponseBuilder``` moves to ```io.fintrospect.formats.Xml.ResponseBuilder```.
+- (Unlikely) Breaking change: Rename of ```ResponseBuilderMethods``` trait to ```AbstractResponseBuilder```.
 - Deprecation of ```FintrospectModule``` to be replaced with ```ModuleSpec``` and ```Module``` for consistency.
 - Added support Circe JSON library out of the box. See ```Circe``` to get the Format util and ResponseBuilder for this format.
 - Added templating support for Mustache and Handlebars - similar to the JSON libraries, these require extra dependencies to be added to build.sbt.
 - Added StaticModule for serving static resources from the classpath.
 - Added SiteMapModuleRenderer for XML descriptions of web modules.
 - Added parenthesis for ```ResponseBuilder``` ```build()``` method for consistency.
-- Rename of ```ResponseBuilderMethods``` trait to ```AbstractResponseBuilder```. Still terrible.. :(
-- New documentation (and hopefully site)!
 
 #####v11.5.0
 - Upgrade to Finagle ```6.31.0```.
