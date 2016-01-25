@@ -1,62 +1,3 @@
-Pre-amble
-==
-Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it's concepts, which can be found here: http://twitter.github.io/finagle/guide
-
-&tldr; version:
-1. Finagle provides protocol-agnostic RPC and is based on Netty.
-2. It is mainly asynchronous and makes heavy usage of Twitter's version of Scala Futures.
-3. It defines identical Service and Filter interfaces for both client and server APIs that contain a single method:
-```scala
-      Service:  def apply(request : Req) : com.twitter.util.Future[Rep]
-      Filter:   def apply(request : ReqIn, service : 
-     com.twitter.finagle.Service[ReqOut, RepIn]) : com.twitter.util.Future[RepOut]
-```
-where the types Req and Rep represent the Request and Response types for the protocol in question.
-
-Note that in order to aid the reader, the code in this guide has omitted imports that would have made the it read more nicely. The sacrifices we make in the name of learning... :)
-
-##Broad concepts
-Fintrospect is a library designed to facilitate painless definition, serving and consumption of HTTP APIs. It uses the following main concepts:
-- RouteSpec: defines the overall HTTP contract of an endpoint. This contract can then be bound to a Finagle Service representing an HTTP client, or bundled into a Module and attached to a Finagle HTTP server.
-- ParameterSpec: defines the acceptable format for a request parameter (Path/Query/Header/Form-field). Provides the auto-marshalling mechanic for serializing and deserializing objects to and from HTTP message.
-- BodySpec: similar to ParameterSpec, but applied to the body of an HTTP message.
-- ModuleSpec: defines a set of Routes which are grouped under a particular request path. These modules can be combined and then converted to a Finagle service and attached to a Finagle HTTP server. Each module provides an endpoint under which it's own runtime-generated documentation can be served (eg. in Swagger format).
-
-##Defining routes
-A RouteSpec object defines the specification of the contract and the API follows the immutable builder pattern. Apart from the path elements (which terminate the builder), all of the "builder-y" calls here are optional, as are the descriptive strings (we'll see how they are used later). Here's the simplest possible REST-like example for getting all employees in a system:
-
-```scala
-RouteSpec("list all employees").at(Method.Get) / "employee"
-```
-
-Notice that the request in that  example was completely static? If we want an example of a dynamic endpoint, such as listing all users in a particular numerically-identified department, then we can introduce a Path parameter:
-```scala
-  RouteSpec("list all employees in a particular group").at(Method.Get) / "employee" / Path.integer("departmentId")
-```
-... and we can do the same for Header and Query parameters; both optional and mandatory parameters are supported, as are parameters that can appear multiple times.:
-```scala
-RouteSpec("list all employees in a particular group")
-    .taking(Header.optional.boolean("listOnlyActive"))
-    .taking(Query.required.*.localDate("datesTakenAsHoliday"))
-    .at(Method.Get) / "employee" / Path.integer("departmentId")
-```
-Moving onto HTTP bodies - for example adding an employee via a HTTP Post and declaring the content types that we produce (although this is optional):
-
-```scala
-RouteSpec("add employee", "Insert a new employee, failing if it already exists")
-    .producing(ContentTypes.TEXT_PLAIN)
-    .body(Body.form(FormField.required.string("name"), FormField.required.localDate("dateOfBirth")))
-    .at(Method.Post) / "user" / Path.integer("departmentId")
-```
-  ... or via a form submission and declaring possible responses:
-```scala
-RouteSpec("add user", "Insert a new employee, failing if it already exists")
-    .body(Body.form(FormField.required.string("name"), FormField.required.localDate("dateOfBirth")))
-    .returning(Created -> "Employee was created")
-    .returning(Conflict -> "Employee already exists")
-    .at(Method.Post) / "user" / Path.integer("departmentId")
-```
-
 ##Defining request parameters and bodies
 As can be seen above, request parameters are created in a uniform way using the standardised objects Path, Header, Query, FormField and Body. The general form for definition is: ```<parameter location>.<required|optional>.<param type>("name")```
 Since Path and Body parameters are always required, the middle step is omitted from this form for these types.
@@ -65,7 +6,7 @@ There are convenience methods for a standard set of "primitive" types, plus exte
 
 ##Custom formats
 These can be implemented by defining a ParameterSpec or BodySpec and passing this in instead of calling the ```<param type>``` method in the form above. These Spec objects define the serialization and deserialization mechanisms from the String format that comes in on the request. An example for a simple domain case class Birthday:
-```scala
+```
 case class Birthday(value: LocalDate) {
    override def toString = value.toString
 }
@@ -87,7 +28,7 @@ Once the RouteSpec has been defined, it can be bound to either an HTTP Endpoint 
 A RouteSpec needs to be bound to a standard Finagle Service to receive requests. Since these are very lightweight, we create a new instance of the Service for every request, and bind the RouteSpec to a factory method which receives the dynamic Path parameters and returns the Service. Other parameters can be retrieved directly in a typesafe manner from the HTTP request by using ```<--()``` or ```from()``` method on the parameter declaration.
 Note that the validity of ALL parameters which are attached to a RouteSpec is verified by Fintrospect before requests make it to these bound Services, so you do not need to worry about implementing any validation at this point.
 
-```scala
+```
 val holidays = Query.required.*.localDate("datesTakenAsHoliday")
 val includeManagement = Header.optional.boolean("includeManagement")
 
@@ -106,7 +47,7 @@ RouteSpec().taking(holidays).taking(includeManagement).at(Method.Get) / "employe
 
 ###Modules
 A Module is a collection of Routes that share a common root URL context. Add the routes and then convert into a standard Finagle Service object which is then attached in the normal way to an HTTP server.
-```scala
+```
 def listEmployees(): Service[Request, Response] = Service.mk(req => Future.value(Response()))
 
 Http.serve(":8080",
@@ -116,25 +57,25 @@ Http.serve(":8080",
 )
 ```
 Modules with different root contexts can also be combined with one another and then converted to a Service:
-```scala
+```
 Module.toService(ModuleSpec(Root / "a").combine(ModuleSpec(Root / "b")))
 ```
 
 ####Self-describing Module APIs
 A big feature of the Fintrospect library is the ability to generate API documentation at runtime. This can be activated by passing in a ModuleRenderer implementation when creating the ModuleSpec and when this is done, a new endpoint is created at the root of the module context (overridable) which serves this documentation. Bundled with Fintrospect are Swagger (1.1 and 2.0) JSON and a simple JSON format. Other implementations are pluggable by implementing a Trait - see the example code for a simple XML implementation.
-```scala
+```
 ModuleSpec(Root / "employee", Swagger2dot0Json(ApiInfo("an employee discovery API", "3.0")))
 ```
 
 ####Security
 Module routes can secured by adding an implementation of the Security trait - this essentially provides a filter through which all requests will be passed. An ApiKey implementation is bundled with the library which return an unauthorized HTTP response code when a request does not pass authentication.
-```scala
+```
 ModuleSpec(Root / "employee").securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future.value(key == "extremelySecretThing")))
 ```
 
 ###Clientside
 A RouteSpec can also be bound to a standard Finagle HTTP client and then called as a function, passing in the parameters which are bound to values by using the ```-->()``` or ```of()``` method. The client marshalls the passed parameters into an HTTP request and returns a Twitter Future containing the response. Any required manipulation of the Request (such as adding timeouts or caching headers) can be done in the standard way by chaining Filters to the Finagle HTTP client:
-```scala
+```
 val employeeId = Path.integer("employeeId")
 val name = Query.required.string("name")
 val client: RouteClient = RouteSpec().taking(name).at(Get) / "employee" / employeeId bindToClient Http.newService("localhost:10000")
@@ -148,7 +89,7 @@ Because the RouteSpec objects can be used to bind to either a Server OR a Client
 
 ##Building HTTP Responses
 It's all very well being able to extract pieces of data from HTTP requests, but that's only half the story - we also want to be able to easily build responses. Fintrospect comes bundled with a extensible set of HTTP Response Builders to do this. The very simplest way is by using a ResponseBuilder object directly...
-```scala
+```
 ResponseBuilder.toFuture(
     ResponseBuilder.HttpResponse(ContentTypes.APPLICATION_JSON).withCode(Ok).withContent("some text").build()
 )
@@ -238,7 +179,7 @@ However, this only handles Strings and Buffer types directly. Also bundled are a
 Note that to avoid dependency bloat, Fintrospect only ships with the above JSON library bindings - you'll need to bring in the library of your choice as an additional dependency.
 
 The simplest (least concise) way to invoke an auto-marshalling (ie. typesafe) ResponseBuilder is along the lines of:
-```scala
+```
 val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(
     Xml.ResponseBuilder.HttpResponse(Ok).withContent(<xml>lashings and lashings of wonderful</xml>)
   )
@@ -251,7 +192,7 @@ val responseViaImplicits: Future[Response] = Ok(<xml>lashings and lashings of wo
 
 ##Templating
 Templates are applied by using custom Filters to convert View instances into standard Http Responses. Simply implement the View trait and then put a matching template file onto the classpath, and chain the output of the model-creating Service into the Filter. You can do this for entire modules by making the ModuleSpec itself generified on View and using the templating Filter as a Module-level filter:
-```scala
+```
 case class ViewMessage(value: String) extends View
 
 def showMessage() = Service.mk[Request, View] { _ => Future.value(ViewMessage("some value to be displayed")) }
@@ -285,6 +226,6 @@ Similarly to how the ResponseBuilders work, no 3rd-party dependencies are bundle
 
 ##Static content
 Files can be served easily by using a StaticModule:
-```scala
+```
 val publicModule = StaticModule(Root / "public", "public")
 ```
