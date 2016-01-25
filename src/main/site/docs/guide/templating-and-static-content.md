@@ -1,4 +1,4 @@
-##Templating
+# templating
 Templates are applied by using custom Filters to convert View instances into standard Http Responses. Simply implement the View trait and then put a matching template file onto the classpath, and chain the output of the model-creating Service into the Filter. You can do this for entire modules by making the ModuleSpec itself generified on View and using the templating Filter as a Module-level filter:
 ```
 case class ViewMessage(value: String) extends View
@@ -32,7 +32,7 @@ Similarly to how the ResponseBuilders work, no 3rd-party dependencies are bundle
 </tr>
 </table>
 
-##Static content
+## static content
 Files can be served easily by using a StaticModule:
 ```
 val publicModule = StaticModule(Root / "public", "public")
