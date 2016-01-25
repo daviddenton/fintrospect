@@ -2,6 +2,7 @@ package io.fintrospect.renderers
 
 import java.net.URL
 
+import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Response, Status}
@@ -23,7 +24,7 @@ class SiteMapModuleRenderer(baseUrl: URL) extends ModuleRenderer {
     }
 
     Ok(<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      {routes.map(buildUrl)}
+      {routes.filter(_.method == Get).map(buildUrl)}
     </urlset>)
   }
 }
