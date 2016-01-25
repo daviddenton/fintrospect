@@ -3,6 +3,7 @@ Roadmap/Release Notes/Migration Guide
 The main API is fairly stable now, but expect some amount of breaking changes around major releases as new features are added.
 
 #####v12.1.0 (in dev)
+- Option to dynamically reload templates
 - New documentation (and hopefully site)!
 
 #####v12.0.1
