@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "bower": "^1.7.2",
+    "harp": "^0.20.1"
+  },
+  "scripts": {
+    "setup": "npm install && ./node_modules/bower/bin/bower install",
+    "start": "./node_modules/harp/bin/harp compile src/main/site target/www && ./node_modules/harp/bin/harp server target/www"
+  }
+}
