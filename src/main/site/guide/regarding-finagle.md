@@ -1,4 +1,4 @@
-# introduction
+# regarding finagle
 Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it's concepts, which can be found here: http://twitter.github.io/finagle/guide
 
 &tldr; version:
