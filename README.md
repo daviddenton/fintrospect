@@ -28,7 +28,7 @@ the HTTP API of a downstream servers (for a fake) to be created with no effort, 
 - Template responses using Mustache (2.11 only) or Handlebars
 - Serve static resources
 
-###Get it
+### Get it
 Add the following lines to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle,
 and it has built against the version below:
 
@@ -40,14 +40,14 @@ libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "X.X.X"
 
 Additionally, to activate any message formats other than Argo JSON and native XML you'll need to import the relevant libraries (e.g. Json4S native/jackson), since only the bindings are included in the Fintrospect JAR.
 
-###See it
+### See it
 See the <a href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples" target="_top">example code</a>.
 
-###Learn it
+### Learn it
 
-####Server-side
+#### Server-side
 Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, we'll imagine a Library application (see the example above for the full code) which will be rendering Swagger v2 documentation.
-#####Define a module to live at ```http://{host}:8080/library```
+##### Define a module to live at ```http://{host}:8080/library```
 This module will have a single endpoint ```search```:
 
 ```scala
@@ -59,7 +59,7 @@ val service = Module.toService(libraryModule)
 Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)) // remember to make your own Cors Policy for prod!
 ```
 
-#####Define the endpoint
+##### Define the endpoint
 This example is quite contrived (and almost all the code is optional) but shows the kind of thing that can be done. Note the use of the example response object, which will be broken down to provide the JSON model for the Swagger documentation.
 
 ```scala
@@ -88,10 +88,10 @@ class BookSearch(books: Books) {
 }
 ```
 
-#####View the generated documentation
+##### View the generated documentation
 The auto-generated documentation lives at the root of the module, so point the Swagger UI at ```http://{host}:8080/library``` to see it.
 
-####Client-side
+#### Client-side
 Declare the fields to be sent to the client service and then bind them to a remote service. This produces a simple function, which can then be called with the bindings for each parameter.
 ```scala
   val httpClient = Http.newService("localhost:10000")
@@ -111,12 +111,12 @@ Declare the fields to be sent to the client service and then bind them to a remo
   println(Await.result(theCall))
 ```
 
-#####Test it
+##### Test it
 Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you can mix into your tests in order to validate your declared server-side routes.
 
 ###Upgrading?
 See the <a href="https://github.com/daviddenton/fintrospect/blob/master/RELEASE.md" target="_top">Roadmap</a>.
 
-###Contributions
+### Contributing
 If there are any message format library or templating engine bindings that you'd like to see included, then please feel free to suggest them or provide a PR. For JSON formats, this
 is particularly easy to implement - just provide an implementation of ```JsonLibrary``` by following the ```Argo``` example in the source.
