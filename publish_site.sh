@@ -6,7 +6,7 @@ cd target
 git clone git@github.com:daviddenton/fintrospect.git www
 cd www
 git checkout --orphan gh-pages
-git rm -rf .
+rm -rf .
 cd ../..
 npm run makeSite
 cd target/www
