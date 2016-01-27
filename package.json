@@ -4,7 +4,7 @@
     "harp": "^0.20.1"
   },
   "scripts": {
-    "cleanSite": "rm -rf target/site",
+    "cleanSite": "rm -rf target/www",
     "setup": "npm install && ./node_modules/bower/bin/bower install",
     "makeSite": "./node_modules/harp/bin/harp compile src/main/site",
     "serve": "./node_modules/harp/bin/harp server target/www",
