@@ -6,8 +6,8 @@ Since Fintrospect is build on top of Finagle, it's worth acquainting yourself wi
 2. It is mainly asynchronous and makes heavy usage of Twitter's version of Scala Futures.
 3. It defines identical Service and Filter interfaces for both client and server APIs that contain a single method:
 ```
-Service:  def apply(request : Req) : com.twitter.util.Future[Rep]
-Filter:   def apply(request : ReqIn, service : com.twitter.finagle.Service[ReqOut, RepIn]) : com.twitter.util.Future[RepOut]
+Service:  def apply(request : Req) : Future[Rep]
+Filter:   def apply(request : ReqIn, service : Service[ReqOut, RepIn]) : Future[RepOut]
 ```
 where the types Req and Rep represent the Request and Response types for the protocol in question.
 
