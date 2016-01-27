@@ -1,12 +1,12 @@
 ul.nav.nav-pills.nav-stacked.nav-docs
-    li(class="#{ current.source == '' ? 'active' : '' }")
-        a(href="/") Home
+    li(class="#{ current.source == 'index' ? 'active' : '' }")
+        a(href="/") introduction
     li
         h1 Guide
-    li(class="#{ current.source == 'intro' ? 'active' : '' }")
-        a(href="/guide/intro") Introduction
+    li(class="#{ current.source == 'regarding-finagle' ? 'active' : '' }")
+        a(href="/guide/regarding-finagle") regarding finagle
     li(class="#{ current.source == 'installation' ? 'active' : '' }")
-        a(href="/guide/installation") Installation
+        a(href="/guide/installation") installation
     li(class="#{ current.source == 'request-parameters-and-bodies' ? 'active' : '' }")
         a(href="/guide/request-parameters-and-bodies") request parameters & bodies
     li(class="#{ current.source == 'routes' ? 'active' : '' }")
@@ -15,13 +15,3 @@ ul.nav.nav-pills.nav-stacked.nav-docs
         a(href="/guide/using-routes") using routes
     li(class="#{ current.source == 'templating-and-static-content' ? 'active' : '' }")
         a(href="/guide/templating-and-static-content") templating and static content
-    li
-        h1 Links
-    li
-        a(href="https://travis-ci.org/daviddenton/fintrospect") Travis
-    li
-        a(href="https://bintray.com/daviddenton/maven/fintrospect/_latestVersion") Latest Version
-    li
-        a(href="https://github.com/daviddenton/fintrospect") Github
-    li
-        a(href="https://github.com/daviddenton/fintrospect") Coveralls
