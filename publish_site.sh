@@ -2,15 +2,16 @@
 echo Releasing and publishing v$1
 
 npm run cleanSite
-cd target
-git clone git@github.com:daviddenton/fintrospect.git www
-cd www
+rm -rf /tmp/site
+git clone git@github.com:daviddenton/fintrospect.git /tmp/site
+cd /tmp/site
 git checkout --orphan gh-pages
-rm -rf .
-cd ../..
+rm -rf *
+cd -
 npm run makeSite
-cd target/www
+cp -R target/www/* /tmp/site
+cd /tmp/site
 git add *
 git commit -a -m "releasing $1 version of site"
 git push origin gh-pages
-cd ../..
+cd -
