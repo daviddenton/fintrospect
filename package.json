@@ -8,6 +8,6 @@
     "setup": "npm install && ./node_modules/bower/bin/bower install",
     "makeSite": "./node_modules/harp/bin/harp compile src/main/site target/www",
     "serve": "./node_modules/harp/bin/harp server target/www",
-    "start": "npm run makeSite && npm serve"
+    "start": "npm run makeSite && npm run serve"
   }
 }
