@@ -11,24 +11,24 @@ val webModule = ModuleSpec[View](Root / "web",
     .withRoute(RouteSpec().at(Get) / "message" bindTo showMessage)
 ```
 Similarly to how the ResponseBuilders work, no 3rd-party dependencies are bundled with Fintrospect - simply import the extra SBT dependencies as required:
-<table border="1px">
+<table class="code table table-bordered">
 <tr>
   <td>Library</td>
   <td>Template filename suffix</td>
-  <td>Additional SBT depdendencies</td>
+  <td>Additional SBT deps</td>
   <td>Filter class</td>
 </tr>
 <tr>
   <td>Handlebars</td>
   <td>.hbs</td>
   <td>"com.gilt" %% "handlebars-scala" % "2.0.1"</td>
-  <td>io.fintrospect.templating.RenderHandlebarsView</td>
+  <td>RenderHandlebarsView</td>
 </tr>
 <tr>
   <td>Mustache (v2.11 only)</td>
   <td>.mustache</td>
   <td>"com.github.spullara.mustache.java" % "compiler" % "0.9.1"<br/>"com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"</td>
-  <td>io.fintrospect.templating.RenderMustacheView</td>
+  <td>RenderMustacheView</td>
 </tr>
 </table>
 
