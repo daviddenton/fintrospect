@@ -6,13 +6,13 @@ npm run cleanSite
 rm -rf /tmp/site
 git clone git@github.com:daviddenton/fintrospect.git /tmp/site
 cd /tmp/site
-git checkout --orphan gh-pages
-rm -rf *
+git checkout gh-pages
 cd -
 npm run makeSite
 cp -R target/www/* /tmp/site
 cd /tmp/site
 git add *
-git commit -a -m "releasing $1 version of site"
+git commit -m "releasing $1 version of site"
+git pull -r
 git push origin gh-pages
 cd -
