@@ -7,7 +7,7 @@ object RunnableEnvironment extends App {
   val userDirectoryPort = 10000
   val entryLoggerPort = 10001
 
-  private val environment: TestEnvironment = new TestEnvironment(serverPort, userDirectoryPort, entryLoggerPort)
+  private val environment = new TestEnvironment(serverPort, userDirectoryPort, entryLoggerPort)
   environment.start()
   environment.userDirectory.contains(User(Id(1), Username("Bob"), EmailAddress("bob@bob.com")))
   environment.userDirectory.contains(User(Id(2), Username("Rita"), EmailAddress("rita@bob.com")))
