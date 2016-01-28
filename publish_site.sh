@@ -9,6 +9,7 @@ cd /tmp/site
 git checkout gh-pages
 cd -
 npm run makeSite
+rm -rf /tmp/site/*
 mv -f target/www/* /tmp/site
 cd /tmp/site
 git add *
