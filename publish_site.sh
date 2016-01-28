@@ -9,10 +9,9 @@ cd /tmp/site
 git checkout gh-pages
 cd -
 npm run makeSite
-cp -R target/www/* /tmp/site
+mv -f target/www/* /tmp/site
 cd /tmp/site
 git add *
 git commit -m "releasing $1 version of site"
-git pull -r
 git push origin gh-pages
 cd -
