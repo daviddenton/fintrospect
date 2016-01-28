@@ -4,7 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Request, Response}
 import examples.full.main.UserDirectory._
-import examples.full.main.{EmailAddress, Id, User, Username}
+import examples.full.main._
 import io.fintrospect.ServerRoutes
 import io.fintrospect.formats.json.Json4s.Native.JsonFormat._
 import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder._
@@ -14,7 +14,7 @@ import scala.collection.mutable
 /**
   * Fake implementation of the User Directory HTTP contract. Note the re-use of the RouteSpecs from UserDirectory.
   */
-class FakeUserDirectoryState extends ServerRoutes[Response] {
+class FakeUserDirectory extends ServerRoutes[Response] {
 
   private var users: mutable.Map[Id, User] = null
 
@@ -24,7 +24,7 @@ class FakeUserDirectoryState extends ServerRoutes[Response] {
 
   private def create() = Service.mk[Request, Response] {
     request => {
-      val form = Create.form <-- request
+      val form = UserDirectory.Create.form <-- request
       val (username, email) = form <--(Create.username, Create.email)
       val newUser = User(Id(users.size), Username(username), EmailAddress(email))
       users(newUser.id) = newUser
@@ -32,7 +32,7 @@ class FakeUserDirectoryState extends ServerRoutes[Response] {
     }
   }
 
-  add(Create.route.bindTo(create))
+  add(UserDirectory.Create.route.bindTo(create))
 
   private def delete(id: Id) = Service.mk[Request, Response] {
     request => users
@@ -41,7 +41,7 @@ class FakeUserDirectoryState extends ServerRoutes[Response] {
       .getOrElse(NotFound())
   }
 
-  add(Delete.route.bindTo(delete))
+  add(UserDirectory.Delete.route.bindTo(delete))
 
   private def lookup(username: Username) = Service.mk[Request, Response] {
     request =>
@@ -52,11 +52,11 @@ class FakeUserDirectoryState extends ServerRoutes[Response] {
         .getOrElse(NotFound())
   }
 
-  add(Lookup.route.bindTo(lookup))
+  add(UserDirectory.Lookup.route.bindTo(lookup))
 
   private def userList() = Service.mk[Request, Response] { _ =>  Ok(encode(users.values)) }
 
-  add(UserList.route.bindTo(userList))
+  add(UserDirectory.UserList.route.bindTo(userList))
 
   reset()
 }

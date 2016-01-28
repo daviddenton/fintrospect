@@ -11,8 +11,8 @@ import io.fintrospect.testing.TestHttpServer
 class TestEnvironment(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: Int) {
 
   val clock = Clock.fixed(Instant.ofEpochMilli(0), ZoneId.systemDefault())
-  val userDirectory = new FakeUserDirectoryState()
-  val entryLogger = new FakeEntryLoggerState()
+  val userDirectory = new FakeUserDirectory()
+  val entryLogger = new FakeEntryLogger()
 
   val userDirectoryServer = new TestHttpServer(userDirectoryPort, userDirectory)
   val entryLoggerServer = new TestHttpServer(entryLoggerPort, entryLogger)
