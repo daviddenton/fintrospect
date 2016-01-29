@@ -3,11 +3,10 @@ package examples.full.main
 import java.net.URL
 import java.time.Clock
 
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle._
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.{Filter, Http, ListeningServer}
 import com.twitter.util.Future
 import io.fintrospect.formats.Html
 import io.fintrospect.renderers.SiteMapModuleRenderer
@@ -24,11 +23,9 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
   private val entryLogger = new EntryLogger(s"localhost:$entryLoggerPort", clock)
   private val inhabitants = new Inhabitants
 
-  private val moduleFilter: Filter[Request, Response, Request, Response] = Filter.identity
-
   private val serviceModule = ModuleSpec(Root / "security",
     Swagger2dot0Json(ApiInfo("Security System", "1.0", Option("Building security system"))),
-    moduleFilter
+    new RequestCountingFilter(System.out)
   )
     .withDescriptionPath(_ / "api-docs")
     .securedBy(SecuritySystemAuth())
