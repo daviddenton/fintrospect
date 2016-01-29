@@ -1,4 +1,4 @@
-# building HTTP Responses
+# building http responses
 It's all very well being able to extract pieces of data from HTTP requests, but that's only half the story - we also want to be able to easily build responses. Fintrospect comes bundled with a extensible set of HTTP Response Builders to do this. The very simplest way is by using a ResponseBuilder object directly...
 ```
 ResponseBuilder.toFuture(
