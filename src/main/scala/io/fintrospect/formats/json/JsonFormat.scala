@@ -3,7 +3,8 @@ package io.fintrospect.formats.json
 import java.math.BigInteger
 
 /**
- * Capability to create and parse JSON message formats in a generic way.
+ * Capability to create and parse JSON message formats in a generic way. Used to serialise and deserialise
+  * request parameters and bodies.
  */
 trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
 
@@ -11,7 +12,8 @@ trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
 
   /**
    * Attempt to parse the JSON into the root node type. Implementations should throw an exception
-   * if the parsing fails, which is dealt with by the surrounding deserialisation mechanism.
+   * if the parsing fails, which is dealt with by the surrounding deserialisation mechanism, so you
+    * don't need to worry about having to muddy your own code with the exception handling.
    */
   def parse(in: String): ROOT_NODETYPE
 
