@@ -48,9 +48,9 @@ object UserDirectory {
   */
 class UserDirectory(hostAuthority: String) {
 
-  private def expect[T](expectedStatus: Status, b: Body[T]): Response => T = {
-    r => if (r.status == expectedStatus) b <-- r else throw RemoteSystemProblem("user directory", r.status)
-  }
+  private def expect[T](expectedStatus: Status, b: Body[T]): Response => Future[T] =
+    r => if (r.status == expectedStatus) Future.value(b.from(r))
+    else Future.exception(RemoteSystemProblem("user directory", r.status))
 
   private val http = Http.newService(hostAuthority)
 
@@ -59,28 +59,31 @@ class UserDirectory(hostAuthority: String) {
   def create(name: Username, inEmail: EmailAddress): Future[User] = {
     val form = Form(Create.username --> name.value, Create.email --> inEmail.value)
     createClient(Create.form --> form)
-      .map(expect(Created, Create.user))
+      .flatMap(expect(Created, Create.user))
   }
 
   private val deleteClient = Delete.route bindToClient http
 
   def delete(user: User): Future[Unit] =
     deleteClient(Delete.id --> user.id)
-      .map(r => if (r.status == Ok) Unit else throw RemoteSystemProblem("user directory", r.status))
+      .flatMap(
+        r => if (r.status == Ok) Future.value(Unit)
+        else Future.exception(RemoteSystemProblem("user directory", r.status)))
 
   private val listClient = UserList.route bindToClient http
 
   def list(): Future[Seq[User]] = listClient()
-    .map(expect(Ok, UserList.users))
+    .flatMap(expect(Ok, UserList.users))
 
   private val lookupClient = Lookup.route bindToClient http
 
   def lookup(username: Username): Future[Option[User]] =
     lookupClient(Lookup.username --> username)
-      .map { r => r.status match {
-        case Ok => Some(Lookup.user <-- r)
-        case NotFound => None
-        case s => throw RemoteSystemProblem("user directory", r.status)
-      }
+      .flatMap {
+        r => r.status match {
+          case Ok => Future.value(Some(Lookup.user <-- r))
+          case NotFound => Future.value(None)
+          case s => Future.exception(RemoteSystemProblem("user directory", r.status))
+        }
       }
 }
