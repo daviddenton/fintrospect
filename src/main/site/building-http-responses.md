@@ -74,13 +74,13 @@ However, this only handles Strings and Buffer types directly. Also bundled are a
     <td>io.fintrospect.formats.json.Spray</td>
 </tr>
 <tr>
-    <td>(XHTML)</td>
+    <td>XHTML</td>
     <td>application/xhtml+xml</td>
     <td>-</td>
     <td>io.fintrospect.formats.XHtml</td>
 </tr>
 <tr>
-    <td>(XML)</td>
+    <td>XML</td>
     <td>application/xml</td>
     <td>-</td>
     <td>io.fintrospect.formats.Xml</td>
