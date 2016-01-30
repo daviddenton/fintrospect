@@ -1,5 +1,12 @@
 {
   "globals": {
-    "name": "fintrospect"
+    "finagle": {
+      "old": "6.30.0",
+      "new": "6.31.0"
+    },
+    "fintrospect": {
+      "old": "12.0.1",
+      "new": "12.0.2"
+    }
   }
 }
