@@ -15,15 +15,9 @@ for parameters are supported. Also support for typesafe conversions of custom ty
 - The library provide identification HTTP headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. ```/search/author/rowling -> /search/author/{name}```.
 - Define HTTP Client endpoints APIs which reuse the same syntax and parameter bindings as the server-side, which means that you can use the same route specification to define both sides of the transport boundary. This allows, for example,
 the HTTP API of a downstream servers (for a fake) to be created with no effort, and exactly matching the client side. These endpoints are also exposed as simple functions.
-- A set of HTTP Response builders with pluggable extension points for custom formats; currently supported are:
-  - Argo JSON (3.12 compatible)
-  - Argonaut JSON (v6.0.X compatible)
-  - Circe JSON (v0.2.X compatible)
-  - GSON (v2.5 compatible)
-  - Json4s (v3.2.X compatible) Native & Jackson
-  - Play JSON (v2.4.X compatible)
-  - Scala native XML
-  - Spray JSON (v1.3.X compatible)
+-  set of HTTP Response builders with pluggable extension points for custom formats:
+  - JSON (requires extra : Argo, Argonaut, Circe, GSON, Json4S, Play JSON, Spray JSON
+  - Native implementations of XML, Plain Text, HTML, XHTML 
 - Template responses using Mustache (2.11 only) or Handlebars
 - Serve static resources
 
@@ -37,7 +31,7 @@ libraryDependencies += "com.twitter" %% "finagle-http" % "6.31.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.0.2"
 ```
 
-Additionally, to activate any message formats other than Argo JSON and native XML you'll need to import the relevant libraries (e.g. Json4S native/jackson), since only the bindings are included in the Fintrospect JAR.
+Some features require additional dependencies. Please see <a href="http://fintrospect.io/installation">here</a> for details.
 
 ### See it
 See the <a href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples" target="_top">example code</a>.
