@@ -6,3 +6,5 @@ git tag
 git push origin $1
 
 ./sbt "set version:=\"$1\"" clean compile test +package +publish
+
+./publish_site.sh $1
