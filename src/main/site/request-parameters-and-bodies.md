@@ -1,8 +1,13 @@
 # request parameters and bodies
 
 ### defining
-As can be seen previously, request parameters are created in a uniform way using the standardised objects Path, Header, Query, FormField and Body. The general form for definition is: ```<parameter location>.<required|optional>.<param type>("name")```
-Since Path and Body parameters are always required, the middle step is omitted from this form for these types.
+Request parameters are created in a uniform way using the standardised objects ```Path```, ```Header```, ```Query```, ```FormField``` and ```Body```. 
+The general form for definition is: 
+```
+<parameter location class>.<required|optional>.<param type>("<name>")
+```
+
+Since ```Path``` and ```Body``` parameters are always required, the middle step is omitted from this form for these types.
 
 There are convenience methods for a standard set of "primitive" types, plus extensions for other common formats such as native Scala XML, Forms (body only) and JSON (more on this later).
 
