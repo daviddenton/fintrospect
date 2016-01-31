@@ -11,7 +11,7 @@ RouteSpec().at(Method.Get) / "employee"
 Notice that the request routing in that example was completely static? If we want an example of a dynamic endpoint, such as listing 
 all users in a particular numerically-identified department, then we can introduce a ```Path``` parameter:
 ```
-  RouteSpec("list all employees in a particular group").at(Method.Get) / "employee" / Path.integer("departmentId")
+RouteSpec("list all employees in a particular group").at(Method.Get) / "employee" / Path.integer("departmentId")
 ```
 ... and we can do the same for Header and Query parameters; both optional and mandatory parameters are supported, as are parameters that can appear multiple times.:
 ```

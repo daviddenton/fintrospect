@@ -7,37 +7,37 @@ interface to which the main functions are:
 Request parameters are created in a uniform way using the standardised objects ```Path```, ```Header```, ```Query```, ```FormField``` and ```Body```. 
 The general form for definition is as follows, although since ```Path``` and ```Body``` parameters are always required, the middle step is omitted: 
 ```
-    <parameter location class>.<required|optional>.<param type>("<name>")
+<parameter location class>.<required|optional>.<param type>("<name>")
 ```
 
 Descriptions can be attached to these definitions for documentation purposes. Note the type for the optional param:
 ```
-    val anniversary = Header.required.localDate("anniversary", "the date you should not forget! format: yyyy-mm-dd")
-    val myAnniversary: LocalDate = age <-- request
+val anniversary = Header.required.localDate("anniversary", "the date you should not forget! format: yyyy-mm-dd")
+val myAnniversary: LocalDate = age <-- request
 
-    val age = Header.optional.int("age", "your age")
-    val age: Option[Integer] = age <-- request
+val age = Header.optional.int("age", "your age")
+val age: Option[Integer] = age <-- request
 
-    val ohDear = Body.xml("soapMessage", "This isn't Simple")
-    val ohDearDear: Elem = anniversary <-- request
+val ohDear = Body.xml("soapMessage", "This isn't Simple")
+val ohDearDear: Elem = anniversary <-- request
 ```
 
 There are convenience methods for a standard set of "primitive" types, plus extensions for such as native Scala XML, Forms and JSON.
 
 Additionally, there is another form for parameters which can appear multiple times - simply insert the ```*()``` method in the chain:
 ```
-    val kidsBirthdays = Query.required.*.localDate("birthdays", "the dates you should not forget! format: yyyy-mm-dd")
-    val ourKidsBirthdays: Seq[LocalDate] = kidsBirthdays <-- request
+val kidsBirthdays = Query.required.*.localDate("birthdays", "the dates you should not forget! format: yyyy-mm-dd")
+val ourKidsBirthdays: Seq[LocalDate] = kidsBirthdays <-- request
 ```
 
 #### forms
 These represent a slightly special case you first need to retrieve the form from the request, and then the fields from the form.
 ```
-    val name = FormField.required.string("name")
-    val isMarried = FormField.optional.boolean("married")
-    val form = Body.form(name, isMarried)
-    val myForm = form <-- request
-    val myName = name <-- formInstance
+val name = FormField.required.string("name")
+val isMarried = FormField.optional.boolean("married")
+val form = Body.form(name, isMarried)
+val myForm = form <-- request
+val myName = name <-- formInstance
     val iAmMarried = isMarried <-- formInstance
 ```
 
