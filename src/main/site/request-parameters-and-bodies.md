@@ -38,7 +38,7 @@ val isMarried = FormField.optional.boolean("married")
 val form = Body.form(name, isMarried)
 val myForm = form <-- request
 val myName = name <-- formInstance
-    val iAmMarried = isMarried <-- formInstance
+val iAmMarried = isMarried <-- formInstance
 ```
 
 ### custom formats
