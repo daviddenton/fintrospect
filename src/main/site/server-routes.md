@@ -8,8 +8,8 @@ and returns the Service. Other parameters can be retrieved directly in a type-sa
 The presence validity of ALL parameters which are attached to a ```RouteSpec``` is verified by Fintrospect before requests make it to 
 this bound ```Service```, so no validation code is required. The response returned to the client is:
 
-- if there are any ```Path``` params which are missing or invalid (all are required): ```Not Found 404```
-- if there are any ```Header```, ```Query```, or ```Body``` params are missing (required only) or invalid: ```Bad Request 400```
+- ```Not Found 404```: if there are any ```Path``` params which are missing or invalid (all are required)
+- ```Bad Request 400```: if there are any ```Header```, ```Query```, or ```Body``` params are missing (required only) or invalid
 
 ### simple example
 ```
