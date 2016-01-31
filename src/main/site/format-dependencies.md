@@ -59,13 +59,13 @@
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.PlainText">PlainText</a></td>
 </tr>
 <tr>
-    <td><a target="_top" href="https://github.com/google/gson">Play</a></td>
+    <td><a target="_top" href="https://www.playframework.com">Play</a></td>
     <td>application/json</td>
     <td>"com.typesafe.play" %% "play-json" % "2.4.3"</td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Play">Play</a></td>
 </tr>
 <tr>
-    <td><a target="_top" href="https://github.com/google/gson">Spray</a></td>
+    <td><a target="_top" href="https://github.com/spray/spray-json">Spray</a></td>
     <td>application/json</td>
     <td>"io.spray" %% "spray-json" % "1.3.2"</td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Spray">Spray</a></td>
