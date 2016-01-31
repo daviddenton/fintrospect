@@ -70,5 +70,6 @@ Module routes can secured by adding an implementation of the ```Security``` trai
 all requests will be passed. An ```ApiKey``` implementation is bundled with the library which return an ```401 Unauthorized``` HTTP 
 response code when a request does not pass authentication.
 ```
-ModuleSpec(Root / "employee").securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future.value(key == "extremelySecretThing")))
+ModuleSpec(Root / "employee")
+.securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future.value(key == "extremelySecretThing")))
 ```
