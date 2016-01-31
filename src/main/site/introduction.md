@@ -14,11 +14,13 @@ Note that in order to aid the reader, the code in this guide has omitted imports
 ### regarding finagle
 Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it's concepts, which can be found <a href="http://twitter.github.io/finagle/guide" target="_top">here</a>. 
 
-### &tldr; version:
+#### &tldr; finagle primer:
 1. Finagle provides protocol-agnostic RPC and is based on Netty
 2. It is mainly asynchronous and makes heavy usage of Twitter's version of Scala Futures
-3. It defines uniform Service and Filter interfaces for both client and server APIs that are effectively a single method...
+3. It defines uniform ```Service``` and ```Filter``` interfaces for both client and server APIs that are effectively a single method...
 ```scala
 Service:  def apply(request : Request) : Future[Response]
 Filter:   def apply(request : RequestIn, service : Service[RequestOut, ResponseIn]) : Future[ResponseOut]
 ```
+4. ```Filters``` can be chained together and then applied to a ```Service```, which results in another ```Service```. This is useful to 
+apply layers of functionality such as caching headers, retry behaviour, and timeouts.
