@@ -34,7 +34,7 @@ endpoint under which it's own runtime-generated documentation can be served (eg.
 Note that in order to aid the reader, the code in this guide has omitted imports that would have made the it read more nicely. The sacrifices we make in the name of learning... :)
 
 ### regarding finagle
-Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it's concepts, which can be found <a href="http://twitter.github.io/finagle/guide" target="_top">here</a>. 
+Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it's concepts, which can be found <a target="_top" href="http://twitter.github.io/finagle/guide" target="_top">here</a>. 
 
 #### &tldr; finagle primer:
 1. Finagle provides protocol-agnostic RPC and is based on Netty
