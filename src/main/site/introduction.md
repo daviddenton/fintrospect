@@ -6,8 +6,7 @@ Fintrospect is a library designed to facilitate painless definition, serving and
 - ```ParameterSpec```: defines the acceptable format for a request parameter (Path/Query/Header/Form-field). Provides the auto-marshalling mechanic for serializing and deserializing objects to and from HTTP message.
 - ```BodySpec```: similar to ParameterSpec, but applied to the body of an HTTP message.
 - ```ModuleSpec```: defines a set of Routes which are grouped under a particular request path. These modules can be combined and then converted to a Finagle service and attached to a Finagle HTTP server. Each module provides an 
-endpoint under which 
-it's own runtime-generated documentation can be served (eg. in Swagger format).
+endpoint under which it's own runtime-generated documentation can be served (eg. in Swagger format).
 
 Note that in order to aid the reader, the code in this guide has omitted imports that would have made the it read more nicely. The sacrifices we make in the name of learning... :)
 
