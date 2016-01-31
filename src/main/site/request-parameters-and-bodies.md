@@ -22,7 +22,7 @@ Descriptions can be attached to these definitions for documentation purposes. No
     val age: Option[Integer] = age <-- request
 ```
 
-There are convenience methods for a standard set of "primitive" types, plus extensions for such as native Scala XML, Forms (body only) and JSON.
+There are convenience methods for a standard set of "primitive" types, plus extensions for such as native Scala XML, Forms and JSON.
 
 #### forms
 These represent a slightly special case you first need to retrieve the form from the request, and then the fields from the form.
