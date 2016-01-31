@@ -12,17 +12,23 @@ The general form for definition is as follows, although since ```Path``` and ```
 
 Descriptions can be attached to these definitions for documentation purposes. Note the type for the optional param:
 ```
-    val anniversary = Query.required.localDate("anniversary", "the date you should not forget! format: yyyy-mm-dd")
-    val myAnniversary: LocalDate = anniversary <-- request
-    
+    val anniversary = Header.required.localDate("anniversary", "the date you should not forget! format: yyyy-mm-dd")
+    val myAnniversary: LocalDate = age <-- request
+
     val age = Header.optional.int("age", "your age")
     val age: Option[Integer] = age <-- request
 
-    val age = Body.optional.int("age", "your age")
-    val age: Option[Integer] = age <-- request
+    val ohDear = Body.xml("soapMessage", "This isn't Simple")
+    val ohDearDear: Elem = anniversary <-- request
 ```
 
 There are convenience methods for a standard set of "primitive" types, plus extensions for such as native Scala XML, Forms and JSON.
+
+Additionally, there is another form for parameters which can appear multiple times - simply insert the ```*()``` method in the chain:
+```
+    val kidsBirthdays = Query.required.*.localDate("birthdays", "the dates you should not forget! format: yyyy-mm-dd")
+    val ourKidsBirthdays: Seq[LocalDate] = kidsBirthdays <-- request
+```
 
 #### forms
 These represent a slightly special case you first need to retrieve the form from the request, and then the fields from the form.
