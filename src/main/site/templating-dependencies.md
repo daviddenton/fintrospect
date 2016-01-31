@@ -6,15 +6,16 @@
   <td>Filter class</td>
 </tr>
 <tr>
-  <td>Handlebars</td>
+  <td><a href="http://handlebarsjs.com">Handlebars</a></td>
   <td>.hbs</td>
   <td>"com.gilt" %% "handlebars-scala" % "2.0.1"</td>
-  <td>RenderHandlebarsView</td>
+  <td><a data-toggle="tooltip" href="#" title="io.fintrospect.templating.RenderHandlebarsView">RenderHandlebarsView</a></td>
 </tr>
 <tr>
-  <td>Mustache (v2.11 only)</td>
+  <td><a href="http://mustache.github.io/">Mustache</a> (v2.11 only)</td>
   <td>.mustache</td>
   <td>"com.github.spullara.mustache.java" % "compiler" % "0.9.1"<br/>"com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"</td>
-  <td>RenderMustacheView</td>
+  <td><a data-toggle="tooltip" href="#" title="io.fintrospect.templating.RenderMustacheView">RenderMustacheView</a></td>
 </tr>
 </table>
+
