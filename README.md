@@ -17,8 +17,7 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
 
 - Easily build type-safe HTTP responses with a set of custom builders for a wide variety of message formats:
   - JSON: <a href="http://argo.sourceforge.net/" target="_top">Argo</a>, <a href="http://argonaut.io/" target="_top">Argonaut</a>, <a href="https://github.com/travisbrown/circe" target="_top">Circe</a>, <a href="https://github.com/google/gson" 
-  target="_top">GSON</a>, 
-  <a href="http://json4s.org/" target="_top">Json4S</a>, <a href="https://github.com/google/gson" target="_top">Play JSON</a>, <a href="https://github.com/google/gson" target="_top">Spray JSON</a>
+  target="_top">GSON</a>, <a href="http://json4s.org/" target="_top">Json4S</a>, <a href="https://github.com/google/gson" target="_top">Play JSON</a>, <a href="https://github.com/google/gson" target="_top">Spray JSON</a>
   - Native implementations of XML, Plain Text, HTML, XHTML
 - Serve static files from the classpath
 - Template ```View``` support for building responses with <a href="http://mustache.github.io/" target="_top">Mustache</a> or <a href="http://handlebarsjs.com" target="_top">Handlebars</a>
