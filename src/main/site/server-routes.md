@@ -1,4 +1,4 @@
-# server routes
+# server routes & modules
 A RouteSpec needs to be bound to a standard Finagle Service to receive requests. Since these are very lightweight, we create a new instance of the Service for every request, and bind the RouteSpec to a factory method which receives the dynamic Path parameters and returns the Service. Other parameters can be retrieved directly in a typesafe manner from the HTTP request by using ```<--()``` or ```from()``` method on the parameter declaration.
 Note that the validity of ALL parameters which are attached to a RouteSpec is verified by Fintrospect before requests make it to these bound Services, so you do not need to worry about implementing any validation at this point.
 
