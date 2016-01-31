@@ -1,4 +1,4 @@
-# routes
+# defining routes
 A RouteSpec object defines the specification of the contract and the API follows the immutable builder pattern. Apart from the path elements (which terminate the builder), all of the "builder-y" calls here are optional, as are the descriptive strings (we'll see how they are used later). Here's the simplest possible REST-like example for getting all employees in a system:
 
 ```
