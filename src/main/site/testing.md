@@ -28,6 +28,6 @@ especially well if you are utilising custom serialisation formats (such as one o
 absolutely no marshalling code required to send back objects over the wire from your stub.
 
 ```
-    val route = RouteSpec().at(Get) / "myRoute" bindTo(() => Service.mk {r => Future.value(Response(Status.Ok))})
-    new TestHttpServer(9999, route).start()
+val route = RouteSpec().at(Get) / "myRoute" bindTo(() => Service.mk {r => Future.value(Response(Status.Ok))})
+new TestHttpServer(9999, route).start()
 ```

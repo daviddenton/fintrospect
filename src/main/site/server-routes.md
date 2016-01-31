@@ -5,7 +5,7 @@ which receives the dynamic ```Path``` parameters and returns the Service. Other 
 ```from()``` method on the parameter declaration.
 
 #### validation
-The presence validity of ALL parameters which are attached to a ```RouteSpec``` is verified by Fintrospect before requests make it to 
+The presence and format validity of ALL parameters which are attached to a ```RouteSpec``` is verified by Fintrospect before requests make it to 
 this bound ```Service```, so no validation code is required. The response returned to the client is:
 
 - ```Not Found 404```: if there are any ```Path``` params which are missing or invalid (all are required)
