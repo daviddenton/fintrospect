@@ -11,7 +11,7 @@ this bound ```Service```, so no validation code is required. The response return
 - if there are any ```Path``` params which are missing or invalid (all are required): ```Not Found 404```
 - if there are any ```Header```, ```Query```, or ```Body``` params are missing (required only) or invalid: ```Bad Request 400```
 
-### Simple example
+### simple example
 ```
 val holidays = Query.required.*.localDate("datesTakenAsHoliday")
 val includeManagement = Header.optional.boolean("includeManagement")
