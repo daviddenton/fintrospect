@@ -1,4 +1,4 @@
-<h1 class="githubpageheader">Roadmap/Release Notes/Migration Guide</h1>
+<h1 class="githubonly">Roadmap/Release Notes/Migration Guide</h1>
 
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 

@@ -1,12 +1,10 @@
 div.logo
     img(src="images/eye.png")
 ul.nav.nav-pills.nav-stacked.nav-docs
-    li(class="#{ current.source == 'index' ? 'active' : '' }")
-        a(href=".") overview
     li
         h1 guide
-    li(class="#{ current.source == 'introduction' ? 'active' : '' }")
-        a(href="introduction") introduction
+    li(class="#{ current.source == 'index' ? 'active' : '' }")
+        a(href=".") overview
     li(class="#{ current.source == 'installation' ? 'active' : '' }")
         a(href="installation") installation
     li(class="#{ current.source == 'request-parameters-and-bodies' ? 'active' : '' }")
