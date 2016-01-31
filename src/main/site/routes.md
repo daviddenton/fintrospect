@@ -32,3 +32,7 @@ RouteSpec("add user", "Insert a new employee, failing if it already exists")
     .returning(Conflict -> "Employee already exists")
     .at(Method.Post) / "user" / Path.integer("departmentId")
 ```
+
+### using routes
+Once the RouteSpec has been defined, it can be bound to either an HTTP Endpoint or to an HTTP Client.
+
