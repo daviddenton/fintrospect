@@ -7,7 +7,7 @@ interface to which the main functions are:
 Request parameters are created in a uniform way using the standardised objects ```Path```, ```Header```, ```Query```, ```FormField``` and ```Body```. 
 The general form for definition is as follows, although since ```Path``` and ```Body``` parameters are always required, the middle step is omitted: 
 ```
-<parameter location class>.<required|optional>.<param type>("<name>")
+    <parameter location class>.<required|optional>.<param type>("<name>")
 ```
 
 Descriptions can be attached to these definitions for documentation purposes. Note the type for the optional param:
