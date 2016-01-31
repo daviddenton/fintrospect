@@ -7,12 +7,14 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Http, ListeningServer, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.{ModuleSpec, ServerRoutes}
+import io.fintrospect.{ServerRoute, ModuleSpec, ServerRoutes}
 
 /**
   * Simple, insecure HTTP server which can be used for tests
   */
 class TestHttpServer(port: Int, serverRoutes: ServerRoutes[Response]) {
+
+  def this(port: Int, route: ServerRoute[Response]) = this(port, new ServerRoutes[Response] { add(route)})
 
   private var overrideStatus: Option[Status] = Option.empty
 
