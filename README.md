@@ -30,7 +30,7 @@ Add the following to ```build.sbt```. Note that this library doesn't depend on a
 
 ```scala
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.31.0"
-libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.0.2"
+libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.1.0"
 ```
 
 In order to keep the core library dependency-lite, some features require additional dependencies. Please see <a href="http://fintrospect.io/installation">here</a> for details.

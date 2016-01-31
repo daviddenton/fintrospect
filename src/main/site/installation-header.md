@@ -10,5 +10,5 @@ Add the following lines to ```build.sbt```:
 
 ```scala
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.31.0"
-libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.0.2"
+libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.1.0"
 ```
