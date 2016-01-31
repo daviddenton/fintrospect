@@ -7,7 +7,9 @@ headers) can be done in the standard way by chaining a ```Filter``` to the Finag
 ```
 val employeeId = Path.integer("employeeId")
 val name = Query.required.string("name")
-val client: RouteClient = RouteSpec().taking(name).at(Get) / "employee" / employeeId bindToClient Http.newService("localhost:10000")
+val client: RouteClient = RouteSpec()
+                            .taking(name)
+                            .at(Get) / "employee" / employeeId bindToClient Http.newService("localhost:10000")
 val response: Future[Response] = client(employeeId --> 1, name --> "")
 ```
 
