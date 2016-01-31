@@ -8,10 +8,10 @@ Fintrospect a library that adds an intelligent HTTP routing layer to the
 <a href="http://twitter.github.io/finagle/" target="_top">Finagle</a> RPC framework from Twitter. It provides a simple way to 
 implement contracts for both server and client-side HTTP services which are:
 
-- ```Type-safe``` : auto-marshall all request parameters/bodies into the correct types (including primitives + JSON/XML etc...).
+- ```Type-safe``` : auto-marshalls all request parameters/bodies into the correct types (including primitives + JSON/XML etc...)
 - ```Auto-validating``` : the presence of required and optional request parameters and bodies are checked before entering service-layer code
 - ```Auto-documenting``` : runtime generation of endpoint documentation such as <a href="http://swagger.io/" target="_top">Swagger</a> JSON or web sitemap XML
-- ```Uniform``` : reuse the same contract to define both incoming or outgoing Finagle HTTP services. This also allows extremely low effort fake servers to be created.
+- ```Uniform``` : reuse the same contract to define both incoming or outgoing Finagle HTTP services. This also allows extremely low effort fake servers to be created
 
 Additionally, Fintrospect provides a number of mechanisms to leverage these routes:
 
@@ -23,19 +23,18 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
 - Serve static files from the classpath
 - Template ```View``` support for building responses with <a href="http://mustache.github.io/" target="_top">Mustache</a> or <a href="http://handlebarsjs.com" target="_top">Handlebars</a>
 - Anonymising headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. 
-```/search/author/rowling -> /search/author/{name}```
+```/search/author/rowling``` becomes ```/search/author/{name}```
 - Utilities to help you unit-test endpoint services and write HTTP contract tests for remote dependencies 
 
 ### Get it
 Add the following to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle, and it has built against the version below:
 
 ```scala
-resolvers += "JCenter" at "https://jcenter.bintray.com"
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.31.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.0.2"
 ```
 
-Some features require additional dependencies. Please see <a href="http://fintrospect.io/installation">here</a> for details.
+In order to keep the core library dependency-lite, some features require additional dependencies. Please see <a href="http://fintrospect.io/installation">here</a> for details.
 
 ### See it
 See the <a href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/full" target="_top">example code</a>.
@@ -113,7 +112,7 @@ Declare the fields to be sent to the client service and then bind them to a remo
 Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you can mix into your tests in order to validate your declared server-side routes.
 
 ### Upgrading?
-See the <a href="https://github.com/daviddenton/fintrospect/blob/master/RELEASE.md" target="_top">Roadmap</a>.
+See the <a href="https://github.com/daviddenton/fintrospect/blob/master/CHANGELOG.md" target="_top">changelog</a>.
 
 ### Contributing
 If there are any message format library or templating engine bindings that you'd like to see included, then please feel free to suggest them or provide a PR. For JSON formats, this

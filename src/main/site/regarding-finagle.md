@@ -1,7 +1,7 @@
 # regarding finagle
 Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it's concepts, which can be found <a href="http://twitter.github.io/finagle/guide" target="_top">here</a>. 
 
-## &tldr; version:
+### &tldr; version:
 1. Finagle provides protocol-agnostic RPC and is based on Netty.
 2. It is mainly asynchronous and makes heavy usage of Twitter's version of Scala Futures.
 3. It defines identical Service and Filter interfaces for both client and server APIs that contain a single method:
@@ -13,7 +13,7 @@ Filter:   def apply(request : ReqIn, service : Service[ReqOut, RepIn]) : Future[
 
 Note that in order to aid the reader, the code in this guide has omitted imports that would have made the it read more nicely. The sacrifices we make in the name of learning... :)
 
-## broad concepts
+### broad concepts
 Fintrospect is a library designed to facilitate painless definition, serving and consumption of HTTP APIs. It uses the following main concepts:
 
 - <strong>RouteSpec</strong>: defines the overall HTTP contract of an endpoint. This contract can then be bound to a Finagle Service representing an HTTP client, or bundled into a Module and attached to a Finagle HTTP server.
