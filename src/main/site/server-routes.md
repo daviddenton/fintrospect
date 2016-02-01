@@ -53,7 +53,7 @@ Module.toService(ModuleSpec(Root / "a").combine(ModuleSpec(Root / "b")))
 #### self-describing Module APIs
 A big feature of the Fintrospect library is the ability to generate API documentation at runtime. This can be activated by passing 
 in a ModuleRenderer implementation when creating the ModuleSpec and when this is done, a new endpoint is created at the root of the 
-module context (this location is overridable) which serves this documentation. 
+module context (this location is overridable) which serves this documentation.
 
 Bundled with Fintrospect are:
 - Swagger (1.1 and 2.0) JSON, including <a href="http://json-schema.org/" target="_top">JSON Schema</a> models
@@ -62,8 +62,11 @@ Bundled with Fintrospect are:
 
 Other implementations are pluggable by implementing the ```ModuleRenderer```  trait - see the example code for a simple XML implementation.
 ```
-ModuleSpec(Root / "employee", Swagger2dot0Json(ApiInfo("an employee discovery API", "3.0")))
+val service = ModuleSpec(Root / "employee", Swagger2dot0Json(ApiInfo("an employee discovery API", "3.0"))).toService
+Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service))
 ```
+Note above the usage of the Finagle ```CorsPolicy``` filter, which will allow the services to be called from a Swagger UI - 
+without it, the server will reject any cross-domain requests initiated inside a browser.
 
 #### security
 Module routes can secured by adding an implementation of the ```Security``` trait - this essentially provides a filter through which 
