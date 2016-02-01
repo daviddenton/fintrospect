@@ -110,7 +110,9 @@ then be called with the bindings for each parameter.
     .body(body)
     .at(Get) / "firstSection" / theUser bindToClient httpClient
 
-  val theCall = formClient(gender --> "female", body --> Form(theDate --> LocalDate.of(2015, 1, 1)), theUser --> System.getenv("USER"))
+  val theCall = formClient( gender --> "female", 
+                            body --> Form(theDate --> LocalDate.of(2015, 1, 1)), 
+                            theUser --> System.getenv("USER"))
 
   println(Await.result(theCall))
 ```
