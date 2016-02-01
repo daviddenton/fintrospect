@@ -10,7 +10,8 @@ implement contracts for both server and client-side HTTP services which are:
 
 - ```Type-safe``` : auto-marshalls all request parameters/bodies into the correct types (including primitives + JSON/XML etc...)
 - ```Auto-validating``` : the presence of required and optional request parameters and bodies are checked before entering service-layer code
-- ```Auto-documenting``` : runtime generation of endpoint documentation such as <a href="http://swagger.io/" target="_top">Swagger</a> JSON or web sitemap XML
+- ```Auto-documenting``` : runtime generation of endpoint documentation such as <a href="http://swagger.io/" target="_top">Swagger</a> JSON or web sitemap XML. 
+Generates <a href="http://json-schema.org/" target="_top">JSON Schema</a> for example object formats to be included in these API docs.
 - ```Uniform``` : reuse the same contract to define both incoming or outgoing Finagle HTTP services. This also allows extremely low effort fake servers to be created
 
 Additionally, Fintrospect provides a number of mechanisms to leverage these routes:
