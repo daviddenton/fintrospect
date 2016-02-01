@@ -29,6 +29,8 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
 - Utilities to help you unit-test endpoint services and write HTTP contract tests for remote dependencies 
 
 ## Get it
+
+[![Join the chat at https://gitter.im/daviddenton/fintrospect](https://badges.gitter.im/daviddenton/fintrospect.svg)](https://gitter.im/daviddenton/fintrospect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Fintropect is intentionally dependency-lite by design - the library itself only has a single dependency. The other requirement is Finagle
 itself - the choice of version is up to the user (although it has built against the version shown). 
 
