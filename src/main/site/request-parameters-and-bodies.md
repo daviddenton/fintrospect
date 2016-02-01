@@ -1,8 +1,8 @@
 # request parameters and bodies
 Fintrospect broadly abstracts the various parts of an HTTP Request ```Path```, ```Header```, ```Query``` and ```Body``` behind a common 
 interface to which the main functions are:
-1. Retrieve a specified value from an incoming request in a typesafe way using ```<--()``` or ```from()```
-2. Bind a specified value into an outgoing request in a typesafe way using ```-->()``` or ```of()```
+1. Retrieve a specified value from an incoming request in a type-safe way using ```<--()``` or ```from()```
+2. Bind a specified value into an outgoing request in a type-safe way using ```-->()``` or ```of()```
 
 Parameters are created in a uniform way using the objects ```Path```, ```Header```, ```Query```, ```FormField``` and ```Body```. 
 The general form for definition is as follows, although since ```Path``` and ```Body``` parameters are always required, the middle step is omitted: 
