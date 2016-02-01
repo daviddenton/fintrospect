@@ -40,3 +40,4 @@ RouteSpec("add user", "Insert a new employee, failing if it already exists")
 ### using routes
 Once the ```RouteSpec``` has been defined, it can be bound to either an HTTP <a href="server-routes">server endpoint</a> or to an <a href="client-routes">client</a>.
 
+<a class="next" href="server-routes" target="_top"><button type="button" class="btn btn-sm btn-default">next: server routes</button></a>

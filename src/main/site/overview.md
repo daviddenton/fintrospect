@@ -28,7 +28,7 @@ The main concepts in play:
 - ```RouteSpec```: defines the self-describing contract of an HTTP endpoint
 - ```ServerRoute```: the binding of a ```RouteSpec``` to a Finagle ```Service```  implementing some business-logic, to create an inbound HTTP endpoint
 - ```RouteClient```: the binding of a ```RouteSpec``` to a Finagle ```Service``` representing an HTTP client, to create a simple function for making outbound HTTP calls
-- ```ParameterSpec```: defines the acceptable format for a request parameter (Path/Query/Header/Form-field). Provides the auto-marshalling mechanic for serializing and deserializing objects to and from HTTP message
+- ```ParameterSpec```: defines the acceptable format for a request parameter (Path/Query/Header/Form-field). Provides the auto-marshalling mechanic for serializing and deserializing objects to and from HTTP messages
 - ```BodySpec```: similar to ```ParameterSpec```, but applied to the body of an HTTP message
 - ```ModuleSpec```: defines a set of ```ServerRoute``` instances which are grouped under a particular request path. These modules can be combined and then converted to a Finagle ```Service``` and attached to a Finagle HTTP server. Each module 
 provides an endpoint under which it's own runtime-generated documentation can be served (eg. in <a href="http://swagger.io/" target="_top">Swagger</a> format)
@@ -51,3 +51,5 @@ apply layers of functionality such as caching headers, retry behaviour, and time
 
 ### a note on style
 - The code in this guide has omitted imports that would have made the it read more concisely. The sacrifices we make in the name of learning... :)
+
+<a class="next" href="installation" target="_top"><button type="button" class="btn btn-sm btn-default">next: installation</button></a>
