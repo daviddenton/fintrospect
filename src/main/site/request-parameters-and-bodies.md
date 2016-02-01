@@ -51,7 +51,7 @@ a single line of code change.
 val json = Argonaut.JsonFormat
 val exampleObject = jsonFormat.obj("fieldName" -> json.string("hello"))
 val json = Body.json(Option("my lovely JSON object"), exampleObject, json)
-val body: Json = json <-- Request()
+val body: Json = json <-- request
 ```
 
 Notice that in the above we specified an example of the JSON message. This is not mandatory, but allows the generation of 
