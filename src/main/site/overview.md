@@ -36,7 +36,8 @@ Note that in order to aid the reader, the code in this guide has omitted imports
 ### regarding finagle
 Since Fintrospect is build on top of Finagle, it's worth acquainting yourself with it's concepts, which can be found <a target="_top" href="http://twitter.github.io/finagle/guide" target="_top">here</a>. 
 
-#### &tldr; finagle primer:
+#### &tldr; finagle primer
+
 1. Finagle provides protocol-agnostic RPC and is based on Netty
 2. It is mainly asynchronous and makes heavy usage of Twitter's version of Scala Futures
 3. It defines uniform ```Service``` and ```Filter``` interfaces for both client and server APIs that are effectively a single method...
