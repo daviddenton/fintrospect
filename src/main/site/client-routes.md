@@ -1,8 +1,8 @@
 # client routes
-A RouteSpec can also be bound to a standard Finagle HTTP client service and then called as a function, passing in the parameters which 
+A ```RouteSpec``` can also be bound to a standard Finagle HTTP client ```Service``` and then called as a function, passing in the parameters which 
 are bound to values by using the ```-->()``` or ```of()``` method. The client marshalls the passed parameters into an HTTP request and 
 returns a Twitter ```Future``` containing the response. Any required manipulation of the ```Request``` (such as adding timeouts or caching 
-headers) can be done in the standard way by chaining a ```Filter``` to the Finagle HTTP client:
+headers) can be done in the standard way by chaining a ```Filter``` to the client ```Service```:
 
 ```
 val employeeId = Path.integer("employeeId")
@@ -14,8 +14,8 @@ val response: Future[Response] = client(employeeId --> 1, name --> "")
 ```
 
 ### super-cool feature time: reuse of HTTP contracts
-Because the ```RouteSpec``` objects can be used to bind to either a Server OR a Client, we can be spectacularly smug and use them on 
-BOTH sides of an HTTP boundary to provide a type-safe remote contract, to either:
+Because the ```RouteSpec``` objects can be used to bind to either a Server or a Client, we can be spectacularly smug and use them on 
+both sides of an HTTP boundary to provide a type-safe remote contract, to either:
 
 1. Auto-generate fake HTTP server implementations for remote HTTP dependencies. In this case, defining the ```RouteSpec``` as part of 
 an HTTP client contract and then simply reusing them as the server-side contract of a testing fake - see the "full" example code

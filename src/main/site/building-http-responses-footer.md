@@ -1,6 +1,6 @@
 Note that to avoid dependency bloat, Fintrospect only ships with the above JSON library bindings - you'll need to bring in the library of your choice as an additional dependency.
 
-The simplest (least concise) way to invoke an auto-marshalling (ie. typesafe) ResponseBuilder is along the lines of:
+The simplest (least concise) way to invoke an auto-marshalling (ie. type-safe) ResponseBuilder is along the lines of:
 ```
 val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(
 Xml.ResponseBuilder.HttpResponse(Ok).withContent(<xml>lashings and lashings of wonderful</xml>)
