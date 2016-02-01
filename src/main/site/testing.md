@@ -31,3 +31,5 @@ absolutely no marshalling code required to send back objects over the wire from 
 val route = RouteSpec().at(Get) / "myRoute" bindTo(() => Service.mk {r => Future.value(Response(Status.Ok))})
 new TestHttpServer(9999, route).start()
 ```
+
+<a class="next" href="examples" target="_top"><button type="button" class="btn btn-sm btn-default">next: examples</button></a>

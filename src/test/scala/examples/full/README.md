@@ -1,7 +1,6 @@
-Building security system
-------------------------
+# building security system
 
-#### About
+#### about
 This is a complete example application which uses all the features of Fintrospect:
 - HTTP request routing with automatic parameter marshalling and unmarshalling (Headers/Query/Path/Body)
 - HTTP clients with request creation and route spec reuse for
@@ -15,7 +14,7 @@ to give a complete overview of how the app would look when finished. The code it
 imports in order to aid comprehension - which is a little frustrating from a maintainer perspective (as you always want your 
 code looking as awesome as possible! :).
 
-#### Requirements
+#### requirements
 This example models a simple building security system accessible over HTTP. Requirements are:
 
 1. Users can ask to be let into and out of the building.
@@ -26,8 +25,8 @@ This example models a simple building security system accessible over HTTP. Requ
 6. API documentation should be available.
 7. Logging of every 10 successful requests should be made.
 
-#### Running this demo app
-Checkout the source and start a local environment by running the ```RunnableEnvironment``` App. This will start the 
+#### running this demo app
+Checkout the Fintrospect repo source and start a local environment by running the ```RunnableEnvironment``` App. This will start the 
 application on port 9999 which has been configured to use a fake versions of the remote dependencies (on ports 10000 
 and 10001). From there, just point your browser at <a href="http://localhost:9999/">http://localhost:9999/</a>.
 
