@@ -28,5 +28,5 @@ This example models a simple building security system accessible over HTTP. Requ
 #### running this demo app
 Checkout the Fintrospect repo source and start a local environment by running the ```RunnableEnvironment``` App. This will start the 
 application on port 9999 which has been configured to use a fake versions of the remote dependencies (on ports 10000 
-and 10001). From there, just point your browser at <a href="http://localhost:9999/">http://localhost:9999/</a>.
+and 10001). From there, just point your browser at <a target="_top" href="http://localhost:9999/">http://localhost:9999/</a>.
 
