@@ -49,18 +49,6 @@ See the rest of the <a href="http://fintrospect.io/" target="_top">guide</a>, or
 Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, we'll imagine a Library application (see the example 
 above for the full code) which will be rendering Swagger v2 documentation.
 
-#### Define a module to live at ```http://{host}:8080/library```
-This module will have a single endpoint ```search```:
-
-```scala
-val apiInfo = ApiInfo("Library Example", "1.0", Option("Simple description"))
-val renderer = Swagger2dot0Json(apiInfo) 
-val libraryModule = ModuleSpec(Root / "library", renderer)
-    .withRoute(new BookSearch(new BookRepo()).route)
-val service = Module.toService(libraryModule)
-Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)) 
-```
-
 #### Define the endpoint
 This example is quite contrived (and almost all the code is optional) but shows the kind of thing that can be done. Note the use of the 
 example response object, which will be broken down to provide the JSON model for the Swagger documentation. 
@@ -89,6 +77,18 @@ class BookSearch(books: Books) {
     .producing(APPLICATION_JSON)
     .at(Post) / "search" bindTo search
 }
+```
+
+#### Define a module to live at ```http://{host}:8080/library```
+This module will have a single endpoint ```search```:
+
+```scala
+val apiInfo = ApiInfo("Library Example", "1.0", Option("Simple description"))
+val renderer = Swagger2dot0Json(apiInfo) 
+val libraryModule = ModuleSpec(Root / "library", renderer)
+    .withRoute(new BookSearch(new BookRepo()).route)
+val service = Module.toService(libraryModule)
+Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)) 
 ```
 
 #### View the generated documentation
