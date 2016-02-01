@@ -1,4 +1,4 @@
-<h1 class="githubonly">Fintrospect</h1>
+<h1 class="githubonly"><a href="http://fintrospect.io">Fintrospect</a></h1>
 <a class="githubonly" href="https://travis-ci.org/daviddenton/fintrospect" target="_top"><img src="https://travis-ci.org/daviddenton/fintrospect.svg?branch=master"/></a>
 <a class="githubonly" href="https://coveralls.io/github/daviddenton/fintrospect?branch=master" target="_top"><img src="https://coveralls.io/repos/daviddenton/fintrospect/badge.svg?branch=master"/></a>
 <a class="githubonly" href="https://bintray.com/daviddenton/maven/fintrospect/_latestVersion" target="_top"><img src="https://api.bintray.com/packages/daviddenton/maven/fintrospect/images/download.svg"/></a>
