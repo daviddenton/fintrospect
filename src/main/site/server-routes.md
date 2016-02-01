@@ -17,19 +17,19 @@ val holidays = Query.required.*.localDate("datesTakenAsHoliday")
 val includeManagement = Header.optional.boolean("includeManagement")
 
 def findEmployeesOnHoliday(departmentId: Integer) = Service.mk[Request, Response] {
-    request =>
-        val holidayDates: Seq[LocalDate] = holidays <-- request
-        val includeManagementFlag: Option[Boolean] = includeManagement <-- request
-        val response = Response(Ok)
-        val baseMsg = s"Everyone from department $departmentId was at work on $holidayDates"
-        response.contentString = baseMsg + (if (includeManagementFlag.getOrElse(false)) "" else ", even the management") Future.value(response)
+  request =>
+    val holidayDates: Seq[LocalDate] = holidays <-- request
+    val includeManagementFlag: Option[Boolean] = includeManagement <-- request
+    val response = Response(Ok)
+    val baseMsg = s"Everyone from department $departmentId was at work on $holidayDates"
+    response.contentString = baseMsg + (if (includeManagementFlag.getOrElse(false)) "" else ", even the management") Future.value(response)
 }
 
 val route = ServerRoute[Request] = 
-    RouteSpec()
-    .taking(holidays)
-    .taking(includeManagement)
-    .at(Method.Get) / "employee" / Path.integer("departmentId") bindTo findEmployeesOnHoliday
+  RouteSpec()
+  .taking(holidays)
+  .taking(includeManagement)
+  .at(Method.Get) / "employee" / Path.integer("departmentId") bindTo findEmployeesOnHoliday
 ```
 
 ### modules
@@ -39,9 +39,9 @@ routes and then convert into a standard Finagle Service object which is then att
 def listEmployees(): Service[Request, Response] = Service.mk(req => Future.value(Response()))
 
 Http.serve(":8080",
-    ModuleSpec(Root / "employee")
-      .withRoute(RouteSpec("lists all employees").at(Method.Get) bindTo listEmployees)
-      .toService
+  ModuleSpec(Root / "employee")
+    .withRoute(RouteSpec("lists all employees").at(Method.Get) bindTo listEmployees)
+    .toService
 )
 
 ```
