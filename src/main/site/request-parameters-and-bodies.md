@@ -83,4 +83,4 @@ val birthdayAsAQueryParam = Query.required(ParameterSpec[Birthday]("DOB", None, 
 val birthdayAsABody = Body(BodySpec[Birthday](Option("DOB"), ContentTypes.TEXT_PLAIN, Birthday.from, _.toString))
 ```
 
-<a class="next" href="defining-routes" target="_top"><button type="button" class="btn btn-sm btn-default">next: defining routes</button></a>
+<a class="next" href="http://fintrospect.io/defining-routes" target="_top"><button type="button" class="btn btn-sm btn-default">next: defining routes</button></a>
