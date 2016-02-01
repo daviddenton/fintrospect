@@ -4,7 +4,7 @@ target="_top"><img
  src="https://travis-ci.org/daviddenton/fintrospect.svg?branch=master"/></a>
 <a class="githubonly" href="https://coveralls.io/github/daviddenton/fintrospect?branch=master" target="_top"><img src="https://coveralls.io/repos/daviddenton/fintrospect/badge.svg?branch=master"/></a>
 <a class="githubonly" href="https://bintray.com/daviddenton/maven/fintrospect/_latestVersion" target="_top"><img src="https://api.bintray.com/packages/daviddenton/maven/fintrospect/images/download.svg"/></a>
-<a class="githubonly" href="https://bintray.com/daviddenton/maven/fintrospect/view?source=watch" target="_top"><img src="https://www.bintray.com/docs/images/bintray_badge_color.png"/></a>
+<a class="githubonly" href="https://bintray.com/daviddenton/maven/fintrospect/view?source=watch" target="_top"><img height="45" src="https://www.bintray.com/docs/images/bintray_badge_color.png"/></a>
 </h1>
 
 Fintrospect a library that adds an intelligent HTTP routing layer to the 
