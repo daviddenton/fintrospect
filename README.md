@@ -26,25 +26,30 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
 ```/search/author/rowling``` becomes ```/search/author/{name}```
 - Utilities to help you unit-test endpoint services and write HTTP contract tests for remote dependencies 
 
-### Get it
-Add the following to ```build.sbt```. Note that this library doesn't depend on a particular version of Finagle, and it has built against the version below:
+## Get it
+Fintropect is intentionally dependency-lite by design - the library itself only has a single dependency. The other requirement is Finagle
+itself - the choice of version is up to the user (although it has built against the version shown). 
+
+To activate some optional features, additional dependencies may be required - please see <a href="http://fintrospect.io/installation">here</a> for details.
+
+Add the following lines to ```build.sbt```:
 
 ```scala
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.31.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.1.0"
 ```
 
-In order to keep the core library dependency-lite, some features require additional dependencies. Please see <a href="http://fintrospect.io/installation">here</a> for details.
-
-### See it
+## See the code
 See the <a href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/full" target="_top">example code</a>.
 
-### Learn it
-See the rest of the <a href="http://fintrospect.io/" target="_top">guide</a>
+## Learn it
+See the rest of the <a href="http://fintrospect.io/" target="_top">guide</a>, or read on for the tldr; example. :)
 
-#### Server-side
-Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, we'll imagine a Library application (see the example above for the full code) which will be rendering Swagger v2 documentation.
-##### Define a module to live at ```http://{host}:8080/library```
+### Server-side contracts
+Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, we'll imagine a Library application (see the example 
+above for the full code) which will be rendering Swagger v2 documentation.
+
+#### Define a module to live at ```http://{host}:8080/library```
 This module will have a single endpoint ```search```:
 
 ```scala
@@ -53,12 +58,12 @@ val renderer = Swagger2dot0Json(apiInfo)
 val libraryModule = ModuleSpec(Root / "library", renderer)
     .withRoute(new BookSearch(new BookRepo()).route)
 val service = Module.toService(libraryModule)
-// remember to make your own Cors Policy for prod!
 Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)) 
 ```
 
-##### Define the endpoint
-This example is quite contrived (and almost all the code is optional) but shows the kind of thing that can be done. Note the use of the example response object, which will be broken down to provide the JSON model for the Swagger documentation.
+#### Define the endpoint
+This example is quite contrived (and almost all the code is optional) but shows the kind of thing that can be done. Note the use of the 
+example response object, which will be broken down to provide the JSON model for the Swagger documentation. 
 
 ```scala
 class BookSearch(books: Books) {
@@ -86,11 +91,12 @@ class BookSearch(books: Books) {
 }
 ```
 
-##### View the generated documentation
+#### View the generated documentation
 The auto-generated documentation lives at the root of the module, so point the Swagger UI at ```http://{host}:8080/library``` to see it.
 
-#### Client-side
-Declare the fields to be sent to the client service and then bind them to a remote service. This produces a simple function, which can then be called with the bindings for each parameter.
+### Client-side contracts
+Declare the fields to be sent to the client service and then bind them to a remote service. This produces a simple function, which can 
+then be called with the bindings for each parameter.
 ```scala
   val httpClient = Http.newService("localhost:10000")
 
@@ -109,12 +115,10 @@ Declare the fields to be sent to the client service and then bind them to a remo
   println(Await.result(theCall))
 ```
 
-##### Test it
-Fintrospect ships with a testing trait ```TestingFintrospectRoute```, which you can mix into your tests in order to validate your declared server-side routes.
-
-### Upgrading?
+## Upgrading?
 See the <a href="https://github.com/daviddenton/fintrospect/blob/master/CHANGELOG.md" target="_top">changelog</a>.
 
-### Contributing
-If there are any message format library or templating engine bindings that you'd like to see included, then please feel free to suggest them or provide a PR. For JSON formats, this
-is particularly easy to implement - just provide an implementation of ```JsonLibrary``` by following the ```Argo``` example in the source.
+## Contributing
+If there are any message format library or templating engine bindings that you'd like to see included, then please feel free to suggest 
+them or provide a PR. For JSON formats, this is particularly easy to implement - just provide an implementation of ```JsonLibrary``` by 
+following the ```Argo``` example in the source.
