@@ -1,5 +1,4 @@
 <h1 class="githubonly">
-<img width="50" src="https://raw.githubusercontent.com/daviddenton/fintrospect/master/src/main/site/images/eye.png"/>&nbsp;&nbsp;&nbsp;
 <a class="githubonly" href="http://fintrospect.io">Fintrospect</a>&nbsp;&nbsp;&nbsp;
 <a class="githubonly" href="https://travis-ci.org/daviddenton/fintrospect" target="_top"><img src="https://travis-ci.org/daviddenton/fintrospect.svg?branch=master"/></a>&nbsp;&nbsp;&nbsp;
 <a class="githubonly" href="https://coveralls.io/github/daviddenton/fintrospect?branch=master" target="_top"><img src="https://coveralls.io/repos/daviddenton/fintrospect/badge.svg?branch=master"/></a>&nbsp;&nbsp;&nbsp;
