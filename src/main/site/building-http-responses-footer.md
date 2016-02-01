@@ -11,4 +11,4 @@ Xml.ResponseBuilder.HttpResponse(Ok).withContent(<xml>lashings and lashings of w
 import Xml.ResponseBuilder._
 val responseViaImplicits: Future[Response] = Ok(<xml>lashings and lashings of wonderful</xml>)
 ```
-<a class="next" href="templating-and-static-content" target="_top"><button type="button" class="btn btn-sm btn-default">next: templating and static content</button></a>
+<a class="next" href="http://fintrospect.io/templating-and-static-content" target="_top"><button type="button" class="btn btn-sm btn-default">next: templating and static content</button></a>

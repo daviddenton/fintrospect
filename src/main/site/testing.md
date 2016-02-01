@@ -32,4 +32,4 @@ val route = RouteSpec().at(Get) / "myRoute" bindTo(() => Service.mk {r => Future
 new TestHttpServer(9999, route).start()
 ```
 
-<a class="next" href="examples" target="_top"><button type="button" class="btn btn-sm btn-default">next: examples</button></a>
+<a class="next" href="http://fintrospect.io/examples" target="_top"><button type="button" class="btn btn-sm btn-default">next: examples</button></a>

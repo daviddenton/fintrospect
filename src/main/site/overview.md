@@ -52,4 +52,4 @@ apply layers of functionality such as caching headers, retry behaviour, and time
 ### a note on style
 - The code in this guide has omitted imports that would have made the it read more concisely. The sacrifices we make in the name of learning... :)
 
-<a class="next" href="installation" target="_top"><button type="button" class="btn btn-sm btn-default">next: installation</button></a>
+<a class="next" href="http://fintrospect.io/installation" target="_top"><button type="button" class="btn btn-sm btn-default">next: installation</button></a>
