@@ -1,4 +1,4 @@
-# request parameters and bodies
+# request parameters & bodies
 Fintrospect broadly abstracts the various parts of an HTTP Request ```Path```, ```Header```, ```Query``` and ```Body``` behind a common 
 interface to which the main functions are:
 1. Retrieve a specified value from an incoming request in a type-safe way using ```<--()``` or ```from()```
