@@ -1,7 +1,7 @@
 package io.fintrospect
 
 import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status.{BadRequest, NotFound}
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
@@ -24,6 +24,8 @@ object ModuleSpec {
     override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response = Response(NotFound)
 
     override def badRequest(badParameters: Seq[Parameter]): Response = Response(BadRequest)
+
+    override def notFound(request: Request): Response = Response(NotFound)
   })
 
   /**
@@ -86,12 +88,26 @@ class ModuleSpec[RS] private(basePath: Path,
     */
   def withRoutes(newRoutes: Iterable[ServerRoute[RS]]*): ModuleSpec[RS] = newRoutes.flatten.foldLeft(this)(_.withRoute(_))
 
-  private def withDefault(otherRoutes: ServiceBinding) = {
+  private def withDefault(otherRoutes: ServiceBinding): ServiceBinding = {
     val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo {
       () => Service.mk { r => Future.value(moduleRenderer.description(basePath, security, routes)) }
     }
 
-    otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(identify(descriptionRoute)))
+    val totalPf = otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(identify(descriptionRoute)))
+      .orElse(new PartialFunction[(Method, Path), Service[Request, Response]] {
+        override def isDefinedAt(x: (Method, Path)): Boolean = true
+        override def apply(v1: (Method, Path)): Service[Request, Response] = Service.mk { request:Request => Future.value(moduleRenderer.notFound(request)) }
+      })
+
+    new ServiceBinding() {
+      override def isDefinedAt(methodAndPath: (Method, Path)) = {
+        methodAndPath._2.startsWith(basePath)
+      }
+
+      override def apply(methodAndPath: (Method, Path)) = {
+        totalPf.apply(methodAndPath)
+      }
+    }
   }
 
   private def validateParams(serverRoute: ServerRoute[_]) = Filter.mk[Request, Response, Request, Response] {

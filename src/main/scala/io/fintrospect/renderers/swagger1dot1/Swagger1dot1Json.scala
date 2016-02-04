@@ -1,14 +1,14 @@
 package io.fintrospect.renderers.swagger1dot1
 
 import argo.jdom.JsonNode
-import com.twitter.finagle.http.Response
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.path.Path
 import io.fintrospect.ServerRoute
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.{Parameter, Security}
-import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
+import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 
 import scala.collection.JavaConversions._
 
@@ -53,7 +53,9 @@ class Swagger1dot1Json extends ModuleRenderer {
     Ok(obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api))))
   }
 
-  override def badRequest(badParameters: Seq[Parameter]): Response = JsonBadRequestRenderer(badParameters)
+  override def badRequest(badParameters: Seq[Parameter]): Response = JsonErrorResponseRenderer.badRequest(badParameters)
+
+  override def notFound(request: Request): Response = JsonErrorResponseRenderer.notFound()
 }
 
 object Swagger1dot1Json {

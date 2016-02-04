@@ -74,6 +74,10 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
       statusAndContentFrom(bldr.HttpResponse().withContent(copiedBuffer(message, defaultCharset()))) shouldEqual(Ok, expectedContent)
     }
 
+    it("error with code only") {
+      statusAndContentFrom(bldr.Error(NotFound))._1 shouldEqual NotFound
+    }
+
     it("error with message - Buf") {
       statusAndContentFrom(bldr.Error(NotFound, customError)) shouldEqual(NotFound, expectedErrorContent)
       statusAndContentFrom(NotFound(customError)) shouldEqual(NotFound, expectedErrorContent)

@@ -29,7 +29,7 @@ class StaticModule private(basePath: Path, baseDir: String, moduleFilter: Filter
   }
 
   private def exists(path: Path): Boolean = {
-    if (path.startsWith(basePath)) {
+    if (path != Root && path.startsWith(basePath)) {
       getClass.getResource(baseDir + path.toString.replace(basePath.toString + "/", "")) != null
     } else false
   }

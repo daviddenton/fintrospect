@@ -50,7 +50,7 @@ class SecuritySystem(serverPort: Int, userDirectoryPort: Int, entryLoggerPort: I
 
   def start() = {
     server = Http.serve(s":$serverPort", globalFilter.andThen(Module.toService(
-      Module.combine(serviceModule, internalModule, webModule, publicModule))))
+      Module.combine(serviceModule, internalModule, publicModule, webModule))))
     Future.Done
   }
 

@@ -56,6 +56,8 @@ trait AbstractResponseBuilder[T] {
 
   def Error(status: Status, reader: Reader) = toResponseBuilder(status)(reader)
 
+  def Error(status: Status) = toResponseBuilder(status)("")
+
   def Error(status: Status, channelBuffer: ChannelBuffer) = toResponseBuilder(status)(channelBuffer)
 
   def Error(status: Status, buf: Buf) = toResponseBuilder(status)(buf)

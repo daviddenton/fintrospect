@@ -1,7 +1,7 @@
 package io.fintrospect.renderers.swagger2dot0
 
 import argo.jdom.JsonNode
-import com.twitter.finagle.http.Response
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Path
 import io.fintrospect._
@@ -9,7 +9,7 @@ import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
-import io.fintrospect.renderers.{JsonBadRequestRenderer, ModuleRenderer}
+import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 
 import scala.util.Try
 
@@ -18,7 +18,9 @@ import scala.util.Try
   */
 case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
 
-  def badRequest(badParameters: Seq[Parameter]): Response = JsonBadRequestRenderer(badParameters)
+  override def badRequest(badParameters: Seq[Parameter]): Response = JsonErrorResponseRenderer.badRequest(badParameters)
+
+  override def notFound(request: Request): Response = JsonErrorResponseRenderer.notFound()
 
   private val schemaGenerator = new JsonToJsonSchema()
 

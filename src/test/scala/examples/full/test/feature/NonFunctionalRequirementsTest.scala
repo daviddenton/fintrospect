@@ -19,6 +19,12 @@ class NonFunctionalRequirementsTest extends FunSpec with ShouldMatchers with Run
     response.content shouldBe "pong"
   }
 
+  it("serves static content") {
+    val response = env.responseTo(Request("/style.css"))
+    response.status shouldBe Ok
+    response.content shouldBe "body { font-family: \"Droid Sans\", sans-serif; } .content { padding: 50px; }"
+  }
+
   it("has a sitemap") {
     val response = env.responseTo(Request("/sitemap.xml"))
     response.status shouldBe Ok

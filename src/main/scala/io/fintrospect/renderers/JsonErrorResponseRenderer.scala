@@ -6,8 +6,8 @@ import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Parameter
 
-object JsonBadRequestRenderer {
-  def apply(badParameters: Seq[Parameter]): Response = {
+object JsonErrorResponseRenderer {
+  def badRequest(badParameters: Seq[Parameter]): Response = {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),
       "type" -> string(p.where),
@@ -17,4 +17,6 @@ object JsonBadRequestRenderer {
 
     BadRequest(obj("message" -> string("Missing/invalid parameters"), "params" -> array(messages)))
   }
+
+  def notFound(): Response = { NotFound(obj("message" -> string("No route found on this path. Have you used the correct HTTP verb?"))) }
 }
