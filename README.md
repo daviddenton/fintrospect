@@ -100,22 +100,34 @@ The auto-generated documentation lives at the root of the module, so point the S
 ### Client-side contracts
 Declare the fields to be sent to the client service and then bind them to a remote service. This produces a simple function, which can 
 then be called with the bindings for each parameter.
+
+Since we can re-use the routes between client and server, we can easily create fake implementations of remote systems without having to 
+redefine the contract. This means that marshalling of objects and values into/out of the HTTP messages can be reused.
 ```scala
-  val httpClient = Http.newService("localhost:10000")
+  val theDate = Path.localDate("date")
+  val gender = FormField.optional.string("gender")
+  val body = Body.form(gender)
 
-  val theUser = Path.string("user")
-  val gender = Header.required.string("gender")
-  val theDate = FormField.required.localDate("date")
-  val body = Body.form(theDate)
-
-  val formClient = RouteSpec()
-    .taking(gender)
+  val sharedRouteSpec = RouteSpec()
     .body(body)
-    .at(Get) / "firstSection" / theUser bindToClient httpClient
+    .at(Get) / "firstSection" / theDate
 
-  val theCall = formClient( gender --> "female", 
-                            body --> Form(theDate --> LocalDate.of(2015, 1, 1)), 
-                            theUser --> System.getenv("USER"))
+  val fakeServerRoute = sharedRouteSpec bindTo (dateFromPath => Service.mk[Request, Response] {
+    request: Request => {
+      // insert stub server implementation in here
+      println("Form sent was " + (body <-- request))
+      Ok(dateFromPath.toString)
+    }
+  })
+
+  Await.result(new TestHttpServer(10000, fakeServerRoute).start())
+
+  val client = sharedRouteSpec bindToClient Http.newService("localhost:10000")
+
+  val theCall = client(
+    body --> Form(gender --> "male"), 
+    theDate --> LocalDate.of(2015, 1, 1)
+  )
 
   println(Await.result(theCall))
 ```
