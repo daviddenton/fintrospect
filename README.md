@@ -46,7 +46,7 @@ libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.1.0"
 See a <a href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples" target="_top">full example application</a>.
 
 ## Learn it
-See the rest of the <a href="http://fintrospect.io/" target="_top">guide</a>, or read on for the tldr; example. :)
+See the full user guide <a href="http://fintrospect.io/" target="_top">here</a>, or read on for the tldr; example. :)
 
 ### Server-side contracts
 Adding Fintrospect routes to a Finagle HTTP server is simple. For this example, we'll imagine a Library application (see the example 
@@ -124,6 +124,10 @@ then be called with the bindings for each parameter.
 See the <a href="https://github.com/daviddenton/fintrospect/blob/master/CHANGELOG.md" target="_top">changelog</a>.
 
 ## Contributing
-If there are any message format library or templating engine bindings that you'd like to see included, then please feel free to suggest 
-them or provide a PR. For JSON formats, this is particularly easy to implement - just provide an implementation of ```JsonLibrary``` by 
-following the ```Argo``` example in the source.
+There are many ways in which you can contribute to the development of the library:
+
+- Give us a Star on Github - you know you want to ;)
+- Questions can be directed towards the Gitter channel, or on Twitter @fintrospectdev
+- For issues, please describe giving as much detail as you can - including version and steps to recreate
+
+See the <a href="https://github.com/daviddenton/fintrospect/blob/master/CONTRIBUTING.md"/>Contributor Guide</a> for details.
