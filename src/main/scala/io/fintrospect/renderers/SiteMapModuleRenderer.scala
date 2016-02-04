@@ -5,14 +5,16 @@ import java.net.URL
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.http.{Response, Status}
+import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.ServerRoute
 import io.fintrospect.formats.Xml.ResponseBuilder._
 import io.fintrospect.parameters.{Parameter, Security}
 
 class SiteMapModuleRenderer(baseUrl: URL) extends ModuleRenderer {
 
-  override def badRequest(badParameters: Seq[Parameter]): Response = Error(Status.BadRequest, badParameters.toString())
+  override def badRequest(badParameters: Seq[Parameter]): Response = Error(BadRequest, badParameters.toString())
+
+  override def notFound(request: Request): Response = Error(NotFound)
 
   override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response = {
     def buildUrl(route: ServerRoute[_]) = {

@@ -2,7 +2,7 @@ package examples.customformats
 
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.http.{Response, Status}
+import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.ServerRoute
 import io.fintrospect.formats.json.Argo.ResponseBuilder._
 import io.fintrospect.parameters.{Parameter, Security}
@@ -14,6 +14,8 @@ import io.fintrospect.renderers.ModuleRenderer
 object HipsterXmlModuleRenderer extends ModuleRenderer {
 
   override def badRequest(badParameters: Seq[Parameter]): Response = Error(Status.BadRequest, badParameters.toString())
+
+  override def notFound(request: Request): Response = Error(Status.NotFound)
 
   private def renderRoute(basePath: Path, route: ServerRoute[_]): HipsterXmlFormat = HipsterXmlFormat(s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")
 
