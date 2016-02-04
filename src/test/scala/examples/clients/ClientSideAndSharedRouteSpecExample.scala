@@ -10,6 +10,7 @@ import com.twitter.util.Await
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters._
+import io.fintrospect.testing.TestHttpServer
 import io.fintrospect.util.HttpRequestResponseUtil._
 
 /**
@@ -17,19 +18,11 @@ import io.fintrospect.util.HttpRequestResponseUtil._
   * Note that the client will automatically reject (with a 400) any unknown or missing parameters, as per the
   * specified route. The response is also decorated with the anonymised route, allowing for collection of
   * metrics about timing and number of requests going to the downsteam systems.
+  *
+  * This example also shows how you can re-use the RouteSpec across client and servers, thus allowing really simple
+  * stub/fake implementations of remote systems to be created.
   */
-object ClientSideExample extends App {
-
-  Http.serve(":10000", Service.mk[Request, Response] {
-    request => {
-      println("URL was " + request.uri)
-      println("Headers were " + headersFrom(request))
-      println("Content was " + contentFrom(request))
-      Ok("")
-    }
-  })
-
-  val httpClient = Http.newService("localhost:10000")
+object ClientSideAndSharedRouteSpecExample extends App {
 
   val theDate = Path.localDate("date")
   val theWeather = Query.optional.string("weather")
@@ -37,11 +30,25 @@ object ClientSideExample extends App {
   val gender = FormField.optional.string("gender")
   val body = Body.form(gender)
 
-  val client = RouteSpec()
+  val sharedRouteSpec = RouteSpec()
     .taking(theUser)
     .taking(theWeather)
     .body(body)
-    .at(Get) / "firstSection" / theDate bindToClient httpClient
+    .at(Get) / "firstSection" / theDate
+
+  val fakeServerRoute = sharedRouteSpec bindTo (dateFromPath => Service.mk[Request, Response] {
+    request: Request => {
+      println("URL was " + request.uri)
+      println("Headers were " + headersFrom(request))
+      println("Form sent was " + (body <-- request))
+      println("Date send was " + dateFromPath.toString)
+      Ok(dateFromPath.toString)
+    }
+  })
+
+  Await.result(new TestHttpServer(10000, fakeServerRoute).start())
+
+  val client = sharedRouteSpec bindToClient Http.newService("localhost:10000")
 
   val theCall = client(theWeather --> Option("sunny"), body --> Form(gender --> "male"), theDate --> LocalDate.of(2015, 1, 1), theUser --> System.getenv("USER"))
 
