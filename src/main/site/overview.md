@@ -1,6 +1,6 @@
 # overview
 
-Fintrospect a library that adds an intelligent HTTP routing layer to the 
+Fintrospect is a library that adds an intelligent HTTP routing layer to the 
 <a href="http://twitter.github.io/finagle/" target="_top">Finagle</a> RPC framework from Twitter. It provides a simple way to 
 implement contracts for both server and client-side HTTP services which are:
 
