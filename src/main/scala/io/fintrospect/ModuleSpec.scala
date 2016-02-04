@@ -93,20 +93,12 @@ class ModuleSpec[RS] private(basePath: Path,
       () => Service.mk { r => Future.value(moduleRenderer.description(basePath, security, routes)) }
     }
 
-    val totalPf = otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(identify(descriptionRoute)))
-      .orElse(new PartialFunction[(Method, Path), Service[Request, Response]] {
-        override def isDefinedAt(x: (Method, Path)): Boolean = true
-        override def apply(v1: (Method, Path)): Service[Request, Response] = Service.mk { request:Request => Future.value(moduleRenderer.notFound(request)) }
-      })
+    val fallback: ServiceBinding = { case _ => Service.mk { request:Request => Future.value(moduleRenderer.notFound(request)) }}
 
-    new ServiceBinding() {
-      override def isDefinedAt(methodAndPath: (Method, Path)) = {
-        methodAndPath._2.startsWith(basePath)
-      }
+    val totalPf = otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(identify(descriptionRoute))).orElse(fallback)
 
-      override def apply(methodAndPath: (Method, Path)) = {
-        totalPf.apply(methodAndPath)
-      }
+    {
+      case (method, path) if path.startsWith(basePath) => totalPf.apply((method, path))
     }
   }
 
