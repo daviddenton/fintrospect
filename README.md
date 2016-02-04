@@ -7,7 +7,7 @@
 <a href="https://bintray.com/daviddenton/maven/fintrospect/view?source=watch" target="_top"><img height="45" src="https://www.bintray.com/docs/images/bintray_badge_color.png"/></a>&nbsp;&nbsp;&nbsp;
 </h1>
 
-Fintrospect a library that adds an intelligent HTTP routing layer to the 
+Fintrospect is a library that adds an intelligent HTTP routing layer to the 
 <a href="http://twitter.github.io/finagle/" target="_top">Finagle</a> RPC framework from Twitter. It provides a simple way to 
 implement contracts for both server and client-side HTTP services which are:
 
