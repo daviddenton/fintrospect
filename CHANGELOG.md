@@ -9,7 +9,7 @@ The main API is stable now, but expect some amount of breaking changes around ma
 - Significant performance improvement by route matching on ```ModuleSpec``` context first and then on the whole path. This means that ```ModuleSpec``` contexts now 
 CANNOT overlap at all, as matching just the Module context and then then the rest of the path. For static resources, this means that 
 ```StaticModule``` instances that share their context with another (e.g. for dynamic web resources), they need to come before the ```ModuleSpec```
-when creating the final service. Any overlapping contexts will need to be merged into one as a result.
+when creating the final service. Any overlapping ModuleSpecs will need to be combined into one as a result.
 
 ## v12.1.0
 - New documentation and project site
