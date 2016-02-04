@@ -3,7 +3,7 @@
 There are many ways in which you can contribute to the development of the library:
 
 - Give us a Star on Github - you know you want to ;)
-- Questions can be directed towards the Gitter channel, or to questions@fintrospect.io
+- Questions can be directed towards the Gitter channel, or on Twitter <a href="https://twitter.com/fintrospectdev">@fintrospectdev</a>
 - For issues, please describe giving as much detail as you can - including version and steps to recreate
 
 ### pull requests
