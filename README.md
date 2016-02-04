@@ -126,7 +126,7 @@ See the <a href="https://github.com/daviddenton/fintrospect/blob/master/CHANGELO
 ## Contributing
 There are many ways in which you can contribute to the development of the library:
 
-- Give us a Star on Github - you know you want to ;)
+- Give us a ⭐️ on Github - you know you want to ;)
 - Questions can be directed towards the Gitter channel, or on Twitter @fintrospectdev
 - For issues, please describe giving as much detail as you can - including version and steps to recreate
 
