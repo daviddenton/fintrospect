@@ -3,7 +3,7 @@
 <a href="https://bintray.com/daviddenton/maven/fintrospect/_latestVersion" target="_top"><img src="https://api.bintray.com/packages/daviddenton/maven/fintrospect/images/download.svg"/></a>&nbsp;&nbsp;&nbsp;
 <a href="https://travis-ci.org/daviddenton/fintrospect" target="_top"><img src="https://travis-ci.org/daviddenton/fintrospect.svg?branch=master"/></a>&nbsp;&nbsp;&nbsp;
 <a href="https://coveralls.io/github/daviddenton/fintrospect?branch=master" target="_top"><img src="https://coveralls.io/repos/daviddenton/fintrospect/badge.svg?branch=master"/></a>&nbsp;&nbsp;&nbsp;
-<a href="https://gitter.im/daviddenton/fintrospect" target="_top"><img src="https://img.shields.io/gitter/room/nwjs/nw.js.svg"/></a>&nbsp;&nbsp;&nbsp;
+<a href="https://gitter.im/daviddenton/fintrospect" target="_top"><img src="https://badges.gitter.im/daviddenton/fintrospect.svg"/></a>&nbsp;&nbsp;&nbsp;
 <a href="https://bintray.com/daviddenton/maven/fintrospect/view?source=watch" target="_top"><img height="45" src="https://www.bintray.com/docs/images/bintray_badge_color.png"/></a>&nbsp;&nbsp;&nbsp;
 </h1>
 
