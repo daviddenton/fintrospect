@@ -9,6 +9,6 @@ To activate some optional features, additional dependencies may be required - th
 Add the following lines to ```build.sbt```:
 
 ```scala
-libraryDependencies += "com.twitter" %% "finagle-http" % "6.31.0"
+libraryDependencies += "com.twitter" %% "finagle-http" % "6.33.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.1.0"
 ```

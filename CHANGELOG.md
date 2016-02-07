@@ -5,6 +5,9 @@ The main API is stable now, but expect some amount of breaking changes around ma
 ## v12.3.0 (in dev)
 - Option to dynamically reload templates.
 
+## v12.2.0 (post)
+- upgrade finagle dependency to v6.33.0
+
 ## v12.2.0
 - Significant performance improvement by route matching on ```ModuleSpec``` context first and then on the whole path. This means that ```ModuleSpec``` contexts now 
 CANNOT overlap at all, as matching just the Module context and then then the rest of the path. For static resources, this means that 
