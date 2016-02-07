@@ -2,7 +2,11 @@ package io.fintrospect.formats.json
 
 import argonaut.Argonaut._
 import argonaut._
+import com.twitter.finagle.http.Request
+import io.fintrospect.formats.json.Argonaut.JsonFormat._
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
+import io.fintrospect.parameters.{Query, Body}
+import scala.language.reflectiveCalls
 
 case class ArgonautStreetAddress(address: String)
 
@@ -23,12 +27,21 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut.JsonFormat) {
   describe("Argonaut.JsonFormat") {
     val aLetter = ArgonautLetter(ArgonautStreetAddress("my house"), ArgonautStreetAddress("your house"), "hi there")
     it("roundtrips to JSON and back") {
-      val encoded = Argonaut.JsonFormat.encode(aLetter)(ArgonautLetter.Codec)
-      Argonaut.JsonFormat.decode[ArgonautLetter](encoded)(ArgonautLetter.Codec) shouldEqual aLetter
+      val encoded = encode(aLetter)(ArgonautLetter.Codec)
+      decode[ArgonautLetter](encoded)(ArgonautLetter.Codec) shouldEqual aLetter
     }
 
     it("invalid extracted JSON throws up") {
-      intercept[InvalidJsonForDecoding](Argonaut.JsonFormat.decode[ArgonautLetter](Argonaut.JsonFormat.obj()))
+      intercept[InvalidJsonForDecoding](decode[ArgonautLetter](obj()))
+    }
+
+    it("body spec decodes content") {
+      (Body(bodySpec[ArgonautLetter]()) <-- Argonaut.ResponseBuilder.OK(encode(aLetter)).build()) shouldBe aLetter
+    }
+
+    it("param spec decodes content") {
+      val param = Query.required(parameterSpec[ArgonautLetter]("name"))
+      (param <-- Request("?name=" + encode(aLetter))) shouldBe aLetter
     }
   }
 
