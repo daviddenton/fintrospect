@@ -5,7 +5,8 @@ The main API is stable now, but expect some amount of breaking changes around ma
 ## v12.3.0 (in dev)
 - Option to dynamically reload templates.
 
-## v12.2.0 (post)
+## v12.2.1
+- Bugfix: Static resources not found when Static module is at the root context (issue #14).
 - upgrade finagle dependency to v6.33.0
 
 ## v12.2.0

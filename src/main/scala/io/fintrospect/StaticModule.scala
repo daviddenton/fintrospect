@@ -23,14 +23,19 @@ class StaticModule private(basePath: Path, baseDir: String, moduleFilter: Filter
   override protected def serviceBinding: ServiceBinding = {
     case method -> path if method == Get && exists(path) =>
       moduleFilter.andThen(Service.mk[Request, Response] {
-        val subPath = baseDir + path.toString.replace(basePath.toString + "/", "")
+        val subPath = convertPath(path)
         request => HttpResponse(ContentType.lookup(subPath)).withCode(Ok).withContent(Owned(toByteArray(getClass.getResource(subPath))))
       })
   }
 
   private def exists(path: Path): Boolean = {
     if (path != Root && path.startsWith(basePath)) {
-      getClass.getResource(baseDir + path.toString.replace(basePath.toString + "/", "")) != null
+      getClass.getResource(convertPath(path)) != null
     } else false
+  }
+
+  private def convertPath(path: Path): String = {
+    val newPath = if (basePath == Root) path.toString else path.toString.replace(basePath.toString, "")
+    baseDir + newPath.replaceFirst("/", "")
   }
 }
