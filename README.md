@@ -33,7 +33,7 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
 Fintropect is intentionally dependency-lite by design - the library itself only has a single dependency. The other requirement is Finagle
 itself - the choice of version is up to the user (although it has built against the version shown). 
 
-To activate some optional features, additional dependencies may be required - please see <a href="http://fintrospect.io/installation">here</a> for details.
+To activate some optional features, additional dependencies may be required - please see <a target="_top" href="http://fintrospect.io/installation">here</a> for details.
 
 Add the following lines to ```build.sbt```:
 
