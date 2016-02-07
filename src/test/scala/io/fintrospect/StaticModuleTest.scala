@@ -16,9 +16,17 @@ class StaticModuleTest extends FunSpec with ShouldMatchers {
     result.contentType.map(_.split(";")(0)) shouldEqual Option(ContentTypes.APPLICATION_XML.value)
   }
 
-  it("looks up contents of existing subdir file") {
+  it("looks up contents of existing subdir file non-root context") {
     val module = StaticModule(Root / "svc")
     val result = Await.result(module.toService(Request("/svc/io/fintrospect/StaticModule.js")))
+    result.status shouldEqual Status.Ok
+    result.contentString shouldEqual "function hearMeNow() { }"
+    result.contentType.map(_.split(";")(0)) shouldEqual Option(ContentType("application/javascript").value)
+  }
+
+  it("looks up contents of existing subdir file") {
+    val module = StaticModule(Root)
+    val result = Await.result(module.toService(Request("/io/fintrospect/StaticModule.js")))
     result.status shouldEqual Status.Ok
     result.contentString shouldEqual "function hearMeNow() { }"
     result.contentType.map(_.split(";")(0)) shouldEqual Option(ContentType("application/javascript").value)
