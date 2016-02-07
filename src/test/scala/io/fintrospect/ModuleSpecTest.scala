@@ -60,6 +60,11 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
         assertOkResponse(m.withRoute(d.at(Get) / Path.fixed("svc") / Path.string("s1") / Path.string("s2") / Path.string("s3") / Path.string("s4") / Path.string("s5") / Path.string("s6")
           bindTo ((_1, _2, _3, _4, _5, _6, _7) => AService(Seq(_2, _3, _4, _5, _6, _7)))), Seq("a", "b", "c", "d", "e", "f"))
       }
+
+      it("with all fixed segments") {
+        val module = m.withRoute(d.at(Get) / "svc" / "1" / "2" / "3" / "4" / "5" / "6" bindTo(() => Service.mk {r: Request => Response()}))
+        Await.result(module.toService(Request("/svc/1/2/3/4/5/6"))).status shouldEqual Status.Ok
+      }
     }
 
     describe("description route is added") {
