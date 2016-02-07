@@ -55,5 +55,18 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
       //                  println(actual)
       parse(actual) shouldEqual expected
     }
+
+    it("can build 400") {
+      val response = statusAndContentFrom(renderer.badRequest(Seq(Query.required.string("bob"))))
+      response._1 shouldBe Status.BadRequest
+      parse(response._2).getStringValue("message") shouldBe "Missing/invalid parameters"
+    }
+
+    it("can build 404") {
+      val response = statusAndContentFrom(renderer.notFound(Request()))
+      response._1 shouldBe Status.NotFound
+      parse(response._2).getStringValue("message") shouldBe "No route found on this path. Have you used the correct HTTP verb?"
+    }
+
   }
 }

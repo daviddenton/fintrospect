@@ -14,6 +14,10 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 class SiteMapModuleRendererTest extends FunSpec with ShouldMatchers {
 
+  it("renders 404") {
+    new SiteMapModuleRenderer(new URL("http://fintrospect.io")).badRequest(Seq())
+  }
+
   it("should describe only GET endpoints of module as a sitemap") {
     val rsp = new SiteMapModuleRenderer(new URL("http://fintrospect.io")).description(Root / "bob", NoSecurity, Seq(
       endpointFor(Get),
