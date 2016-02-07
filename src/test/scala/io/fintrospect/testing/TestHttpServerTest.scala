@@ -1,10 +1,10 @@
-package io.fintrospect
+package io.fintrospect.testing
 
-import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
-import io.fintrospect.testing.TestHttpServer
+import io.fintrospect.RouteSpec
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class TestHttpServerTest extends FunSpec with ShouldMatchers {
