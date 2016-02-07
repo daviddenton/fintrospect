@@ -44,7 +44,7 @@ libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.2.1"
 ```
 
 ## See the code
-See a <a href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples" target="_top">full example application</a>.
+See the examples in this repo, or clone the <a target="_top" href="http://github.com/daviddenton/fintrospect-example-app">full example application repo</a>.
 
 ## Learn it
 See the full user guide <a href="http://fintrospect.io/" target="_top">here</a>, or read on for the tldr; example. :)

@@ -18,7 +18,7 @@ Because the ```RouteSpec``` objects can be used to bind to either a Server or a 
 both sides of an HTTP boundary to provide a type-safe remote contract, to either:
 
 1. Auto-generate fake HTTP server implementations for remote HTTP dependencies. In this case, defining the ```RouteSpec``` as part of 
-an HTTP client contract and then simply reusing them as the server-side contract of a testing fake - see the "full" example code
+an HTTP client contract and then simply reusing them as the server-side contract of a testing fake - see the ```/clients``` example code
 2. Use a shared library approach to define a contract and the data objects that go across it for reuse in multiple applications, each 
 of which import the shared library. This obviously binary-couples the applications together to a certain degree, so utmost care should 
 be taken, backed up with sufficient CDC-style testing to ensure that the version of the contract deployed is valid on both ends.
