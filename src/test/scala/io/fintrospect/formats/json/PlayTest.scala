@@ -1,6 +1,8 @@
 package io.fintrospect.formats.json
 
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
+import io.fintrospect.formats.json.Play.JsonFormat._
+import io.fintrospect.parameters.Body
 import play.api.libs.json._
 
 case class PlayStreetAddress(address: String)
@@ -24,7 +26,8 @@ object PlayLetter {
   implicit val W = PlayStreetAddress.Writes
 
   implicit val Writes = Json.writes[PlayLetter]
-  implicit val Reads = Json.reads[PlayLetter]}
+  implicit val Reads = Json.reads[PlayLetter]
+}
 
 class PlayJsonResponseBuilderTest extends JsonResponseBuilderSpec(Play)
 
@@ -32,6 +35,7 @@ class PlayJsonFormatTest extends JsonFormatSpec(Play.JsonFormat) {
 
   describe("Play.JsonFormat") {
     val aLetter = PlayLetter(PlayStreetAddress("my house"), PlayStreetAddress("your house"), "hi there")
+
     it("roundtrips to JSON and back") {
       val encoded = Play.JsonFormat.encode(aLetter)(PlayLetter.Writes)
       Play.JsonFormat.decode[PlayLetter](encoded)(PlayLetter.Reads) shouldEqual aLetter
@@ -39,6 +43,10 @@ class PlayJsonFormatTest extends JsonFormatSpec(Play.JsonFormat) {
 
     it("invalid extracted JSON throws up") {
       intercept[InvalidJsonForDecoding](Play.JsonFormat.decode[PlayLetter](Play.JsonFormat.obj()))
+    }
+
+    it("body spec decodes content") {
+      (Body(bodySpec[PlayLetter]()) <-- Play.ResponseBuilder.OK(encode(aLetter)).build()) shouldBe aLetter
     }
   }
 }
