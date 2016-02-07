@@ -1,8 +1,10 @@
-The Fintrospect example code hosted here:
+The Fintrospect example code hosted [here](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples):
 
-- ```/clients```	- an example of using HTTP routes as a client and creating *really* easy fake remote servers for testing
-- ```/customformats```	- creating a custom message format with it's own Response Builder: HipsterXML
-- ```/customparameters```	- creating a custom serialisation format for request parameters and bodies
-- ```/extended```	- the library application. Example used on the Github project README
-- ```/full```	- the building security system example. This is a full example of Fintrospect features
-- ```/json4s```	- shows the usage of a JSON library for message marshalling
+- <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/clients">```/clients```</a>- an example of using HTTP routes as a client and creating *really* easy fake remote servers for testing
+- <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/customformats">```/customformats```</a>- creating a custom message format with it's own Response Builder: HipsterXML
+- <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/customparameters">```/customparameters```</a>- creating a custom serialisation format for request parameters and bodies
+- <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/extended">```/extended```</a>- the library application. Example used on the Github project README
+- <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/json4s">```/json4s```</a>- shows the usage of a JSON library for message marshalling
+
+# quickstart repo
+If you want to dive in head-first, there is example source project of a Fintrospect application with most of the features hosted in this <a target="_top" href="http://github.com/daviddenton/fintrospect-example-app">Github Repo</a.>
