@@ -1,8 +1,9 @@
 package io.fintrospect.formats.json
 
+import com.twitter.finagle.http.Request
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.json.Play.JsonFormat._
-import io.fintrospect.parameters.Body
+import io.fintrospect.parameters.{Body, Query}
 import play.api.libs.json._
 
 case class PlayStreetAddress(address: String)
@@ -48,5 +49,11 @@ class PlayJsonFormatTest extends JsonFormatSpec(Play.JsonFormat) {
     it("body spec decodes content") {
       (Body(bodySpec[PlayLetter]()) <-- Play.ResponseBuilder.OK(encode(aLetter)).build()) shouldBe aLetter
     }
+
+    it("param spec decodes content") {
+      val param = Query.required(parameterSpec[PlayLetter]("name"))
+      (param <-- Request("?name=" + encode(aLetter))) shouldBe aLetter
+    }
   }
+
 }
