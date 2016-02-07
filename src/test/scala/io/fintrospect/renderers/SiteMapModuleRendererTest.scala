@@ -4,8 +4,9 @@ import java.net.URL
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Method, Request, Response, Status}
+import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.util.Future
 import io.fintrospect.parameters.NoSecurity
 import io.fintrospect.util.HttpRequestResponseUtil._
@@ -14,8 +15,12 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 class SiteMapModuleRendererTest extends FunSpec with ShouldMatchers {
 
+  it("renders 400") {
+    new SiteMapModuleRenderer(new URL("http://fintrospect.io")).badRequest(Seq()).status shouldBe BadRequest
+  }
+
   it("renders 404") {
-    new SiteMapModuleRenderer(new URL("http://fintrospect.io")).badRequest(Seq())
+    new SiteMapModuleRenderer(new URL("http://fintrospect.io")).notFound(Request()).status shouldBe NotFound
   }
 
   it("should describe only GET endpoints of module as a sitemap") {
@@ -31,7 +36,7 @@ class SiteMapModuleRendererTest extends FunSpec with ShouldMatchers {
     ))
 
     val (status, content) = statusAndContentFrom(rsp)
-    status shouldBe Status.Ok
+    status shouldBe Ok
     content shouldBe <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <url>
         <loc>
