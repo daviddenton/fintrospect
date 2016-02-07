@@ -52,7 +52,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       val clientWithNameQuery = RouteSpec().taking(nameQuery).at(Get) / "prefix" bindToClient returnsMethodAndUri
 
       it("when there are some") {
-        responseFor(clientWithNameQuery(nameQuery --> "bob")) shouldEqual(Status.Ok, "GET,/prefix?name=bob")
+        responseFor(clientWithNameQuery(nameQuery --> Option("bob"))) shouldEqual(Status.Ok, "GET,/prefix?name=bob")
       }
       it("optional query params are ignored if not there") {
         responseFor(clientWithNameQuery()) shouldEqual(Status.Ok, "GET,/prefix")
