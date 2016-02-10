@@ -4,6 +4,7 @@ The main API is stable now, but expect some amount of breaking changes around ma
 
 ## v12.3.0 (in dev)
 - Option to dynamically reload templates.
+- Added symbol support to ```JsonFormat``` object generation - see ```objSym()```
 
 ## v12.2.1
 - Bugfix: Static resources not found when Static module is at the root context (issue #14).
