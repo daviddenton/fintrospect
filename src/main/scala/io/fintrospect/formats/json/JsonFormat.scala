@@ -25,6 +25,8 @@ trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
 
   def obj(fields: Field*): ROOT_NODETYPE
 
+  def objSym(fields: (Symbol, NODETYPE)*): ROOT_NODETYPE = obj(fields.map(p => p._1.name -> p._2):_*)
+
   def array(elements: Iterable[NODETYPE]): NODETYPE
 
   def array(elements: NODETYPE*): NODETYPE
