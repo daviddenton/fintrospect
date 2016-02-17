@@ -5,6 +5,7 @@ import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.json.Play.JsonFormat._
 import io.fintrospect.parameters.{Body, Query}
 import play.api.libs.json._
+import scala.language.reflectiveCalls
 
 case class PlayStreetAddress(address: String)
 

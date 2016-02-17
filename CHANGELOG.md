@@ -2,9 +2,12 @@
 
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
-## v12.3.0 (in dev)
+## v12.4.0 (in dev)
 - Option to dynamically reload templates.
+
+## v12.3.0
 - Added symbol support to ```JsonFormat``` object generation - see ```objSym()```
+- Upgrade of ```Circe to``` ```0.3.0``` - note the rename of the ```circe-parse``` package dependency to ```circe-parser```
 
 ## v12.2.1
 - Bugfix: Static resources not found when Static module is at the root context (issue #14).
