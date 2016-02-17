@@ -4,6 +4,7 @@ import com.twitter.finagle.http.Request
 import io.fintrospect.formats.json.Circe.JsonFormat._
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
+
 import scala.language.reflectiveCalls
 
 case class CirceStreetAddress(address: String)
@@ -16,7 +17,7 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
 
   import io.circe._
   import io.circe.generic.auto._
-  import io.circe.parse._
+  import io.circe.parser._
   import io.circe.syntax._
 
   describe("Circe.JsonFormat") {
