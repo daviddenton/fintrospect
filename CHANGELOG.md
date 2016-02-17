@@ -11,7 +11,7 @@ The main API is stable now, but expect some amount of breaking changes around ma
 
 ## v12.2.1
 - Bugfix: Static resources not found when Static module is at the root context (issue #14).
-- upgrade finagle dependency to v6.33.0
+- Upgrade finagle dependency to v6.33.0
 
 ## v12.2.0
 - Significant performance improvement by route matching on ```ModuleSpec``` context first and then on the whole path. This means that ```ModuleSpec``` contexts now 
