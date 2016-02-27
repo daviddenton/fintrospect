@@ -19,7 +19,7 @@ trait JsonLibrary[R, N] {
    * Use this to create JSON-format Responses
    */
   object ResponseBuilder extends AbstractResponseBuilder[R] {
-    private def formatJson(node: R): String = JsonFormat.pretty(node)
+    private def formatJson(node: R): String = JsonFormat.compact(node)
 
     private def formatErrorMessage(errorMessage: String): R = JsonFormat.obj("message" -> JsonFormat.string(errorMessage))
 
