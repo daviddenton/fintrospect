@@ -67,9 +67,12 @@ class BookSearch(books: Books) {
   private def search() = Service.mk[Request, Response] { 
     request => {
       val requestForm = form.from(request)
-      Ok(array(books.search(minPages.from(requestForm).getOrElse(MIN_VALUE),
-        maxPages.from(request).getOrElse(MAX_VALUE),
-        titleTerm.from(requestForm)).map(_.toJson)))
+      Ok(array(
+        books.search(
+            minPages.from(requestForm).getOrElse(MIN_VALUE), 
+            maxPages.from(request).getOrElse(MAX_VALUE),
+            titleTerm.from(requestForm)
+        ).map(_.toJson)))
     }
   }
 
