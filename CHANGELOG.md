@@ -2,8 +2,12 @@
 
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
-## v12.4.0 (in dev)
+## v12.5.0 (in dev)
 - Option to dynamically reload templates.
+
+## v12.4.0
+- For performance, all JSON responses are now rendered in compact format by default when using a JSON library and the native node type (as opposed to string). This shouldn't really break anything in your code unless you're relying on comparisons 
+with hardcoded JSON strings - :) 
 
 ## v12.3.0
 - Added symbol support to ```JsonFormat``` object generation - see ```objSym()```
