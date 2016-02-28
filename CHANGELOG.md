@@ -19,9 +19,9 @@ with hardcoded JSON strings - :)
 
 ## v12.2.0
 - Significant performance improvement by route matching on ```ModuleSpec``` context first and then on the whole path. This means that ```ModuleSpec``` contexts now 
-CANNOT overlap at all, as matching just the Module context and then then the rest of the path. For static resources, this means that 
-```StaticModule``` instances that share their context with another (e.g. for dynamic web resources), they need to come before the ```ModuleSpec```
-when creating the final service. Any overlapping ModuleSpecs will need to be combined into one as a result.
+CANNOT be shared at all, due to the routing matching just the Module context to select the Module and then then the rest of the path within that Module. For static resources, 
+```StaticModule``` instances that share their context with another (e.g. for dynamic web resources at the root context), need to come before any partner ```ModuleSpec```
+when creating the final service. Also, any overlapping ModuleSpecs will need to be combined into one.
 
 ## v12.1.0
 - New documentation and project site
