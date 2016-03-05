@@ -25,6 +25,8 @@ ul.nav.nav-pills.nav-stacked.nav-docs
         a(href="http://fintrospect.io/examples") examples
     li
         h1 misc
+    li(class="#{ current.source == 'api' ? 'active' : '' }")
+        a(href="http://fintrospect.io/api") api docs
     li(class="#{ current.source == 'changelog' ? 'active' : '' }")
         a(href="http://fintrospect.io/changelog") changelog & migration
     li(class="#{ current.source == 'contributing' ? 'active' : '' }")
