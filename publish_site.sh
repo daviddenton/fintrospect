@@ -9,7 +9,9 @@ cd /tmp/site
 git checkout gh-pages
 cd -
 npm run makeSite
+./sbt doc
 rm -rf /tmp/site/*
+mv target/scala-2.11/api target/www/
 mv -f target/www/* /tmp/site
 cd /tmp/site
 git add *
