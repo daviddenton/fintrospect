@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
+import java.util.UUID
 
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.formats.json.{Argo, Json4s, JsonFormat, Spray}
@@ -116,6 +117,21 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
 
     it("serializes correctly") {
       ParameterSpec.string(paramName, "").serialize("asdas") shouldEqual "asdas"
+    }
+  }
+
+  describe("uuid") {
+    println(UUID.randomUUID().toString)
+    it("retrieves a valid value") {
+      Try(ParameterSpec.uuid(paramName, "").deserialize("41fe035f-a948-4d67-a276-1ff79a0a7443")) shouldEqual Success(UUID.fromString("41fe035f-a948-4d67-a276-1ff79a0a7443"))
+    }
+
+    it("does not retrieve an null value") {
+      Try(ParameterSpec.uuid(paramName, "").deserialize(null)).isFailure shouldEqual true
+    }
+
+    it("serializes correctly") {
+      ParameterSpec.uuid(paramName, "").serialize(UUID.fromString("41fe035f-a948-4d67-a276-1ff79a0a7443")) shouldEqual "41fe035f-a948-4d67-a276-1ff79a0a7443"
     }
   }
 

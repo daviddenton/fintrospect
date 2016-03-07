@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.util.UUID
 
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 
@@ -67,6 +68,14 @@ trait Parameters[P[_], R[_]] {
    * @return a parameter for retrieving a String value from the request
    */
   def string(name: String, description: String = null): P[String] with R[String] = apply(ParameterSpec.string(name, description))
+
+  /**
+    * Create a UUID parameter
+    * @param name the name of the parameter (for use in description endpoints)
+    * @param description optional description of the parameter (for use in description endpoints)
+    * @return a parameter for retrieving a UUID value from the request
+    */
+  def uuid(name: String, description: String = null): P[UUID] with R[UUID] = apply(ParameterSpec.uuid(name, description))
 
   /**
    * Create a BigDecimal parameter which is constrained to numeric values
