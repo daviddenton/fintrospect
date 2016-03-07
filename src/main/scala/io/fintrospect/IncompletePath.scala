@@ -1,8 +1,8 @@
 package io.fintrospect
 
-import com.twitter.finagle.{Filter, Service}
 import com.twitter.finagle.http.path.{->, /, Path}
 import com.twitter.finagle.http.{Method, Request, Response}
+import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.IncompletePath._
 import io.fintrospect.ModuleSpec.ModifyPath
 import io.fintrospect.parameters.{Path => Fp, PathParameter}
@@ -31,6 +31,14 @@ class IncompletePath0(val routeSpec: RouteSpec, val method: Method, val pathFn: 
 
   def /[T](pp0: PathParameter[T]) = new IncompletePath1(routeSpec, method, pathFn, pp0)
 
+  /**
+    * Non-lazy bindTo(). Depending on use-case, can use this instead of the lazy version.
+    */
+  def bindTo[RS](svc: Service[Request, RS]): ServerRoute[RS] = bindTo(() => svc)
+
+  /**
+    * Lazy bindTo(). Depending on use-case, can use this instead of the non-lazy version.
+    */
   def bindTo[RS](fn: () => Service[Request, RS]): ServerRoute[RS] = new ServerRoute[RS](routeSpec, method, pathFn) {
     override def toPf(filter: Filter[Request, Response, Request, RS], basePath: Path) = {
       filtered: Filter[Request, Response, Request, Response] => {

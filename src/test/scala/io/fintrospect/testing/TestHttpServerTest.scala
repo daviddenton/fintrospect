@@ -11,8 +11,7 @@ import org.scalatest.{BeforeAndAfterEach, FunSpec, ShouldMatchers}
 class TestHttpServerTest extends FunSpec with ShouldMatchers with BeforeAndAfterEach {
   val originalStatus = Conflict
 
-  private val server = new TestHttpServer(9888, RouteSpec().at(Get) bindTo (
-    () => Service.mk { r => Future.value(Response(originalStatus)) }))
+  private val server = new TestHttpServer(9888, RouteSpec().at(Get) bindTo Service.mk { r: Request => Future.value(Response(originalStatus)) })
 
   override def beforeEach() = {
     Await.result(server.start())

@@ -2,6 +2,7 @@ package io.fintrospect.parameters
 
 import java.time.format.DateTimeFormatter._
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.util.UUID
 
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 
@@ -32,6 +33,7 @@ object ParameterSpec {
   def dateTime(name: String, description: String = null) = ParameterSpec[LocalDateTime](name, Option(description), StringParamType, LocalDateTime.parse(_), ISO_LOCAL_DATE_TIME.format(_))
   def boolean(name: String, description: String = null) = ParameterSpec[Boolean](name, Option(description), BooleanParamType, _.toBoolean, _.toString)
   def string(name: String, description: String = null) = ParameterSpec[String](name, Option(description), StringParamType, _.toString, _.toString)
+  def uuid(name: String, description: String = null) = ParameterSpec[UUID](name, Option(description), StringParamType, UUID.fromString, _.toString)
   def bigDecimal(name: String, description: String = null) = ParameterSpec[BigDecimal](name, Option(description), NumberParamType, BigDecimal(_), _.toString())
   def long(name: String, description: String = null) = ParameterSpec[Long](name, Option(description), IntegerParamType, _.toLong, _.toString)
   def int(name: String, description: String = null) = ParameterSpec[Int](name, Option(description), IntegerParamType, _.toInt, _.toString)

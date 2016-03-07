@@ -89,11 +89,13 @@ class ModuleSpec[RS] private(basePath: Path,
   def withRoutes(newRoutes: Iterable[ServerRoute[RS]]*): ModuleSpec[RS] = newRoutes.flatten.foldLeft(this)(_.withRoute(_))
 
   private def withDefault(otherRoutes: ServiceBinding): ServiceBinding = {
-    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath).bindTo {
-      () => Service.mk { r => Future.value(moduleRenderer.description(basePath, security, routes)) }
+    val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath) bindTo {
+      Service.mk { r: Request => Future.value(moduleRenderer.description(basePath, security, routes)) }
     }
 
-    val fallback: ServiceBinding = { case _ => Service.mk { request:Request => Future.value(moduleRenderer.notFound(request)) }}
+    val fallback: ServiceBinding = {
+      case _ => Service.mk { request: Request => Future.value(moduleRenderer.notFound(request)) }
+    }
 
     val totalPf = otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(identify(descriptionRoute))).orElse(fallback)
 
