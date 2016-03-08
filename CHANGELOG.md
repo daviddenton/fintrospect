@@ -2,9 +2,11 @@
 
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
-## v12.6.0 (in dev)
+## v12.7.0 (in dev)
 - Option to dynamically reload templates.
-- Bolstered test utilities
+
+## v12.6.0
+- Bolstered infra utilities to be friendlier for testing applications outside of a container
 
 ## v12.5.0
 - Added UUID parameter type
