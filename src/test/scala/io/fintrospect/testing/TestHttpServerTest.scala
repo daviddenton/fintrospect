@@ -8,6 +8,7 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec
 import org.scalatest.{BeforeAndAfterEach, FunSpec, ShouldMatchers}
 
+
 class TestHttpServerTest extends FunSpec with ShouldMatchers with BeforeAndAfterEach {
   val originalStatus = Conflict
 
@@ -22,15 +23,15 @@ class TestHttpServerTest extends FunSpec with ShouldMatchers with BeforeAndAfter
   }
 
   it("will serve routes that are passed to it") {
-    statusFrom(originalStatus)
+    statusShouldBe(originalStatus)
   }
 
   it("can override status") {
     server.respondWith(Accepted)
-    statusFrom(Accepted)
+    statusShouldBe(Accepted)
   }
 
-  private def statusFrom(expected: Status): Unit = {
+  private def statusShouldBe(expected: Status): Unit = {
     Await.result(Http.newService("localhost:9888", "")(Request())).status shouldBe expected
   }
 }
