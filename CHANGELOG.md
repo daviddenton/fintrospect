@@ -4,6 +4,7 @@ The main API is stable now, but expect some amount of breaking changes around ma
 
 ## v12.6.0 (in dev)
 - Option to dynamically reload templates.
+- Bolstered test utilities
 
 ## v12.5.0
 - Added UUID parameter type
