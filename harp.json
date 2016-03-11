@@ -1,8 +1,8 @@
 {
   "globals": {
     "finagle": {
-      "old": "6.31.0",
-      "new": "6.33.0"
+      "old": "6.33.0",
+      "new": "6.34.0"
     },
     "fintrospect": {
       "old": "12.5.0",

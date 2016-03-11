@@ -10,6 +10,6 @@ Add the following lines to ```build.sbt```:
 
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
-libraryDependencies += "com.twitter" %% "finagle-http" % "6.33.0"
+libraryDependencies += "com.twitter" %% "finagle-http" % "6.34.0"
 libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.6.0"
 ```
