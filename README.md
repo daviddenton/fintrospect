@@ -27,10 +27,11 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
 - Template ```View``` support for building responses with <a href="http://mustache.github.io/" target="_top">Mustache</a> or <a href="http://handlebarsjs.com" target="_top">Handlebars</a>
 - Anonymising headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. 
 ```/search/author/rowling``` becomes ```/search/author/{name}```
+- Interacts seamlessly with other Finagle based libraries, such as <a href="https://github.com/finagle/finagle-oauth2" target="_top">Finagle OAuth2</a> 
 - Utilities to help you unit-test endpoint services and write HTTP contract tests for remote dependencies 
 
 ## Get it
-Fintropect is intentionally dependency-lite by design - the library itself only has a single dependency. The other requirement is Finagle
+Fintrospect is intentionally dependency-lite by design - the library itself only has a single dependency. The other requirement is Finagle
 itself - the choice of version is up to the user (although it has built against the version shown). 
 
 To activate some optional features, additional dependencies may be required - please see <a target="_top" href="http://fintrospect.io/installation">here</a> for details.

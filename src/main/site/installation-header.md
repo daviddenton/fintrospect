@@ -1,6 +1,6 @@
 # installation
 
-Fintropect is intentionally dependency-lite by design - the library itself only has a single dependency. The other requirement is Finagle
+Fintrospect is intentionally dependency-lite by design - the library itself only has a single dependency. The other requirement is Finagle
 itself - the choice of version is up to the user (although it has built against the version shown). 
 
 To activate some optional features, additional dependencies may be required - these are shown in the subsequent sections depending on the use-case.
