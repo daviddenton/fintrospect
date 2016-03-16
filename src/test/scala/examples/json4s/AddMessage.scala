@@ -15,7 +15,7 @@ import io.fintrospect.parameters._
 class AddMessage(emails: Emails) {
   private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", 250)
 
-  private val email = Body(BodySpec[Email](Option("email"), APPLICATION_JSON, s => decode[Email](parse(s)), e => compact(encode(e))), exampleEmail, ObjectParamType)
+  private val email = Body(bodySpec[Email](Option("email")))
 
   private def addEmail() = Service.mk[Request, Response] {
     request => {
@@ -28,7 +28,7 @@ class AddMessage(emails: Emails) {
 
   val route = RouteSpec("add an email and return the new inbox contents for the receiver")
     .body(email)
-    .returning(ResponseSpec.json(Ok -> "new list of emails for the 'to' user", encode(Seq(exampleEmail)), JsonFormat))
+    .returning(responseSpec(Ok -> "new list of emails for the 'to' user", Seq(exampleEmail)))
     .at(Post) / "email" bindTo addEmail
 }
 

@@ -4,13 +4,15 @@ import java.math.BigInteger
 
 import argonaut.Argonaut._
 import argonaut.{DecodeJson, EncodeJson, Json}
+import com.twitter.finagle.http.Status
 import io.fintrospect.ContentTypes._
+import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 
 /**
- * Argonaut JSON support (application/json content type)
- */
+  * Argonaut JSON support (application/json content type)
+  */
 object Argonaut extends JsonLibrary[Json, Json] {
 
   object JsonFormat extends JsonFormat[Json, Json] {
@@ -48,14 +50,21 @@ object Argonaut extends JsonLibrary[Json, Json] {
     def decode[T](in: Json)(implicit decodec: DecodeJson[T]) = decodec.decodeJson(in).getOr(throw new InvalidJsonForDecoding)
 
     /**
-     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
-     */
+      * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+      */
     def bodySpec[R](description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
       BodySpec[R](description, APPLICATION_JSON, s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
 
     /**
-     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
-     */
+      * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
+      */
+    def responseSpec[R](statusAndDescription: (Status, String), example: R)
+                       (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
+      ResponseSpec.json(statusAndDescription, encode(example)(encodec), this)
+
+    /**
+      * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+      */
     def parameterSpec[R](name: String, description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
       ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
   }
