@@ -41,7 +41,7 @@ val myName = name <-- myForm
 val iAmMarried = isMarried <-- myForm
 ```
 
-### custom object serialisation
+#### custom object serialisation
 These can be implemented by defining a ```ParameterSpec``` or ```BodySpec``` and passing an instance instead of calling the ```<param type>``` method 
 in the form above. These Spec objects define:
 
