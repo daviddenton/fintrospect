@@ -48,14 +48,21 @@ use (else it will default to the bundled Argo JSON library) - and if this is don
 a single line of code change.
 
 ```
-val json = Argonaut.JsonFormat
+val jsonFormat = Argonaut.JsonFormat
 val exampleObject = jsonFormat.obj("fieldName" -> json.string("hello"))
-val json = Body.json(Option("my lovely JSON object"), exampleObject, json)
+val json = Body.json(Option("my lovely JSON object"), exampleObject, jsonFormat)
 val body: Json = json <-- request
 ```
 
 Notice that in the above we specified an example of the JSON message. This is not mandatory, but allows the generation of 
 <a href="http://json-schema.org/" target="_top">JSON Schema</a> to be included in the auto-generated API documentation.
+
+Additionally, in the case of some JSON libraries that provide auto marshalling and demarshalling to case class instances, you can remove the JSON step altogether:
+```
+case class Email(address: String)
+val email = Body(Argonaut.JsonFormat.bodySpec(Option("my lovely JSON object"), Email("jim@example.com")))
+val retreived: Email = email <-- request
+```
 
 ### custom object serialisation
 These can be implemented by defining a ```ParameterSpec``` or ```BodySpec``` and passing an instance instead of calling the ```<param type>``` method 
