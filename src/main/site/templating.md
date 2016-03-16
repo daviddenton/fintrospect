@@ -9,7 +9,7 @@ case class ViewMessage(value: String) extends View
 
 def showMessage() = Service.mk[Request, View] { _ => Future.value(ViewMessage("some value to be displayed")) }
 
-val webModule = ModuleSpec[View](Root / "web",
+val webModule = ModuleSpec[Request, View](Root / "web",
     new SiteMapModuleRenderer(new URL("http://root.com")),
     new RenderMustacheView(Html.ResponseBuilder))
     .withRoute(RouteSpec().at(Get) / "message" bindTo showMessage)

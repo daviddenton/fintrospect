@@ -17,11 +17,11 @@ object HipsterXmlModuleRenderer extends ModuleRenderer {
 
   override def notFound(request: Request): Response = Error(Status.NotFound)
 
-  private def renderRoute(basePath: Path, route: ServerRoute[_]): HipsterXmlFormat = HipsterXmlFormat(s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")
+  private def renderRoute(basePath: Path, route: ServerRoute[_, _]): HipsterXmlFormat = HipsterXmlFormat(s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")
 
-  private def renderRoutes(basePath: Path, routes: Seq[ServerRoute[_]]): String = HipsterXmlFormat(routes.map(renderRoute(basePath, _)): _*).toString()
+  private def renderRoutes(basePath: Path, routes: Seq[ServerRoute[_, _]]): String = HipsterXmlFormat(routes.map(renderRoute(basePath, _)): _*).toString()
 
-  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response = {
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = {
     Ok(HipsterXmlFormat(s"<paths>${renderRoutes(basePath, routes)}</paths>").value)
   }
 }

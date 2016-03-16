@@ -8,7 +8,7 @@ import io.fintrospect.renderers.ModuleRenderer
 @deprecated("Use ModuleSpec instead", "v12.0.0")
 object FintrospectModule {
   @deprecated("Use ModuleSpec() instead", "v12.0.0")
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer): ModuleSpec[Response] =
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer): ModuleSpec[Request, Response] =
     ModuleSpec(basePath, moduleRenderer)
 
   @deprecated("Use ModuleSpec() instead", "v12.0.0")

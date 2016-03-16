@@ -114,7 +114,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
     }
 
     describe("filters") {
-      val module = ModuleSpec[Response](Root, SimpleJson(), Filter.mk((in, svc) => {
+      val module = ModuleSpec[Request, Response](Root, SimpleJson(), Filter.mk((in, svc) => {
         svc(in).flatMap(resp => {
           resp.headerMap.add("MYHEADER", "BOB")
           resp
@@ -222,7 +222,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
 
   }
 
-  def assertOkResponse(module: ModuleSpec[_], segments: Seq[String]): Unit = {
+  def assertOkResponse(module: ModuleSpec[_, _], segments: Seq[String]): Unit = {
     val result = Await.result(module.toService(Request("/svc/" + segments.mkString("/"))))
     result.status shouldEqual Status.Ok
     result.contentString shouldEqual segments.mkString(",")

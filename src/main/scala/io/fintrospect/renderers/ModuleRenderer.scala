@@ -15,7 +15,7 @@ trait ModuleRenderer {
 
   def badRequest(badParameters: Seq[Parameter]): Response
 
-  def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response
+  def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response
 }
 
 

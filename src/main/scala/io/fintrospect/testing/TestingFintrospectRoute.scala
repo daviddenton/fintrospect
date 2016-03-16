@@ -14,7 +14,7 @@ import scala.concurrent.duration.Duration
  * Mixin this and provide the route under test.
  */
 trait TestingFintrospectRoute {
-  val route: ServerRoute[Response]
+  val route: ServerRoute[Request, Response]
 
   /**
    * get the response from the Route under test for this response. Default timeout is massively generous
