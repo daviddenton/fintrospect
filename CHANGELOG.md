@@ -2,8 +2,11 @@
 
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
-## v12.8.0 (planned)
+## v12.9.0 (planned)
 - Option to dynamically reload templates.
+
+## v12.9.0
+- Added convenience methods for creating ```ResponseSpec``` object for auto-encoding JSON libraries.
 
 ## v12.7.0
 - Added generification of ModuleSpec in the ```Request``` type as well as the ```Response``` type. This means that we can plug in other Finagle frameworks which vary in their Request type, such as Finagle-OAuth2. Likelihood of breaks is small, so 
