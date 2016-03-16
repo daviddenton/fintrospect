@@ -12,9 +12,9 @@ import io.fintrospect.{ModuleSpec, ServerRoutes}
   */
 class OverridableHttpService[T](rawSvc: Service[Request, Response]) {
 
-  def this(moduleSpec: ModuleSpec[Response]) = this(moduleSpec.toService)
+  def this(moduleSpec: ModuleSpec[Request, Response]) = this(moduleSpec.toService)
 
-  def this(serverRoutes: ServerRoutes[Response]) = this(ModuleSpec(Root).withRoutes(serverRoutes))
+  def this(serverRoutes: ServerRoutes[Request, Response]) = this(ModuleSpec(Root).withRoutes(serverRoutes))
 
   private var overrideStatus = Option.empty[Status]
 

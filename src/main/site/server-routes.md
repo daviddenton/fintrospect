@@ -25,7 +25,7 @@ def findEmployeesOnHoliday(departmentId: Integer) = Service.mk[Request, Response
     response.contentString = baseMsg + (if (includeManagementFlag.getOrElse(false)) "" else ", even the management") Future.value(response)
 }
 
-val route = ServerRoute[Request] = 
+val route = ServerRoute[Request, Response] = 
   RouteSpec()
   .taking(holidays)
   .taking(includeManagement)

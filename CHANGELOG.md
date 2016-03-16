@@ -2,8 +2,13 @@
 
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
-## v12.7.0 (in dev)
+## v12.8.0 (planned)
 - Option to dynamically reload templates.
+
+## v12.7.0 (in dev)
+- Added generification of ModuleSpec in the ```Request``` type as well as the ```Response``` type. This means that we can plug in other Finagle frameworks which vary in their Request type, such as Finagle-OAuth. Likelihood of breaks is small, so 
+just a minor version bump. In all cases, just replace ```ModuleSpec[X]``` and ```ServerRoute[X]``` with ```ModuleSpec[Request, X]``` and ```ServerRoute[Request, X]``` .
+- Upgrade finagle dependency to v6.34.0
 
 ## v12.6.0
 - Bolstered infra utilities to be friendlier for testing applications outside of a container

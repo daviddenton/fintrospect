@@ -46,7 +46,7 @@ class SiteMapModuleRendererTest extends FunSpec with ShouldMatchers {
     </urlset>.toString()
   }
 
-  private def endpointFor(method: Method): ServerRoute[Response] = {
+  private def endpointFor(method: Method): ServerRoute[Request, Response] = {
     RouteSpec().at(method) / method.toString() bindTo Service.mk[Request, Response]((r) => Future.value(Response()))
   }
 }

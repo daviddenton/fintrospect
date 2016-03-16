@@ -16,8 +16,8 @@ class SiteMapModuleRenderer(baseUrl: URL) extends ModuleRenderer {
 
   override def notFound(request: Request): Response = Error(NotFound)
 
-  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_]]): Response = {
-    def buildUrl(route: ServerRoute[_]) = {
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = {
+    def buildUrl(route: ServerRoute[_, _]) = {
       <url>
         <loc>
           {baseUrl + route.describeFor(basePath)}
