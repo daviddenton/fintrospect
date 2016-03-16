@@ -15,7 +15,7 @@ import io.fintrospect.parameters._
 class AddMessage(emails: Emails) {
   private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", 250)
 
-  private val email = Body(bodySpec[Email](Option("email")))
+  private val email = Body(bodySpec[Email](Option("email")), exampleEmail, ObjectParamType)
 
   private def addEmail() = Service.mk[Request, Response] {
     request => {

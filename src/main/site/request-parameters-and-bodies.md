@@ -86,7 +86,7 @@ Notice that in the above we specified an example of the JSON message. This is no
 Additionally, in the case of some JSON libraries that provide auto marshalling and demarshalling to case class instances, you can remove the JSON step altogether:
 ```
 case class Email(address: String)
-val email = Body(Argonaut.JsonFormat.bodySpec(Option("my lovely JSON object"), Email("jim@example.com")))
+val email = Body(jsonFormat.bodySpec[Email](Option("an email address")), Email("jim@example.com"), ObjectParamType)
 val retrieved: Email = email <-- request
 ```
 
