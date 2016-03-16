@@ -13,7 +13,7 @@ class UserList(emails: Emails) {
   private def list() = Service.mk[Request, Response] { _ => Ok(encode(emails.users())) }
 
   val route = RouteSpec("list the known users on this server")
-    .returning(ResponseSpec.json(Ok -> "all users who have sent or received a mail", encode(EmailAddress("you@github.com")), JsonFormat))
+    .returning(responseSpec(Ok -> "all users who have sent or received a mail", EmailAddress("you@github.com")))
     .at(Get) / "user" bindTo list
 }
 
