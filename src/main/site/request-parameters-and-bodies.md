@@ -41,29 +41,6 @@ val myName = name <-- myForm
 val iAmMarried = isMarried <-- myForm
 ```
 
-#### usage of JSON libraries
-Fintrospect comes with binding support for several JSON libraries, each represented by static instances of ```JsonFormat``` on a class named 
-after the library in question. When defining a ```Body``` or ```Parameter```, if required you can also specify the library format for it to 
-use (else it will default to the bundled Argo JSON library) - and if this is done centrally then you can switch out JSON libraries with only 
-a single line of code change.
-
-```
-val jsonFormat = Argonaut.JsonFormat
-val exampleObject = jsonFormat.obj("fieldName" -> json.string("hello"))
-val json = Body.json(Option("my lovely JSON object"), exampleObject, jsonFormat)
-val body: Json = json <-- request
-```
-
-Notice that in the above we specified an example of the JSON message. This is not mandatory, but allows the generation of 
-<a href="http://json-schema.org/" target="_top">JSON Schema</a> to be included in the auto-generated API documentation.
-
-Additionally, in the case of some JSON libraries that provide auto marshalling and demarshalling to case class instances, you can remove the JSON step altogether:
-```
-case class Email(address: String)
-val email = Body(Argonaut.JsonFormat.bodySpec(Option("my lovely JSON object"), Email("jim@example.com")))
-val retrieved: Email = email <-- request
-```
-
 ### custom object serialisation
 These can be implemented by defining a ```ParameterSpec``` or ```BodySpec``` and passing an instance instead of calling the ```<param type>``` method 
 in the form above. These Spec objects define:
@@ -88,6 +65,29 @@ object Birthday {
 val birthdayAsAQueryParam = Query.required(ParameterSpec[Birthday]("DOB", None, StringParamType, Birthday.from, _.toString))
 
 val birthdayAsABody = Body(BodySpec[Birthday](Option("DOB"), ContentTypes.TEXT_PLAIN, Birthday.from, _.toString))
+```
+
+#### usage of JSON libraries
+Fintrospect comes with binding support for several JSON libraries, each represented by static instances of ```JsonFormat``` on a class named 
+after the library in question. When defining a ```Body``` or ```Parameter```, if required you can also specify the library format for it to 
+use (else it will default to the bundled Argo JSON library) - and if this is done centrally then you can switch out JSON libraries with only 
+a single line of code change.
+
+```
+val jsonFormat = Argonaut.JsonFormat
+val exampleObject = jsonFormat.obj("fieldName" -> json.string("hello"))
+val json = Body.json(Option("my lovely JSON object"), exampleObject, jsonFormat)
+val body: Json = json <-- request
+```
+
+Notice that in the above we specified an example of the JSON message. This is not mandatory, but allows the generation of 
+<a href="http://json-schema.org/" target="_top">JSON Schema</a> to be included in the auto-generated API documentation.
+
+Additionally, in the case of some JSON libraries that provide auto marshalling and demarshalling to case class instances, you can remove the JSON step altogether:
+```
+case class Email(address: String)
+val email = Body(Argonaut.JsonFormat.bodySpec(Option("my lovely JSON object"), Email("jim@example.com")))
+val retrieved: Email = email <-- request
 ```
 
 <a class="next" href="http://fintrospect.io/defining-routes" target="_top"><button type="button" class="btn btn-sm btn-default">next: defining routes</button></a>
