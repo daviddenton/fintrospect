@@ -61,7 +61,7 @@ Additionally, in the case of some JSON libraries that provide auto marshalling a
 ```
 case class Email(address: String)
 val email = Body(Argonaut.JsonFormat.bodySpec(Option("my lovely JSON object"), Email("jim@example.com")))
-val retreived: Email = email <-- request
+val retrieved: Email = email <-- request
 ```
 
 ### custom object serialisation
