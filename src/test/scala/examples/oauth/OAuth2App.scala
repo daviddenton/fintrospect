@@ -20,7 +20,7 @@ object OAuth2App extends App {
   val auth = new OAuth2Filter(new UserDataHandler) with OAuthErrorInJson
 
   val module = ModuleSpec(Root / "auth", SimpleJson(), auth)
-    .withRoute(RouteSpec().at(Get) bindTo Service.mk {
+    .withRoute(RouteSpec().at(Get) / "user" bindTo Service.mk {
       rq: OAuth2Request[User] => Ok(rq.authInfo.user.name)
     })
 
