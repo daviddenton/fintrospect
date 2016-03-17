@@ -7,7 +7,8 @@ import io.circe._
 import io.fintrospect.ContentTypes._
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import org.json4s.{NoTypeHints, Formats}
 
 /**
   * Circe JSON support (application/json content type)
@@ -47,6 +48,12 @@ object Circe extends JsonLibrary[Json, Json] {
     def encode[T](in: T)(implicit e: Encoder[T]) = e(in)
 
     def decode[T](in: Json)(implicit d: Decoder[T]) = d.decodeJson(in).getOrElse(throw new InvalidJsonForDecoding)
+
+    /**
+      * Convenience method for creating Body that just use straight JSON encoding/decoding logic
+      */
+    def body[R](description: Option[String] = None, example: R = null)
+               (implicit encodec: Encoder[R], decodec: Decoder[R]) = Body(bodySpec[R](description)(encodec, decodec), example, ObjectParamType)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic

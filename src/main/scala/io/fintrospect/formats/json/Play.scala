@@ -3,10 +3,11 @@ package io.fintrospect.formats.json
 import java.math.BigInteger
 
 import com.twitter.finagle.http.Status
+import io.circe.{Decoder, Encoder}
 import io.fintrospect.ContentTypes._
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
-import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import play.api.libs.json.{Json, _}
 
 /**
@@ -49,6 +50,12 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     def encode[T](in: T)(implicit writes: Writes[T]) = writes.writes(in)
 
     def decode[T](in: JsValue)(implicit reads: Reads[T]) = reads.reads(in).asOpt.getOrElse(throw new InvalidJsonForDecoding)
+
+    /**
+      * Convenience method for creating Body that just use straight JSON encoding/decoding logic
+      */
+    def body[R](description: Option[String] = None, example: R = null)
+               (implicit reads: Reads[R], writes: Writes[R]) = Body(bodySpec[R](description)(reads, writes), example, ObjectParamType)
 
     /**
      * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
