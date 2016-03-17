@@ -5,10 +5,12 @@ import java.math.BigInteger
 import argonaut.Argonaut._
 import argonaut.{DecodeJson, EncodeJson, Json}
 import com.twitter.finagle.http.Status
+import io.circe.{Decoder, Encoder}
 import io.fintrospect.ContentTypes._
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import org.json4s.{NoTypeHints, Formats}
 
 /**
   * Argonaut JSON support (application/json content type)
@@ -48,6 +50,12 @@ object Argonaut extends JsonLibrary[Json, Json] {
     def encode[T](in: T)(implicit encodec: EncodeJson[T]) = encodec.encode(in)
 
     def decode[T](in: Json)(implicit decodec: DecodeJson[T]) = decodec.decodeJson(in).getOr(throw new InvalidJsonForDecoding)
+
+    /**
+      * Convenience method for creating Body that just use straight JSON encoding/decoding logic
+      */
+    def body[R](description: Option[String] = None, example: R = null)
+               (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) = Body(bodySpec[R](description)(encodec, decodec), example, ObjectParamType)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic

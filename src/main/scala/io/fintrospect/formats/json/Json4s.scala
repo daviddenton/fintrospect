@@ -5,7 +5,7 @@ import java.math.BigInteger
 import com.twitter.finagle.http.Status
 import io.fintrospect.ContentTypes._
 import io.fintrospect.ResponseSpec
-import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import org.json4s.Extraction.decompose
 import org.json4s._
 
@@ -53,6 +53,12 @@ object Json4s {
     def decode[R](in: JValue,
                   formats: Formats = serialization.formats(NoTypeHints))
                  (implicit mf: scala.reflect.Manifest[R]): R = in.extract[R](formats, mf)
+
+    /**
+      * Convenience method for creating Body that just use straight JSON encoding/decoding logic
+      */
+    def body[R](description: Option[String] = None, example: R = null, formats: Formats = serialization.formats(NoTypeHints))
+               (implicit mf: scala.reflect.Manifest[R]) = Body(bodySpec[R](description, formats)(mf), example, ObjectParamType)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
