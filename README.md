@@ -59,8 +59,9 @@ This example is quite contrived (and almost all the code is optional) but shows 
 example response object, which will be broken down to provide the JSON model for the Swagger documentation. 
 
 ```scala
+// implicit conversion from Status -> ResponseBuilder pulled in here
+import io.fintrospect.formats.json.Argo.ResponseBuilder.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.formats.json.Argo.JsonFormat.array
-import io.fintrospect.formats.json.Argo.ResponseBuilder._ // implicit conversion from Status -> ResponseBuilder
 
 class BookSearch(books: Books) {
   private val maxPages = Query.optional.int("maxPages", "max number of pages in book")
