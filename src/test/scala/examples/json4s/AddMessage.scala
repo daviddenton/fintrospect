@@ -1,16 +1,17 @@
 package examples.json4s
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Method.Post
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.ContentTypes._
-import io.fintrospect._
-import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.json.Json4s.Native.JsonFormat
-import io.fintrospect.formats.json.Json4s.Native.JsonFormat._
-import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder._
-import io.fintrospect.parameters._
+import io.fintrospect.RouteSpec
+import io.fintrospect.formats.ResponseBuilder.toFuture
+import io.fintrospect.formats.json.Json4s.Native.JsonFormat.{bodySpec, encode, responseSpec}
+import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder.toResponseBuilder
+import io.fintrospect.parameters.{Body, ObjectParamType}
+
+
+
 
 class AddMessage(emails: Emails) {
   private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", 250)
