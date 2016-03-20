@@ -3,7 +3,7 @@ package examples.extended
 import com.twitter.finagle.http._
 import io.fintrospect.formats.json.Argo.JsonFormat._
 import io.fintrospect.testing.TestingFintrospectRoute
-import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.util.HttpRequestResponseUtil.{statusAndContentFrom, contentFrom}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 /*

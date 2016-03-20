@@ -1,16 +1,16 @@
 package examples.customformats
 
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Method.Get
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import examples.customformats.HipsterXml.ResponseBuilder._
-import io.fintrospect._
-import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.parameters._
+import io.fintrospect.{ModuleSpec, RouteSpec, ContentTypes}
+import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
+import io.fintrospect.formats.ResponseBuilder.toFuture
 
 /**
  * This application shows how to define a custom rendering, body and parameter formats.

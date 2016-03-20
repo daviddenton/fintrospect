@@ -1,14 +1,15 @@
 package examples.extended
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Method.Get
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
-import io.fintrospect.ContentTypes._
-import io.fintrospect._
-import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.json.Argo.JsonFormat._
-import io.fintrospect.formats.json.Argo.ResponseBuilder._
+import io.fintrospect.ContentTypes.APPLICATION_JSON
+import io.fintrospect.RouteSpec
+import io.fintrospect.formats.ResponseBuilder.toFuture
+import io.fintrospect.formats.json.Argo.JsonFormat.array
+import io.fintrospect.formats.json.Argo.ResponseBuilder.toResponseBuilder
+
 
 class BookCollection(books: Books) {
 

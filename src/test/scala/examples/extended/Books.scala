@@ -3,7 +3,7 @@ package examples.extended
 import java.lang.Integer.parseInt
 
 import argo.jdom.{JsonNode, JsonRootNode}
-import io.fintrospect.formats.json.Argo.JsonFormat._
+import io.fintrospect.formats.json.Argo.JsonFormat.{obj, string, number}
 
 import scala.util.Try
 

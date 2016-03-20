@@ -2,16 +2,16 @@ package examples.clients
 
 import java.time.LocalDate
 
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Method.Get
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.PlainText.ResponseBuilder._
+import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
 import io.fintrospect.parameters._
 import io.fintrospect.testing.TestHttpServer
-import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 
 /**
   * Simple example of how to define client endpoints using the same techniques as the server routes.

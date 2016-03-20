@@ -1,10 +1,10 @@
 package examples.customformats
 
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.ServerRoute
-import io.fintrospect.formats.json.Argo.ResponseBuilder._
+import io.fintrospect.formats.PlainText.ResponseBuilder.{Error, toResponse, toResponseBuilder}
 import io.fintrospect.parameters.{Parameter, Security}
 import io.fintrospect.renderers.ModuleRenderer
 
