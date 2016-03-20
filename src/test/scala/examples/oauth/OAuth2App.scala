@@ -1,13 +1,13 @@
 package examples.oauth
 
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.oauth2.OAuthErrorInJson
 import com.twitter.finagle.{Http, OAuth2Filter, OAuth2Request, Service}
-import io.fintrospect.formats.PlainText.ResponseBuilder._
+import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{ModuleSpec, RouteSpec}
 

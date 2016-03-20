@@ -2,11 +2,10 @@ package examples.json4s
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
-import examples.json4s.InboxApp.JsonLibrary.JsonFormat.encode
-import examples.json4s.InboxApp.JsonLibrary.JsonFormat.responseSpec
-import examples.json4s.InboxApp.JsonLibrary.ResponseBuilder._
+import examples.json4s.InboxApp.JsonLibrary.JsonFormat.{encode, responseSpec}
+import examples.json4s.InboxApp.JsonLibrary.ResponseBuilder.toResponseBuilder
 import io.fintrospect.RouteSpec
 
 class UserList(emails: Emails) {
