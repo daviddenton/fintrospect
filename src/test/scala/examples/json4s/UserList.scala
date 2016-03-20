@@ -4,10 +4,10 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Status._
 import com.twitter.finagle.http.{Request, Response}
-import examples.json4s.InboxApp.JsonLibrary.JsonFormat
-import examples.json4s.InboxApp.JsonLibrary.JsonFormat._
+import examples.json4s.InboxApp.JsonLibrary.JsonFormat.encode
+import examples.json4s.InboxApp.JsonLibrary.JsonFormat.responseSpec
 import examples.json4s.InboxApp.JsonLibrary.ResponseBuilder._
-import io.fintrospect.{ResponseSpec, RouteSpec}
+import io.fintrospect.RouteSpec
 
 class UserList(emails: Emails) {
   private def list() = Service.mk[Request, Response] { _ => Ok(encode(emails.users())) }
