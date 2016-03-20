@@ -15,7 +15,7 @@ import io.fintrospect.formats.AbstractResponseBuilder
 class RenderHandlebarsView(responseBuilder: AbstractResponseBuilder[_])
   extends Filter[Request, Response, Request, View] {
 
-  import responseBuilder.toResponseBuilder
+  import responseBuilder.statusToResponseBuilderConfig
 
   private val loader = new CachingClasspathViews[Handlebars[Any]](s => Handlebars(s), ".hbs")
 

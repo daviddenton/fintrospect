@@ -5,7 +5,7 @@ import com.twitter.finagle.http.Status.{Ok, Unauthorized}
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
-import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
+import io.fintrospect.formats.PlainText.ResponseBuilder.statusToResponseBuilderConfig
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.scalatest.{FunSpec, ShouldMatchers}
 

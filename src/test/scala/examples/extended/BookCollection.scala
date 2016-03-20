@@ -6,9 +6,8 @@ import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.formats.json.Argo.JsonFormat.array
-import io.fintrospect.formats.json.Argo.ResponseBuilder.toResponseBuilder
+import io.fintrospect.formats.json.Argo.ResponseBuilder.statusToResponseBuilderConfig
 
 
 class BookCollection(books: Books) {

@@ -12,5 +12,5 @@ trait View {
 }
 
 object View {
-  implicit def toFuture(view: View): Future[View] = Future.value(view)
+  implicit def viewToFuture(view: View): Future[View] = Future.value(view)
 }

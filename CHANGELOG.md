@@ -2,8 +2,11 @@
 
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
-## v12.9.0 (planned)
+## v12.10.0 (planned)
 - Option to dynamically reload templates.
+
+## v12.9.0
+- Renamed implicit method conversions for clarity from ```toFuture``` to ```XXXToFuture```. Possible small break if you've imported the implicits exactly instead of with a wildcard.
 
 ## v12.8.0
 - Added convenience methods for creating ```ResponseSpec``` object for auto-encoding JSON libraries.

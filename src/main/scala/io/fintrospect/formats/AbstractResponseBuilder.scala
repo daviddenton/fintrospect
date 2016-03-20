@@ -34,9 +34,9 @@ trait AbstractResponseBuilder[T] {
   /**
    * Implicitly convert a Status object implicitly to a correctly generified ResponseBuilderConfig, and from there to a ResponseBuilder
    */
-  implicit def toResponseBuilder(status: Status): ResponseBuilderConfig = new ResponseBuilderConfig(status)
+  implicit def statusToResponseBuilderConfig(status: Status): ResponseBuilderConfig = new ResponseBuilderConfig(status)
 
-  implicit def toResponse(builder: ResponseBuilder[T]): Response = builder.build()
+  implicit def responseBuilderToResponse(builder: ResponseBuilder[T]): Response = builder.build()
 
   def HttpResponse(): ResponseBuilder[T]
 
@@ -44,27 +44,27 @@ trait AbstractResponseBuilder[T] {
 
   def OK: Response = HttpResponse(Ok)
 
-  def OK(channelBuffer: ChannelBuffer) = toResponseBuilder(Ok)(channelBuffer)
+  def OK(channelBuffer: ChannelBuffer) = statusToResponseBuilderConfig(Ok)(channelBuffer)
 
-  def OK(reader: Reader) = toResponseBuilder(Ok)(reader)
+  def OK(reader: Reader) = statusToResponseBuilderConfig(Ok)(reader)
 
-  def OK(buf: Buf) = toResponseBuilder(Ok)(buf)
+  def OK(buf: Buf) = statusToResponseBuilderConfig(Ok)(buf)
 
-  def OK(content: T) = toResponseBuilder(Ok)(content)
+  def OK(content: T) = statusToResponseBuilderConfig(Ok)(content)
 
-  def OK(content: String) = toResponseBuilder(Ok)(content)
+  def OK(content: String) = statusToResponseBuilderConfig(Ok)(content)
 
-  def Error(status: Status, reader: Reader) = toResponseBuilder(status)(reader)
+  def Error(status: Status, reader: Reader) = statusToResponseBuilderConfig(status)(reader)
 
-  def Error(status: Status) = toResponseBuilder(status)("")
+  def Error(status: Status) = statusToResponseBuilderConfig(status)("")
 
-  def Error(status: Status, channelBuffer: ChannelBuffer) = toResponseBuilder(status)(channelBuffer)
+  def Error(status: Status, channelBuffer: ChannelBuffer) = statusToResponseBuilderConfig(status)(channelBuffer)
 
-  def Error(status: Status, buf: Buf) = toResponseBuilder(status)(buf)
+  def Error(status: Status, buf: Buf) = statusToResponseBuilderConfig(status)(buf)
 
-  def Error(status: Status, t: T) = toResponseBuilder(status)(t)
+  def Error(status: Status, t: T) = statusToResponseBuilderConfig(status)(t)
 
-  def Error(status: Status, message: String) = toResponseBuilder(status)().withErrorMessage(message)
+  def Error(status: Status, message: String) = statusToResponseBuilderConfig(status)().withErrorMessage(message)
 
-  def Error(status: Status, error: Throwable) = toResponseBuilder(status)().withError(error).build()
+  def Error(status: Status, error: Throwable) = statusToResponseBuilderConfig(status)().withError(error).build()
 }

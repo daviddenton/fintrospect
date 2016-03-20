@@ -6,8 +6,7 @@ import com.twitter.finagle.http.Status.{NotFound, Ok}
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.ResponseBuilder.toFuture
-import io.fintrospect.formats.json.Argo.ResponseBuilder.{toResponse, toResponseBuilder}
+import io.fintrospect.formats.json.Argo.ResponseBuilder.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.Path
 
 class BookLookup(books: Books) {

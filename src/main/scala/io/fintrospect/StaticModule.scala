@@ -9,7 +9,7 @@ import com.twitter.finagle.{Filter, Service}
 import com.twitter.io.Buf.ByteArray.Owned
 import io.fintrospect.ContentType.lookup
 import io.fintrospect.Types.ServiceBinding
-import io.fintrospect.formats.ResponseBuilder.{HttpResponse, toFuture}
+import io.fintrospect.formats.ResponseBuilder.{HttpResponse}
 
 object StaticModule {
   def apply(basePath: Path, baseDir: String = "/", moduleFilter: Filter[Request, Response, Request, Response] = Filter.identity) = {

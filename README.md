@@ -59,6 +59,9 @@ This example is quite contrived (and almost all the code is optional) but shows 
 example response object, which will be broken down to provide the JSON model for the Swagger documentation. 
 
 ```scala
+import io.fintrospect.formats.json.Argo.JsonFormat.array
+import io.fintrospect.formats.json.Argo.ResponseBuilder.statusToResponseBuilderConfig // implicit to pimp the Status object
+
 class BookSearch(books: Books) {
   private val maxPages = Query.optional.int("maxPages", "max number of pages in book")
   private val minPages = FormField.optional.int("minPages", "min number of pages in book")
@@ -68,7 +71,7 @@ class BookSearch(books: Books) {
   private def search() = Service.mk[Request, Response] { 
     request => {
       val requestForm = form.from(request)
-      Ok(array(
+      Status.Ok(array(
         books.search(
             minPages.from(requestForm).getOrElse(MIN_VALUE), 
             maxPages.from(request).getOrElse(MAX_VALUE),
@@ -80,10 +83,10 @@ class BookSearch(books: Books) {
   val route = RouteSpec("search for books")
     .taking(maxPages)
     .body(form)
-    .returning(Ok -> "we found your book", array(Book("a book", "authorName", 99).toJson))
-    .returning(BadRequest -> "invalid request")
-    .producing(APPLICATION_JSON)
-    .at(Post) / "search" bindTo search
+    .returning(Status.Ok -> "we found your book", array(Book("a book", "authorName", 99).toJson))
+    .returning(Status.BadRequest -> "invalid request")
+    .producing(ContentTypes.APPLICATION_JSON)
+    .at(Method.Post) / "search" bindTo search
 }
 ```
 
