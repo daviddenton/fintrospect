@@ -1,9 +1,11 @@
 package io.fintrospect.formats.json
 
 import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.Status.Ok
 import io.fintrospect.formats.json.Json4s.Json4sFormat
-import io.fintrospect.parameters.{Query, Body}
+import io.fintrospect.parameters.{Body, Query}
 import org.json4s.MappingException
+
 import scala.language.reflectiveCalls
 
 case class Json4sStreetAddress(address: String)
@@ -34,6 +36,10 @@ class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Nati
     val param = Query.required(Json4s.Native.JsonFormat.parameterSpec[Json4sLetter]("name"))
     (param <-- Request("?name=" + Json4s.Native.JsonFormat.compact(Json4s.Native.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
+
+  it("response spec has correct code") {
+    Json4s.Native.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+  }
 }
 
 class Json4sNativeJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s.Native)
@@ -46,6 +52,10 @@ class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4
   it("param spec decodes content") {
     val param = Query.required(Json4s.NativeDoubleMode.JsonFormat.parameterSpec[Json4sLetter]("name"))
     (param <-- Request("?name=" + Json4s.NativeDoubleMode.JsonFormat.compact(Json4s.NativeDoubleMode.JsonFormat.encode(aLetter)))) shouldBe aLetter
+  }
+
+  it("response spec has correct code") {
+    Json4s.NativeDoubleMode.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
   }
 }
 
@@ -60,6 +70,11 @@ class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Jac
     val param = Query.required(Json4s.Jackson.JsonFormat.parameterSpec[Json4sLetter]("name"))
     (param <-- Request("?name=" + Json4s.Jackson.JsonFormat.compact(Json4s.Jackson.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
+
+  it("response spec has correct code") {
+    Json4s.Jackson.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+  }
+
 }
 
 class Json4sJacksonJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s.Jackson)
@@ -73,6 +88,11 @@ class Json4sJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json
     val param = Query.required(Json4s.JacksonDoubleMode.JsonFormat.parameterSpec[Json4sLetter]("name"))
     (param <-- Request("?name=" + Json4s.JacksonDoubleMode.JsonFormat.compact(Json4s.JacksonDoubleMode.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
+
+  it("response spec has correct code") {
+    Json4s.JacksonDoubleMode.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+  }
+
 }
 
 class Json4sJacksonDoubleJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s.JacksonDoubleMode)

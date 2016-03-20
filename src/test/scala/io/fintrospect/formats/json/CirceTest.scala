@@ -1,6 +1,7 @@
 package io.fintrospect.formats.json
 
-import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.{Status, Request}
 import io.fintrospect.formats.json.Circe.JsonFormat.{bodySpec, encode, parameterSpec}
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
@@ -34,6 +35,10 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
 
     it("body spec decodes content") {
       (Body(bodySpec[CirceLetter]()) <-- Circe.ResponseBuilder.OK(encode(aLetter)).build()) shouldBe aLetter
+    }
+
+    it("response spec has correct code") {
+      Circe.JsonFormat.responseSpec[CirceLetter](Ok -> "ok", aLetter).status shouldBe Ok
     }
 
     it("param spec decodes content") {
