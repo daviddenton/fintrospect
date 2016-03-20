@@ -2,7 +2,7 @@ package io.fintrospect
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.Status.{BadRequest, Ok}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
@@ -26,23 +26,23 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
 
     describe("invalid parameters are dealt with") {
       it("missing parameters throw up") {
-        responseFor(clientWithNameAndMaxAgeAndGender()) shouldEqual(Status.BadRequest, "Client: Missing required params passed: Set({name}, {maxAge}, {gender})")
+        responseFor(clientWithNameAndMaxAgeAndGender()) shouldEqual(BadRequest, "Client: Missing required params passed: Set({name}, {maxAge}, {gender})")
       }
       it("unknown parameters returns bad request") {
-        responseFor(clientWithNoParameters(maxAge.of(7))) shouldEqual(Status.BadRequest, "Client: Unknown params passed: Set({maxAge})")
+        responseFor(clientWithNoParameters(maxAge.of(7))) shouldEqual(BadRequest, "Client: Unknown params passed: Set({maxAge})")
       }
     }
 
     describe("converts the path parameters into the correct url") {
       it("when there are none") {
-        responseFor(clientWithNoParameters()) shouldEqual(Status.Ok, "GET,/")
+        responseFor(clientWithNoParameters()) shouldEqual(Ok, "GET,/")
       }
       it("when there are some") {
-        responseFor(clientWithNameAndMaxAgeAndGender(gender --> "male", maxAge --> 7, name.-->("bob"))) shouldEqual(Status.Ok, "GET,/bob/7/male")
+        responseFor(clientWithNameAndMaxAgeAndGender(gender --> "male", maxAge --> 7, name.-->("bob"))) shouldEqual(Ok, "GET,/bob/7/male")
       }
       it("ignores fixed") {
         val clientWithFixedSections = RouteSpec().at(Get) / "prefix" / maxAge / "suffix" bindToClient returnsMethodAndUri
-        responseFor(clientWithFixedSections(maxAge --> 7)) shouldEqual(Status.Ok, "GET,/prefix/7/suffix")
+        responseFor(clientWithFixedSections(maxAge --> 7)) shouldEqual(Ok, "GET,/prefix/7/suffix")
       }
     }
 
@@ -51,10 +51,10 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       val clientWithNameQuery = RouteSpec().taking(nameQuery).at(Get) / "prefix" bindToClient returnsMethodAndUri
 
       it("when there are some") {
-        responseFor(clientWithNameQuery(nameQuery --> Option("bob"))) shouldEqual(Status.Ok, "GET,/prefix?name=bob")
+        responseFor(clientWithNameQuery(nameQuery --> Option("bob"))) shouldEqual(Ok, "GET,/prefix?name=bob")
       }
       it("optional query params are ignored if not there") {
-        responseFor(clientWithNameQuery()) shouldEqual(Status.Ok, "GET,/prefix")
+        responseFor(clientWithNameQuery()) shouldEqual(Ok, "GET,/prefix")
       }
     }
 
@@ -66,10 +66,10 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       val clientWithNameHeader = RouteSpec().taking(nameHeader).at(Get) bindToClient returnsHeaders
 
       it("when there are some, includes them") {
-        responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldEqual(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:, name -> bob)")
+        responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldEqual(Ok, "Map(X-Fintrospect-Route-Name -> GET:, name -> bob)")
       }
       it("optional query params are ignored if not there") {
-        responseFor(clientWithNameHeader()) shouldEqual(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:)")
+        responseFor(clientWithNameHeader()) shouldEqual(Ok, "Map(X-Fintrospect-Route-Name -> GET:)")
       }
     }
 
@@ -81,7 +81,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       val client = RouteSpec().at(Get) / "svc" / intParam / Path.fixed("fixed") bindToClient returnsHeaders
 
       it("identifies called route as a request header") {
-        responseFor(client(intParam --> 55)) shouldEqual(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
+        responseFor(client(intParam --> 55)) shouldEqual(Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
       }
     }
   }

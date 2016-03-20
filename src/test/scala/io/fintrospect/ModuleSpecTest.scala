@@ -10,7 +10,7 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.formats.ResponseBuilder.responseToFuture
 import io.fintrospect.formats.json.Argo
-import io.fintrospect.parameters.{BodySpec, FormField, Body, Header, NoSecurity, Path}
+import io.fintrospect.parameters.{Body, BodySpec, FormField, Header, NoSecurity, Path}
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil.{contentFrom, headersFrom, statusAndContentFrom}
@@ -68,6 +68,13 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
       it("with all fixed segments") {
         val module = m.withRoute(d.at(Get) / "svc" / "1" / "2" / "3" / "4" / "5" / "6" bindTo Service.mk { r: Request => Response() })
         Await.result(module.toService(Request("/svc/1/2/3/4/5/6"))).status shouldEqual Ok
+      }
+
+      it("with trailing segments") {
+        val module = m.withRoute(d.at(Get) / "svc" / Path.string("first") / "a" / "b" / "c" / "d" / "e" / "f"
+          bindTo ((_1, _2, _3, _4, _5, _6, _7) => AService(Seq(_2, _3, _4, _5, _6, _7))))
+
+        Await.result(module.toService(Request("/svc/1/a/b/c/d/e/f"))).status shouldEqual Ok
       }
     }
 
