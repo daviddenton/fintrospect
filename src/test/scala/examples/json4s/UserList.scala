@@ -5,7 +5,7 @@ import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
 import examples.json4s.InboxApp.JsonLibrary.JsonFormat.{encode, responseSpec}
-import examples.json4s.InboxApp.JsonLibrary.ResponseBuilder.statusToResponseBuilderConfig
+import examples.json4s.InboxApp.JsonLibrary.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.RouteSpec
 
 class UserList(emails: Emails) {

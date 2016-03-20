@@ -1,6 +1,6 @@
 package examples.extended
 
-import java.lang.Integer.{MIN_VALUE, MAX_VALUE}
+import java.lang.Integer.{MAX_VALUE, MIN_VALUE}
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
@@ -9,7 +9,7 @@ import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.json.Argo.JsonFormat.array
-import io.fintrospect.formats.json.Argo.ResponseBuilder.statusToResponseBuilderConfig
+import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters.Query
 
 class BookTermSearch(books: Books) {

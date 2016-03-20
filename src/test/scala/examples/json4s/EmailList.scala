@@ -7,7 +7,7 @@ import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.json.Json4s.Native.JsonFormat.{encode, responseSpec}
-import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder.statusToResponseBuilderConfig
+import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters.{ParameterSpec, Path, StringParamType}
 
 

@@ -86,14 +86,8 @@ object ResponseBuilder {
 
   def HttpResponse(contentType: ContentType): ResponseBuilder[_] = new ResponseBuilder[HIDDEN](_.value, HIDDEN, e => HIDDEN(e.getMessage), contentType)
 
-  /**
-    * Implicitly convert a ResponseBuilder object to a Future[Response]
-    */
   implicit def responseBuilderToFuture(builder: ResponseBuilder[_]): Future[Response] = builder.toFuture
 
-  /**
-    * Implicitly convert a Response object to a Future[Response]
-    */
   implicit def responseToFuture(response: Response): Future[Response] = Future.value(response)
 }
 

@@ -7,7 +7,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
-import io.fintrospect.formats.PlainText.ResponseBuilder.statusToResponseBuilderConfig
+import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.formats.ResponseBuilder.responseToFuture
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.parameters.{BodySpec, FormField, Body, Header, NoSecurity, Path}

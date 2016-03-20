@@ -23,7 +23,7 @@ import scala.collection.JavaConverters._
 class RenderMustacheView(responseBuilder: AbstractResponseBuilder[_], baseTemplateDir: String = ".")
   extends Filter[Request, Response, Request, View] {
 
-  import responseBuilder.statusToResponseBuilderConfig
+  import responseBuilder.implicits.statusToResponseBuilderConfig
 
   private val classToMustache = new ConcurrentHashMap[Class[_], Mustache]().asScala
 

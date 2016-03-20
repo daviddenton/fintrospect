@@ -41,7 +41,7 @@ Add the following lines to ```build.sbt```:
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.34.0"
-libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.9.0"
+libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.10.0"
 ```
 
 ## See the code
@@ -60,7 +60,7 @@ example response object, which will be broken down to provide the JSON model for
 
 ```scala
 // implicit conversion from Status -> ResponseBuilder pulled in here
-import io.fintrospect.formats.json.Argo.ResponseBuilder.{responseBuilderToResponse, statusToResponseBuilderConfig}
+import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
 import io.fintrospect.formats.json.Argo.JsonFormat.array
 
 class BookSearch(books: Books) {
