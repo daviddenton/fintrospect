@@ -5,7 +5,7 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import examples.json4s.Emails.InMemoryEmails
-import io.fintrospect._
+import io.fintrospect.ModuleSpec
 import io.fintrospect.formats.json.Json4s
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 

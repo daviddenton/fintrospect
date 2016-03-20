@@ -1,9 +1,8 @@
 package examples.customparameters
 
 import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.path.Path
 import examples.customparameters.CustomParameterTypes.email
-import io.fintrospect.parameters.{Header, ParameterSpec, Query, StringParamType}
+import io.fintrospect.parameters._
 
 import scala.language.reflectiveCalls
 

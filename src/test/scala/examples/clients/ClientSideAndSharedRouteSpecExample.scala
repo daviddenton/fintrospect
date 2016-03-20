@@ -11,7 +11,7 @@ import io.fintrospect.RouteSpec
 import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
 import io.fintrospect.parameters._
 import io.fintrospect.testing.TestHttpServer
-import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
+import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 
 /**
   * Simple example of how to define client endpoints using the same techniques as the server routes.
