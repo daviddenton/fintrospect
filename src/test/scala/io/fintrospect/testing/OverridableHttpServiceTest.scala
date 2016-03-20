@@ -1,10 +1,11 @@
 package io.fintrospect.testing
 
-import com.twitter.finagle.{Service, Http}
-import com.twitter.finagle.http.{Response, Request, Status}
-import com.twitter.finagle.http.Status._
-import com.twitter.util.{Future, Await}
-import org.scalatest.{ShouldMatchers, FunSpec}
+import com.twitter.finagle.Service
+import com.twitter.finagle.http.Status.Conflict
+import com.twitter.finagle.http.Status.Accepted
+import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.util.{Await, Future}
+import org.scalatest.{FunSpec, ShouldMatchers}
 
 class OverridableHttpServiceTest extends FunSpec with ShouldMatchers {
 

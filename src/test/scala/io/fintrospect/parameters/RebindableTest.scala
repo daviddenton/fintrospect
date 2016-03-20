@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
 import org.scalatest.{FunSpec, ShouldMatchers}
 

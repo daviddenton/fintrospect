@@ -9,7 +9,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import examples.customformats.HipsterXml.ResponseBuilder.toResponseBuilder
 import io.fintrospect.formats.ResponseBuilder.toFuture
-import io.fintrospect.parameters._
+import io.fintrospect.parameters.{Path, Body, Header, StringParamType, ParameterSpec, BodySpec}
 import io.fintrospect.{ContentTypes, ModuleSpec, RouteSpec}
 
 /**

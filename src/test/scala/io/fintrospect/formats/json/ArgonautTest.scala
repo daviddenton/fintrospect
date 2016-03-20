@@ -1,11 +1,12 @@
 package io.fintrospect.formats.json
 
-import argonaut.Argonaut._
+import argonaut.Argonaut.{casecodec1, casecodec3}
 import argonaut._
 import com.twitter.finagle.http.Request
-import io.fintrospect.formats.json.Argonaut.JsonFormat._
+import io.fintrospect.formats.json.Argonaut.JsonFormat.{bodySpec, decode, encode, obj, parameterSpec}
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
-import io.fintrospect.parameters.{Query, Body}
+import io.fintrospect.parameters.{Body, Query}
+
 import scala.language.reflectiveCalls
 
 case class ArgonautStreetAddress(address: String)

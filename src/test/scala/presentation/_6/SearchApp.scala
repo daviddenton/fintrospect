@@ -1,18 +1,18 @@
 package presentation._6
 
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Method.{Get, Post}
+import com.twitter.finagle.http.Status.{NotFound, Ok}
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import io.fintrospect.ContentTypes._
-import io.fintrospect._
-import io.fintrospect.formats.json.Argo.JsonFormat._
-import io.fintrospect.formats.json.Argo.ResponseBuilder._
+import io.fintrospect.ContentTypes.APPLICATION_JSON
+import io.fintrospect.formats.json.Argo.JsonFormat.{array, compact, parse}
+import io.fintrospect.formats.json.Argo.ResponseBuilder.{toResponse, toResponseBuilder}
 import io.fintrospect.parameters.{Body, BodySpec, Query, StringParamType}
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
+import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
 import presentation.Book
 
 class SearchRoute(books: RemoteBooks) {

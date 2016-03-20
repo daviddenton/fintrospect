@@ -1,7 +1,7 @@
 package io.fintrospect.formats.json
 
 import com.twitter.finagle.http.Request
-import io.fintrospect.formats.json.Circe.JsonFormat._
+import io.fintrospect.formats.json.Circe.JsonFormat.{bodySpec, encode, parameterSpec}
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
 

@@ -1,10 +1,12 @@
 package io.fintrospect.renderers
 
 import com.twitter.finagle.http.Status
-import io.fintrospect.formats.json.Json4s.Native.JsonFormat._
+import io.fintrospect.formats.json.Json4s.Native.JsonFormat.parse
+import io.fintrospect.formats.json.Json4s.Native.JsonFormat.string
 import io.fintrospect.parameters.Query
-import io.fintrospect.renderers.JsonErrorResponseRenderer._
-import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.renderers.JsonErrorResponseRenderer.notFound
+import io.fintrospect.renderers.JsonErrorResponseRenderer.badRequest
+import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class JsonErrorResponseRendererTest extends FunSpec with ShouldMatchers {

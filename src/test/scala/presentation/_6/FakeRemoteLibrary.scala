@@ -1,14 +1,14 @@
 package presentation._6
 
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect.ModuleSpec
-import io.fintrospect.formats.PlainText.ResponseBuilder._
-import io.fintrospect.formats.ResponseBuilder._
+import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
+import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.renderers.simplejson.SimpleJson
 import presentation.Books
 

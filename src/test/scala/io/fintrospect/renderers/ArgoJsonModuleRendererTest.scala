@@ -1,17 +1,16 @@
 package io.fintrospect.renderers
 
 import _root_.util.Echo
-import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.{Await, Future}
-import io.fintrospect.ContentTypes._
-import io.fintrospect._
+import io.fintrospect.ContentTypes.{APPLICATION_ATOM_XML, APPLICATION_JSON, APPLICATION_SVG_XML}
 import io.fintrospect.formats.json.Argo
-import io.fintrospect.formats.json.Argo.JsonFormat._
-import io.fintrospect.parameters.Path._
-import io.fintrospect.parameters._
-import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.formats.json.Argo.JsonFormat.{number, obj, parse}
+import io.fintrospect.parameters.{ApiKey, Body, FormField, Header, Path, Query}
+import io.fintrospect.util.HttpRequestResponseUtil.{contentFrom, statusAndContentFrom}
+import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.io.Source
@@ -47,7 +46,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
           RouteSpec("a friendly endpoint")
             .taking(Query.required.boolean("query", "description of the query"))
             .body(Body.form(FormField.required.int("form", "description of the form")))
-            .at(Get) / "welcome" / Path.string("firstName") / fixed("bertrand") / Path.string("secondName") bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
+            .at(Get) / "welcome" / Path.string("firstName") / "bertrand" / Path.string("secondName") bindTo ((x: String, y: String, z: String) => Echo(x, y, z)))
 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
