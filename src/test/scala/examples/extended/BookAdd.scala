@@ -4,8 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{Conflict, Created}
 import com.twitter.finagle.http.{Method, Request, Response}
 import io.fintrospect.{ResponseSpec, RouteSpec}
-import io.fintrospect.formats.ResponseBuilder.toFuture
-import io.fintrospect.formats.json.Argo.ResponseBuilder.{toResponse, toResponseBuilder}
+import io.fintrospect.formats.json.Argo.ResponseBuilder.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.{Body, Path}
 
 class BookAdd(books: Books) {

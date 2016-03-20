@@ -6,8 +6,7 @@ import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
-import io.fintrospect.formats.ResponseBuilder.toFuture
-import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
+import io.fintrospect.formats.PlainText.ResponseBuilder.statusToResponseBuilderConfig
 import io.fintrospect.parameters.{Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import org.scalatest.{FunSpec, ShouldMatchers}

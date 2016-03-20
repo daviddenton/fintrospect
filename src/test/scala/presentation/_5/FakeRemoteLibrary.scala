@@ -7,7 +7,7 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect.ModuleSpec
-import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
+import io.fintrospect.formats.PlainText.ResponseBuilder.statusToResponseBuilderConfig
 import io.fintrospect.renderers.simplejson.SimpleJson
 import presentation.Books
 

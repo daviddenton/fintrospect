@@ -86,8 +86,8 @@ object ResponseBuilder {
 
   def HttpResponse(contentType: ContentType): ResponseBuilder[_] = new ResponseBuilder[HIDDEN](_.value, HIDDEN, e => HIDDEN(e.getMessage), contentType)
 
-  implicit def toFuture(builder: ResponseBuilder[_]): Future[Response] = builder.toFuture
+  implicit def responseBuilderToFuture(builder: ResponseBuilder[_]): Future[Response] = builder.toFuture
 
-  implicit def toFuture(response: Response): Future[Response] = Future.value(response)
+  implicit def responseToFuture(response: Response): Future[Response] = Future.value(response)
 }
 

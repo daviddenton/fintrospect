@@ -3,7 +3,7 @@ package examples.customformats
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response, Status}
-import examples.customformats.HipsterXml.ResponseBuilder.{Error, toResponse, toResponseBuilder}
+import examples.customformats.HipsterXml.ResponseBuilder.{Error, responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.ServerRoute
 import io.fintrospect.parameters.{Parameter, Security}
 import io.fintrospect.renderers.ModuleRenderer

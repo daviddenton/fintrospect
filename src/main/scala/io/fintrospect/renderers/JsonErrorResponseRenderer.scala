@@ -7,8 +7,8 @@ import io.fintrospect.formats.json.Argo.JsonFormat.array
 import io.fintrospect.formats.json.Argo.JsonFormat.obj
 import io.fintrospect.formats.json.Argo.JsonFormat.string
 import io.fintrospect.formats.json.Argo.JsonFormat.boolean
-import io.fintrospect.formats.json.Argo.ResponseBuilder.toResponse
-import io.fintrospect.formats.json.Argo.ResponseBuilder.toResponseBuilder
+import io.fintrospect.formats.json.Argo.ResponseBuilder.responseBuilderToResponse
+import io.fintrospect.formats.json.Argo.ResponseBuilder.statusToResponseBuilderConfig
 import io.fintrospect.parameters.Parameter
 
 object JsonErrorResponseRenderer {

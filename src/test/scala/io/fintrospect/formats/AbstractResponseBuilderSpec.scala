@@ -11,8 +11,8 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) extends FunSpec with ShouldMatchers {
 
-  import bldr.toResponse
-  import bldr.toResponseBuilder
+  import bldr.responseBuilderToResponse
+  import bldr.statusToResponseBuilderConfig
 
   val message = "some text goes here"
 
