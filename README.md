@@ -60,7 +60,7 @@ example response object, which will be broken down to provide the JSON model for
 
 ```scala
 import io.fintrospect.formats.json.Argo.JsonFormat.array
-import io.fintrospect.formats.json.Argo.ResponseBuilder.statusToResponseBuilderConfig // implicit to pimp the Status object
+import io.fintrospect.formats.json.Argo.ResponseBuilder._ // implicit conversion from Status -> ResponseBuilder
 
 class BookSearch(books: Books) {
   private val maxPages = Query.optional.int("maxPages", "max number of pages in book")
