@@ -1,14 +1,12 @@
 package examples.extended
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
-import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect._
-import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.json.Argo.ResponseBuilder._
+import com.twitter.finagle.http.Status.{Conflict, Created}
+import com.twitter.finagle.http.{Method, Request, Response}
+import io.fintrospect.{ResponseSpec, RouteSpec}
+import io.fintrospect.formats.ResponseBuilder.toFuture
+import io.fintrospect.formats.json.Argo.ResponseBuilder.{toResponse, toResponseBuilder}
 import io.fintrospect.parameters.{Body, Path}
-
 
 class BookAdd(books: Books) {
   private val exampleBook = Book("the title", "the author", 666)
@@ -31,7 +29,7 @@ class BookAdd(books: Books) {
     .body(jsonBody)
     .returning(ResponseSpec.json(Created -> "we added your book", exampleBook.toJson))
     .returning(bookExistsResponse)
-    .at(Post) / "book" / Path.string("isbn", "the isbn of the book") bindTo addBook
+    .at(Method.Post) / "book" / Path.string("isbn", "the isbn of the book") bindTo addBook
 }
 
 

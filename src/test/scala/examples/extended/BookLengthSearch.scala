@@ -1,17 +1,17 @@
 package examples.extended
 
-import java.lang.Integer._
+import java.lang.Integer.MIN_VALUE
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Method.Post
+import com.twitter.finagle.http.Status.{BadRequest, Ok}
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
-import io.fintrospect._
-import io.fintrospect.formats.ResponseBuilder._
-import io.fintrospect.formats.json.Argo.JsonFormat._
-import io.fintrospect.formats.json.Argo.ResponseBuilder._
-import io.fintrospect.parameters._
+import io.fintrospect.RouteSpec
+import io.fintrospect.formats.ResponseBuilder.toFuture
+import io.fintrospect.formats.json.Argo.JsonFormat.array
+import io.fintrospect.formats.json.Argo.ResponseBuilder.toResponseBuilder
+import io.fintrospect.parameters.{Body, FormField}
 
 class BookLengthSearch(books: Books) {
   private val minPages = FormField.optional.int("minPages", "min number of pages in book")
