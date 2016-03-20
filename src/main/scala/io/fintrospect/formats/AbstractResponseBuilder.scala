@@ -1,6 +1,6 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Response, Status}
 import com.twitter.io.{Buf, Reader}
 import org.jboss.netty.buffer.ChannelBuffer

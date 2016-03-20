@@ -1,12 +1,12 @@
 package io.fintrospect
 
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Status.BadRequest
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
-import io.fintrospect.Headers._
-import io.fintrospect.formats.PlainText.ResponseBuilder._
-import io.fintrospect.parameters._
+import io.fintrospect.Headers.IDENTIFY_SVC_HEADER
+import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
+import io.fintrospect.parameters.{Binding, PathBinding, PathParameter, RequestBuilder}
 
 
 object RouteClient {

@@ -2,8 +2,8 @@ package io.fintrospect.renderers.util
 
 import argo.jdom.JsonNode
 import argo.jdom.JsonNodeType._
-import io.fintrospect.formats.json.Argo.JsonFormat._
-import io.fintrospect.parameters._
+import io.fintrospect.formats.json.Argo.JsonFormat.{Field, obj, string}
+import io.fintrospect.parameters.{IntegerParamType, BooleanParamType, NumberParamType, ParamType, StringParamType}
 import io.fintrospect.renderers.util.JsonToJsonSchema.IllegalSchemaException
 import org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode
 

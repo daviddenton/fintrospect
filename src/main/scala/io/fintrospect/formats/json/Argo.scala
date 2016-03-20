@@ -3,8 +3,8 @@ package io.fintrospect.formats.json
 import java.math.BigInteger
 
 import argo.format.{CompactJsonFormatter, PrettyJsonFormatter}
-import argo.jdom.JsonNodeFactories._
-import argo.jdom._
+import argo.jdom.JsonNodeFactories.booleanNode
+import argo.jdom.{JsonNodeFactories, JdomParser, JsonNode, JsonRootNode}
 
 /**
  * Argo JSON support (application/json content type)

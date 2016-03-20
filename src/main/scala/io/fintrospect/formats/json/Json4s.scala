@@ -3,11 +3,11 @@ package io.fintrospect.formats.json
 import java.math.BigInteger
 
 import com.twitter.finagle.http.Status
-import io.fintrospect.ContentTypes._
+import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import org.json4s.Extraction.decompose
-import org.json4s._
+import org.json4s.{JValue, Serialization, JsonMethods}
 
 /**
   * Json4S support (application/json content type)

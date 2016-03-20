@@ -1,14 +1,15 @@
 package io.fintrospect
 
-import com.google.common.io.Resources._
+import com.google.common.io.Resources.toByteArray
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status._
-import com.twitter.finagle.http.path._
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.path.{->, Path, Root}
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service}
-import com.twitter.io.Buf.ByteArray._
-import io.fintrospect.Types._
-import io.fintrospect.formats.ResponseBuilder._
+import com.twitter.io.Buf.ByteArray.Owned
+import io.fintrospect.ContentType.lookup
+import io.fintrospect.Types.ServiceBinding
+import io.fintrospect.formats.ResponseBuilder.{HttpResponse, toFuture}
 
 object StaticModule {
   def apply(basePath: Path, baseDir: String = "/", moduleFilter: Filter[Request, Response, Request, Response] = Filter.identity) = {
@@ -24,7 +25,7 @@ class StaticModule private(basePath: Path, baseDir: String, moduleFilter: Filter
     case method -> path if method == Get && exists(path) =>
       moduleFilter.andThen(Service.mk[Request, Response] {
         val subPath = convertPath(path)
-        request => HttpResponse(ContentType.lookup(subPath)).withCode(Ok).withContent(Owned(toByteArray(getClass.getResource(subPath))))
+        request => HttpResponse(lookup(subPath)).withCode(Ok).withContent(Owned(toByteArray(getClass.getResource(subPath))))
       })
   }
 

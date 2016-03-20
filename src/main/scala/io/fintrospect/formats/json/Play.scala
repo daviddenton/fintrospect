@@ -3,8 +3,7 @@ package io.fintrospect.formats.json
 import java.math.BigInteger
 
 import com.twitter.finagle.http.Status
-import io.circe.{Decoder, Encoder}
-import io.fintrospect.ContentTypes._
+import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
