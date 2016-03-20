@@ -3,6 +3,7 @@ package io.fintrospect.formats.json
 import argonaut.Argonaut.{casecodec1, casecodec3}
 import argonaut._
 import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.Status.Ok
 import io.fintrospect.formats.json.Argonaut.JsonFormat.{bodySpec, decode, encode, obj, parameterSpec}
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
@@ -44,6 +45,11 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut.JsonFormat) {
       val param = Query.required(parameterSpec[ArgonautLetter]("name"))
       (param <-- Request("?name=" + encode(aLetter))) shouldBe aLetter
     }
+
+    it("response spec has correct code") {
+      Argonaut.JsonFormat.responseSpec[ArgonautLetter](Ok -> "ok", aLetter).status shouldBe Ok
+    }
+
   }
 
   override val expectedJson: String = """{"string":"hello","null":null,"bigInt":12344,"object":{"field1":"aString"},"decimal":1.2,"array":["world",true],"long":2,"bool":true,"int":1}"""
