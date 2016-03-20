@@ -3,6 +3,7 @@ package io.fintrospect.formats
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Response, Status}
 import com.twitter.io.{Buf, Reader}
+import com.twitter.util.Future
 import org.jboss.netty.buffer.ChannelBuffer
 
 import scala.language.implicitConversions
@@ -11,6 +12,28 @@ import scala.language.implicitConversions
  * Convenience methods for building Http Responses
  */
 trait AbstractResponseBuilder[T] {
+
+  object implicits {
+    /**
+      * Implicitly convert a ResponseBuilder object to a Future[Response]
+      */
+    implicit def responseBuilderToFuture(builder: ResponseBuilder[T]): Future[Response] = builder.toFuture
+
+    /**
+      * Implicitly convert a Response object to a Future[Response]
+      */
+    implicit def responseToFuture(response: Response): Future[Response] = Future.value(response)
+
+    /**
+      * Implicitly convert a Status object to a correctly generified ResponseBuilderConfig
+      */
+    implicit def statusToResponseBuilderConfig(status: Status): ResponseBuilderConfig = new ResponseBuilderConfig(status)
+
+    /**
+      * Implicitly convert a ResponseBuilder object to a Response
+      */
+    implicit def responseBuilderToResponse(builder: ResponseBuilder[T]): Response = builder.build()
+  }
 
   /**
    * Intermediate object used when constructing a ResponseBuilder from a Status object (via implicit conversion)
@@ -31,43 +54,39 @@ trait AbstractResponseBuilder[T] {
     def apply(error: Throwable): ResponseBuilder[T] = HttpResponse(status).withError(error)
   }
 
-  /**
-   * Implicitly convert a Status object to a correctly generified ResponseBuilderConfig
-   */
+  @deprecated("Use [X].ResponseBuilder.implicits.statusToResponseBuilderConfig instead", "12.10.0")
   implicit def statusToResponseBuilderConfig(status: Status): ResponseBuilderConfig = new ResponseBuilderConfig(status)
 
-  /**
-    * Implicitly convert a ResponseBuilder object to a Response
-    */
+  @deprecated("Use [X].ResponseBuilder.implicits.responseBuilderToResponse instead", "12.10.0")
   implicit def responseBuilderToResponse(builder: ResponseBuilder[T]): Response = builder.build()
 
   def HttpResponse(): ResponseBuilder[T]
 
   def HttpResponse(status: Status): ResponseBuilder[T] = HttpResponse().withCode(status)
 
-  def OK: Response = HttpResponse(Ok)
+  def OK: Response = HttpResponse(Ok).build()
 
-  def OK(channelBuffer: ChannelBuffer) = statusToResponseBuilderConfig(Ok)(channelBuffer)
+  def OK(channelBuffer: ChannelBuffer) = implicits.statusToResponseBuilderConfig(Ok)(channelBuffer)
 
-  def OK(reader: Reader) = statusToResponseBuilderConfig(Ok)(reader)
+  def OK(reader: Reader) = implicits.statusToResponseBuilderConfig(Ok)(reader)
 
-  def OK(buf: Buf) = statusToResponseBuilderConfig(Ok)(buf)
+  def OK(buf: Buf) = implicits.statusToResponseBuilderConfig(Ok)(buf)
 
-  def OK(content: T) = statusToResponseBuilderConfig(Ok)(content)
+  def OK(content: T) = implicits.statusToResponseBuilderConfig(Ok)(content)
 
-  def OK(content: String) = statusToResponseBuilderConfig(Ok)(content)
+  def OK(content: String) = implicits.statusToResponseBuilderConfig(Ok)(content)
 
-  def Error(status: Status, reader: Reader) = statusToResponseBuilderConfig(status)(reader)
+  def Error(status: Status, reader: Reader) = implicits.statusToResponseBuilderConfig(status)(reader)
 
-  def Error(status: Status) = statusToResponseBuilderConfig(status)("")
+  def Error(status: Status) = implicits.statusToResponseBuilderConfig(status)("")
 
-  def Error(status: Status, channelBuffer: ChannelBuffer) = statusToResponseBuilderConfig(status)(channelBuffer)
+  def Error(status: Status, channelBuffer: ChannelBuffer) = implicits.statusToResponseBuilderConfig(status)(channelBuffer)
 
-  def Error(status: Status, buf: Buf) = statusToResponseBuilderConfig(status)(buf)
+  def Error(status: Status, buf: Buf) = implicits.statusToResponseBuilderConfig(status)(buf)
 
-  def Error(status: Status, t: T) = statusToResponseBuilderConfig(status)(t)
+  def Error(status: Status, t: T) = implicits.statusToResponseBuilderConfig(status)(t)
 
-  def Error(status: Status, message: String) = statusToResponseBuilderConfig(status)().withErrorMessage(message)
+  def Error(status: Status, message: String) = implicits.statusToResponseBuilderConfig(status)().withErrorMessage(message)
 
-  def Error(status: Status, error: Throwable) = statusToResponseBuilderConfig(status)().withError(error).build()
+  def Error(status: Status, error: Throwable) = implicits.statusToResponseBuilderConfig(status)().withError(error).build()
 }

@@ -7,7 +7,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.oauth2.OAuthErrorInJson
 import com.twitter.finagle.{Http, OAuth2Filter, OAuth2Request, Service}
-import io.fintrospect.formats.PlainText.ResponseBuilder.statusToResponseBuilderConfig
+import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{ModuleSpec, RouteSpec}
 

@@ -1,14 +1,9 @@
 package io.fintrospect.renderers
 
 import com.twitter.finagle.http.Response
-import com.twitter.finagle.http.Status.NotFound
-import com.twitter.finagle.http.Status.BadRequest
-import io.fintrospect.formats.json.Argo.JsonFormat.array
-import io.fintrospect.formats.json.Argo.JsonFormat.obj
-import io.fintrospect.formats.json.Argo.JsonFormat.string
-import io.fintrospect.formats.json.Argo.JsonFormat.boolean
-import io.fintrospect.formats.json.Argo.ResponseBuilder.responseBuilderToResponse
-import io.fintrospect.formats.json.Argo.ResponseBuilder.statusToResponseBuilderConfig
+import com.twitter.finagle.http.Status.{BadRequest, NotFound}
+import io.fintrospect.formats.json.Argo.JsonFormat.{array, boolean, obj, string}
+import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.Parameter
 
 object JsonErrorResponseRenderer {
