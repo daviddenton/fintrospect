@@ -32,10 +32,13 @@ trait AbstractResponseBuilder[T] {
   }
 
   /**
-   * Implicitly convert a Status object implicitly to a correctly generified ResponseBuilderConfig, and from there to a ResponseBuilder
+   * Implicitly convert a Status object to a correctly generified ResponseBuilderConfig
    */
   implicit def statusToResponseBuilderConfig(status: Status): ResponseBuilderConfig = new ResponseBuilderConfig(status)
 
+  /**
+    * Implicitly convert a ResponseBuilder object to a Response
+    */
   implicit def responseBuilderToResponse(builder: ResponseBuilder[T]): Response = builder.build()
 
   def HttpResponse(): ResponseBuilder[T]
