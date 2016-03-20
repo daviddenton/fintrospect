@@ -2,7 +2,7 @@
 
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
-## v12.10.0 (planned)
+## v12.11.0 (planned)
 - Option to dynamically reload templates.
 
 ## v12.10.0
