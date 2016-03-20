@@ -1,20 +1,19 @@
 package io.fintrospect
 
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
-import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
+import com.twitter.finagle.http.Method.{Get, Post}
+import com.twitter.finagle.http.Status.{NotFound, Ok}
+import com.twitter.finagle.http.path.{Root}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await._
 import com.twitter.util.{Await, Future}
-import io.fintrospect.Module._
-import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.HttpRequestResponseUtil
-import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.util.HttpRequestResponseUtil.{contentFrom, headersFrom, statusAndContentFrom}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class ModuleSpecTest extends FunSpec with ShouldMatchers {
@@ -35,7 +34,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
       }
 
       it("with 0 segment") {
-        assertOkResponse(m.withRoute(d.at(Get) / "svc" bindTo (AService(Nil))), Nil)
+        assertOkResponse(m.withRoute(d.at(Get) / "svc" bindTo AService(Nil)), Nil)
       }
 
       it("with 1 segment") {
@@ -67,29 +66,29 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
       }
 
       it("with all fixed segments") {
-        val module = m.withRoute(d.at(Get) / "svc" / "1" / "2" / "3" / "4" / "5" / "6" bindTo(Service.mk {r: Request => Response()}))
-        Await.result(module.toService(Request("/svc/1/2/3/4/5/6"))).status shouldEqual Status.Ok
+        val module = m.withRoute(d.at(Get) / "svc" / "1" / "2" / "3" / "4" / "5" / "6" bindTo Service.mk { r: Request => Response() })
+        Await.result(module.toService(Request("/svc/1/2/3/4/5/6"))).status shouldEqual Ok
       }
     }
 
     describe("description route is added") {
       it("at default location at the root of the module") {
         val m = ModuleSpec(Root, SimpleJson())
-        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(Status.Ok, contentFrom(SimpleJson().description(Root, NoSecurity, Nil)))
+        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(Ok, contentFrom(SimpleJson().description(Root, NoSecurity, Nil)))
       }
 
       it("at custom location") {
         val m = ModuleSpec(Root, SimpleJson()).withDescriptionPath(_ / "bob")
-        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldEqual(Status.Ok, contentFrom(SimpleJson().description(Root, NoSecurity, Nil)))
+        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldEqual(Ok, contentFrom(SimpleJson().description(Root, NoSecurity, Nil)))
 
-        Await.result(m.toService(Request("/"))).status shouldEqual Status.NotFound
+        Await.result(m.toService(Request("/"))).status shouldEqual NotFound
       }
     }
 
     describe("when no module renderer is used") {
       it("at default location at the root of the module") {
         val m = ModuleSpec(Root)
-        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(Status.NotFound, "")
+        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(NotFound, "")
       }
     }
 
@@ -97,19 +96,19 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
       it("can get to all routes") {
 
         def module(path: String) = {
-          ModuleSpec(Root / path).withRoute(RouteSpec("").at(Get) / "echo" bindTo (Service.mk[Request, Response] {_ => Ok(path)}))
+          ModuleSpec(Root / path).withRoute(RouteSpec("").at(Get) / "echo" bindTo Service.mk[Request, Response] { _ => Ok(path) })
         }
-        val totalService = toService(combine(module("rita"), module("bob"), module("sue")))
+        val totalService = Module.toService(Module.combine(module("rita"), module("bob"), module("sue")))
 
-        statusAndContentFrom(result(totalService(Request("/rita/echo")))) shouldEqual(Status.Ok, "rita")
-        statusAndContentFrom(result(totalService(Request("/bob/echo")))) shouldEqual(Status.Ok, "bob")
-        statusAndContentFrom(result(totalService(Request("/sue/echo")))) shouldEqual(Status.Ok, "sue")
+        statusAndContentFrom(result(totalService(Request("/rita/echo")))) shouldEqual(Ok, "rita")
+        statusAndContentFrom(result(totalService(Request("/bob/echo")))) shouldEqual(Ok, "bob")
+        statusAndContentFrom(result(totalService(Request("/sue/echo")))) shouldEqual(Ok, "sue")
       }
     }
 
     describe("when a route path cannot be found") {
       it("returns a 404") {
-        result(ModuleSpec(Root).toService(Request("/svc/noSuchRoute"))).status shouldEqual Status.NotFound
+        result(ModuleSpec(Root).toService(Request("/svc/noSuchRoute"))).status shouldEqual NotFound
       }
     }
 
@@ -132,7 +131,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
 
     describe("when a valid path does not contain all required request parameters") {
       val d = RouteSpec("").taking(Header.required.int("aNumberHeader"))
-      val m = ModuleSpec(Root).withRoute(d.at(Get) / "svc" bindTo (AService(Nil)))
+      val m = ModuleSpec(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil))
 
       it("it returns a 400 when the required param is missing") {
         val request = Request("/svc")
@@ -148,7 +147,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
 
     describe("when a valid path does not contain all required form fields") {
       val d = RouteSpec("").body(Body.form(FormField.required.int("aNumber")))
-      val service = ModuleSpec(Root).withRoute(d.at(Post) / "svc" bindTo (AService(Nil))).toService
+      val service = ModuleSpec(Root).withRoute(d.at(Post) / "svc" bindTo AService(Nil)).toService
 
       it("it returns a 400 when a required form field is missing") {
         val request = Request(Post, "/svc")
@@ -164,7 +163,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
 
     describe("when a valid path does not contain required JSON body") {
       val d = RouteSpec("").body(Body.json(None, Argo.JsonFormat.obj()))
-      val service = ModuleSpec(Root).withRoute(d.at(Get) / "svc" bindTo (AService(Nil))).toService
+      val service = ModuleSpec(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 
       it("it returns a 400 when the required body is missing") {
         val request = Request("/svc")
@@ -181,7 +180,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
     describe("when a valid path does not contain required custom body") {
       val body = Body[Int](BodySpec[Int](None, ContentTypes.TEXT_PLAIN, _.toInt, _.toString), example = 1)
       val d = RouteSpec("").body(body)
-      val service = ModuleSpec(Root).withRoute(d.at(Get) / "svc" bindTo (AService(Nil))).toService
+      val service = ModuleSpec(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 
       it("it returns a 400 when the required body is missing") {
         val request = Request("/svc")
@@ -197,11 +196,11 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
 
     describe("when a valid path contains illegal values for an optional parameter") {
       val d = RouteSpec("").taking(Header.optional.int("aNumberHeader"))
-      val service = ModuleSpec(Root).withRoute(d.at(Get) / "svc" bindTo (AService(Nil))).toService
+      val service = ModuleSpec(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 
       it("it returns a 200 when the optional param is missing") {
         val request = Request("/svc")
-        result(service(request)).status shouldEqual Status.Ok
+        result(service(request)).status shouldEqual Ok
       }
 
       it("it returns a 400 when the optional param is not the correct type") {
@@ -216,7 +215,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
         def getHeaders(number: Int, aString: String) = Service.mk[Request, Response] { request => Ok(headersFrom(request).toString()) }
         val route = RouteSpec("").at(Get) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
         val m = ModuleSpec(Root).withRoute(route)
-        HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldEqual(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
+        HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldEqual(Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
       }
     }
 
@@ -224,7 +223,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
 
   def assertOkResponse(module: ModuleSpec[_, _], segments: Seq[String]): Unit = {
     val result = Await.result(module.toService(Request("/svc/" + segments.mkString("/"))))
-    result.status shouldEqual Status.Ok
+    result.status shouldEqual Ok
     result.contentString shouldEqual segments.mkString(",")
   }
 

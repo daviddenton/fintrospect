@@ -1,15 +1,15 @@
 package io.fintrospect
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Method.Get
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
-import com.twitter.util.Await._
+import com.twitter.util.Await.result
 import com.twitter.util.Future
-import io.fintrospect.formats.PlainText.ResponseBuilder._
-import io.fintrospect.formats.ResponseBuilder._
+import io.fintrospect.formats.ResponseBuilder.toFuture
+import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
 import io.fintrospect.parameters.{Header, Path, Query}
-import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class RouteSpecTest extends FunSpec with ShouldMatchers {

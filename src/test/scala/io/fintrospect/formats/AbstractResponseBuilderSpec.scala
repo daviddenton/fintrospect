@@ -1,11 +1,11 @@
 package io.fintrospect.formats
 
-import java.nio.charset.Charset._
+import java.nio.charset.Charset.defaultCharset
 
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Status.{NotFound, Ok, BadGateway}
 import com.twitter.io.{Bufs, Reader}
 import com.twitter.util.Await
-import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.jboss.netty.buffer.ChannelBuffers._
 import org.scalatest.{FunSpec, ShouldMatchers}
 
