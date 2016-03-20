@@ -2,7 +2,7 @@ package io.fintrospect.parameters
 
 import java.time.LocalDate
 
-import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.{Message, Request, Response}
 import org.scalatest._
 

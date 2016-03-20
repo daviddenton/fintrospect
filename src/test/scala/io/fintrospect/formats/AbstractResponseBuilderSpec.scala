@@ -6,12 +6,13 @@ import com.twitter.finagle.http.Status.{NotFound, Ok, BadGateway}
 import com.twitter.io.{Bufs, Reader}
 import com.twitter.util.Await
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
-import org.jboss.netty.buffer.ChannelBuffers._
+import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) extends FunSpec with ShouldMatchers {
 
-  import bldr._
+  import bldr.toResponse
+  import bldr.toResponseBuilder
 
   val message = "some text goes here"
 

@@ -1,16 +1,16 @@
 package io.fintrospect
 
-import com.twitter.finagle.{Filter, Service}
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Status.{NotFound, Ok}
-import com.twitter.finagle.http.path.{Root}
+import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
-import com.twitter.util.Await._
+import com.twitter.finagle.{Filter, Service}
+import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
+import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
 import io.fintrospect.formats.ResponseBuilder.toFuture
 import io.fintrospect.formats.json.Argo
-import io.fintrospect.formats.PlainText.ResponseBuilder.toResponseBuilder
-import io.fintrospect.parameters._
+import io.fintrospect.parameters.{BodySpec, FormField, Body, Header, NoSecurity, Path}
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil.{contentFrom, headersFrom, statusAndContentFrom}

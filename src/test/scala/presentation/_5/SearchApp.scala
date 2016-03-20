@@ -1,15 +1,16 @@
 package presentation._5
 
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Method.Get
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import io.fintrospect._
-import io.fintrospect.formats.json.Argo.JsonFormat._
-import io.fintrospect.formats.json.Argo.ResponseBuilder._
+import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
+import io.fintrospect.formats.json.Argo.JsonFormat.array
+import io.fintrospect.formats.json.Argo.ResponseBuilder.toResponseBuilder
+import io.fintrospect.formats.json.Argo.ResponseBuilder.toResponse
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import presentation.Book

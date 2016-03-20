@@ -1,14 +1,14 @@
 package io.fintrospect.formats
 
-import java.nio.charset.Charset._
+import java.nio.charset.Charset.defaultCharset
 
 import com.twitter.finagle.http.Status
 import com.twitter.io.{Bufs, Reader}
 import com.twitter.util.Await
 import io.fintrospect.ContentType
-import io.fintrospect.ContentTypes._
+import io.fintrospect.ContentTypes.TEXT_PLAIN
 import io.fintrospect.formats.ResponseBuilder.HttpResponse
-import org.jboss.netty.buffer.ChannelBuffers._
+import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
 import org.scalatest.FunSpec
 import org.scalatest.Matchers._
 

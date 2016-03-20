@@ -1,7 +1,8 @@
 package io.fintrospect.testing
 
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Status.Conflict
+import com.twitter.finagle.http.Status.Accepted
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}

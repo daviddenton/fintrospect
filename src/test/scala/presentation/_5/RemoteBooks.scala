@@ -1,7 +1,7 @@
 package presentation._5
 
 import com.twitter.finagle.Http
-import com.twitter.finagle.http.Method._
+import com.twitter.finagle.http.Method.Get
 import com.twitter.util.Future
 import io.fintrospect.RouteSpec
 import io.fintrospect.parameters.Path

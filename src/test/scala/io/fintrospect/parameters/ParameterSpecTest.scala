@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 import java.util.UUID
 
-import io.fintrospect.formats.json.Argo.JsonFormat._
+import io.fintrospect.formats.json.Argo.JsonFormat.{obj, string}
 import io.fintrospect.formats.json.{Argo, Json4s, JsonFormat, Spray}
 import org.json4s.JsonAST.{JObject, JString}
 import org.scalatest._

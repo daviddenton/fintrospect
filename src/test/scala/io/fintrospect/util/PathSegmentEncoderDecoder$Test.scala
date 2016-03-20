@@ -1,6 +1,7 @@
 package io.fintrospect.util
 
-import io.fintrospect.util.PathSegmentEncoderDecoder._
+import io.fintrospect.util.PathSegmentEncoderDecoder.encode
+import io.fintrospect.util.PathSegmentEncoderDecoder.decode
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class PathSegmentEncoderDecoder$Test extends FunSpec with ShouldMatchers{
