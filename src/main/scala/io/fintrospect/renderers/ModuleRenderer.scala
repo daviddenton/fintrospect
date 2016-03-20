@@ -1,6 +1,6 @@
 package io.fintrospect.renderers
 
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Status.NotFound
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.ServerRoute

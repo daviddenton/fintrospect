@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.{Method, Request}
-import org.jboss.netty.handler.codec.http._
+import org.jboss.netty.handler.codec.http.QueryStringEncoder
 
 case class RequestBuilder(method: Method,
                         uriParts: Seq[String] = Nil,

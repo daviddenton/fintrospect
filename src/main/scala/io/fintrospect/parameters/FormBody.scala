@@ -1,11 +1,11 @@
 package io.fintrospect.parameters
 
-import java.net.URLDecoder._
+import java.net.URLDecoder.decode
 import java.net.URLEncoder.encode
 
 import com.twitter.finagle.http.Message
 import io.fintrospect.ContentTypes
-import io.fintrospect.util.HttpRequestResponseUtil._
+import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}

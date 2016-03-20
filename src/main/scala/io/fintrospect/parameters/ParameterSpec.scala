@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import java.time.format.DateTimeFormatter._
+import java.time.format.DateTimeFormatter.{ISO_LOCAL_DATE, ISO_LOCAL_DATE_TIME, ISO_ZONED_DATE_TIME}
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.util.UUID
 

@@ -3,7 +3,7 @@ package io.fintrospect
 import com.twitter.finagle.http.path.{->, /, Path}
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
-import io.fintrospect.IncompletePath._
+import io.fintrospect.IncompletePath.clientFor
 import io.fintrospect.ModuleSpec.ModifyPath
 import io.fintrospect.parameters.{Path => Fp, PathParameter}
 

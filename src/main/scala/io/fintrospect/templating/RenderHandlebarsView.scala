@@ -2,7 +2,8 @@ package io.fintrospect.templating
 
 import com.gilt.handlebars.scala.Handlebars
 import com.gilt.handlebars.scala.binding.dynamic._
-import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.formats.AbstractResponseBuilder
 
@@ -14,13 +15,10 @@ import io.fintrospect.formats.AbstractResponseBuilder
 class RenderHandlebarsView(responseBuilder: AbstractResponseBuilder[_])
   extends Filter[Request, Response, Request, View] {
 
-  import responseBuilder._
+  import responseBuilder.toResponseBuilder
 
   private val loader = new CachingClasspathViews[Handlebars[Any]](s => Handlebars(s), ".hbs")
 
   override def apply(request: Request, service: Service[Request, View]) = service(request)
-    .flatMap {
-      view => {
-        Status.Ok(loader.loadView(view)(view))}
-    }
+    .flatMap { view => Ok(loader.loadView(view)(view)) }
 }

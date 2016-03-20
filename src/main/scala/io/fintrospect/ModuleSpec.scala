@@ -1,18 +1,19 @@
 package io.fintrospect
 
-import com.twitter.finagle.http.Method._
-import com.twitter.finagle.http.Status._
+import com.twitter.finagle.http.Method.Get
+import com.twitter.finagle.http.Status.BadRequest
+import com.twitter.finagle.http.Status.NotFound
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
-import io.fintrospect.Headers._
-import io.fintrospect.ModuleSpec._
+import io.fintrospect.Headers.IDENTIFY_SVC_HEADER
+import io.fintrospect.ModuleSpec.ModifyPath
 import io.fintrospect.Types.ServiceBinding
 import io.fintrospect.parameters.{NoSecurity, Parameter, Security}
 import io.fintrospect.renderers.ModuleRenderer
 
-import scala.PartialFunction._
+import scala.PartialFunction.empty
 
 object ModuleSpec {
   type ModifyPath = Path => Path

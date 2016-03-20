@@ -4,11 +4,10 @@ import java.math.BigInteger
 
 import com.twitter.finagle.http.Status
 import io.circe._
-import io.fintrospect.ContentTypes._
+import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
-import org.json4s.{NoTypeHints, Formats}
 
 /**
   * Circe JSON support (application/json content type)
