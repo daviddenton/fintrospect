@@ -7,12 +7,11 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
 import io.fintrospect.formats.json.Argo.JsonFormat.array
-import io.fintrospect.formats.json.Argo.ResponseBuilder.statusToResponseBuilderConfig
-import io.fintrospect.formats.json.Argo.ResponseBuilder.responseBuilderToResponse
+import io.fintrospect.formats.json.Argo.ResponseBuilder.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
+import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
 import presentation.Book
 
 class SearchRoute(books: RemoteBooks) {
