@@ -126,7 +126,7 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
           resp
         })
       }))
-        .withRoute(RouteSpec("").at(Get) / "svc" bindTo (AService(Nil)))
+        .withRoute(RouteSpec("").at(Get) / "svc" bindTo AService(Nil))
 
       it("applies to routes in module") {
         result(module.toService(Request("/svc"))).headerMap("MYHEADER") shouldEqual "BOB"
