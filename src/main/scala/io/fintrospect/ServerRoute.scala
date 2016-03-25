@@ -19,7 +19,7 @@ abstract class ServerRoute[RQ, RS](val routeSpec: RouteSpec,
 
   def matches(actualMethod: Method, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
 
-  def toPf(filter: Filter[Request, Response, RQ, RS], basePath: Path): Filter[Request, Response, Request, Response] => PartialFunction[(Method, Path), Service[Request, Response]]
+  def toPf(filter: Filter[Request, Response, RQ, RS], basePath: Path): PartialFunction[(Method, Path), Service[Request, Response]]
 
   def describeFor(basePath: Path): String = (pathFn(basePath).toString +: pathParams.map(_.toString())).mkString("/")
 }
