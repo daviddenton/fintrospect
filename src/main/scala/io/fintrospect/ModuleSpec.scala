@@ -58,8 +58,8 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
   override protected def serviceBinding: ServiceBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
-        val filters = identify(route) +: security.filter +: validateParams(route) +: Nil
-        currentBinding.orElse(route.toPf(moduleFilter, basePath)(filters.reduce(_.andThen(_))))
+        val filter = identify(route).andThen(security.filter).andThen(validateParams(route)).andThen(moduleFilter)
+        currentBinding.orElse(route.toPf(filter, basePath))
     })
   }
 
@@ -98,7 +98,7 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
       case _ => Service.mk { request: Request => Future.value(moduleRenderer.notFound(request)) }
     }
 
-    val totalPf = otherRoutes.orElse(descriptionRoute.toPf(Filter.identity, basePath)(identify(descriptionRoute))).orElse(fallback)
+    val totalPf = otherRoutes.orElse(descriptionRoute.toPf(identify(descriptionRoute), basePath)).orElse(fallback)
 
     {
       case (method, path) if path.startsWith(basePath) => totalPf.apply((method, path))
