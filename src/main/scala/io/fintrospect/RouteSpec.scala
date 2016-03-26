@@ -1,8 +1,8 @@
 package io.fintrospect
 
-import com.twitter.finagle.http.{Method, Response, Status}
+import com.twitter.finagle.http.{Request, Message, Method, Response, Status}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
-import io.fintrospect.parameters.{Body, HeaderParameter, QueryParameter}
+import io.fintrospect.parameters.{Retrieval, Parameter, Validatable, Body, HeaderParameter, QueryParameter}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 
 /**
@@ -13,8 +13,7 @@ case class RouteSpec private(summary: String,
                              produces: Set[ContentType],
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
-                             headerParams: Seq[HeaderParameter[_]],
-                             queryParams: Seq[QueryParameter[_]],
+                             requestParams: Seq[Parameter with Validatable[_, Request]],
                              responses: Seq[ResponseSpec]) {
 
   /**
@@ -30,12 +29,12 @@ case class RouteSpec private(summary: String,
   /**
    * Register a header parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: HeaderParameter[_]): RouteSpec = copy(headerParams = rp +: headerParams)
+  def taking(rp: HeaderParameter[_]): RouteSpec = copy(requestParams = rp +: requestParams)
 
   /**
    * Register a query parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: QueryParameter[_]): RouteSpec = copy(queryParams = rp +: queryParams)
+  def taking(rp: QueryParameter[_]): RouteSpec = copy(requestParams = rp +: requestParams)
 
   /**
    * Register the expected content of the body.
@@ -74,5 +73,5 @@ case class RouteSpec private(summary: String,
 
 object RouteSpec {
   def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
-    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil, Nil)
+    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil)
 }

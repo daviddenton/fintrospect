@@ -32,7 +32,7 @@ class RouteClient(method: Method,
                   underlyingService: Service[Request, Response]) {
 
   private val providedBindings = pathParams.filter(_.isFixed).map(p => new PathBinding(p, p.name))
-  private val allPossibleParams = pathParams ++ routeSpec.headerParams ++ routeSpec.queryParams ++ routeSpec.body.toSeq.flatMap(_.iterator)
+  private val allPossibleParams = pathParams ++ routeSpec.requestParams ++ routeSpec.body.toSeq.flatMap(_.iterator)
   private val requiredParams = allPossibleParams.filter(_.required)
   private val service = RouteClient.identify(method, pathParams).andThen(underlyingService)
 
