@@ -11,8 +11,7 @@ abstract class ServerRoute[RQ, RS](val routeSpec: RouteSpec,
                                val pathParams: PathParameter[_]*) {
 
   def missingOrFailedFrom(request: Request) = {
-    val validations = routeSpec.headerParams.map(_.validate(request)) ++
-      routeSpec.queryParams.map(_.validate(request)) ++
+    val validations = routeSpec.requestParams.map(_.validate(request)) ++
       routeSpec.body.toSeq.flatMap(_.validate(request))
     validations.collect { case Left(l) => l }
   }

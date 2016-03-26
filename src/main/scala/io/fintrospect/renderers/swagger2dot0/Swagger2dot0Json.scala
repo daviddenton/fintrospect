@@ -52,9 +52,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       (p, exampleOption, render(p, exampleOption))
     })
 
-    val allParams = route.pathParams.flatMap(identity) ++
-      route.routeSpec.headerParams ++
-      route.routeSpec.queryParams
+    val allParams = route.pathParams.flatMap(identity) ++ route.routeSpec.requestParams
     val nonBodyParams = allParams.map(render(_, Option.empty))
 
     val route2 = route.method.toString().toLowerCase -> obj(
