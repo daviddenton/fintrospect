@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 /**
  * Represents the ability to retrieve a parameter value from an enclosing object (request/form etc..)
  */
-trait Retrieval[T, From] {
+trait Retrieval[T, -From] {
 
   /**
    * Extract the parameter from the target object.
