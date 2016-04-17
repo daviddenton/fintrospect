@@ -1,20 +1,17 @@
-package examples.json4s
+package examples.circe
 
 import com.twitter.finagle.Http
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
-import examples.json4s.Emails.InMemoryEmails
+import examples.circe.Emails.InMemoryEmails
 import io.fintrospect.ModuleSpec
-import io.fintrospect.formats.json.Json4s
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 
 /**
- * This example uses Json4s as a JSON format instead of the Argo default
+ * This example uses Circe as a JSON format instead of the Argo default
  */
 object InboxApp extends App {
-
-  val JsonLibrary = Json4s.Native // we define the JsonFormat once here so we can import it in other classes
 
   private val emails = new InMemoryEmails()
 
