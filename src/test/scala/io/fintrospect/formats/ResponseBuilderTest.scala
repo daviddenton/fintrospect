@@ -2,7 +2,7 @@ package io.fintrospect.formats
 
 import java.nio.charset.Charset.defaultCharset
 
-import com.twitter.finagle.http.Status
+import com.twitter.finagle.http.{Cookie, Status}
 import com.twitter.io.{Bufs, Reader}
 import com.twitter.util.Await
 import io.fintrospect.ContentType
@@ -52,6 +52,13 @@ class ResponseBuilderTest extends FunSpec {
     val response = new ResponseBuilder[PlainTextValue](_.value, PlainTextValue, e => PlainTextValue(e.getMessage), ContentType("anyContentType"))
       .withContent(copiedBuffer("hello", defaultCharset())).build()
     response.contentString shouldBe "hello"
+  }
+
+  it("should set cookies") {
+    val response = new ResponseBuilder[PlainTextValue](_.value, PlainTextValue, e => PlainTextValue(e.getMessage), ContentType("anyContentType"))
+      .withCookies(new Cookie("name", "value")).build()
+
+    response.cookies("name").value shouldBe "value"
   }
 
   it("should set the content correctly given reader and copies over all headers") {
