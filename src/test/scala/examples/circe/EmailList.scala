@@ -1,16 +1,15 @@
-package examples.json4s
+package examples.circe
 
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
+import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.json.Json4s.Native.JsonFormat.{encode, responseSpec}
-import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder.implicits.statusToResponseBuilderConfig
+import io.fintrospect.formats.json.Circe.JsonFormat.{encode, responseSpec}
+import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters.{ParameterSpec, Path, StringParamType}
-
-
 
 class EmailList(emails: Emails) {
   private val emailAddress = Path(ParameterSpec[EmailAddress]("address", Option("user email"), StringParamType, EmailAddress, e => e.address))

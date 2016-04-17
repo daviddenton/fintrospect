@@ -1,4 +1,4 @@
-package examples.json4s
+package examples.circe
 
 trait Emails {
   def add(newEmail: Email)
