@@ -5,7 +5,7 @@ The main API is stable now, but expect some amount of breaking changes around ma
 ## Backlog/upcoming
 - Option to dynamically reload View templates
 - Vetting of Accept and Content-types (return 418 for unsupported media type)
-- Drop support for Scala 2.10 support (when finagle.http does)
+- Drop support for Scala 2.10 (when finagle.http does)
 
 ## v12.11.0 (uncut)
 - Added `HeapDump` utility service to programatically generate a hprof file.
