@@ -8,9 +8,9 @@ name := projectName
 
 description := "Library that adds self-documentation to Finagle server endpoint services"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.10.6", "2.11.7")
+crossScalaVersions := Seq("2.10.6", "2.11.8")
 
 scalacOptions += "-deprecation"
 
@@ -22,9 +22,9 @@ libraryDependencies ++= Seq(
   "com.github.spullara.mustache.java" % "compiler" % "0.9.1" % "provided",
   "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1" % "provided",
   "com.google.code.gson" % "gson" % "2.5" % "provided",
-  "io.circe" %% "circe-core" % "0.3.0" % "provided",
-  "io.circe" %% "circe-generic" % "0.3.0" % "provided",
-  "io.circe" %% "circe-parser" % "0.3.0" % "provided",
+  "io.circe" %% "circe-core" % "0.4.1" % "provided",
+  "io.circe" %% "circe-generic" % "0.4.1" % "provided",
+  "io.circe" %% "circe-parser" % "0.4.1" % "provided",
   "io.spray" %% "spray-json" % "1.3.2" % "provided",
   "io.argonaut" %% "argonaut" % "6.0.4" % "provided",
   "com.typesafe.play" %% "play-json" % "2.4.3" % "provided",

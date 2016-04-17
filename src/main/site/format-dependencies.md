@@ -20,7 +20,7 @@
 <tr>
     <td><a target="_top" href="https://github.com/travisbrown/circe">Circe</a></td>
     <td>application/json</td>
-    <td>"io.circe" %% "circe-core" % "0.3.0"<br/>"io.circe" %% "circe-parser" % "0.3.0"<br/>"io.circe" %% "circe-generic" % "0.3.0" </td>
+    <td>"io.circe" %% "circe-core" % "0.4.1"<br/>"io.circe" %% "circe-parser" % "0.4.1"<br/>"io.circe" %% "circe-generic" % "0.4.1" </td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Circe">Circe</a></td>
 </tr>
 <tr>

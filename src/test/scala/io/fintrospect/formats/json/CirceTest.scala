@@ -1,7 +1,7 @@
 package io.fintrospect.formats.json
 
+import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.Status.Ok
-import com.twitter.finagle.http.{Status, Request}
 import io.fintrospect.formats.json.Circe.JsonFormat.{bodySpec, encode, parameterSpec}
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
@@ -16,10 +16,7 @@ class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
 class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
 
-  import io.circe._
   import io.circe.generic.auto._
-  import io.circe.parser._
-  import io.circe.syntax._
 
   describe("Circe.JsonFormat") {
     val aLetter = CirceLetter(CirceStreetAddress("my house"), CirceStreetAddress("your house"), "hi there")
