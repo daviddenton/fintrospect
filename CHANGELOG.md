@@ -2,9 +2,13 @@
 
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
-## v12.11.0 (planned)
-- Added `HeapDump` utility service to programatically generate a hprof file.
+## Backlog
 - Option to dynamically reload templates.
+
+## v12.11.0 (uncut)
+- Added `HeapDump` utility service to programatically generate a hprof file.
+- Upgrade of `Circe` version to `0.4.1`
+- Upgrade of `Scala` version to `2.11.8`
 
 ## v12.10.0
 - Renamed and moved implicit method conversions for response building for clarity from `X.toFuture` to `X.implicits.XXXToFuture`. Possible small break if you've imported the implicits exactly instead of with a wildcard.
@@ -15,7 +19,7 @@ The main API is stable now, but expect some amount of breaking changes around ma
 ## v12.7.0
 - Added generification of ModuleSpec in the `Request` type as well as the `Response` type. This means that we can plug in other Finagle frameworks which vary in their Request type, such as Finagle-OAuth2. Likelihood of breaks is small, so 
 just a minor version bump. In all cases, just replace `ModuleSpec[X]` and `ServerRoute[X]` with `ModuleSpec[Request, X]` and `ServerRoute[Request, X]` .
-- Upgrade Finagle dependency to v6.34.0
+- Upgrade Finagle dependency to `6.34.0`
 - Added examples for templating and OAuth2 integration
 
 ## v12.6.0
@@ -30,11 +34,11 @@ with hardcoded JSON strings - :)
 
 ## v12.3.0
 - Added symbol support to `JsonFormat` object generation - see `objSym()`
-- Upgrade of `Circe to` `0.3.0` - note the rename of the `circe-parse` package dependency to `circe-parser`
+- Upgrade of `Circe` to `0.3.0` - note the rename of the `circe-parse` package dependency to `circe-parser`
 
 ## v12.2.1
 - Bugfix: Static resources not found when Static module is at the root context (issue #14).
-- Upgrade finagle dependency to v6.33.0
+- Upgrade finagle dependency to `6.33.0`
 
 ## v12.2.0
 - Significant performance improvement by route matching on `ModuleSpec` context first and then on the whole path. This means that `ModuleSpec` contexts now 
@@ -89,7 +93,7 @@ routes since this will already be handled by Fintrospect.
 - Breaking change: Musical chairs from the Finagle team with the `finagle-httpx` package, which is now renamed to `finagle-http`. Just globally replace `httpx` with `http` and all should be good.
 - Removed `CorsFilter`. You can now use the `Cors.HttpFilter` supplied by finagle-http instead.
 
-## v10.3.0
+## v10.4.1
 - Added 6 and 7 arity path lengths.
 
 ## v10.2.0

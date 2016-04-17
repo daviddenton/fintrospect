@@ -26,23 +26,23 @@ object Circe extends JsonLibrary[Json, Json] {
 
     override def obj(fields: Field*): Json = Json.obj(fields.map(f => (f._1, f._2)): _*)
 
-    override def array(elements: Iterable[Json]) = Json.array(elements.toSeq: _*)
+    override def array(elements: Iterable[Json]) = Json.arr(elements.toSeq: _*)
 
     override def array(elements: Json*) = array(elements)
 
-    override def string(value: String) = Json.string(value)
+    override def string(value: String) = Json.fromString(value)
 
-    override def number(value: Int) = Json.numberOrNull(value)
+    override def number(value: Int) = Json.fromDoubleOrNull(value)
 
-    override def number(value: BigDecimal) = Json.bigDecimal(value.doubleValue())
+    override def number(value: BigDecimal) = Json.fromBigDecimal(value.doubleValue())
 
-    override def number(value: Long) = Json.long(value)
+    override def number(value: Long) = Json.fromLong(value)
 
-    override def number(value: BigInteger) = Json.long(value.intValue())
+    override def number(value: BigInteger) = Json.fromLong(value.intValue())
 
-    override def boolean(value: Boolean) = Json.bool(value)
+    override def boolean(value: Boolean) = Json.fromBoolean(value)
 
-    override def nullNode() = Json.empty
+    override def nullNode() = Json.Null
 
     def encode[T](in: T)(implicit e: Encoder[T]) = e(in)
 
