@@ -2,7 +2,7 @@ package io.fintrospect.formats
 
 import java.io.OutputStream
 
-import com.twitter.finagle.http.{Response, Status}
+import com.twitter.finagle.http.{Cookie, Response, Status}
 import com.twitter.io.{Buf, Charsets, Reader}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
@@ -64,6 +64,11 @@ class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
   def withContent(f: OutputStream => Unit): ResponseBuilder[T] = {
     response.setContentType(contentType.value)
     response.withOutputStream(f)
+    this
+  }
+
+  def withCookies(cookies: Cookie*): ResponseBuilder[T] = {
+    cookies.foreach { response.cookies.add }
     this
   }
 
