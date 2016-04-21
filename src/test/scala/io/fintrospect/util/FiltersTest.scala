@@ -1,12 +1,11 @@
 package io.fintrospect.util
 
-import java.time.Clock.tickSeconds
-import java.time.{Instant, ZoneId, Clock, Duration}
 import java.time.Duration.ofSeconds
 import java.time.ZoneId.systemDefault
+import java.time.{Clock, Duration, Instant, ZoneId}
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
 import io.fintrospect.Headers
