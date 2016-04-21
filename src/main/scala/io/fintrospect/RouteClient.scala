@@ -4,16 +4,15 @@ import com.twitter.finagle.http.Status.BadRequest
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
-import io.fintrospect.Headers.IDENTIFY_SVC_HEADER
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
 import io.fintrospect.parameters.{Binding, PathBinding, PathParameter, RequestBuilder}
 
 
 object RouteClient {
-  private def identify(method: Method, pathParams: Seq[PathParameter[_]]) = Filter.mk[Request, Response, Request ,Response] {
+  private def identify(method: Method, pathParams: Seq[PathParameter[_]]) = Filter.mk[Request, Response, Request, Response] {
     (request, svc) => {
       val description = method + ":" + pathParams.map(_.toString()).mkString("/")
-      request.headerMap.set(IDENTIFY_SVC_HEADER, description)
+      Headers.IdentifyRouteName.of(description)(request)
       svc(request)
     }
   }
