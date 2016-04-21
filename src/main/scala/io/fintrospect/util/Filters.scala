@@ -2,10 +2,12 @@ package io.fintrospect.util
 
 import java.nio.charset.StandardCharsets.ISO_8859_1
 import java.security.MessageDigest
+import java.time.{Clock, Duration}
 import java.util.Base64
 
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.{Request, Response}
+import io.fintrospect.Headers.IDENTIFY_SVC_HEADER
 import io.fintrospect.configuration.{Authority, Credentials}
 
 /**
@@ -38,6 +40,25 @@ object Filters {
           rsp
         }
       }
+  }
+
+  def reportingPathAndLatency(clock: Clock)(recordFn: (String, Duration) => Unit) = Filter.mk[Request, Response, Request, Response] {
+    (req, svc) => {
+      val start = clock.instant()
+      for {
+        resp <- svc(req)
+      } yield {
+        val identifier = List(req.headerMap.get(IDENTIFY_SVC_HEADER)
+          .map(s => s.replace('.', '_').replace(':', '.'))
+          .getOrElse(req.method.toString() + ".UNMAPPED")
+          .replace('/', '_'),
+          resp.status.code / 100 + "xx",
+          resp.status.code.toString).mkString(".")
+
+        recordFn(identifier, Duration.between(start, clock.instant()))
+        resp
+      }
+    }
   }
 
 }
