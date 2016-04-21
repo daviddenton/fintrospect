@@ -1,5 +1,8 @@
 package io.fintrospect
 
+import com.twitter.finagle.http.Method.Get
+import io.fintrospect.ContentTypes.APPLICATION_ATOM_XML
+import io.fintrospect.parameters.RequestBuilder
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class ContentTypeTest extends FunSpec with ShouldMatchers {
@@ -19,5 +22,9 @@ class ContentTypeTest extends FunSpec with ShouldMatchers {
 
   it("defaults to octet-stream") {
     ContentType.lookup("bob.foo") shouldBe ContentType("application/octet-stream")
+  }
+
+  it("bind header instance to request") {
+    ContentType.header.of(APPLICATION_ATOM_XML).head(RequestBuilder(Get)).build().headerMap("Content-Type") shouldBe APPLICATION_ATOM_XML.value
   }
 }
