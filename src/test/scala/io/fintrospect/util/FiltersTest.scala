@@ -37,8 +37,9 @@ class FiltersTest extends FunSpec with ShouldMatchers {
     }
   }
 
- private val clock = new Clock {
+  private val clock = new Clock {
     private var current = Instant.now()
+
     override def getZone: ZoneId = systemDefault()
 
     override def instant(): Instant = {
@@ -66,7 +67,8 @@ class FiltersTest extends FunSpec with ShouldMatchers {
       val filter = reportingPathAndLatency(clock) { (name: String, duration: Duration) => called = (name, duration) }
 
       val request = Request("/")
-      request.headerMap.add(Headers.IDENTIFY_SVC_HEADER, "GET:/path/dir/someFile.html")
+
+      Headers.IdentifyRouteName.of("GET:/path/dir/someFile.html")(request)
 
       result(filter(request, Service.mk { req => Future.value(Response()) }))
 

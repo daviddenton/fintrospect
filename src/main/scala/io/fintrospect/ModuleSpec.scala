@@ -1,13 +1,11 @@
 package io.fintrospect
 
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status.BadRequest
-import com.twitter.finagle.http.Status.NotFound
+import com.twitter.finagle.http.Status.{BadRequest, NotFound}
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
-import io.fintrospect.Headers.IDENTIFY_SVC_HEADER
 import io.fintrospect.ModuleSpec.ModifyPath
 import io.fintrospect.Types.ServiceBinding
 import io.fintrospect.parameters.{NoSecurity, Parameter, Security}
@@ -50,11 +48,11 @@ object ModuleSpec {
   * Self-describing module builder (uses the immutable builder pattern).
   */
 class ModuleSpec[RQ, RS] private(basePath: Path,
-                             moduleRenderer: ModuleRenderer,
-                             descriptionRoutePath: ModifyPath,
-                             routes: Seq[ServerRoute[RQ, RS]],
-                             security: Security,
-                             moduleFilter: Filter[Request, Response, RQ, RS]) extends Module {
+                                 moduleRenderer: ModuleRenderer,
+                                 descriptionRoutePath: ModifyPath,
+                                 routes: Seq[ServerRoute[RQ, RS]],
+                                 security: Security,
+                                 moduleFilter: Filter[Request, Response, RQ, RS]) extends Module {
   override protected def serviceBinding: ServiceBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
@@ -115,7 +113,7 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
   private def identify(route: ServerRoute[_, _]) = Filter.mk[Request, Response, Request, Response] {
     (request, svc) => {
       val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
-      request.headerMap.set(IDENTIFY_SVC_HEADER, request.method + ":" + url)
+      Headers.IdentifyRouteName.of(request.method + ":" + url)(request)
       svc(request)
     }
   }

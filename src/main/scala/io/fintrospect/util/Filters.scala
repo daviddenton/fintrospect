@@ -7,7 +7,7 @@ import java.util.Base64
 
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.Headers.IDENTIFY_SVC_HEADER
+import io.fintrospect.Headers
 import io.fintrospect.configuration.{Authority, Credentials}
 
 /**
@@ -17,7 +17,7 @@ object Filters {
 
   def addAuthorityHost[T](authority: Authority) = Filter.mk[Request, T, Request, T] {
     (req, svc) => {
-      req.headerMap.add("Host", authority.toString)
+      Headers.Host.of(authority.toString)(req)
       svc(req)
     }
   }
@@ -25,7 +25,7 @@ object Filters {
   def addBasicAuthorization[T](credentials: Credentials) = Filter.mk[Request, T, Request, T] {
     (req, svc) => {
       val base64Credentials = Base64.getEncoder.encodeToString(s"${credentials.username}:${credentials.password}".getBytes(ISO_8859_1))
-      req.headerMap.add("Authorization", "Basic " + base64Credentials.trim)
+      Headers.Authorization.of("Basic " + base64Credentials.trim)(req)
       svc(req)
     }
   }
@@ -36,7 +36,7 @@ object Filters {
       .map {
         rsp => {
           val hashedBody = MessageDigest.getInstance("MD5").digest(rsp.contentString.getBytes).map("%02x".format(_)).mkString
-          rsp.headerMap("ETag") = hashedBody
+          Headers.ETag.of(hashedBody)(rsp)
           rsp
         }
       }
@@ -48,10 +48,11 @@ object Filters {
       for {
         resp <- svc(req)
       } yield {
-        val identifier = List(req.headerMap.get(IDENTIFY_SVC_HEADER)
-          .map(s => s.replace('.', '_').replace(':', '.'))
-          .getOrElse(req.method.toString() + ".UNMAPPED")
-          .replace('/', '_'),
+        val identifier = List(
+          (Headers.IdentifyRouteName <-- req)
+            .map(_.replace('.', '_').replace(':', '.'))
+            .getOrElse(req.method.toString() + ".UNMAPPED")
+            .replace('/', '_'),
           resp.status.code / 100 + "xx",
           resp.status.code.toString).mkString(".")
 
