@@ -6,8 +6,10 @@ import java.time.{Clock, Duration, ZonedDateTime}
 import java.util.Base64
 
 import com.twitter.finagle.Filter
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.configuration.{Authority, Credentials}
+import io.fintrospect.formats.AbstractResponseBuilder
+import io.fintrospect.formats.json.Argo
 import io.fintrospect.{ContentType, Headers}
 
 /**
@@ -76,5 +78,17 @@ object Filters {
         }
       }
     }
+
+    /**
+      * Last-gasp Filter which converts uncaught exceptions and converts them into INTERNAL_SERVER_ERRORs
+      */
+    def CatchAll(responseBuilder: AbstractResponseBuilder[_] = Argo.ResponseBuilder) = Filter.mk[Request, Response, Request, Response] {
+      (req, svc) => {
+        svc(req).handle {
+          case t: Throwable => responseBuilder.HttpResponse(Status.InternalServerError).withError(t).build()
+        }
+      }
+    }
   }
+
 }
