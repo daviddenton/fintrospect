@@ -1,65 +1,80 @@
 package io.fintrospect.util
 
 import java.nio.charset.StandardCharsets.ISO_8859_1
-import java.security.MessageDigest
-import java.time.{Clock, Duration}
+import java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME
+import java.time.{Clock, Duration, ZonedDateTime}
 import java.util.Base64
 
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.Headers
 import io.fintrospect.configuration.{Authority, Credentials}
+import io.fintrospect.{ContentType, Headers}
 
 /**
   * Useful filters
   */
 object Filters {
 
-  def addAuthorityHost[T](authority: Authority) = Filter.mk[Request, T, Request, T] {
-    (req, svc) => {
-      Headers.Host.of(authority.toString)(req)
-      svc(req)
+  /**
+    * These filters operate on Requests (pre-flight)
+    */
+  object Request {
+    def AddContentType[T](contentType: ContentType) = Filter.mk[Request, T, Request, T] {
+      (req, svc) => {
+        req.headerMap("Content-Type") = contentType.value
+        svc(req)
+      }
+    }
+
+    def AddHost[T](authority: Authority) = Filter.mk[Request, T, Request, T] {
+      (req, svc) => {
+        req.headerMap("Host") = authority.toString
+        svc(req)
+      }
+    }
+
+    def BasicAuthorization[T](credentials: Credentials) = Filter.mk[Request, T, Request, T] {
+      (req, svc) => {
+        val base64Credentials = Base64.getEncoder.encodeToString(s"${credentials.username}:${credentials.password}".getBytes(ISO_8859_1))
+        req.headerMap("Authorization") = "Basic " + base64Credentials.trim
+        svc(req)
+      }
     }
   }
 
-  def addBasicAuthorization[T](credentials: Credentials) = Filter.mk[Request, T, Request, T] {
-    (req, svc) => {
-      val base64Credentials = Base64.getEncoder.encodeToString(s"${credentials.username}:${credentials.password}".getBytes(ISO_8859_1))
-      Headers.Authorization.of("Basic " + base64Credentials.trim)(req)
-      svc(req)
-    }
-  }
+  /**
+    * These filters operate on Responses (post-flight)
+    */
+  object Response {
 
-  // Stolen from http://stackoverflow.com/questions/26423662/scalatra-response-hmac-calulation
-  def addETag[T](): Filter[T, Response, T, Response] = Filter.mk[T, Response, T, Response] {
-    (req, svc) => svc(req)
-      .map {
-        rsp => {
-          val hashedBody = MessageDigest.getInstance("MD5").digest(rsp.contentString.getBytes).map("%02x".format(_)).mkString
-          Headers.ETag.of(hashedBody)(rsp)
-          rsp
+    def AddDate[T](clock: Clock = Clock.systemUTC()) = Filter.mk[T, Response, T, Response] {
+      (req, svc) => {
+        svc(req)
+          .map(rsp => {
+            rsp.headerMap("Date") = RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
+            rsp
+          })
+      }
+    }
+
+    def ReportingRouteLatency(clock: Clock)(recordFn: (String, Duration) => Unit) = Filter.mk[Request, Response, Request, Response] {
+      (req, svc) => {
+        val start = clock.instant()
+        for {
+          resp <- svc(req)
+        } yield {
+          val identifier = List(
+            req.headerMap.get(Headers.IDENTIFY_SVC_HEADER)
+              .map(_.replace('.', '_').replace(':', '.'))
+              .getOrElse(req.method.toString() + ".UNMAPPED")
+              .replace('/', '_'),
+            resp.status.code / 100 + "xx",
+            resp.status.code.toString).mkString(".")
+
+          recordFn(identifier, Duration.between(start, clock.instant()))
+          resp
         }
       }
-  }
-
-  def reportingPathAndLatency(clock: Clock)(recordFn: (String, Duration) => Unit) = Filter.mk[Request, Response, Request, Response] {
-    (req, svc) => {
-      val start = clock.instant()
-      for {
-        resp <- svc(req)
-      } yield {
-        val identifier = List(
-          (Headers.IdentifyRouteName <-- req)
-            .map(_.replace('.', '_').replace(':', '.'))
-            .getOrElse(req.method.toString() + ".UNMAPPED")
-            .replace('/', '_'),
-          resp.status.code / 100 + "xx",
-          resp.status.code.toString).mkString(".")
-
-        recordFn(identifier, Duration.between(start, clock.instant()))
-        resp
-      }
     }
   }
-
 }

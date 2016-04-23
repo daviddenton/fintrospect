@@ -113,7 +113,7 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
   private def identify(route: ServerRoute[_, _]) = Filter.mk[Request, Response, Request, Response] {
     (request, svc) => {
       val url = if (route.describeFor(basePath).length == 0) "/" else route.describeFor(basePath)
-      Headers.IdentifyRouteName.of(request.method + ":" + url)(request)
+      request.headerMap(Headers.IDENTIFY_SVC_HEADER) = request.method + ":" + url
       svc(request)
     }
   }
