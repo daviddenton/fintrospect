@@ -7,8 +7,8 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import examples.customformats.HipsterXml.ResponseBuilder.implicits.{statusToResponseBuilderConfig, responseBuilderToFuture}
-import io.fintrospect.parameters.{Path, Body, Header, StringParamType, ParameterSpec, BodySpec}
+import examples.customformats.HipsterXml.ResponseBuilder.implicits.{responseBuilderToFuture, statusToResponseBuilderConfig}
+import io.fintrospect.parameters.{Body, BodySpec, Header, ParameterSpec, Path, StringParamType}
 import io.fintrospect.{ContentTypes, ModuleSpec, RouteSpec}
 
 /**

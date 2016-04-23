@@ -1,8 +1,7 @@
 package io.fintrospect.parameters
 
 import io.fintrospect.ContentType
-import io.fintrospect.ContentTypes.APPLICATION_XML
-import io.fintrospect.ContentTypes.APPLICATION_JSON
+import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_XML}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 
 import scala.xml.{Elem, XML}

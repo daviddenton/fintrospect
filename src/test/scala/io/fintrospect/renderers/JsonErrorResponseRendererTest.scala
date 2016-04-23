@@ -1,11 +1,9 @@
 package io.fintrospect.renderers
 
 import com.twitter.finagle.http.Status
-import io.fintrospect.formats.json.Json4s.Native.JsonFormat.parse
-import io.fintrospect.formats.json.Json4s.Native.JsonFormat.string
+import io.fintrospect.formats.json.Json4s.Native.JsonFormat.{parse, string}
 import io.fintrospect.parameters.Query
-import io.fintrospect.renderers.JsonErrorResponseRenderer.notFound
-import io.fintrospect.renderers.JsonErrorResponseRenderer.badRequest
+import io.fintrospect.renderers.JsonErrorResponseRenderer.{badRequest, notFound}
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.scalatest.{FunSpec, ShouldMatchers}
 

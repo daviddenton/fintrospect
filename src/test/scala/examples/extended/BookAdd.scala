@@ -3,9 +3,9 @@ package examples.extended
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{Conflict, Created}
 import com.twitter.finagle.http.{Method, Request, Response}
-import io.fintrospect.{ResponseSpec, RouteSpec}
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.{Body, Path}
+import io.fintrospect.{ResponseSpec, RouteSpec}
 
 class BookAdd(books: Books) {
   private val exampleBook = Book("the title", "the author", 666)

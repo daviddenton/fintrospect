@@ -2,12 +2,10 @@ package io.fintrospect.testing
 
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
-import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.util.Future
-import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.{ModuleSpec, ServerRoute, ServerRoutes}
+import io.fintrospect.{ServerRoute, ServerRoutes}
 
 
 /**
