@@ -2,7 +2,7 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
-import com.google.gson.{JsonNull, JsonPrimitive, JsonArray, JsonObject, JsonParser, GsonBuilder, JsonElement}
+import com.google.gson.{GsonBuilder, JsonArray, JsonElement, JsonNull, JsonObject, JsonParser, JsonPrimitive}
 
 /**
   * GSON JSON support (application/json content type)

@@ -4,9 +4,9 @@ import com.twitter.finagle.Http
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
-import io.fintrospect.{Module, ModuleSpec}
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
+import io.fintrospect.{Module, ModuleSpec}
 
 /**
  * This example shows the intended method for implementing a simple app using Fintrospect routes and modules, using

@@ -4,7 +4,7 @@ import java.math.BigInteger
 
 import argo.format.{CompactJsonFormatter, PrettyJsonFormatter}
 import argo.jdom.JsonNodeFactories.booleanNode
-import argo.jdom.{JsonNodeFactories, JdomParser, JsonNode, JsonRootNode}
+import argo.jdom.{JdomParser, JsonNode, JsonNodeFactories, JsonRootNode}
 
 /**
  * Argo JSON support (application/json content type)

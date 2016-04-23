@@ -7,7 +7,7 @@ import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import org.json4s.Extraction.decompose
-import org.json4s.{JValue, Serialization, JsonMethods}
+import org.json4s.{JValue, JsonMethods, Serialization}
 
 /**
   * Json4S support (application/json content type)

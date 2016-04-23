@@ -1,7 +1,7 @@
 package io.fintrospect.util
 
 import java.time.ZoneId.systemDefault
-import java.time.{ZoneId, Instant, Clock}
+import java.time.{Clock, Instant, ZoneId}
 
 object TestClocks {
   val ticking = new Clock {
