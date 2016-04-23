@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter._
 import java.time.{Clock, Duration, Instant, ZoneId, ZonedDateTime}
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
-import com.twitter.finagle.{Service, SimpleFilter}
+import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.util.Caching.{DefaultCacheTimings, MaxAgeTtl, StaleIfErrorTtl, StaleWhenRevalidateTtl}
@@ -75,6 +75,6 @@ class CachingTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  def responseWith(caching: SimpleFilter[Request, Response], request: Request) = result(caching(request, Service.mk((r) => Future.value(Response()))))
+  def responseWith(caching: Filter[Request, Response, Request, Response], request: Request) = result(caching(request, Service.mk((r) => Future.value(Response()))))
 }
 

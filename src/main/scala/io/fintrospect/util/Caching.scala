@@ -35,11 +35,11 @@ object Caching {
     }
   }
 
-  def NoCache(): SimpleFilter[Request, Response] = new CacheFilter {
+  def NoCache(): Filter[Request, Response, Request, Response] = new CacheFilter {
     override def headersFor(response: Response) = Map("Cache-Control" -> "private, must-revalidate", "Expires" -> "0")
   }
 
-  def MaxAge(clock: Clock, maxAge: Duration): SimpleFilter[Request, Response] = new CacheFilter {
+  def MaxAge(clock: Clock, maxAge: Duration): Filter[Request, Response, Request, Response] = new CacheFilter {
     override def headersFor(response: Response) = Map(
       "Cache-Control" -> Seq("public", new MaxAgeTtl(maxAge).toHeaderValue).mkString(", "),
       "Expires" -> RFC_1123_DATE_TIME.format(now(response).plusSeconds(maxAge.getSeconds)))
