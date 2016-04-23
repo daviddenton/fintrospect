@@ -5,15 +5,17 @@ import java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME
 import java.time.{Duration, ZonedDateTime}
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Status, Request, Response}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
 import io.fintrospect.{ContentTypes, ContentType, Headers}
 import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
 import io.fintrospect.util.Filters.Request.{AddHost, BasicAuthorization}
-import io.fintrospect.util.Filters.Response.{AddDate, ReportingRouteLatency}
+import io.fintrospect.util.Filters.Response.{CatchAll, AddDate, ReportingRouteLatency}
 import io.fintrospect.util.TestClocks._
 import org.scalatest.{FunSpec, ShouldMatchers}
+
+import scala.RuntimeException
 
 class FiltersTest extends FunSpec with ShouldMatchers {
   describe("Request") {
@@ -40,6 +42,13 @@ class FiltersTest extends FunSpec with ShouldMatchers {
   }
 
   describe("Response") {
+    describe("CatchAll") {
+      it("converts uncaught exceptions into 500 responses") {
+        val rsp = result(CatchAll()(Request(), Service.mk { req: Request => Future.exception(new RuntimeException("boo")) }))
+        rsp.status shouldBe Status.InternalServerError
+        rsp.contentString shouldBe """{"message":"boo"}"""
+      }
+    }
 
     describe("Add date header") {
       it("works") {
