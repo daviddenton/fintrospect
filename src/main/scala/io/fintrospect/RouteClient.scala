@@ -7,12 +7,10 @@ import com.twitter.util.Future
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
 import io.fintrospect.parameters.{Binding, PathBinding, PathParameter, RequestBuilder}
 
-
 object RouteClient {
   private def identify(method: Method, pathParams: Seq[PathParameter[_]]) = Filter.mk[Request, Response, Request, Response] {
     (request, svc) => {
-      val description = method + ":" + pathParams.map(_.toString()).mkString("/")
-      Headers.IdentifyRouteName.of(description)(request)
+      request.headerMap(Headers.IDENTIFY_SVC_HEADER) = method + ":" + pathParams.map(_.toString()).mkString("/")
       svc(request)
     }
   }

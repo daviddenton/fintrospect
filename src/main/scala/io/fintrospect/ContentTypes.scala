@@ -2,15 +2,11 @@ package io.fintrospect
 
 import javax.activation.MimetypesFileTypeMap
 
-import io.fintrospect.parameters.{StringParamType, ParameterSpec, Header}
-
 case class ContentType(value: String)
 
 object ContentType {
   private lazy val extMap = new MimetypesFileTypeMap(getClass.getResourceAsStream("/META-INF/mime.types"))
   def lookup(name: String): ContentType = ContentType(extMap.getContentType(name))
-
-  val header = Header.required(ParameterSpec[ContentType]("Content-Type", Some("Content type of the HTTP response"), StringParamType, ContentType(_), _.value))
 }
 
 object ContentTypes {
