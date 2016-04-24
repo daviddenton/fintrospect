@@ -7,7 +7,9 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
-import io.fintrospect.{ContentTypes, ModuleSpec, RouteSpec, StrictContentTypeNegotiation}
+import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_SVG_XML, APPLICATION_XML}
+import io.fintrospect.util.Filters
+import io.fintrospect.{ModuleSpec, RouteSpec, StrictContentTypeNegotiation}
 
 /**
   * Shows how to add routes which can serve multiple content types using strict content-type negotiation.
@@ -18,7 +20,7 @@ import io.fintrospect.{ContentTypes, ModuleSpec, RouteSpec, StrictContentTypeNeg
 object StrictMultiContentTypeRoutes extends App {
 
   private val serveJson = Service.mk { (rq: Request) => import io.fintrospect.formats.json.Argo.JsonFormat._
-    import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
+ import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
     Ok(obj("field" -> string("value")))
   }
 
@@ -31,13 +33,17 @@ object StrictMultiContentTypeRoutes extends App {
   }
 
   private val serve = StrictContentTypeNegotiation(
-    ContentTypes.APPLICATION_SVG_XML -> serveXml,
-    ContentTypes.APPLICATION_JSON -> serveJson
+    APPLICATION_SVG_XML -> serveXml,
+    APPLICATION_JSON -> serveJson
   )
 
   val route = RouteSpec()
-    .producing(ContentTypes.APPLICATION_XML, ContentTypes.APPLICATION_JSON)
+    .producing(APPLICATION_XML, APPLICATION_JSON)
     .at(Get) / "multi" bindTo serve
+
+  val jsonOnlyRoute = RouteSpec()
+    .producing(APPLICATION_JSON)
+    .at(Get) / "json" bindTo Filters.Request.StrictAccept(APPLICATION_JSON).andThen(serveJson)
 
   Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy)
     .andThen(ModuleSpec(Root).withRoute(route).toService))
