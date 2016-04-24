@@ -42,7 +42,7 @@ object MultiContentTypeRoutes extends App {
   Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy)
     .andThen(ModuleSpec(Root).withRoute(route).toService))
 
-  println("See the service description at: http://localhost:8080")
+  println("See the service description at: http://localhost:8080 . The route at /multi should match wildcard Accept headers set in a browser.")
 
   Thread.currentThread().join()
 
