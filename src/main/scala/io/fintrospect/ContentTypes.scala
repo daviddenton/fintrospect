@@ -2,11 +2,28 @@ package io.fintrospect
 
 import javax.activation.MimetypesFileTypeMap
 
+import com.twitter.finagle.http.Message
+import io.fintrospect.parameters.Header
+
 case class ContentType(value: String)
 
 object ContentType {
   private lazy val extMap = new MimetypesFileTypeMap(getClass.getResourceAsStream("/META-INF/mime.types"))
+
   def lookup(name: String): ContentType = ContentType(extMap.getContentType(name))
+
+  private val accept = Header.optional.*.string("Accept")
+
+  def fromAcceptHeaders(msg: Message): Option[Set[ContentType]] =
+    accept.from(msg)
+      .map(s => {
+        s.flatMap(
+          value => value.split(Array(',', ' ', ';'))
+            .map(_.toLowerCase)
+            .filter(_.matches(".+\\/.+"))
+            .map(ContentType(_))
+        ).toSet
+      })
 }
 
 object ContentTypes {

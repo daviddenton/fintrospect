@@ -11,7 +11,7 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 class StrictContentTypeNegotiationTest extends FunSpec with ShouldMatchers {
 
-  describe("MultiContentType") {
+  describe("StrictContentTypeNegotiation") {
     it("on no match, return 406") {
       val r = result(StrictContentTypeNegotiation()(requestWithAcceptHeaders(APPLICATION_JSON.value)))
       r.status shouldBe NotAcceptable
