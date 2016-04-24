@@ -5,11 +5,13 @@ import java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME
 import java.time.{Duration, ZonedDateTime}
 
 import com.twitter.finagle.Service
+import com.twitter.finagle.http.Status.{NotAcceptable, Ok}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
+import io.fintrospect.ContentTypes.{WILDCARD, APPLICATION_XHTML_XML, APPLICATION_XML}
 import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
-import io.fintrospect.util.Filters.Request.{AddHost, BasicAuthorization}
+import io.fintrospect.util.Filters.Request.{AddHost, BasicAuthorization, StrictAccept}
 import io.fintrospect.util.Filters.Response.{AddDate, CatchAll, ReportingRouteLatency}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.TestClocks._
@@ -20,10 +22,33 @@ class FiltersTest extends FunSpec with ShouldMatchers {
 
   describe("Request") {
 
+    describe("StrictAccept") {
+      it("passes through when no accept header") {
+        result(StrictAccept(APPLICATION_XML)(Request(), Service.mk { req => Future.value(Response()) })).status shouldBe Ok
+      }
+
+      it("passes through when wildcard accept header") {
+        val request = Request()
+        request.headerMap("Accept") = WILDCARD.value
+        result(StrictAccept(APPLICATION_XML)(request, Service.mk { req => Future.value(Response()) })).status shouldBe Ok
+      }
+
+      it("passes through when correct accept header") {
+        val request = Request()
+        request.headerMap("Accept") = APPLICATION_XML.value
+        result(StrictAccept(APPLICATION_XML)(request, Service.mk { req => Future.value(Response()) })).status shouldBe Ok
+      }
+
+      it("Not Acceptable when wrong accept header") {
+        val request = Request()
+        request.headerMap("Accept") = APPLICATION_XHTML_XML.value
+        result(StrictAccept(APPLICATION_XML)(request, Service.mk { req => Future.value(Response()) })).status shouldBe NotAcceptable
+      }
+    }
+
     describe("Add authority host header") {
       it("works") {
         val authority = Authority(Host.localhost, Port(9865))
-
         result(AddHost(authority)(Request(), Service.mk { req => Future.value(headerOf("Host")(req)) })) shouldBe authority.toString
       }
     }

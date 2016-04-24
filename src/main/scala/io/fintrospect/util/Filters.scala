@@ -6,11 +6,14 @@ import java.time.{Clock, Duration, ZonedDateTime}
 import java.util.Base64
 
 import com.twitter.finagle.Filter
+import com.twitter.finagle.http.Status.NotAcceptable
 import com.twitter.finagle.http.{Request, Response, Status}
+import io.fintrospect.ContentType.fromAcceptHeaders
 import io.fintrospect.configuration.{Authority, Credentials}
 import io.fintrospect.formats.AbstractResponseBuilder
 import io.fintrospect.formats.json.Argo
-import io.fintrospect.{ContentType, Headers}
+import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
+import io.fintrospect.{ContentType, ContentTypes, Headers}
 
 /**
   * General case useful filters
@@ -21,6 +24,21 @@ object Filters {
     * These filters operate on Requests (pre-flight)
     */
   object Request {
+
+    /**
+      * Respond with NotAcceptable unless: 1. No accept header, 2. Wildcard accept header, 3. Exact matching passed accept header
+      */
+    def StrictAccept(contentTypes: ContentType*) = Filter.mk[Request, Response, Request, Response] {
+      (req, svc) => {
+        fromAcceptHeaders(req)
+          .filter(acceptable =>
+            !acceptable.exists(contentTypes.contains) && !acceptable.contains(ContentTypes.WILDCARD)
+          )
+          .map(_ => NotAcceptable().toFuture)
+          .getOrElse(svc(req))
+      }
+    }
+
     def AddAccept[T](contentTypes: ContentType*) = Filter.mk[Request, T, Request, T] {
       (req, svc) => {
         contentTypes.foreach(c => req.headerMap.add("Accept", c.value))
