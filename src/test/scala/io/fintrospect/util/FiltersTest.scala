@@ -39,12 +39,6 @@ class FiltersTest extends FunSpec with ShouldMatchers {
         result(Filters.Request.AddAccept(ContentTypes.APPLICATION_ATOM_XML, ContentTypes.APPLICATION_JSON)(Request(), Service.mk { req => Future.value(headerOf("Accept")(req)) })) shouldBe "application/atom+xml, application/json"
       }
     }
-
-    describe("Adds content-type header") {
-      it("works") {
-        result(Filters.Request.AddContentType(ContentTypes.APPLICATION_ATOM_XML)(Request(), Service.mk { req => Future.value(headerOf("Content-Type")(req)) })) shouldBe "application/atom+xml"
-      }
-    }
   }
 
   describe("Response") {
