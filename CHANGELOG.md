@@ -6,7 +6,7 @@ The main API is stable now, but expect some amount of breaking changes around ma
 - Option to dynamically reload View templates
 - Drop support for Scala 2.10 (when finagle.http does)
 
-## v12.11.0 (uncut)
+## v12.11.0
 - Added `HeapDump` utility service to programatically generate a hprof file.
 - Similar to ```Query```, added support for multiple header parameters with same name. See ```*()``` on ```Header.required|optional```.
 - Support for serving strict content-type negotiation and multiple content types to be served from a single route. See example ```strictcontenttypes```.
