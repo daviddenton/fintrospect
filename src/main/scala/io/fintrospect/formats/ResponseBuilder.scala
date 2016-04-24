@@ -44,7 +44,7 @@ class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
   def withContent(reader: Reader): ResponseBuilder[T] = {
     val newResponse = Response(response.version, response.status, reader)
     response.setContentType(contentType.value)
-    response.headerMap.foreach(kv => newResponse.headerMap(kv._1) = kv._2)
+    response.headerMap.foreach(kv => newResponse.headerMap.add(kv._1, kv._2))
     response = newResponse
     this
   }

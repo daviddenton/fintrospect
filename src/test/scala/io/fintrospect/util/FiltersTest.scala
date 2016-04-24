@@ -11,6 +11,7 @@ import com.twitter.util.Future
 import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
 import io.fintrospect.util.Filters.Request.{AddHost, BasicAuthorization}
 import io.fintrospect.util.Filters.Response.{AddDate, CatchAll, ReportingRouteLatency}
+import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.TestClocks._
 import io.fintrospect.{ContentTypes, Headers}
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -22,19 +23,19 @@ class FiltersTest extends FunSpec with ShouldMatchers {
       it("works") {
         val authority = Authority(Host.localhost, Port(9865))
 
-        result(AddHost(authority)(Request(), Service.mk { req => Future.value(req.headerMap("Host")) })) shouldBe authority.toString
+        result(AddHost(authority)(Request(), Service.mk { req => Future.value(headerOf("Host")(req)) })) shouldBe authority.toString
       }
     }
 
     describe("Add basic authorization header") {
       it("works") {
-        result(BasicAuthorization(Credentials("hello", "kitty"))(Request(), Service.mk { req => Future.value(req.headerMap("Authorization")) })) shouldBe "Basic aGVsbG86a2l0dHk="
+        result(BasicAuthorization(Credentials("hello", "kitty"))(Request(), Service.mk { req => Future.value(headerOf("Authorization")(req)) })) shouldBe "Basic aGVsbG86a2l0dHk="
       }
     }
 
-    describe("Adds Content-Type") {
+    describe("Adds Accept header") {
       it("works") {
-        result(Filters.Request.AddContentType(ContentTypes.APPLICATION_ATOM_XML)(Request(), Service.mk { req => Future.value(req.headerMap("Content-Type")) })) shouldBe "application/atom+xml"
+        result(Filters.Request.AddAccept(ContentTypes.APPLICATION_ATOM_XML, ContentTypes.APPLICATION_JSON)(Request(), Service.mk { req => Future.value(headerOf("Accept")(req)) })) shouldBe "application/atom+xml, application/json"
       }
     }
   }
@@ -50,7 +51,8 @@ class FiltersTest extends FunSpec with ShouldMatchers {
 
     describe("Add date header") {
       it("works") {
-        result(AddDate(fixed)(Request(), Service.mk { req:Request => Future.value(Response()) })).headerMap("Date") shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(fixed))
+        val response = result(AddDate(fixed)(Request(), Service.mk { req: Request => Future.value(Response()) }))
+        headerOf("Date")(response) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(fixed))
       }
     }
 
