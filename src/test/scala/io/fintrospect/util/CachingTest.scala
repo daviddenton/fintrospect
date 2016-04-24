@@ -13,18 +13,17 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 class CachingTest extends FunSpec with ShouldMatchers {
 
-  private val clock = Clock.fixed(ZonedDateTime.now().toInstant, ZoneId.systemDefault())
   private val maxAge = ofSeconds(10)
   private val timings = DefaultCacheTimings(MaxAgeTtl(maxAge), StaleIfErrorTtl(ofSeconds(2000)), StaleWhenRevalidateTtl(ofSeconds(3000)))
 
   describe("FallbackCacheControl") {
-    def getResponseWith(cacheTimings: DefaultCacheTimings, response: Response) = Await.result(Caching.FallbackCacheControl(clock, cacheTimings)(Request(), Service.mk((r) => Future.value(response))))
+    def getResponseWith(cacheTimings: DefaultCacheTimings, response: Response) = Await.result(Caching.FallbackCacheControl(TestClocks.fixed, cacheTimings)(Request(), Service.mk((r) => Future.value(response))))
 
     it("adds the headers if they are not set") {
       val responseWithNoHeaders = Response(Status.Ok)
       val response = getResponseWith(timings, responseWithNoHeaders)
       response.headerMap("Cache-Control") should be("public, max-age=10, stale-while-revalidate=3000, stale-if-error=2000")
-      response.headerMap("Expires") should be(RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock).plus(maxAge)))
+      response.headerMap("Expires") should be(RFC_1123_DATE_TIME.format(ZonedDateTime.now(TestClocks.fixed).plus(maxAge)))
       response.headerMap("Vary") should be("Accept-Encoding")
     }
 
