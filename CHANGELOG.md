@@ -4,12 +4,14 @@ The main API is stable now, but expect some amount of breaking changes around ma
 
 ## Backlog/upcoming
 - Option to dynamically reload View templates
-- Vetting of Accept and Content-types (return 418 for unsupported media type)
 - Drop support for Scala 2.10 (when finagle.http does)
 
-## v12.11.0 (uncut)
+## v12.11.0
 - Added `HeapDump` utility service to programatically generate a hprof file.
-- Added support for multiple header parameters with same name.
+- Similar to ```Query```, added support for multiple header parameters with same name. See ```*()``` on ```Header.required|optional```.
+- Support for serving strict content-type negotiation and multiple content types to be served from a single route. See example ```strictcontenttypes```.
+- Added a number of useful general-case filters. See ```Filters```.
+- Added a number of useful cache-control filters. See ```Caching```.
 - Upgrade of `Circe` version to `0.4.1`
 - Upgrade of `Scala` version to `2.11.8`
 

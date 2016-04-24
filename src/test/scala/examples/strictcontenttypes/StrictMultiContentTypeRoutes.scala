@@ -1,4 +1,4 @@
-package examples.multicontenttypes
+package examples.strictcontenttypes
 
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
@@ -7,15 +7,15 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
-import io.fintrospect.{ContentTypes, ModuleSpec, MultiContentType, RouteSpec}
+import io.fintrospect.{ContentTypes, ModuleSpec, StrictContentTypeNegotiation, RouteSpec}
 
 /**
-  * Shows how to add routes which can serve multiple content types. Basically, the Accept header is checked
-  * against the list of supplied services and a match found. If there is no Accept header set in the request,
-  * the first service in the list is used. This means that there is NO sophisticated content negotiation implemented,
-  * although Wildcard Accept headers will also match the first supplied service mapping.
+  * Shows how to add routes which can serve multiple content types using strict content-type negotiation.
+  * Basically, the Accept header is checked against the list of supplied services and a match found. If there is no
+  * Accept header set in the request, the first service in the list is used. This means that there is NO sophisticated
+  * content negotiation implemented, although Wildcard Accept headers is supported to match the first supplied mapping service.
   */
-object MultiContentTypeRoutes extends App {
+object StrictMultiContentTypeRoutes extends App {
 
   private val serveJson = Service.mk { (rq: Request) => import io.fintrospect.formats.json.Argo.JsonFormat._
  import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
@@ -30,7 +30,7 @@ object MultiContentTypeRoutes extends App {
       </root>)
   }
 
-  private val serve = MultiContentType(
+  private val serve = StrictContentTypeNegotiation(
     ContentTypes.APPLICATION_SVG_XML -> serveXml,
     ContentTypes.APPLICATION_JSON -> serveJson
   )

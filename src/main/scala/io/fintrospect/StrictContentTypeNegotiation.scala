@@ -7,15 +7,15 @@ import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
 import io.fintrospect.parameters.Header
 
 /**
-  * Service which allows multiple content types to be supported on a single route. Note that due to Content-Type
-  * negotiation being quite complicated, this service does NOT implement full functionality, such as q values or levels.
+  * Service which allows strict content type negotiation (for multiple types) to be supported on a single route. Note that due to Content-Type
+  * negotiation being quite complicated, this service does NOT support full functionality, such as q values or levels.
   *
   * The implementation is:
   * Check the Accept header and tries to get an exact match on any "<level1>/<level2>" value that it finds. If no match
   * can be found, return an HTTP 406 (Not Acceptable) status. Wildcards or missing Accept headers will choose the first
   * supplied service in the list.
   */
-object MultiContentType {
+object StrictContentTypeNegotiation {
   private val accept = Header.optional.*.string("Accept")
 
   def apply(services: (ContentType, Service[Request, Response])*): Service[Request, Response] = {
