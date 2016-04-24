@@ -36,33 +36,28 @@ class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
   def withContent(content: T): ResponseBuilder[T] = withContent(toFormat(content))
 
   def withContent(content: String): ResponseBuilder[T] = {
-    response.setContentType(contentType.value)
     response.setContentString(content)
     this
   }
 
   def withContent(reader: Reader): ResponseBuilder[T] = {
     val newResponse = Response(response.version, response.status, reader)
-    response.setContentType(contentType.value)
     response.headerMap.foreach(kv => newResponse.headerMap.add(kv._1, kv._2))
     response = newResponse
     this
   }
 
   def withContent(buf: Buf): ResponseBuilder[T] = {
-    response.setContentType(contentType.value)
     response.content = buf
     this
   }
 
   def withContent(channelBuffer: ChannelBuffer): ResponseBuilder[T] = {
-    response.setContentType(contentType.value)
     response.setContentString(channelBuffer.toString(Charsets.Utf8))
     this
   }
 
   def withContent(f: OutputStream => Unit): ResponseBuilder[T] = {
-    response.setContentType(contentType.value)
     response.withOutputStream(f)
     this
   }
@@ -77,7 +72,10 @@ class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
     this
   }
 
-  override def build(): Response = response
+  override def build(): Response = {
+    response.setContentType(contentType.value)
+    response
+  }
 
   def toFuture: Future[Response] = Future.value(build())
 }
