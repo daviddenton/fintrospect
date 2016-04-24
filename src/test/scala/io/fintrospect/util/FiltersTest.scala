@@ -17,6 +17,7 @@ import io.fintrospect.{ContentTypes, Headers}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class FiltersTest extends FunSpec with ShouldMatchers {
+
   describe("Request") {
 
     describe("Add authority host header") {
@@ -33,9 +34,15 @@ class FiltersTest extends FunSpec with ShouldMatchers {
       }
     }
 
-    describe("Adds Accept header") {
+    describe("Adds accept header") {
       it("works") {
         result(Filters.Request.AddAccept(ContentTypes.APPLICATION_ATOM_XML, ContentTypes.APPLICATION_JSON)(Request(), Service.mk { req => Future.value(headerOf("Accept")(req)) })) shouldBe "application/atom+xml, application/json"
+      }
+    }
+
+    describe("Adds content-type header") {
+      it("works") {
+        result(Filters.Request.AddContentType(ContentTypes.APPLICATION_ATOM_XML)(Request(), Service.mk { req => Future.value(headerOf("Content-Type")(req)) })) shouldBe "application/atom+xml"
       }
     }
   }

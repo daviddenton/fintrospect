@@ -21,6 +21,13 @@ object Filters {
     * These filters operate on Requests (pre-flight)
     */
   object Request {
+    def AddContentType[T](contentType: ContentType) = Filter.mk[Request, T, Request, T] {
+      (req, svc) => {
+        req.headerMap("Content-Type") = contentType.value
+        svc(req)
+      }
+    }
+
     def AddAccept[T](contentTypes: ContentType*) = Filter.mk[Request, T, Request, T] {
       (req, svc) => {
         contentTypes.foreach(c => req.headerMap.add("Accept", c.value))
