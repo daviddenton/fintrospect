@@ -9,6 +9,7 @@ The main API is stable now, but expect some amount of breaking changes around ma
 
 ## v12.11.0 (uncut)
 - Added `HeapDump` utility service to programatically generate a hprof file.
+- Added support for multiple header parameters with same name.
 - Upgrade of `Circe` version to `0.4.1`
 - Upgrade of `Scala` version to `2.11.8`
 

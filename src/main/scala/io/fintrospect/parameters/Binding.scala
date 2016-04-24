@@ -5,8 +5,8 @@ import com.twitter.finagle.http.Request
 import scala.language.existentials
 
 /**
- * Represents the binding of a parameter to it's value in a particular context
- */
+  * Represents the binding of a parameter to it's value in a particular context
+  */
 sealed trait Binding {
   val parameter: Parameter
 
