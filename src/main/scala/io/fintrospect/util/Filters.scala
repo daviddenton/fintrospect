@@ -13,7 +13,7 @@ import io.fintrospect.formats.json.Argo
 import io.fintrospect.{ContentType, Headers}
 
 /**
-  * Useful filters
+  * General case useful filters
   */
 object Filters {
 
