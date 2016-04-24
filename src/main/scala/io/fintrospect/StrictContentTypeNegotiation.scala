@@ -20,7 +20,7 @@ object StrictContentTypeNegotiation {
 
     val accepted = (services ++ services.headOption.map(p => ContentTypes.WILDCARD -> p._2))
       .map(p => (ContentType(p._1.value.toLowerCase), p._2))
-      .tomove
+      .toMap
 
     Service.mk {
       request: Request => {
