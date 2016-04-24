@@ -12,19 +12,38 @@ object Header {
     self: Bindable[T, RequestBinding] =>
   }
 
+  trait MandatorySeq[T] extends io.fintrospect.parameters.Mandatory[Seq[T], Message] with MandatoryRebind[Seq[T], Message, RequestBinding] {
+    self: Bindable[Seq[T], RequestBinding] =>
+  }
+
   trait Optional[T] extends io.fintrospect.parameters.Optional[T, Message]
   with OptionalBindable[T, RequestBinding]
   with OptionalRebind[T, Message, RequestBinding] {
     self: Bindable[T, RequestBinding] =>
   }
 
-  val required = new Parameters[HeaderParameter, Mandatory] {
-    override def apply[T](spec: ParameterSpec[T]) = new HeaderParameter[T](spec)
-      with Mandatory[T]
+  trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Seq[T], Message]
+  with OptionalBindable[Seq[T], RequestBinding]
+  with OptionalRebind[Seq[T], Message, RequestBinding] {
+    self: Bindable[Seq[T], RequestBinding] =>
   }
 
-  val optional = new Parameters[HeaderParameter, Optional] {
-    override def apply[T](spec: ParameterSpec[T]) = new HeaderParameter[T](spec)
+  val required = new Parameters[HeaderParameter, Mandatory] with MultiParameters[MultiHeaderParameter, MandatorySeq] {
+    override def apply[T](spec: ParameterSpec[T]) = new SingleHeaderParameter[T](spec)
+      with Mandatory[T]
+
+    override val multi = new Parameters[MultiHeaderParameter, MandatorySeq] {
+      override def apply[T](spec: ParameterSpec[T]) = new MultiHeaderParameter[T](spec) with MandatorySeq[T]
+    }
+  }
+
+  val optional = new Parameters[HeaderParameter, Optional] with MultiParameters[MultiHeaderParameter, OptionalSeq] {
+    override def apply[T](spec: ParameterSpec[T]) = new SingleHeaderParameter[T](spec)
       with Optional[T]
+
+    override val multi = new Parameters[MultiHeaderParameter, OptionalSeq] {
+      override def apply[T](spec: ParameterSpec[T]) = new MultiHeaderParameter[T](spec) with OptionalSeq[T]
+    }
+
   }
 }
