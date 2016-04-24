@@ -10,6 +10,7 @@ import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.util.Caching.Response.FallbackCacheControl
 import io.fintrospect.util.Caching.{DefaultCacheTimings, MaxAgeTtl, StaleIfErrorTtl, StaleWhenRevalidateTtl}
+import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.TestClocks.fixed
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -24,7 +25,7 @@ class CachingTest extends FunSpec with ShouldMatchers {
       it("works") {
         val maxAge = Duration.ofSeconds(1)
         result(Caching.Request.AddIfModifiedSince(fixed, maxAge)(Request(),
-          Service.mk { req => Future.value(req.headerMap("If-Modified-Since")) })
+          Service.mk { req => Future.value(req.headerMap.getAll("If-Modified-Since").mkString(",")) })
         ) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(fixed).minus(maxAge))
       }
     }
@@ -38,9 +39,9 @@ class CachingTest extends FunSpec with ShouldMatchers {
       it("adds the headers if they are not set") {
         val responseWithNoHeaders = Response(Status.Ok)
         val response = getResponseWith(timings, responseWithNoHeaders)
-        response.headerMap("Cache-Control") should be("public, max-age=10, stale-while-revalidate=3000, stale-if-error=2000")
-        response.headerMap("Expires") should be(RFC_1123_DATE_TIME.format(ZonedDateTime.now(TestClocks.fixed).plus(maxAge)))
-        response.headerMap("Vary") should be("Accept-Encoding")
+        headerOf("Cache-Control")(response) should be("public, max-age=10, stale-while-revalidate=3000, stale-if-error=2000")
+        headerOf("Expires")(response) should be(RFC_1123_DATE_TIME.format(ZonedDateTime.now(TestClocks.fixed).plus(maxAge)))
+        headerOf("Vary")(response) should be("Accept-Encoding")
       }
 
       it("does not overwrite the headers if they are set") {
@@ -49,9 +50,9 @@ class CachingTest extends FunSpec with ShouldMatchers {
         responseWithHeaders.headerMap("Expires") = "rita"
         responseWithHeaders.headerMap("Vary") = "sue"
         val response = getResponseWith(timings, responseWithHeaders)
-        response.headerMap("Cache-Control") should be("bob")
-        response.headerMap("Expires") should be("rita")
-        response.headerMap("Vary") should be("sue")
+        headerOf("Cache-Control")(response) should be("bob")
+        headerOf("Expires")(response) should be("rita")
+        headerOf("Vary")(response) should be("sue")
       }
     }
 
@@ -63,8 +64,8 @@ class CachingTest extends FunSpec with ShouldMatchers {
 
       it("adds correct headers to GET requests") {
         val r = responseWith(Caching.Response.NoCache(), Request(Method.Get, ""))
-        r.headerMap("Expires") shouldBe "0"
-        r.headerMap("Cache-Control") shouldBe "private, must-revalidate"
+        headerOf("Expires")(r) shouldBe "0"
+        headerOf("Cache-Control")(r) shouldBe "private, must-revalidate"
       }
     }
 
@@ -77,8 +78,8 @@ class CachingTest extends FunSpec with ShouldMatchers {
       it("adds correct headers to GET requests based on current time") {
         val now = ZonedDateTime.now()
         val r = responseWith(Caching.Response.MaxAge(Clock.fixed(now.toInstant, ZoneId.systemDefault()), Duration.ofHours(1)), Request(Method.Get, ""))
-        r.headerMap("Expires") shouldBe now.plusHours(1).format(RFC_1123_DATE_TIME)
-        r.headerMap("Cache-Control") shouldBe "public, max-age=3600"
+        headerOf("Expires")(r) shouldBe now.plusHours(1).format(RFC_1123_DATE_TIME)
+        headerOf("Cache-Control")(r) shouldBe "public, max-age=3600"
       }
     }
 
