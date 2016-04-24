@@ -2,7 +2,8 @@
 A ```RouteSpec``` can also be bound to a standard Finagle HTTP client ```Service``` and then called as a function, passing in the parameters which 
 are bound to values by using the ```-->()``` or ```of()``` method. The client marshalls the passed parameters into an HTTP request and 
 returns a Twitter ```Future``` containing the response. Any required manipulation of the ```Request``` (such as adding timeouts or caching 
-headers) can be done in the standard way by chaining a ```Filter``` to the client ```Service```:
+headers) can be done in the standard way by chaining a ```Filter``` to the client ```Service```. Note that ```Content-Type``` headers for posted HTTP 
+bodies is already handled by the bound ```Body``` instance.:
 
 ```
 val employeeId = Path.integer("employeeId")
