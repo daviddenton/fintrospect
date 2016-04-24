@@ -4,7 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.NotAcceptable
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
-import io.fintrospect.parameters.Header
+
 
 /**
   * Service which allows strict content type negotiation (for multiple types) to be supported on a single route. Note that due to Content-Type
@@ -16,25 +16,17 @@ import io.fintrospect.parameters.Header
   * supplied service in the list.
   */
 object StrictContentTypeNegotiation {
-  private val accept = Header.optional.*.string("Accept")
-
   def apply(services: (ContentType, Service[Request, Response])*): Service[Request, Response] = {
 
-    val accepted =
-      (services ++ services.headOption.map(p => ContentTypes.WILDCARD -> p._2))
-        .map(p => (p._1.value.toLowerCase, p._2))
-        .toMap
+    val accepted = (services ++ services.headOption.map(p => ContentTypes.WILDCARD -> p._2))
+      .map(p => (ContentType(p._1.value.toLowerCase), p._2))
+      .tomove
 
     Service.mk {
       request: Request => {
-        accept.from(request)
-          .map(accepting => {
-            accepting
-              .flatMap(_.split(Array(',', ' ', ';')))
-              .map(_.toLowerCase)
-              .filter(_.matches(".+\\/.+"))
-              .toSet
-              .find(accepted.contains)
+        ContentType.fromAcceptHeaders(request)
+          .map(contentTypes => {
+            contentTypes.find(accepted.contains)
               .flatMap(accepted.get)
               .map(_ (request))
               .getOrElse(NotAcceptable().toFuture)
