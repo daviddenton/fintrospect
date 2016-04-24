@@ -3,12 +3,14 @@ package io.fintrospect.formats
 import java.nio.charset.Charset.defaultCharset
 
 import com.twitter.finagle.http.{Cookie, Status}
+import com.twitter.io.Bufs.utf8Buf
 import com.twitter.io.{Bufs, Reader}
 import com.twitter.util.Await
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes.TEXT_PLAIN
 import io.fintrospect.formats.ResponseBuilder.HttpResponse
 import io.fintrospect.util.HttpRequestResponseUtil
+import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
 import org.scalatest.FunSpec
 import org.scalatest.Matchers._
@@ -67,16 +69,16 @@ class ResponseBuilderTest extends FunSpec {
     val response = new ResponseBuilder[PlainTextValue](_.value, PlainTextValue, e => PlainTextValue(e.getMessage), ContentType("anyContentType"))
       .withHeaders("bob" -> "rita", "bob" -> "rita2")
       .withContent(reader).build()
-    reader.write(Bufs.utf8Buf("hello")).ensure(reader.close())
+    reader.write(utf8Buf("hello")).ensure(reader.close())
 
-    HttpRequestResponseUtil.headerOf("bob")(response) shouldBe "rita, rita2"
+    headerOf("bob")(response) shouldBe "rita, rita2"
     response.headerMap("Content-Type") shouldBe "anyContentType;charset=utf-8"
     Await.result(response.reader.read(5)).map(Bufs.asUtf8String).get shouldBe "hello"
   }
 
   it("should set the content correctly given Buf") {
     val response = new ResponseBuilder[PlainTextValue](_.value, PlainTextValue, e => PlainTextValue(e.getMessage), ContentType("anyContentType"))
-      .withContent(Bufs.utf8Buf("hello")).build()
+      .withContent(utf8Buf("hello")).build()
     response.contentString shouldBe "hello"
   }
 
