@@ -1,5 +1,6 @@
 package io.fintrospect.formats
 
+import java.io.OutputStream
 import java.nio.charset.Charset.defaultCharset
 
 import com.twitter.finagle.http.Status.{BadGateway, NotFound, Ok}
@@ -62,16 +63,24 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
       statusAndContentFrom(Ok(customType)) shouldEqual(Ok, customTypeSerialised)
     }
 
+    it("content - OutputStream") {
+      statusAndContentFrom(bldr.HttpResponse().withContent((out:OutputStream) => out.write(expectedContent.getBytes()))) shouldEqual(Ok, expectedContent)
+      statusAndContentFrom(Ok((out:OutputStream) => out.write(expectedContent.getBytes()))) shouldEqual(Ok, expectedContent)
+    }
+
     it("content - String") {
       statusAndContentFrom(bldr.HttpResponse().withContent(message)) shouldEqual(Ok, expectedContent)
+      statusAndContentFrom(Ok(message)) shouldEqual(Ok, expectedContent)
     }
 
     it("content - Buf") {
       statusAndContentFrom(bldr.HttpResponse().withContent(Bufs.utf8Buf(message))) shouldEqual(Ok, expectedContent)
+      statusAndContentFrom(Ok(Bufs.utf8Buf(message))) shouldEqual(Ok, expectedContent)
     }
 
     it("content - ChannelBuffer") {
       statusAndContentFrom(bldr.HttpResponse().withContent(copiedBuffer(message, defaultCharset()))) shouldEqual(Ok, expectedContent)
+      statusAndContentFrom(Ok(copiedBuffer(message, defaultCharset()))) shouldEqual(Ok, expectedContent)
     }
 
     it("error with code only") {

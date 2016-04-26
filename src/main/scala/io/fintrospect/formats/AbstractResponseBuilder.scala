@@ -1,5 +1,7 @@
 package io.fintrospect.formats
 
+import java.io.OutputStream
+
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Response, Status}
 import com.twitter.io.{Buf, Reader}
@@ -40,6 +42,8 @@ trait AbstractResponseBuilder[T] {
    */
   class ResponseBuilderConfig(status: Status) {
     def apply(): ResponseBuilder[T] = HttpResponse(status)
+
+    def apply(f: OutputStream => Unit): ResponseBuilder[T] = HttpResponse(status).withContent(f)
 
     def apply(channelBuffer: ChannelBuffer): ResponseBuilder[T] = HttpResponse(status).withContent(channelBuffer)
 
