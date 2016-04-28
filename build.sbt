@@ -30,7 +30,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json" % "2.4.3" % "provided",
   "org.json4s" %% "json4s-native" % "3.3.0" % "provided",
   "org.json4s" %% "json4s-jackson" % "3.3.0" % "provided",
-  "com.twitter" %% "finagle-http" % "6.34.0" % "provided",
+  "com.twitter" %% "finagle-http" % "6.35.0" % "provided",
   "com.github.finagle" %% "finagle-oauth2" % "0.1.6" % "provided",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
