@@ -6,6 +6,9 @@ The main API is stable now, but expect some amount of breaking changes around ma
 - Option to dynamically reload View templates
 - Drop support for Scala 2.10 (when finagle.http does)
 
+## v12.12.0
+- Upgrade Finagle dependency to `6.35.0`. Note that this is (apparently) the last Scala `2.10.X` supporting release.
+
 ## v12.11.0
 - Added `HeapDump` utility service to programatically generate a hprof file.
 - Similar to ```Query```, added support for multiple header parameters with same name. See ```*()``` on ```Header.required|optional```.
