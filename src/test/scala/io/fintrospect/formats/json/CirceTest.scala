@@ -52,6 +52,37 @@ class CirceFiltersTest extends FunSpec with ShouldMatchers {
         result(svc(request)).status shouldEqual Status.NotFound
       }
     }
+
+    describe("AutoIn") {
+      it("takes the object from the request") {
+        val svc = Circe.Filters.AutoIn(Circe.JsonFormat.body[CirceLetter]()).andThen(Service.mk { in: CirceLetter => Future.value(in) })
+        result(svc(request)) shouldEqual aLetter
+      }
+    }
+
+    describe("AutoOut") {
+      it("takes the object from the request") {
+        val svc = Circe.Filters.AutoOut[CirceLetter, CirceLetter](Created).andThen(Service.mk { in: CirceLetter => Future.value(in) })
+        val response = result(svc(aLetter))
+        response.status shouldEqual Created
+        decode[CirceLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+    }
+
+    describe("AutoOptionalOut") {
+      it("returns Ok when present") {
+        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(Option(in)) })
+
+        val response = result(svc(aLetter))
+        response.status shouldEqual Created
+        decode[CirceLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+
+      it("returns NotFound when missing present") {
+        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(None) })
+        result(svc(aLetter)).status shouldEqual Status.NotFound
+      }
+    }
   }
 }
 

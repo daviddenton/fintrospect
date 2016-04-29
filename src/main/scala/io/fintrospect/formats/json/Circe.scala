@@ -16,6 +16,10 @@ import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec
   */
 object Circe extends JsonLibrary[Json, Json] {
 
+  /**
+    * Auto-marshalling filters which can be used to create Services which take and return domain objects
+    * instead of HTTP responses
+    */
   object Filters {
 
     /**
