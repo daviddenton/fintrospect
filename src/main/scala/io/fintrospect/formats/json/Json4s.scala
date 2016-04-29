@@ -22,6 +22,7 @@ object Json4s {
     */
   class Json4sFilters[T](json4sFormat: Json4sFormat[T], jsonLibrary: JsonLibrary[JValue, JValue]) {
 
+    import jsonLibrary.ResponseBuilder.implicits._
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
       * which return an object.
@@ -57,13 +58,10 @@ object Json4s {
       */
     def AutoOut[IN, OUT <: AnyRef](successStatus: Status = Ok, formats: Formats = json4sFormat.serialization.formats(NoTypeHints)): Filter[IN, Response, IN, OUT]
     = Filter.mk[IN, Response, IN, OUT] {
-      { (req, svc) => svc(req)
+      (req, svc) => svc(req)
         .map(t => {
-          val encode: JValue = json4sFormat.encode(t, formats)
-          jsonLibrary.ResponseBuilder.HttpResponse(successStatus)
-            .withContent(encode).build()
+          jsonLibrary.ResponseBuilder.HttpResponse(successStatus).withContent(json4sFormat.encode(t, formats)).build()
         })
-      }
     }
 
     /**
@@ -72,9 +70,7 @@ object Json4s {
       */
     def AutoOptionalOut[IN, OUT <: AnyRef](successStatus: Status = Ok, formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
     : Filter[IN, Response, IN, Option[OUT]] = Filter.mk[IN, Response, IN, Option[OUT]] {
-      import Json4s.Native.ResponseBuilder.implicits._
-      (req, svc) => svc(req).map(optT => optT.map(t => Json4s.Native.ResponseBuilder.HttpResponse(successStatus)
-        .withContent(json4sFormat.encode(t, formats)).build()).getOrElse(NotFound().build()))
+      (req, svc) => svc(req).map(optT => optT.map(t => successStatus(json4sFormat.encode(t, formats)).build()).getOrElse(NotFound().build()))
     }
 
     /**
@@ -200,4 +196,5 @@ object Json4s {
 
     val Filters = new Json4sFilters(JsonFormat, JacksonDoubleMode)
   }
+
 }
