@@ -21,6 +21,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
     * instead of HTTP responses
     */
   object Filters {
+    import Argonaut.ResponseBuilder.implicits._
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -52,7 +53,6 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoOut[IN, OUT](successStatus: Status = Ok)(implicit e: EncodeJson[OUT]): Filter[IN, Response, IN, OUT] = Filter.mk[IN, Response, IN, OUT] {
-      import Argonaut.ResponseBuilder.implicits._
       { (req, svc) => svc(req)
         .map(t => Argonaut.ResponseBuilder.HttpResponse(successStatus)
           .withContent(Argonaut.JsonFormat.encode(t)))
@@ -64,7 +64,6 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)(implicit e: EncodeJson[OUT]): Filter[IN, Response, IN, Option[OUT]] = Filter.mk[IN, Response, IN, Option[OUT]] {
-      import Argonaut.ResponseBuilder.implicits._
       (req, svc) => svc(req).map(optT => optT.map(t => Argonaut.ResponseBuilder.HttpResponse(successStatus)
         .withContent(Argonaut.JsonFormat.encode(t)).build()).getOrElse(NotFound().build()))
     }

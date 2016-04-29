@@ -22,6 +22,8 @@ object Circe extends JsonLibrary[Json, Json] {
     */
   object Filters {
 
+    import Circe.ResponseBuilder.implicits._
+
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
       * which return an object.
@@ -52,11 +54,9 @@ object Circe extends JsonLibrary[Json, Json] {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoOut[IN, OUT](successStatus: Status = Ok)(implicit e: Encoder[OUT]): Filter[IN, Response, IN, OUT] = Filter.mk[IN, Response, IN, OUT] {
-      import Circe.ResponseBuilder.implicits._
-      { (req, svc) => svc(req)
+      (req, svc) => svc(req)
         .map(t => Circe.ResponseBuilder.HttpResponse(successStatus)
           .withContent(Circe.JsonFormat.encode(t)))
-      }
     }
 
     /**
@@ -64,7 +64,6 @@ object Circe extends JsonLibrary[Json, Json] {
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)(implicit e: Encoder[OUT]): Filter[IN, Response, IN, Option[OUT]] = Filter.mk[IN, Response, IN, Option[OUT]] {
-      import Circe.ResponseBuilder.implicits._
       (req, svc) => svc(req).map(optT => optT.map(t => Circe.ResponseBuilder.HttpResponse(successStatus)
         .withContent(Circe.JsonFormat.encode(t)).build()).getOrElse(NotFound().build()))
     }

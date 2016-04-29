@@ -12,8 +12,8 @@ import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec
 import play.api.libs.json.{Json, _}
 
 /**
- * Play JSON support (application/json content type)
- */
+  * Play JSON support (application/json content type)
+  */
 object Play extends JsonLibrary[JsValue, JsValue] {
 
   /**
@@ -21,6 +21,8 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     * instead of HTTP responses
     */
   object Filters {
+
+    import Play.ResponseBuilder.implicits._
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -52,11 +54,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoOut[IN, OUT](successStatus: Status = Ok)(implicit e: Writes[OUT]): Filter[IN, Response, IN, OUT] = Filter.mk[IN, Response, IN, OUT] {
-      import Play.ResponseBuilder.implicits._
-      { (req, svc) => svc(req)
+      (req, svc) => svc(req)
         .map(t => Play.ResponseBuilder.HttpResponse(successStatus)
           .withContent(Play.JsonFormat.encode(t)))
-      }
     }
 
     /**
@@ -64,7 +64,6 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)(implicit e: Writes[OUT]): Filter[IN, Response, IN, Option[OUT]] = Filter.mk[IN, Response, IN, Option[OUT]] {
-      import Play.ResponseBuilder.implicits._
       (req, svc) => svc(req).map(optT => optT.map(t => Play.ResponseBuilder.HttpResponse(successStatus)
         .withContent(Play.JsonFormat.encode(t)).build()).getOrElse(NotFound().build()))
     }
@@ -122,8 +121,8 @@ object Play extends JsonLibrary[JsValue, JsValue] {
                (implicit reads: Reads[R], writes: Writes[R]) = Body(bodySpec[R](description)(reads, writes), example, ObjectParamType)
 
     /**
-     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
-     */
+      * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+      */
     def bodySpec[R](description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
       BodySpec[R](description, APPLICATION_JSON, s => decode[R](parse(s))(reads), (u: R) => compact(encode(u)(writes)))
 
@@ -135,8 +134,8 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       ResponseSpec.json(statusAndDescription, encode(example)(writes), this)
 
     /**
-     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
-     */
+      * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+      */
     def parameterSpec[R](name: String, description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
       ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(reads), (u: R) => compact(encode(u)(writes)))
   }
