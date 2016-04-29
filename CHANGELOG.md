@@ -6,6 +6,10 @@ The main API is stable now, but expect some amount of breaking changes around ma
 - Option to dynamically reload View templates
 - Drop support for Scala 2.10 (when finagle.http does)
 
+## v12.13.0
+- Added auto-marshalling support for JSON libraries which support it (```Circe, Argonauy, Json4S, Play```. 
+See ```Circe.Filters.Auto***``` filter contructors to wrap your existing domain services, or see ```Circe``` example for exact usage.
+
 ## v12.12.0
 - Upgrade Finagle dependency to `6.35.0`. Note that this is (apparently) the last Scala `2.10.X` supporting release.
 
