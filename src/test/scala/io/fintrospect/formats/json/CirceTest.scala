@@ -1,7 +1,7 @@
 package io.fintrospect.formats.json
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
@@ -30,10 +30,10 @@ class CirceFiltersTest extends FunSpec with ShouldMatchers {
 
     describe("AutoInOut") {
       it("returns Ok") {
-        val svc = Circe.Filters.AutoInOut(Service.mk { in: CirceLetter => Future.value(in) })
+        val svc = Circe.Filters.AutoInOut(Service.mk { in: CirceLetter => Future.value(in) }, Created)
 
         val response = result(svc(request))
-        response.status shouldEqual Ok
+        response.status shouldEqual Created
         decode[CirceLetter](parse(response.contentString)) shouldEqual aLetter
       }
     }
