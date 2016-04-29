@@ -18,7 +18,7 @@ class AddMessage(emails: Emails) {
 
   private val email = Body(bodySpec[Email](Option("email")), exampleEmail, ObjectParamType)
 
-  private val addEmail = Service.mk {
+  private val addEmail: Service[Email, Seq[Email]] = Service.mk {
     newEmail: Email => {
       emails.add(newEmail)
       Future.value(emails.forUser(newEmail.to))

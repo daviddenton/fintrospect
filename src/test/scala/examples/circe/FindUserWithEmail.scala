@@ -16,15 +16,17 @@ import io.fintrospect.parameters.Path
   */
 class FindUserWithEmail(emails: Emails) {
 
-  private def find(email: EmailAddress) = AutoOptionalOut[Request, EmailAddress]()
-    .andThen(
+  private def findByEmail(email: EmailAddress) = {
+    val lookupUserByEmail: Service[Request, Option[EmailAddress]] =
       Service.mk { unused: Request => Future.value(emails.users().find(_.address == email.address)) }
-    )
+
+    AutoOptionalOut[Request, EmailAddress]().andThen(lookupUserByEmail)
+  }
 
   val route = RouteSpec("Get the user for the particular email address")
     .returning(Ok -> "found the user")
     .returning(NotFound -> "who is that?")
-    .at(Get) / "user" / Path(EmailAddress.spec) bindTo find
+    .at(Get) / "user" / Path(EmailAddress.spec) bindTo findByEmail
 }
 
 
