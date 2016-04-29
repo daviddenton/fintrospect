@@ -1,8 +1,8 @@
 package io.fintrospect.formats.json
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
 import io.fintrospect.formats.json.Circe.JsonFormat._
@@ -28,17 +28,31 @@ class CirceFiltersTest extends FunSpec with ShouldMatchers {
     val request = Request()
     request.contentString = encode(aLetter).noSpaces
 
-    it("can auto both in and out") {
-      val svc = Circe.Filters.AutoInOut(Service.mk { in: CirceLetter => Future.value(in) })
-      decode[CirceLetter](parse(result(svc(request)).contentString)) shouldEqual aLetter
+    describe("AutoInOut") {
+      it("returns Ok") {
+        val svc = Circe.Filters.AutoInOut(Service.mk { in: CirceLetter => Future.value(in) })
+
+        val response = result(svc(request))
+        response.status shouldEqual Ok
+        decode[CirceLetter](parse(response.contentString)) shouldEqual aLetter
+      }
     }
 
-//    it("can auto both in and out") {
-//      val svc = Circe.Filters.AutoIn() Service.mk { in: CirceLetter => Future.value(in) })
-//      decode[CirceLetter](parse(result(svc(request)).contentString)) shouldEqual aLetter
-//    }
-  }
+    describe("AutoInOptionalOut") {
+      it("returns Ok when present") {
+        val svc = Circe.Filters.AutoInOptionalOut(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(Option(in)) })
 
+        val response = result(svc(request))
+        response.status shouldEqual Ok
+        decode[CirceLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+
+      it("returns NotFound when missing present") {
+        val svc = Circe.Filters.AutoInOptionalOut(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(None) })
+        result(svc(request)).status shouldEqual Status.NotFound
+      }
+    }
+  }
 }
 
 class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
