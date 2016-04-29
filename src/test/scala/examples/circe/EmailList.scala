@@ -11,6 +11,9 @@ import io.fintrospect.formats.json.Circe.JsonFormat.{encode, responseSpec}
 import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters.{ParameterSpec, Path, StringParamType}
 
+/**
+  * This endpoint shows how to manually create an HTTP response with some Circe-encoded content.
+  */
 class EmailList(emails: Emails) {
   private val emailAddress = Path(ParameterSpec[EmailAddress]("address", Option("user email"), StringParamType, EmailAddress, e => e.address))
 
