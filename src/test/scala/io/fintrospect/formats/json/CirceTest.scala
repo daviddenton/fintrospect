@@ -23,17 +23,20 @@ class CirceFiltersTest extends FunSpec with ShouldMatchers {
   import io.circe.generic.auto._
 
   describe("Circe.Filters") {
-    it("can auto marshall both in and out") {
+    val aLetter = CirceLetter(CirceStreetAddress("my house"), CirceStreetAddress("your house"), "hi there")
 
-      val aLetter = CirceLetter(CirceStreetAddress("my house"), CirceStreetAddress("your house"), "hi there")
+    val request = Request()
+    request.contentString = encode(aLetter).noSpaces
 
-      val request = Request()
-      request.contentString = encode(aLetter).noSpaces
-
-      val svc = Circe.Filters.Auto(Service.mk { in: CirceLetter => Future.value(in) })
-
+    it("can auto both in and out") {
+      val svc = Circe.Filters.AutoInOut(Service.mk { in: CirceLetter => Future.value(in) })
       decode[CirceLetter](parse(result(svc(request)).contentString)) shouldEqual aLetter
     }
+
+//    it("can auto both in and out") {
+//      val svc = Circe.Filters.AutoIn() Service.mk { in: CirceLetter => Future.value(in) })
+//      decode[CirceLetter](parse(result(svc(request)).contentString)) shouldEqual aLetter
+//    }
   }
 
 }
