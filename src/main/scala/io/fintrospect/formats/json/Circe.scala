@@ -2,15 +2,14 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.Status.{NotFound, Ok}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
-import com.twitter.util.Future
 import io.circe._
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{UniBody, Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 
 /**
   * Circe JSON support (application/json content type)
@@ -18,25 +17,50 @@ import io.fintrospect.parameters.{UniBody, Body, BodySpec, ObjectParamType, Para
 object Circe extends JsonLibrary[Json, Json] {
 
   object Filters {
-    def Auto[BODY, OUT](svc: Service[BODY, OUT])(implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null): Service[Request, Response] = {
+
+    /**
+      * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios which return an object
+      */
+    def AutoInOut[BODY, OUT](svc: Service[BODY, OUT])(implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null): Service[Request, Response] = {
       val body = Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
-      marshallBody[BODY, Response](body).andThen(marshallOut[BODY, OUT](e)).andThen(svc)
+      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](e)).andThen(svc)
     }
 
-    def AutoFilter[BODY, OUT](implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null): Filter[Request, Response, BODY, OUT] = {
+    /**
+      * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios which may return an object
+      */
+    def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]])(implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null): Service[Request, Response] = {
       val body = Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
-      marshallBody[BODY, Response](body).andThen(marshallOut[BODY, OUT](e))
+      AutoIn[BODY, Response](body).andThen(AutoOptionalOut[BODY, OUT](e)).andThen(svc)
     }
 
-    def marshallBody[IN, OUT](body: Body[IN]): Filter[Request, OUT, IN, OUT] = new Filter[Request, OUT, IN, OUT] {
-      override def apply(request: Request, service: Service[IN, OUT]): Future[OUT] = service(body <-- request)
+    /**
+      * Filter to provide auto-marshalling of input case class instances for HTTP POST scenarios
+      */
+    def AutoIn[IN, OUT](body: Body[IN]) = Filter.mk[Request, OUT, IN, OUT] { (req, svc) => svc(body <-- req) }
+
+    /**
+      * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned
+      */
+    def AutoOut[IN, OUT](implicit e: Encoder[OUT]): Filter[IN, Response, IN, OUT] = Filter.mk[IN, Response, IN, OUT] {
+      import Circe.ResponseBuilder.implicits._
+      { (req, svc) => svc(req).map(t => Ok(Circe.JsonFormat.encode(t))) }
     }
 
-    def marshallOut[IN, OUT](implicit e: Encoder[OUT]): Filter[IN, Response, IN, OUT] = new Filter[IN, Response, IN, OUT] {
-      override def apply(in: IN, service: Service[IN, OUT]): Future[Response] = {
-        import Circe.ResponseBuilder.implicits._
-        service(in).map(t => Ok(Circe.JsonFormat.encode(t)))
-      }
+    /**
+      * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
+      */
+    def AutoOptionalOut[IN, OUT](implicit e: Encoder[OUT]): Filter[IN, Response, IN, Option[OUT]] = Filter.mk[IN, Response, IN, Option[OUT]] {
+      import Circe.ResponseBuilder.implicits._
+      (req, svc) => svc(req).map(optT => optT.map(t => Ok(Circe.JsonFormat.encode(t)).build()).getOrElse(NotFound().build()))
+    }
+
+    /**
+      * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
+      */
+    def AutoInOutFilter[BODY, OUT](implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null): Filter[Request, Response, BODY, OUT] = {
+      val body = Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
+      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](e))
     }
   }
 
