@@ -29,7 +29,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * which return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)(implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null): Service[Request, Response] = {
+    def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
+                            (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
+    : Service[Request, Response] = {
       val body = Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example, ObjectParamType)
       AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
     }
@@ -39,7 +41,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * which may return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
-    def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)(implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null): Service[Request, Response] = {
+    def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
+                                    (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
+    : Service[Request, Response] = {
       val body = Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example, ObjectParamType)
       AutoIn[BODY, Response](body).andThen(AutoOptionalOut[BODY, OUT](successStatus)(e)).andThen(svc)
     }
@@ -53,7 +57,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoOut[IN, OUT](successStatus: Status = Ok)(implicit e: Writes[OUT]): Filter[IN, Response, IN, OUT] = Filter.mk[IN, Response, IN, OUT] {
+    def AutoOut[IN, OUT](successStatus: Status = Ok)
+                        (implicit e: Writes[OUT]): Filter[IN, Response, IN, OUT]
+    = Filter.mk[IN, Response, IN, OUT] {
       (req, svc) => svc(req)
         .map(t => Play.ResponseBuilder.HttpResponse(successStatus)
           .withContent(Play.JsonFormat.encode(t)))
@@ -63,7 +69,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
-    def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)(implicit e: Writes[OUT]): Filter[IN, Response, IN, Option[OUT]] = Filter.mk[IN, Response, IN, Option[OUT]] {
+    def AutoOptionalOut[IN, OUT](successStatus: Status = Ok
+                                )(implicit e: Writes[OUT]): Filter[IN, Response, IN, Option[OUT]]
+    = Filter.mk[IN, Response, IN, Option[OUT]] {
       (req, svc) => svc(req).map(optT => optT.map(t => Play.ResponseBuilder.HttpResponse(successStatus)
         .withContent(Play.JsonFormat.encode(t)).build()).getOrElse(NotFound().build()))
     }
@@ -72,7 +80,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOutFilter[BODY, OUT](implicit successStatus: Status = Ok, db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null): Filter[Request, Response, BODY, OUT] = {
+    def AutoInOutFilter[BODY, OUT]
+    (implicit successStatus: Status = Ok, db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
+    : Filter[Request, Response, BODY, OUT] = {
       val body = Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example, ObjectParamType)
       AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus)(e))
     }
