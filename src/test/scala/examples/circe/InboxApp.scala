@@ -19,6 +19,7 @@ object InboxApp extends App {
   private val inboxModule = ModuleSpec(Root / "inbox", Swagger2dot0Json(ApiInfo("Inbox Example", "1.0")))
     .withRoute(new AddMessage(emails).route)
     .withRoute(new EmailList(emails).route)
+    .withRoute(new FindUserWithEmail(emails).route)
     .withRoute(new UserList(emails).route)
 
   Http.serve(":8181", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(inboxModule.toService))
