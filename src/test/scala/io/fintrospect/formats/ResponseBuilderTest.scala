@@ -9,7 +9,6 @@ import com.twitter.util.Await
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes.TEXT_PLAIN
 import io.fintrospect.formats.ResponseBuilder.HttpResponse
-import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
 import org.scalatest.FunSpec

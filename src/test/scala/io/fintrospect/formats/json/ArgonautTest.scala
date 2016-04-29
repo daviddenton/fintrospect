@@ -3,17 +3,14 @@ package io.fintrospect.formats.json
 import argonaut.Argonaut.{casecodec1, casecodec3}
 import argonaut._
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Status, Request}
 import com.twitter.finagle.http.Status.{Created, Ok}
+import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
-import io.fintrospect.formats.json.Argonaut.JsonFormat.decode
-import io.fintrospect.formats.json.Argonaut.JsonFormat.encode
-import io.fintrospect.formats.json.Argonaut.JsonFormat.{bodySpec, decode, encode, obj, parameterSpec}
-import io.fintrospect.formats.json.Argonaut.JsonFormat.{parse, decode, encode}
+import io.fintrospect.formats.json.Argonaut.JsonFormat.{bodySpec, decode, encode, obj, parameterSpec, parse}
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
-import org.scalatest.{ShouldMatchers, FunSpec}
+import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.language.reflectiveCalls
 

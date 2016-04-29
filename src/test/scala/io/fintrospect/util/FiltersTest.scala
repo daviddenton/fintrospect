@@ -9,7 +9,7 @@ import com.twitter.finagle.http.Status.{NotAcceptable, Ok}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
-import io.fintrospect.ContentTypes.{WILDCARD, APPLICATION_XHTML_XML, APPLICATION_XML}
+import io.fintrospect.ContentTypes.{APPLICATION_XHTML_XML, APPLICATION_XML, WILDCARD}
 import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
 import io.fintrospect.util.Filters.Request.{AddHost, BasicAuthorization, StrictAccept}
 import io.fintrospect.util.Filters.Response.{AddDate, CatchAll, ReportingRouteLatency}

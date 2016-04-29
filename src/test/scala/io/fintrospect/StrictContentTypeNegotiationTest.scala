@@ -5,7 +5,7 @@ import com.twitter.finagle.http.Status.{NotAcceptable, Ok}
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
-import io.fintrospect.ContentTypes.{TEXT_HTML, APPLICATION_ATOM_XML, APPLICATION_JSON}
+import io.fintrospect.ContentTypes.{APPLICATION_ATOM_XML, APPLICATION_JSON, TEXT_HTML}
 import io.fintrospect.formats.ResponseBuilder
 import org.scalatest.{FunSpec, ShouldMatchers}
 
