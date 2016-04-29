@@ -1,16 +1,93 @@
 package io.fintrospect.formats.json
 
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Status.Ok
-import io.fintrospect.formats.json.Json4s.Json4sFormat
+import com.twitter.finagle.Service
+import com.twitter.finagle.http.Status.{Created, Ok}
+import com.twitter.finagle.http.{Request, Status}
+import com.twitter.util.Await.result
+import com.twitter.util.Future
+import io.fintrospect.formats.json.Json4s.{Json4sFilters, Json4sFormat}
 import io.fintrospect.parameters.{Body, Query}
 import org.json4s.MappingException
+import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.language.reflectiveCalls
 
 case class Json4sStreetAddress(address: String)
 
 case class Json4sLetter(to: Json4sStreetAddress, from: Json4sStreetAddress, message: String)
+
+abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFormat[_]) extends FunSpec with ShouldMatchers {
+
+  import jsonFormat._
+
+  describe("filters") {
+    val aLetter = Json4sLetter(Json4sStreetAddress("my house"), Json4sStreetAddress("your house"), "hi there")
+
+    val request = Request()
+    request.contentString = jsonFormat.compact(jsonFormat.encode(aLetter))
+
+    describe("AutoInOut") {
+      it("returns Ok") {
+        val svc = filters.AutoInOut(Service.mk { in: Json4sLetter => Future.value(in) }, Created)
+
+        val response = result(svc(request))
+        response.status shouldEqual Created
+        decode[Json4sLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+    }
+
+    describe("AutoInOptionalOut") {
+      it("returns Ok when present") {
+        val svc = filters.AutoInOptionalOut(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(Option(in)) })
+
+        val response = result(svc(request))
+        response.status shouldEqual Ok
+        decode[Json4sLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+
+      it("returns NotFound when missing present") {
+        val svc = filters.AutoInOptionalOut(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(None) })
+        result(svc(request)).status shouldEqual Status.NotFound
+      }
+    }
+
+    describe("AutoIn") {
+      it("takes the object from the request") {
+        val svc = filters.AutoIn(jsonFormat.body[Json4sLetter]()).andThen(Service.mk { in: Json4sLetter => Future.value(in) })
+        result(svc(request)) shouldEqual aLetter
+      }
+    }
+
+    describe("AutoOut") {
+      it("takes the object from the request") {
+        val svc = filters.AutoOut[Json4sLetter, Json4sLetter](Created).andThen(Service.mk { in: Json4sLetter => Future.value(in) })
+        val response = result(svc(aLetter))
+        response.status shouldEqual Created
+        decode[Json4sLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+    }
+
+    describe("AutoOptionalOut") {
+      it("returns Ok when present") {
+        val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(Option(in)) })
+
+        val response = result(svc(aLetter))
+        response.status shouldEqual Created
+        decode[Json4sLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+
+      it("returns NotFound when missing present") {
+        val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(None) })
+        result(svc(aLetter)).status shouldEqual Status.NotFound
+      }
+    }
+  }
+}
+
+class Json4sNativeFiltersTest extends Json4sFiltersSpec(Json4s.Native.Filters, Json4s.Native.JsonFormat)
+class Json4sJacksonFiltersTest extends Json4sFiltersSpec(Json4s.Jackson.Filters, Json4s.Jackson.JsonFormat)
+class Json4sNativeDoubleModeFiltersTest extends Json4sFiltersSpec(Json4s.NativeDoubleMode.Filters, Json4s.NativeDoubleMode.JsonFormat)
+class Json4sJacksonDoubleModeFiltersTest extends Json4sFiltersSpec(Json4s.JacksonDoubleMode.Filters, Json4s.JacksonDoubleMode.JsonFormat)
 
 abstract class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends JsonFormatSpec(format) {
 
