@@ -2,11 +2,18 @@ package io.fintrospect.formats.json
 
 import argonaut.Argonaut.{casecodec1, casecodec3}
 import argonaut._
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.Service
+import com.twitter.finagle.http.{Status, Request}
+import com.twitter.finagle.http.Status.{Created, Ok}
+import com.twitter.util.Await.result
+import com.twitter.util.Future
+import io.fintrospect.formats.json.Argonaut.JsonFormat.decode
+import io.fintrospect.formats.json.Argonaut.JsonFormat.encode
 import io.fintrospect.formats.json.Argonaut.JsonFormat.{bodySpec, decode, encode, obj, parameterSpec}
+import io.fintrospect.formats.json.Argonaut.JsonFormat.{parse, decode, encode}
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
+import org.scalatest.{ShouldMatchers, FunSpec}
 
 import scala.language.reflectiveCalls
 
@@ -20,6 +27,73 @@ case class ArgonautLetter(to: ArgonautStreetAddress, from: ArgonautStreetAddress
 
 object ArgonautLetter {
   implicit def Codec: CodecJson[ArgonautLetter]= casecodec3(ArgonautLetter.apply, ArgonautLetter.unapply)("to", "from", "message")
+}
+
+
+class ArgonautFiltersTest extends FunSpec with ShouldMatchers {
+
+  describe("Argonaut.Filters") {
+    val aLetter = ArgonautLetter(ArgonautStreetAddress("my house"), ArgonautStreetAddress("your house"), "hi there")
+
+    val request = Request()
+    request.contentString = Argonaut.JsonFormat.compact(encode(aLetter))
+
+    describe("AutoInOut") {
+      it("returns Ok") {
+        val svc = Argonaut.Filters.AutoInOut(Service.mk { in: ArgonautLetter => Future.value(in) }, Created)
+
+        val response = result(svc(request))
+        response.status shouldEqual Created
+        decode[ArgonautLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+    }
+
+    describe("AutoInOptionalOut") {
+      it("returns Ok when present") {
+        val svc = Argonaut.Filters.AutoInOptionalOut(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(Option(in)) })
+
+        val response = result(svc(request))
+        response.status shouldEqual Ok
+        decode[ArgonautLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+
+      it("returns NotFound when missing present") {
+        val svc = Argonaut.Filters.AutoInOptionalOut(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(None) })
+        result(svc(request)).status shouldEqual Status.NotFound
+      }
+    }
+
+    describe("AutoIn") {
+      it("takes the object from the request") {
+        val svc = Argonaut.Filters.AutoIn(Argonaut.JsonFormat.body[ArgonautLetter]()).andThen(Service.mk { in: ArgonautLetter => Future.value(in) })
+        result(svc(request)) shouldEqual aLetter
+      }
+    }
+
+    describe("AutoOut") {
+      it("takes the object from the request") {
+        val svc = Argonaut.Filters.AutoOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk { in: ArgonautLetter => Future.value(in) })
+        val response = result(svc(aLetter))
+        response.status shouldEqual Created
+        decode[ArgonautLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+    }
+
+    describe("AutoOptionalOut") {
+      it("returns Ok when present") {
+        val svc = Argonaut.Filters.AutoOptionalOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(Option(in)) })
+
+        val response = result(svc(aLetter))
+        response.status shouldEqual Created
+        decode[ArgonautLetter](parse(response.contentString)) shouldEqual aLetter
+      }
+
+      it("returns NotFound when missing present") {
+        val svc = Argonaut.Filters.AutoOptionalOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(None) })
+        result(svc(aLetter)).status shouldEqual Status.NotFound
+      }
+    }
+  }
 }
 
 class ArgonautJsonResponseBuilderTest extends JsonResponseBuilderSpec(Argonaut)
