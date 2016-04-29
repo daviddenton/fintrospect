@@ -1,10 +1,14 @@
 package io.fintrospect.formats.json
 
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.Status.Ok
-import io.fintrospect.formats.json.Circe.JsonFormat.{bodySpec, encode, parameterSpec}
+import com.twitter.util.Await.result
+import com.twitter.util.Future
+import io.fintrospect.formats.json.Circe.JsonFormat._
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
+import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.language.reflectiveCalls
 
@@ -14,6 +18,26 @@ case class CirceLetter(to: CirceStreetAddress, from: CirceStreetAddress, message
 
 class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
+class CirceFiltersTest extends FunSpec with ShouldMatchers {
+
+  import io.circe.generic.auto._
+
+  describe("Circe.Filters") {
+    it("can auto marshall both in and out") {
+
+      val aLetter = CirceLetter(CirceStreetAddress("my house"), CirceStreetAddress("your house"), "hi there")
+
+      val request = Request()
+      request.contentString = encode(aLetter).noSpaces
+
+      val svc = Circe.Filters.Auto(Service.mk { in: CirceLetter => Future.value(in) })
+
+      decode[CirceLetter](parse(result(svc(request)).contentString)) shouldEqual aLetter
+    }
+  }
+
+}
+
 class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
 
   import io.circe.generic.auto._
@@ -22,12 +46,12 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
     val aLetter = CirceLetter(CirceStreetAddress("my house"), CirceStreetAddress("your house"), "hi there")
 
     it("roundtrips to JSON and back") {
-      val encoded = Circe.JsonFormat.encode(aLetter)
-      Circe.JsonFormat.decode[CirceLetter](encoded) shouldEqual aLetter
+      val encoded = encode(aLetter)
+      decode[CirceLetter](encoded) shouldEqual aLetter
     }
 
     it("invalid extracted JSON throws up") {
-      intercept[InvalidJsonForDecoding](Circe.JsonFormat.decode[CirceLetter](Circe.JsonFormat.obj()))
+      intercept[InvalidJsonForDecoding](decode[CirceLetter](Circe.JsonFormat.obj()))
     }
 
     it("body spec decodes content") {

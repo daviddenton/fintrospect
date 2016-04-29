@@ -2,17 +2,43 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.Status
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.{Filter, Service}
+import com.twitter.util.Future
 import io.circe._
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{UniBody, Body, BodySpec, ObjectParamType, ParameterSpec}
 
 /**
   * Circe JSON support (application/json content type)
   */
 object Circe extends JsonLibrary[Json, Json] {
+
+  object Filters {
+    def Auto[BODY, OUT](svc: Service[BODY, OUT])(implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null): Service[Request, Response] = {
+      val body = Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
+      marshallBody[BODY, Response](body).andThen(marshallOut[BODY, OUT](e)).andThen(svc)
+    }
+
+    def AutoFilter[BODY, OUT](implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null): Filter[Request, Response, BODY, OUT] = {
+      val body = Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
+      marshallBody[BODY, Response](body).andThen(marshallOut[BODY, OUT](e))
+    }
+
+    def marshallBody[IN, OUT](body: Body[IN]): Filter[Request, OUT, IN, OUT] = new Filter[Request, OUT, IN, OUT] {
+      override def apply(request: Request, service: Service[IN, OUT]): Future[OUT] = service(body <-- request)
+    }
+
+    def marshallOut[IN, OUT](implicit e: Encoder[OUT]): Filter[IN, Response, IN, OUT] = new Filter[IN, Response, IN, OUT] {
+      override def apply(in: IN, service: Service[IN, OUT]): Future[Response] = {
+        import Circe.ResponseBuilder.implicits._
+        service(in).map(t => Ok(Circe.JsonFormat.encode(t)))
+      }
+    }
+  }
 
   object JsonFormat extends JsonFormat[Json, Json] {
 
