@@ -16,7 +16,7 @@ import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits.statusToRespo
   */
 class UserList(emails: Emails) {
 
-  private val list = Service.mk[Request, Set[EmailAddress]] { req => Future.value(emails.users()) }
+  private val list = Service.mk { req: Request => Future.value(emails.users()) }
 
   val route = RouteSpec("list the known users on this server")
     .returning(responseSpec(Ok -> "all users who have sent or received a mail", EmailAddress("you@github.com")))
