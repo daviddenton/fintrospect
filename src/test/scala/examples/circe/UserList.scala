@@ -1,15 +1,14 @@
 package examples.circe
 
-import com.twitter.finagle.{Filter, Service}
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
+import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.Status.Ok
-import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.json.Circe
-import io.fintrospect.formats.json.Circe.JsonFormat.{encode, responseSpec}
-import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits.statusToResponseBuilderConfig
+import io.fintrospect.formats.json.Circe.JsonFormat.responseSpec
 
 /**
   * This endpoint uses the "Circe.Filters.AutoOut" Filter to automatically create a HTTP 200 response from some returned case class content.
