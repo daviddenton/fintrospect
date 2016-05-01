@@ -7,6 +7,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
+import io.fintrospect.formats.AutoFilters
 import io.fintrospect.formats.json.Argonaut.Filters.{AutoIn, _AutoOptionalOut}
 import io.fintrospect.formats.json.Circe.Filters._AutoOut
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
@@ -22,9 +23,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends AbstractFilters(Play) {
+  object Filters extends AutoFilters(Play.ResponseBuilder) {
 
-    import library.ResponseBuilder.implicits._
+    import responseBuilder.implicits._
 
     private def toResponse[OUT](successStatus: Status, e: Writes[OUT]) =
       (t: OUT) => successStatus(Play.JsonFormat.encode(t)(e))
