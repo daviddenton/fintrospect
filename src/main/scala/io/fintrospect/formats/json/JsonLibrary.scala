@@ -2,9 +2,10 @@ package io.fintrospect.formats.json
 
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.Status.{NotFound, Ok}
-import com.twitter.finagle.http.{Response, Status}
+import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.ContentTypes
 import io.fintrospect.formats.{AbstractResponseBuilder, ResponseBuilder}
+import io.fintrospect.parameters.Body
 
 
 class AbstractFilters[T](library: JsonLibrary[T, T]) {
@@ -14,10 +15,11 @@ class AbstractFilters[T](library: JsonLibrary[T, T]) {
   type ToResponse[OUT] = (OUT) => ResponseBuilder[_]
 
   /**
-    * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
-    * HTTP OK is returned by default in the auto-marshalled response (overridable).
+    * Filter to provide auto-marshalling of input case class instances for HTTP POST scenarios
     */
-  protected def _AutoOut[IN, OUT](successStatus: Status = Ok, fn: ToResponse[OUT]) =
+  def AutoIn[IN, OUT](body: Body[IN]) = Filter.mk[Request, OUT, IN, OUT] { (req, svc) => svc(body <-- req) }
+
+  protected def _AutoOut[IN, OUT](fn: ToResponse[OUT]) =
     Filter.mk[IN, Response, IN, OUT] { (req, svc) => svc(req).map(t => fn(t).build()) }
 
   protected def _AutoOptionalOut[IN, OUT](success: ToResponse[OUT]) =

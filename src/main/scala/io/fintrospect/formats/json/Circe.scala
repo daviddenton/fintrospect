@@ -2,13 +2,12 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.Status.{NotFound, Ok}
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.circe._
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
-import io.fintrospect.formats.ResponseBuilder
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 
@@ -16,6 +15,7 @@ import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec
   * Circe JSON support (application/json content type)
   */
 object Circe extends JsonLibrary[Json, Json] {
+
   /**
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
@@ -49,21 +49,12 @@ object Circe extends JsonLibrary[Json, Json] {
     }
 
     /**
-      * Filter to provide auto-marshalling of input case class instances for HTTP POST scenarios
-      */
-    def AutoIn[IN, OUT](body: Body[IN]) = Filter.mk[Request, OUT, IN, OUT] { (req, svc) => svc(body <-- req) }
-
-    /**
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoOut[IN, OUT](successStatus: Status = Ok)
-                        (implicit e: Encoder[OUT])
-    : Filter[IN, Response, IN, OUT] = Filter.mk[IN, Response, IN, OUT] {
-      (req, svc) => svc(req)
-        .map(t => Circe.ResponseBuilder.HttpResponse(successStatus)
-          .withContent(Circe.JsonFormat.encode(t)))
-    }
+                        (implicit e: Encoder[OUT]): Filter[IN, Response, IN, OUT]
+    = _AutoOut((t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
@@ -71,7 +62,7 @@ object Circe extends JsonLibrary[Json, Json] {
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
                                 (implicit e: Encoder[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = _AutoOptionalOut((t:OUT) => successStatus(Circe.JsonFormat.encode(t)(e)))
+    = _AutoOptionalOut((t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios

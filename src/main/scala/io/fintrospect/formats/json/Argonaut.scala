@@ -50,22 +50,12 @@ object Argonaut extends JsonLibrary[Json, Json] {
     }
 
     /**
-      * Filter to provide auto-marshalling of input case class instances for HTTP POST scenarios
-      */
-    def AutoIn[IN, OUT](body: Body[IN]) = Filter.mk[Request, OUT, IN, OUT] { (req, svc) => svc(body <-- req) }
-
-    /**
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoOut[IN, OUT](successStatus: Status = Ok)
                         (implicit e: EncodeJson[OUT]): Filter[IN, Response, IN, OUT]
-    = Filter.mk[IN, Response, IN, OUT] {
-      { (req, svc) => svc(req)
-        .map(t => Argonaut.ResponseBuilder.HttpResponse(successStatus)
-          .withContent(Argonaut.JsonFormat.encode(t)))
-      }
-    }
+    = _AutoOut((t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
