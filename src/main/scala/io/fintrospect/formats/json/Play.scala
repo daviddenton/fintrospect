@@ -24,7 +24,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     */
   object Filters extends AbstractFilters(Play) {
 
-    import Play.ResponseBuilder.implicits._
+    import library.ResponseBuilder.implicits._
 
     private def toResponse[OUT](successStatus: Status, e: Writes[OUT]) =
       (t: OUT) => successStatus(Play.JsonFormat.encode(t)(e))

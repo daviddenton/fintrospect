@@ -5,6 +5,7 @@ import java.math.BigInteger
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
+import io.circe.{Decoder, Encoder}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
@@ -24,6 +25,15 @@ object Json4s {
     extends AbstractFilters(jsonLibrary) {
 
     import jsonLibrary.ResponseBuilder.implicits._
+
+    private def toResponse[OUT <: AnyRef](successStatus: Status, formats: Formats = json4sFormat.serialization.formats(NoTypeHints)) =
+      (t: OUT) => {
+        successStatus(json4sFormat.encode(t, formats))
+      }
+
+    private def toBody[BODY](mf: scala.reflect.Manifest[BODY])(implicit example: BODY = null) =
+      Body[BODY](json4sFormat.bodySpec[BODY](None)(mf), example, ObjectParamType)
+
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
