@@ -5,7 +5,6 @@ import java.math.BigInteger
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
-import io.circe.{Decoder, Encoder}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
@@ -43,10 +42,9 @@ object Json4s {
     def AutoInOut[BODY, OUT <: AnyRef](svc: Service[BODY, OUT], successStatus: Status = Ok,
                                        formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
                                       (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
-    : Service[Request, Response] = {
-      val body = Body[BODY](json4sFormat.bodySpec[BODY](None)(mf), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus, formats).andThen(svc))
-    }
+    : Service[Request, Response] = AutoIn(toBody(mf))
+      .andThen(AutoOut[BODY, OUT](successStatus, formats))
+      .andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -56,10 +54,7 @@ object Json4s {
     def AutoInOptionalOut[BODY, OUT <: AnyRef](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok,
                                                formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
                                               (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
-    : Service[Request, Response] = {
-      val body = Body[BODY](json4sFormat.bodySpec[BODY](None)(mf), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOptionalOut[BODY, OUT](successStatus, formats).andThen(svc))
-    }
+    : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(mf), toResponse(successStatus, formats))
 
     /**
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
@@ -67,7 +62,7 @@ object Json4s {
       */
     def AutoOut[IN, OUT <: AnyRef]
     (successStatus: Status = Ok, formats: Formats = json4sFormat.serialization.formats(NoTypeHints)): Filter[IN, Response, IN, OUT]
-    = _AutoOut((t: OUT) => successStatus(json4sFormat.encode(t, formats)))
+    = _AutoOut(toResponse(successStatus, formats))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
@@ -85,10 +80,7 @@ object Json4s {
     def AutoInOutFilter[BODY, OUT <: AnyRef](successStatus: Status = Ok,
                                              formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
                                             (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
-    : Filter[Request, Response, BODY, OUT] = {
-      val body = Body[BODY](json4sFormat.bodySpec[BODY](None)(mf), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus, formats))
-    }
+    : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(mf)).andThen(AutoOut[BODY, OUT](successStatus, formats))
   }
 
   class Json4sFormat[T](jsonMethods: JsonMethods[T],
