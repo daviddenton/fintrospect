@@ -59,11 +59,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       */
     def AutoOut[IN, OUT](successStatus: Status = Ok)
                         (implicit e: Writes[OUT]): Filter[IN, Response, IN, OUT]
-    = Filter.mk[IN, Response, IN, OUT] {
-      (req, svc) => svc(req)
-        .map(t => Play.ResponseBuilder.HttpResponse(successStatus)
-          .withContent(Play.JsonFormat.encode(t)))
-    }
+    = _AutoOut(successStatus, (t:OUT)  => successStatus(Play.JsonFormat.encode(t)(e)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
@@ -71,7 +67,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
                                 (implicit e: Writes[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = AutoOptionalOut((t: OUT) => successStatus(Play.JsonFormat.encode(t)(e)))
+    = _AutoOptionalOut((t: OUT) => successStatus(Play.JsonFormat.encode(t)(e)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios

@@ -73,7 +73,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
                                 (implicit e: EncodeJson[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = AutoOptionalOut((t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e)))
+    = _AutoOptionalOut((t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios

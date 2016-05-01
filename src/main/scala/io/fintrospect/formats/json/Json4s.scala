@@ -62,12 +62,7 @@ object Json4s {
       */
     def AutoOut[IN, OUT <: AnyRef]
     (successStatus: Status = Ok, formats: Formats = json4sFormat.serialization.formats(NoTypeHints)): Filter[IN, Response, IN, OUT]
-    = Filter.mk[IN, Response, IN, OUT] {
-      (req, svc) => svc(req)
-        .map(t => {
-          jsonLibrary.ResponseBuilder.HttpResponse(successStatus).withContent(json4sFormat.encode(t, formats)).build()
-        })
-    }
+    = _AutoOut(successStatus, (t: OUT) => successStatus(json4sFormat.encode(t, formats)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
@@ -76,7 +71,7 @@ object Json4s {
     def AutoOptionalOut[IN, OUT <: AnyRef]
     (successStatus: Status = Ok, formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
     : Filter[IN, Response, IN, Option[OUT]]
-    = AutoOptionalOut((t: OUT) => successStatus(json4sFormat.encode(t, formats)))
+    = _AutoOptionalOut((t: OUT) => successStatus(json4sFormat.encode(t, formats)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
