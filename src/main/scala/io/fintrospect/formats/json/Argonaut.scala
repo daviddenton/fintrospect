@@ -9,8 +9,10 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
+import io.fintrospect.formats.json.Argonaut.Filters.AutoIn
+import io.fintrospect.formats.json.Circe.Filters._AutoOut
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{UniBody, Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 
 /**
   * Argonaut JSON support (application/json content type)
@@ -38,9 +40,8 @@ object Argonaut extends JsonLibrary[Json, Json] {
       */
     def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
                             (implicit db: DecodeJson[BODY], eb: EncodeJson[BODY], e: EncodeJson[OUT], example: BODY = null)
-    : Service[Request, Response] = {
-      AutoIn[BODY, Response](toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
-    }
+    : Service[Request, Response] =
+      AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -73,9 +74,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       */
     def AutoInOutFilter[BODY, OUT]
     (implicit successStatus: Status = Ok, db: DecodeJson[BODY], eb: EncodeJson[BODY], e: EncodeJson[OUT], example: BODY = null)
-    : Filter[Request, Response, BODY, OUT] = {
-      AutoIn[BODY, Response](toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
-    }
+    : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
   }
 
   object JsonFormat extends JsonFormat[Json, Json] {

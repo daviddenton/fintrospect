@@ -8,6 +8,7 @@ import com.twitter.finagle.{Filter, Service}
 import io.circe._
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
+import io.fintrospect.formats.json.Argonaut.Filters.{AutoIn, _AutoOptionalOut, _AutoOut, _AutoInOptionalOut}
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 
@@ -24,6 +25,13 @@ object Circe extends JsonLibrary[Json, Json] {
 
     import Circe.ResponseBuilder.implicits._
 
+    private def toResponse[OUT](successStatus: Status, e: Encoder[OUT]) =
+      (t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e))
+
+    private def toBody[BODY](db: Decoder[BODY], eb: Encoder[BODY])(implicit example: BODY = null) =
+      Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
+
+
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
       * which return an object.
@@ -31,10 +39,9 @@ object Circe extends JsonLibrary[Json, Json] {
       */
     def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
                             (implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
-    : Service[Request, Response] = {
-      val body = Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
-    }
+    : Service[Request, Response] = AutoIn(toBody(db, eb))
+      .andThen(AutoOut[BODY, OUT](successStatus)(e))
+      .andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -43,10 +50,7 @@ object Circe extends JsonLibrary[Json, Json] {
       */
     def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
                                     (implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
-    : Service[Request, Response] = {
-      val body = Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOptionalOut[BODY, OUT](successStatus)(e)).andThen(svc)
-    }
+    : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(db, eb), toResponse(successStatus, e))
 
     /**
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
@@ -54,7 +58,7 @@ object Circe extends JsonLibrary[Json, Json] {
       */
     def AutoOut[IN, OUT](successStatus: Status = Ok)
                         (implicit e: Encoder[OUT]): Filter[IN, Response, IN, OUT]
-    = _AutoOut((t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e)))
+    = _AutoOut(toResponse(successStatus, e))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
@@ -62,7 +66,7 @@ object Circe extends JsonLibrary[Json, Json] {
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
                                 (implicit e: Encoder[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = _AutoOptionalOut((t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e)))
+    = _AutoOptionalOut(toResponse(successStatus, e))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
@@ -70,10 +74,7 @@ object Circe extends JsonLibrary[Json, Json] {
       */
     def AutoInOutFilter[BODY, OUT]
     (implicit successStatus: Status = Ok, db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
-    : Filter[Request, Response, BODY, OUT] = {
-      val body = Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus)(e))
-    }
+    : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
   }
 
   object JsonFormat extends JsonFormat[Json, Json] {
