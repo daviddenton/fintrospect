@@ -34,6 +34,5 @@ object CustomParameters extends App {
   val requiredEmailPathSegment = Path(email)
 
   println("missing email: " + (optionalEmailQueryParameter <-- Request("/")))
-  println("invalid email: " + (optionalEmailQueryParameter <-- Request("/", "theEmailAddress" -> "notARealEmailAddress")))
   println("valid email: " + (optionalEmailQueryParameter <-- Request("/", "theEmailAddress" -> "myemail@somedomain.com")))
 }
