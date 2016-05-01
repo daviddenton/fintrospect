@@ -8,6 +8,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_SVG_XML, APPLICATION_XML}
+import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.Filters
 import io.fintrospect.{ModuleSpec, RouteSpec, StrictContentTypeNegotiation}
 
@@ -17,7 +18,7 @@ import io.fintrospect.{ModuleSpec, RouteSpec, StrictContentTypeNegotiation}
   * Accept header set in the request, the first service in the list is used. This means that there is NO sophisticated
   * content negotiation implemented, although Wildcard Accept headers is supported to match the first supplied mapping service.
   */
-object StrictMultiContentTypeRoutes extends App {
+object StrictMultiContentTypeRoute extends App {
 
   private val serveJson = Service.mk { (rq: Request) => import io.fintrospect.formats.json.Argo.JsonFormat._
  import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
@@ -32,21 +33,16 @@ object StrictMultiContentTypeRoutes extends App {
       </root>)
   }
 
-  private val serve = StrictContentTypeNegotiation(
-    APPLICATION_SVG_XML -> serveXml,
-    APPLICATION_JSON -> serveJson
-  )
-
   val route = RouteSpec()
     .producing(APPLICATION_XML, APPLICATION_JSON)
-    .at(Get) / "multi" bindTo serve
+    .at(Get) / "multi" bindTo StrictContentTypeNegotiation(APPLICATION_SVG_XML -> serveXml, APPLICATION_JSON -> serveJson)
 
   val jsonOnlyRoute = RouteSpec()
     .producing(APPLICATION_JSON)
     .at(Get) / "json" bindTo Filters.Request.StrictAccept(APPLICATION_JSON).andThen(serveJson)
 
   Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy)
-    .andThen(ModuleSpec(Root).withRoute(route).toService))
+    .andThen(ModuleSpec(Root, SimpleJson()).withRoute(route).toService))
 
   println("See the service description at: http://localhost:8080 . The route at /multi should match wildcard Accept headers set in a browser.")
 

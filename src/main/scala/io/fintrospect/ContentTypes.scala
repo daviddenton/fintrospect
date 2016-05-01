@@ -12,6 +12,7 @@ object ContentType {
 
   def lookup(name: String): ContentType = ContentType(extMap.getContentType(name))
 
+  val header = Header.optional.string("Content-Type")
   private val accept = Header.optional.*.string("Accept")
 
   def fromAcceptHeaders(msg: Message): Option[Set[ContentType]] =
