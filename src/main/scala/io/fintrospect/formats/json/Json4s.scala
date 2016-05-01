@@ -26,7 +26,9 @@ object Json4s {
 
     import jsonLibrary.ResponseBuilder.implicits._
 
-    private def toResponse[OUT <: AnyRef](successStatus: Status, formats: Formats = json4sFormat.serialization.formats(NoTypeHints)) =
+    private val a = json4sFormat.serialization.formats(NoTypeHints)
+
+    private def toResponse[OUT <: AnyRef](successStatus: Status, formats: Formats = a) =
       (t: OUT) => {
         successStatus(json4sFormat.encode(t, formats))
       }
@@ -41,7 +43,7 @@ object Json4s {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOut[BODY, OUT <: AnyRef](svc: Service[BODY, OUT], successStatus: Status = Ok,
-                                       formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
+                                       formats: Formats = a)
                                       (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
     : Service[Request, Response] = AutoIn(toBody(mf))
       .andThen(AutoOut[BODY, OUT](successStatus, formats))
@@ -53,7 +55,7 @@ object Json4s {
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoInOptionalOut[BODY, OUT <: AnyRef](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok,
-                                               formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
+                                               formats: Formats = a)
                                               (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
     : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(mf), toResponse(successStatus, formats))
 
@@ -62,7 +64,7 @@ object Json4s {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoOut[IN, OUT <: AnyRef]
-    (successStatus: Status = Ok, formats: Formats = json4sFormat.serialization.formats(NoTypeHints)): Filter[IN, Response, IN, OUT]
+    (successStatus: Status = Ok, formats: Formats = a): Filter[IN, Response, IN, OUT]
     = _AutoOut(toResponse(successStatus, formats))
 
     /**
@@ -70,7 +72,7 @@ object Json4s {
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoOptionalOut[IN, OUT <: AnyRef]
-    (successStatus: Status = Ok, formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
+    (successStatus: Status = Ok, formats: Formats = a)
     : Filter[IN, Response, IN, Option[OUT]]
     = _AutoOptionalOut((t: OUT) => successStatus(json4sFormat.encode(t, formats)))
 
@@ -79,7 +81,7 @@ object Json4s {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOutFilter[BODY, OUT <: AnyRef](successStatus: Status = Ok,
-                                             formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
+                                             formats: Formats = a)
                                             (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
     : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(mf)).andThen(AutoOut[BODY, OUT](successStatus, formats))
   }
