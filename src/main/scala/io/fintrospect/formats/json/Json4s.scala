@@ -21,7 +21,7 @@ object Json4s {
     * instead of HTTP responses
     */
   class Json4sFilters[T](json4sFormat: Json4sFormat[T], jsonLibrary: JsonLibrary[JValue, JValue])
-    extends AbstractFilters[JValue](jsonLibrary) {
+    extends AbstractFilters(jsonLibrary) {
 
     import jsonLibrary.ResponseBuilder.implicits._
 
