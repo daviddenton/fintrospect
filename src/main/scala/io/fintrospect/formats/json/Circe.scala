@@ -8,6 +8,7 @@ import com.twitter.finagle.{Filter, Service}
 import io.circe._
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
+import io.fintrospect.formats.AutoFilters
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 
@@ -21,9 +22,9 @@ object Circe extends JsonLibrary[Json, Json] {
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends AbstractFilters(Circe) {
+  object Filters extends AutoFilters(Circe.ResponseBuilder) {
 
-    import library.ResponseBuilder.implicits._
+    import responseBuilder.implicits._
 
     private def toResponse[OUT](successStatus: Status, e: Encoder[OUT]) =
       (t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e))

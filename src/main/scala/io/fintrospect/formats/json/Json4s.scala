@@ -7,6 +7,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
+import io.fintrospect.formats.AutoFilters
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import org.json4s.Extraction.decompose
 import org.json4s.{Formats, JValue, JsonMethods, NoTypeHints, Serialization}
@@ -21,7 +22,7 @@ object Json4s {
     * instead of HTTP responses
     */
   class Json4sFilters[T](json4sFormat: Json4sFormat[T], jsonLibrary: JsonLibrary[JValue, JValue])
-    extends AbstractFilters(jsonLibrary) {
+    extends AutoFilters(jsonLibrary.ResponseBuilder) {
 
     import jsonLibrary.ResponseBuilder.implicits._
 
