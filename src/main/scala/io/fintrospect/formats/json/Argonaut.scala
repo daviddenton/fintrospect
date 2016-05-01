@@ -10,7 +10,7 @@ import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{UniBody, Body, BodySpec, ObjectParamType, ParameterSpec}
 
 /**
   * Argonaut JSON support (application/json content type)
@@ -24,6 +24,12 @@ object Argonaut extends JsonLibrary[Json, Json] {
   object Filters extends AbstractFilters(Argonaut) {
 
     import Argonaut.ResponseBuilder.implicits._
+
+    private def toResponse[OUT](successStatus: Status, e: EncodeJson[OUT]) =
+      (t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e))
+
+    private def toBody[BODY](db: DecodeJson[BODY], eb: EncodeJson[BODY])(implicit example: BODY = null) =
+      Body[BODY](Argonaut.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -44,10 +50,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       */
     def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
                                     (implicit db: DecodeJson[BODY], eb: EncodeJson[BODY], e: EncodeJson[OUT], example: BODY = null)
-    : Service[Request, Response] = {
-      val body = Body[BODY](Argonaut.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOptionalOut[BODY, OUT](successStatus)(e)).andThen(svc)
-    }
+    : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(db, eb), toResponse(successStatus, e))
 
     /**
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
@@ -55,7 +58,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       */
     def AutoOut[IN, OUT](successStatus: Status = Ok)
                         (implicit e: EncodeJson[OUT]): Filter[IN, Response, IN, OUT]
-    = _AutoOut((t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e)))
+    = _AutoOut(toResponse(successStatus, e))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned

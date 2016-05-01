@@ -1,8 +1,8 @@
 package io.fintrospect.formats.json
 
-import com.twitter.finagle.Filter
-import com.twitter.finagle.http.Status.{NotFound, Ok}
-import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.http.Status.NotFound
+import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes
 import io.fintrospect.formats.{AbstractResponseBuilder, ResponseBuilder}
 import io.fintrospect.parameters.Body
@@ -12,7 +12,8 @@ class AbstractFilters[T](library: JsonLibrary[T, T]) {
 
   import library.ResponseBuilder.implicits._
 
-  type ToResponse[OUT] = (OUT) => ResponseBuilder[_]
+  protected type ToResponse[OUT] = (OUT) => ResponseBuilder[_]
+  protected type ToBody[BODY] = () => Body[BODY]
 
   /**
     * Filter to provide auto-marshalling of input case class instances for HTTP POST scenarios
@@ -21,6 +22,9 @@ class AbstractFilters[T](library: JsonLibrary[T, T]) {
 
   protected def _AutoOut[IN, OUT](fn: ToResponse[OUT]) =
     Filter.mk[IN, Response, IN, OUT] { (req, svc) => svc(req).map(t => fn(t).build()) }
+
+  protected def _AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], body: Body[BODY], toResponse: ToResponse[OUT]) =
+    AutoIn[BODY, Response](body).andThen(_AutoOptionalOut[BODY, OUT](toResponse)).andThen(svc)
 
   protected def _AutoOptionalOut[IN, OUT](success: ToResponse[OUT]) =
     Filter.mk[IN, Response, IN, Option[OUT]] {
