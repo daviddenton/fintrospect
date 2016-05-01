@@ -7,6 +7,8 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
+import io.fintrospect.formats.json.Argonaut.Filters.{AutoIn, _AutoOptionalOut}
+import io.fintrospect.formats.json.Circe.Filters._AutoOut
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import play.api.libs.json.{Json, _}
@@ -24,6 +26,12 @@ object Play extends JsonLibrary[JsValue, JsValue] {
 
     import Play.ResponseBuilder.implicits._
 
+    private def toResponse[OUT](successStatus: Status, e: Writes[OUT]) =
+      (t: OUT) => successStatus(Play.JsonFormat.encode(t)(e))
+
+    private def toBody[BODY](db: Reads[BODY], eb: Writes[BODY])(implicit example: BODY = null) =
+      Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example, ObjectParamType)
+
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
       * which return an object.
@@ -31,10 +39,8 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       */
     def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
                             (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
-    : Service[Request, Response] = {
-      val body = Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
-    }
+    : Service[Request, Response] =
+      AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -43,10 +49,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       */
     def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
                                     (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
-    : Service[Request, Response] = {
-      val body = Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOptionalOut[BODY, OUT](successStatus)(e)).andThen(svc)
-    }
+    : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(db, eb), toResponse(successStatus, e))
 
     /**
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
@@ -54,7 +57,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       */
     def AutoOut[IN, OUT](successStatus: Status = Ok)
                         (implicit e: Writes[OUT]): Filter[IN, Response, IN, OUT]
-    = _AutoOut((t:OUT)  => successStatus(Play.JsonFormat.encode(t)(e)))
+    = _AutoOut(toResponse(successStatus, e))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
@@ -62,7 +65,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
                                 (implicit e: Writes[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = _AutoOptionalOut((t: OUT) => successStatus(Play.JsonFormat.encode(t)(e)))
+    = _AutoOptionalOut(toResponse(successStatus, e))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
@@ -70,10 +73,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       */
     def AutoInOutFilter[BODY, OUT]
     (implicit successStatus: Status = Ok, db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
-    : Filter[Request, Response, BODY, OUT] = {
-      val body = Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus)(e))
-    }
+    : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
   }
 
   object JsonFormat extends JsonFormat[JsValue, JsValue] {
