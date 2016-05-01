@@ -39,8 +39,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
     def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
                             (implicit db: DecodeJson[BODY], eb: EncodeJson[BODY], e: EncodeJson[OUT], example: BODY = null)
     : Service[Request, Response] = {
-      val body = Body[BODY](Argonaut.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
+      AutoIn[BODY, Response](toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
     }
 
     /**
@@ -66,7 +65,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
                                 (implicit e: EncodeJson[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = _AutoOptionalOut((t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e)))
+    = _AutoOptionalOut(toResponse(successStatus, e))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
@@ -75,8 +74,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
     def AutoInOutFilter[BODY, OUT]
     (implicit successStatus: Status = Ok, db: DecodeJson[BODY], eb: EncodeJson[BODY], e: EncodeJson[OUT], example: BODY = null)
     : Filter[Request, Response, BODY, OUT] = {
-      val body = Body[BODY](Argonaut.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
-      AutoIn[BODY, Response](body).andThen(AutoOut[BODY, OUT](successStatus)(e))
+      AutoIn[BODY, Response](toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
     }
   }
 
