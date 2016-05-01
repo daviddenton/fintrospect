@@ -8,7 +8,7 @@ import io.fintrospect.formats.{AbstractResponseBuilder, ResponseBuilder}
 import io.fintrospect.parameters.Body
 
 
-class AbstractFilters[T](library: JsonLibrary[T, T]) {
+class AbstractFilters[T](protected val library: JsonLibrary[T, T]) {
 
   import library.ResponseBuilder.implicits._
 
