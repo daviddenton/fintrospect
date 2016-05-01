@@ -3,22 +3,27 @@
 The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
 ## Backlog/upcoming
+- Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
+- Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Option to dynamically reload View templates
 - Drop support for Scala 2.10 (when finagle.http does)
 
+## v12.14.0 (uncut)
+- Filter to allow multiple multiple body types to be accepted on a single route.
+
 ## v12.13.0
-- Added auto-marshalling support for JSON libraries which support it (```Circe, Argonauy, Json4S, Play```. 
-See ```Circe.Filters.Auto***``` filter contructors to wrap your existing domain services, or see ```Circe``` example for exact usage.
+- Added auto-marshalling support for JSON libraries which support it (`Circe, Argonauy, Json4S, Play`. 
+See `Circe.Filters.Auto***` filter constructors to wrap your existing domain services, or see `Circe` example for exact usage.
 
 ## v12.12.0
-- Upgrade Finagle dependency to `6.35.0`. Note that this is (apparently) the last Scala `2.10.X` supporting release.
+- Upgrade Finagle dependency to `6.35.0`. Note that this is (apparently) the last Scala `2.10.X` supporting Finagle release.
 
 ## v12.11.0
 - Added `HeapDump` utility service to programatically generate a hprof file.
-- Similar to ```Query```, added support for multiple header parameters with same name. See ```*()``` on ```Header.required|optional```.
-- Support for serving strict content-type negotiation and multiple content types to be served from a single route. See example ```strictcontenttypes```.
-- Added a number of useful general-case filters. See ```Filters```.
-- Added a number of useful cache-control filters. See ```Caching```.
+- Similar to `Query`, added support for multiple header parameters with same name. See `*()` on `Header.required|optional`.
+- Support for serving strict content-type negotiation and multiple content types to be served from a single route. See example `strictcontenttypes`.
+- Added a number of useful general-case filters. See `Filters`.
+- Added a number of useful cache-control filters. See `Caching`.
 - Upgrade of `Circe` version to `0.4.1`
 - Upgrade of `Scala` version to `2.11.8`
 
