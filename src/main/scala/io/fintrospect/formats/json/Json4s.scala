@@ -2,7 +2,7 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.Status.{NotFound, Ok}
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
@@ -20,7 +20,8 @@ object Json4s {
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  class Json4sFilters[T](json4sFormat: Json4sFormat[T], jsonLibrary: JsonLibrary[JValue, JValue]) {
+  class Json4sFilters[T](json4sFormat: Json4sFormat[T], jsonLibrary: JsonLibrary[JValue, JValue])
+    extends AbstractFilters[JValue](jsonLibrary) {
 
     import jsonLibrary.ResponseBuilder.implicits._
 
@@ -75,11 +76,7 @@ object Json4s {
     def AutoOptionalOut[IN, OUT <: AnyRef]
     (successStatus: Status = Ok, formats: Formats = json4sFormat.serialization.formats(NoTypeHints))
     : Filter[IN, Response, IN, Option[OUT]]
-    = Filter.mk[IN, Response, IN, Option[OUT]] {
-      (req, svc) => svc(req).map(optT => optT
-        .map(t => successStatus(json4sFormat.encode(t, formats)).build())
-        .getOrElse(NotFound().build()))
-    }
+    = AutoOptionalOut((t: OUT) => successStatus(json4sFormat.encode(t, formats)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
