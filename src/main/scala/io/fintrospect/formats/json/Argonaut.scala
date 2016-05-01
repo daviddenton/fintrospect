@@ -4,7 +4,7 @@ import java.math.BigInteger
 
 import argonaut.Argonaut._
 import argonaut.{DecodeJson, EncodeJson, Json}
-import com.twitter.finagle.http.Status.{NotFound, Ok}
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
@@ -21,7 +21,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters {
+  object Filters extends AbstractFilters(Argonaut) {
 
     import Argonaut.ResponseBuilder.implicits._
 
@@ -73,10 +73,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
                                 (implicit e: EncodeJson[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = Filter.mk[IN, Response, IN, Option[OUT]] {
-      (req, svc) => svc(req).map(optT => optT.map(t => Argonaut.ResponseBuilder.HttpResponse(successStatus)
-        .withContent(Argonaut.JsonFormat.encode(t)).build()).getOrElse(NotFound().build()))
-    }
+    = AutoOptionalOut((t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
