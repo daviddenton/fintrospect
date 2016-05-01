@@ -8,6 +8,7 @@ import com.twitter.finagle.{Filter, Service}
 import io.circe._
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
+import io.fintrospect.formats.ResponseBuilder
 import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 
@@ -15,12 +16,11 @@ import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec
   * Circe JSON support (application/json content type)
   */
 object Circe extends JsonLibrary[Json, Json] {
-
   /**
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters {
+  object Filters extends AbstractFilters(Circe) {
 
     import Circe.ResponseBuilder.implicits._
 
@@ -71,10 +71,7 @@ object Circe extends JsonLibrary[Json, Json] {
       */
     def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
                                 (implicit e: Encoder[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = Filter.mk[IN, Response, IN, Option[OUT]] {
-      (req, svc) => svc(req).map(optT => optT.map(t => Circe.ResponseBuilder.HttpResponse(successStatus)
-        .withContent(Circe.JsonFormat.encode(t)).build()).getOrElse(NotFound().build()))
-    }
+    = AutoOptionalOut((t:OUT) => successStatus(Circe.JsonFormat.encode(t)(e)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
