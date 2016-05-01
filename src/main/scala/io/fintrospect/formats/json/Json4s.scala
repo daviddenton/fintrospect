@@ -52,17 +52,12 @@ object Json4s {
     }
 
     /**
-      * Filter to provide auto-marshalling of input case class instances for HTTP POST scenarios
-      */
-    def AutoIn[IN, OUT](body: Body[IN]) = Filter.mk[Request, OUT, IN, OUT] { (req, svc) => svc(body <-- req) }
-
-    /**
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoOut[IN, OUT <: AnyRef]
     (successStatus: Status = Ok, formats: Formats = json4sFormat.serialization.formats(NoTypeHints)): Filter[IN, Response, IN, OUT]
-    = _AutoOut(successStatus, (t: OUT) => successStatus(json4sFormat.encode(t, formats)))
+    = _AutoOut((t: OUT) => successStatus(json4sFormat.encode(t, formats)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
