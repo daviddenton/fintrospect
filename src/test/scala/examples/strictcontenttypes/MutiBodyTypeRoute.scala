@@ -13,7 +13,7 @@ import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{ModuleSpec, MultiBodyType, RouteSpec}
 
 /**
-  * Shows how to add routes which can accept multiple body types (based on the Content-Type header
+  * Shows how to add routes which can accept multiple body types (based on the Content-Type header)
   */
 object MutiBodyTypeRoute extends App {
 
