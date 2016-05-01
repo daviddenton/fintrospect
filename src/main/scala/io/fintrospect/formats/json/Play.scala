@@ -2,7 +2,7 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.Status.{NotFound, Ok}
+import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
@@ -20,7 +20,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters {
+  object Filters extends AbstractFilters(Play) {
 
     import Play.ResponseBuilder.implicits._
 
@@ -69,12 +69,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
-    def AutoOptionalOut[IN, OUT](successStatus: Status = Ok
-                                )(implicit e: Writes[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = Filter.mk[IN, Response, IN, Option[OUT]] {
-      (req, svc) => svc(req).map(optT => optT.map(t => Play.ResponseBuilder.HttpResponse(successStatus)
-        .withContent(Play.JsonFormat.encode(t)).build()).getOrElse(NotFound().build()))
-    }
+    def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
+                                (implicit e: Writes[OUT]): Filter[IN, Response, IN, Option[OUT]]
+    = AutoOptionalOut((t: OUT) => successStatus(Play.JsonFormat.encode(t)(e)))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
