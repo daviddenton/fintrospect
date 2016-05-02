@@ -13,8 +13,8 @@ import io.fintrospect.formats.Xml.ResponseBuilder.implicits._
 val responseViaImplicits: Future[Response] = Status.Ok(<xml>lashings and lashings of wonderful</xml>)
 ```
 
-##Taking advantage of auto-marshalling
-###Controlled mode
+## Taking advantage of auto-marshalling
+### Controlled mode
 Some of the JSON libraries (`Circe`, `Argonaut`, `Json4S`, `Play`) supported by Fintrospect support auto-marshalling of Scala Case 
 class instances directly to JSON without any custom conversion code needing to be written. This is supported by `encode()` and `decode()` 
 methods present on the relevant Fintrospect `JsonFormat` format instance (e.g. `io.fintrospect.formats.json.Circe.JsonFormat`). Generally, 
@@ -31,7 +31,7 @@ The auto-marshalling functionality of these JSON libraries requires implicit par
 echoed in the signatures of the relevant Fintrospect `encode()` and `decode()` methods, but unless you're going to be providing custom 
 encoder/decoder instances, you can get away with just importing the relevant `implicit` params from the parent lib, as in the example above.
 
-###Full-auto mode
+### Full-auto mode
 Fintrospect also contains Filters which allow you to abstract away the HTTP Request/Response entirely. In this example, 
 the `Circe.Filters.AutoInOut` filter converts the `Service[Request, Response]` to a `Service[EmailAddress, ReversedEmailAddress]`, auto-converting 
 the case class objects in and out of the request. The returned status code in the `Response` is 200, but this is overridable:
