@@ -6,7 +6,8 @@ val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(
 Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashings of wonderful</xml>)
 )
 ```
-... although with tiny bit of implicit magic (boo-hiss!), you can reduce this to the rather more concise:
+... although with tiny bit of implicit magic to convert the `Status` object to a `ResponseBuilder` and then convert the `ResponseBuilder` to 
+a `Future[Response]`, you can reduce this to the rather more concise:
 ```
 import Xml.ResponseBuilder.implicits._
 val responseViaImplicits: Future[Response] = Status.Ok(<xml>lashings and lashings of wonderful</xml>)
