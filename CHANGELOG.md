@@ -191,7 +191,7 @@ headers. Clients will need to migrate to the new Form format (see examples).
 
 ## v5.X.X -> v6.X.X
 - We've got a domain! So... repackage from `io.github.daviddenton.fintrospect` to  `io.fintrospect`. A global search and replace on your codebase will do it.
-- Added support for custom parameter types. See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
+- Added support for custom parameter types. See the <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples">example code]</a>).
 
 ## v4.X.X -> v5.X.X
 - Upgrade to require Java 8 time API for time parameter support.
@@ -201,7 +201,7 @@ headers. Clients will need to migrate to the new Form format (see examples).
 
 ## v3.X.X -> v4.X.X
 
-- Addition of custom response rendering formats. See the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
+- Addition of custom response rendering formats. See the <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples">example code]</a>.
   Modules now require a fully configured `ModuleRenderer` upon instantiation, which provides not just the rendering of the Documentation (ie. the old `Renderer` which is now `DescriptionRenderer`), but also the format of error messages. Some repackaging of the pluggable renderers has occurred.
 - `ResponseBuilder` is now generic superclass of pluggable formats. Json support has moved to `JsonResponseBuilder`, so changes to your code will be required to support this.
 - Renamed Identification Header to `X-Fintrospect-Route-Name`
@@ -214,7 +214,7 @@ org.jboss.netty.handler.codec.http.Request`. This is to provide compatibility wi
 to creating both servers and clients. It also has the advantage of unifying the client/server interface (previously it
 was different between the two). The only things that should have to change in your code are:
 
-  - How servers are created - the new method is simpler (see the [example code](https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples)).
+  - How servers are created - the new method is simpler (see the <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples">example code]</a>.
   - The signature of routes is now `Service[Request,Response]`. Since the Twitter Request/Response classes
    extends these interfaces, usages of the ResponseBuilder remain the same.
   - Form-based parameters are now defined with the `Form` object, and not the `Query` object (which now just retrieves Query String parameters from the URL).
