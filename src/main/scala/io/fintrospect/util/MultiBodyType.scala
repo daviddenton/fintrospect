@@ -1,9 +1,10 @@
-package io.fintrospect
+package io.fintrospect.util
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.UnsupportedMediaType
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
+import io.fintrospect.ContentType
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
 import io.fintrospect.parameters.Body
 import io.fintrospect.renderers.ModuleRenderer

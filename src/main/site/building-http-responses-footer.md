@@ -9,6 +9,6 @@ Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashin
 ... although with tiny bit of implicit magic (boo-hiss!), you can reduce this to the rather more concise:
 ```
 import Xml.ResponseBuilder.implicits._
-val responseViaImplicits: Future[Response] = Ok(<xml>lashings and lashings of wonderful</xml>)
+val responseViaImplicits: Future[Response] = Status.Ok(<xml>lashings and lashings of wonderful</xml>)
 ```
 <a class="next" href="http://fintrospect.io/templating-and-static-content" target="_top"><button type="button" class="btn btn-sm btn-default">next: templating and static content</button></a>

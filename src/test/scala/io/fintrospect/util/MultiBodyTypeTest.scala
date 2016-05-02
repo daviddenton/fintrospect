@@ -1,10 +1,11 @@
-package io.fintrospect
+package io.fintrospect.util
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
+import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.parameters.Body
 import org.scalatest.{FunSpec, ShouldMatchers}

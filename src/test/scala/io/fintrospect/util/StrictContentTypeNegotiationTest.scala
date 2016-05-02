@@ -1,10 +1,11 @@
-package io.fintrospect
+package io.fintrospect.util
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{NotAcceptable, Ok}
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
+import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes.{APPLICATION_ATOM_XML, APPLICATION_JSON, TEXT_HTML}
 import io.fintrospect.formats.ResponseBuilder
 import org.scalatest.{FunSpec, ShouldMatchers}
