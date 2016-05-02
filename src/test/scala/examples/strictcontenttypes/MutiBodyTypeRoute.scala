@@ -10,7 +10,8 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect.parameters.Body
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.{ModuleSpec, MultiBodyType, RouteSpec}
+import io.fintrospect.util.MultiBodyType
+import io.fintrospect.{ModuleSpec, RouteSpec}
 
 /**
   * Shows how to add routes which can accept multiple body types (based on the Content-Type header)

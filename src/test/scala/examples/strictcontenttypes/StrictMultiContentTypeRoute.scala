@@ -9,8 +9,8 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_SVG_XML, APPLICATION_XML}
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.util.Filters
-import io.fintrospect.{ModuleSpec, RouteSpec, StrictContentTypeNegotiation}
+import io.fintrospect.util.{StrictContentTypeNegotiation, Filters}
+import io.fintrospect.{ModuleSpec, RouteSpec}
 
 /**
   * Shows how to add routes which can serve multiple content types using strict content-type negotiation.
