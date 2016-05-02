@@ -5,14 +5,15 @@ The main API is stable now, but expect some amount of breaking changes around ma
 ## Backlog/upcoming
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
-- Option to dynamically reload View templates
-- Drop support for Scala 2.10 (when finagle.http does)
+- Option to dynamically reload View templates.
+- Drop support for Scala 2.10 (when finagle.http does).
 
 ## v12.14.0 (uncut)
+- Added auto-marshalling support for XML responses. See `XML.Filters.Auto***`.
 - Filter to allow multiple multiple body types to be accepted on a single route.
 
 ## v12.13.0
-- Added auto-marshalling support for JSON libraries which support it (`Circe, Argonauy, Json4S, Play`. 
+- Added auto-marshalling support for JSON libraries which support it (`Circe, Argonaut, Json4S, Play`. 
 See `Circe.Filters.Auto***` filter constructors to wrap your existing domain services, or see `Circe` example for exact usage.
 
 ## v12.12.0
