@@ -27,7 +27,7 @@ object Xml {
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output Elem instances for HTTP POST scenarios
-      * which return an object.
+      * which return an Elem.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOut(svc: Service[Elem, Elem], successStatus: Status = Ok): Service[Request, Response] =
@@ -35,7 +35,7 @@ object Xml {
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output Elem instances for HTTP POST scenarios
-      * which may return an object.
+      * which may return an Elem.
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoInOptionalOut(svc: Service[Elem, Option[Elem]], successStatus: Status = Ok)
