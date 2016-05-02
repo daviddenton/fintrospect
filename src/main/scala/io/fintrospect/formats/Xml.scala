@@ -26,7 +26,7 @@ object Xml {
     private def toResponse(successStatus: Status = Ok) = (out: Elem) => successStatus(out)
 
     /**
-      * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
+      * Wrap the enclosed service with auto-marshalling of input and output Elem instances for HTTP POST scenarios
       * which return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
@@ -34,7 +34,7 @@ object Xml {
       AutoIn(body).andThen(AutoOut[Elem](successStatus)).andThen(svc)
 
     /**
-      * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
+      * Wrap the enclosed service with auto-marshalling of input and output Elem instances for HTTP POST scenarios
       * which may return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
@@ -42,13 +42,13 @@ object Xml {
     : Service[Request, Response] = _AutoInOptionalOut[Elem, Elem](svc, body, toResponse(successStatus))
 
     /**
-      * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
+      * Filter to provide auto-marshalling of output Elem instances for HTTP scenarios where an object is returned.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoOut[IN](successStatus: Status = Ok): Filter[IN, Response, IN, Elem] = _AutoOut(toResponse(successStatus))
 
     /**
-      * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
+      * Filter to provide auto-marshalling of Elem instances for HTTP scenarios where an object may not be returned
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoOptionalOut[IN](successStatus: Status = Ok): Filter[IN, Response, IN, Option[Elem]]
