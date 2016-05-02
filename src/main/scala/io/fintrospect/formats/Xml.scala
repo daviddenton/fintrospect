@@ -1,8 +1,8 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes
 import io.fintrospect.parameters.Body
 
@@ -14,21 +14,46 @@ import scala.xml.Elem
 object Xml {
 
   /**
-    * Auto-marshalling filters which can be used to create Services which take and return domain objects
+    * Auto-marshalling filters which can be used to create Services which take and return Elem objects
     * instead of HTTP responses
     */
-  object Filters {
+  object Filters extends AutoFilters[Elem](Xml.ResponseBuilder) {
+
+    import Xml.ResponseBuilder.implicits._
+
+    private val body = Body.xml(None)
+
+    private def toResponse(successStatus: Status = Ok) = (out: Elem) => successStatus(out)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
       * which return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOut[BODY, OUT](svc: Service[Elem, Elem], successStatus: Status = Ok): Service[Request, Response] = {
-      val body = Body.xml(None)
-      import Xml.ResponseBuilder.implicits._
-      Service.mk { req: Request => svc(body <-- req).map(successStatus(_)) }
-    }
+    def AutoInOut(svc: Service[Elem, Elem], successStatus: Status = Ok): Service[Request, Response] =
+      AutoIn(body).andThen(AutoOut[Elem](successStatus)).andThen(svc)
+
+    /**
+      * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
+      * which may return an object.
+      * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
+      */
+    def AutoInOptionalOut(svc: Service[Elem, Option[Elem]], successStatus: Status = Ok)
+    : Service[Request, Response] = _AutoInOptionalOut[Elem, Elem](svc, body, toResponse(successStatus))
+
+    /**
+      * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
+      * HTTP OK is returned by default in the auto-marshalled response (overridable).
+      */
+    def AutoOut[IN](successStatus: Status = Ok): Filter[IN, Response, IN, Elem] = _AutoOut(toResponse(successStatus))
+
+    /**
+      * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
+      * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
+      */
+    def AutoOptionalOut[IN](successStatus: Status = Ok): Filter[IN, Response, IN, Option[Elem]]
+    = _AutoOptionalOut(toResponse(successStatus))
+
   }
 
   object ResponseBuilder extends AbstractResponseBuilder[Elem] {
