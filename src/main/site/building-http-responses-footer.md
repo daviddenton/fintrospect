@@ -32,9 +32,9 @@ echoed in the signatures of the relevant Fintrospect `encode()` and `decode()` m
 encoder/decoder instances, you can get away with just importing the relevant `implicit` params from the parent lib, as in the example above.
 
 ### full-auto mode
-Fintrospect also contains Filters which allow you to abstract away the HTTP Request/Response entirely. In this example, 
+Fintrospect also contains filters which allow you to abstract away the HTTP Request/Response entirely. In this example, 
 the `Circe.Filters.AutoInOut` filter converts the `Service[Request, Response]` to a `Service[EmailAddress, ReversedEmailAddress]`, auto-converting 
-the case class objects in and out of the request. The returned status code in the `Response` is 200, but this is overridable:
+the case class objects in and out of the request/response. The returned status code in the `Response` is 200, but this is overridable:
 ```
 import io.circe.generic.auto._
 
