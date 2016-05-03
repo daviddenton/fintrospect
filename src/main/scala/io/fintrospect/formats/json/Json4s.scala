@@ -45,9 +45,7 @@ object Json4s {
     def AutoInOut[BODY, OUT <: AnyRef](svc: Service[BODY, OUT], successStatus: Status = Ok,
                                        formats: Formats = a)
                                       (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
-    : Service[Request, Response] = AutoIn(toBody(mf))
-      .andThen(AutoOut[BODY, OUT](successStatus, formats))
-      .andThen(svc)
+    : Service[Request, Response] = AutoInOutFilter(successStatus)(example, mf).andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios

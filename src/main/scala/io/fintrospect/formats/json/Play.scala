@@ -40,8 +40,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       */
     def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
                             (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
-    : Service[Request, Response] =
-      AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
+    : Service[Request, Response] = AutoInOutFilter(successStatus)(db, eb, e, example).andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios

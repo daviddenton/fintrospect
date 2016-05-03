@@ -40,9 +40,7 @@ object Circe extends JsonLibrary[Json, Json] {
       */
     def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
                             (implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
-    : Service[Request, Response] = AutoIn(toBody(db, eb))
-      .andThen(AutoOut[BODY, OUT](successStatus)(e))
-      .andThen(svc)
+    : Service[Request, Response] = AutoInOutFilter(successStatus)(db, eb, e, example).andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -74,7 +72,7 @@ object Circe extends JsonLibrary[Json, Json] {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOutFilter[BODY, OUT](successStatus: Status = Ok)
-    (implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
+                                  (implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
     : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
   }
 
