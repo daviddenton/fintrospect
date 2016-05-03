@@ -73,8 +73,8 @@ object Circe extends JsonLibrary[Json, Json] {
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOutFilter[BODY, OUT]
-    (implicit successStatus: Status = Ok, db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
+    def AutoInOutFilter[BODY, OUT](successStatus: Status = Ok)
+    (implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
     : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
   }
 
