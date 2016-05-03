@@ -72,8 +72,8 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOutFilter[BODY, OUT]
-    (implicit successStatus: Status = Ok, db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
+    def AutoInOutFilter[BODY, OUT](successStatus: Status = Ok)
+    (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
     : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
   }
 
