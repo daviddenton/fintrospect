@@ -39,8 +39,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       */
     def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
                             (implicit db: DecodeJson[BODY], eb: EncodeJson[BODY], e: EncodeJson[OUT], example: BODY = null)
-    : Service[Request, Response] =
-      AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e)).andThen(svc)
+    : Service[Request, Response] = AutoInOutFilter(successStatus)(db, eb, e, example).andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
