@@ -8,8 +8,10 @@ The main API is stable now, but expect some amount of breaking changes around ma
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
-## v12.14.0 (uncut)
-- Added auto-marshalling support for XML responses. See `XML.Filters.Auto***`.
+## v12.14.0
+- Slight refactor of `Auto***` filters to make usage simpler. May involve a rearrangement of implicit parameters (previously 
+included the `Status`) depending on the use-case, but in majority of cases should not be breaking.
+- Extended auto-marshalling support for XML responses to `Elem`. See `XML.Filters.Auto***`.
 - Filter to allow multiple multiple body types to be accepted on a single route.
 
 ## v12.13.0
