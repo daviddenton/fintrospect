@@ -16,17 +16,14 @@ class ResponseSpec private[fintrospect](statusAndDescription: (Status, String), 
 }
 
 object ResponseSpec {
-  def json[T](statusAndDescription: (Status, String), example: T, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): ResponseSpec = {
+  def json[T](statusAndDescription: (Status, String), example: T, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): ResponseSpec =
     ResponseSpec(statusAndDescription, example, BodySpec.json(None, jsonFormat))
-  }
 
-  def xml(statusAndDescription: (Status, String), example: Elem): ResponseSpec = {
+  def xml(statusAndDescription: (Status, String), example: Elem): ResponseSpec =
     ResponseSpec(statusAndDescription, example, BodySpec.xml())
-  }
 
   def apply(statusAndDescription: (Status, String)): ResponseSpec = new ResponseSpec(statusAndDescription)
 
-  def apply[T](statusAndDescription: (Status, String), example: T, bodySpec: BodySpec[T]): ResponseSpec = {
+  def apply[T](statusAndDescription: (Status, String), example: T, bodySpec: BodySpec[T]): ResponseSpec =
     new ResponseSpec(statusAndDescription, Try(bodySpec.serialize(example)).toOption)
-  }
 }
