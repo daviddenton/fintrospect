@@ -31,9 +31,7 @@ class RenderMustacheView(responseBuilder: AbstractResponseBuilder[_], baseTempla
     setObjectHandler(new ScalaObjectHandler)
   }
 
-  private def loadMustache(view: View) = classToMustache.getOrElseUpdate(view.getClass, {
-    factory.compile(view.template + ".mustache")
-  })
+  private def loadMustache(view: View) = classToMustache.getOrElseUpdate(view.getClass, factory.compile(view.template + ".mustache"))
 
   override def apply(request: Request, service: Service[Request, View]): Future[Response] = {
     service(request)

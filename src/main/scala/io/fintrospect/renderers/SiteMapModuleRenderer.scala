@@ -17,13 +17,12 @@ class SiteMapModuleRenderer(baseUrl: URL) extends ModuleRenderer {
   override def notFound(request: Request): Response = NotFound()
 
   override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = {
-    def buildUrl(route: ServerRoute[_, _]) = {
+    def buildUrl(route: ServerRoute[_, _]) =
       <url>
         <loc>
           {baseUrl + route.describeFor(basePath)}
         </loc>
       </url>
-    }
 
     Ok(<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       {routes.filter(_.method == Get).map(buildUrl)}
