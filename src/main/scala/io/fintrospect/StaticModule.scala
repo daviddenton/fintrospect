@@ -29,11 +29,8 @@ class StaticModule private(basePath: Path, baseDir: String, moduleFilter: Filter
       })
   }
 
-  private def exists(path: Path): Boolean = {
-    if (path != Root && path.startsWith(basePath)) {
-      getClass.getResource(convertPath(path)) != null
-    } else false
-  }
+  private def exists(path: Path): Boolean =
+    if (path != Root && path.startsWith(basePath)) getClass.getResource(convertPath(path)) != null else false
 
   private def convertPath(path: Path): String = {
     val newPath = if (basePath == Root) path.toString else path.toString.replace(basePath.toString, "")

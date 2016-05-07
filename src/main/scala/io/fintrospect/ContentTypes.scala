@@ -5,7 +5,7 @@ import javax.activation.MimetypesFileTypeMap
 import com.twitter.finagle.http.Message
 import io.fintrospect.parameters.Header
 
-case class ContentType(value: String)
+case class ContentType(value: String) extends AnyVal
 
 object ContentType {
   private lazy val extMap = new MimetypesFileTypeMap(getClass.getResourceAsStream("/META-INF/mime.types"))
