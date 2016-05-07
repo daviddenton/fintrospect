@@ -18,9 +18,8 @@ class SimpleJson extends ModuleRenderer {
 
   override def notFound(request: Request): Response = JsonErrorResponseRenderer.notFound()
 
-  private def render(basePath: Path, route: ServerRoute[_, _]): Field = {
+  private def render(basePath: Path, route: ServerRoute[_, _]): Field =
     route.method.toString() + ":" + route.describeFor(basePath) -> Argo.JsonFormat.string(route.routeSpec.summary)
-  }
 
   override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = Ok(obj("resources" -> obj(routes.map(r => render(basePath, r)))))
 }
