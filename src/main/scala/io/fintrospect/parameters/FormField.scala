@@ -19,7 +19,7 @@ abstract class FormField[T](spec: ParameterSpec[_], val deserialize: Seq[String]
         case Success(d) => Extracted(d)
         case Failure(_) => MissingOrInvalid[T](this)
       }
-    }.getOrElse(if (required) MissingOrInvalid(this) else Missing())
+    }.getOrElse(Extraction.forParam[T](this))
   }
 }
 

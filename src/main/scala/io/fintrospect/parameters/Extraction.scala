@@ -12,6 +12,10 @@ sealed trait Extraction[T] {
   val invalid: Seq[Parameter]
 }
 
+object Extraction {
+  def forParam[T](p: Parameter): Extraction[T] = if (p.required) MissingOrInvalid(p) else Missing()
+}
+
 case class Missing[T]() extends Extraction[T] {
   override def asTry: Try[Option[T]] = Success(None)
 
