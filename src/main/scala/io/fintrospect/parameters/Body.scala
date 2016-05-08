@@ -3,12 +3,19 @@ package io.fintrospect.parameters
 import com.twitter.finagle.http.Message
 import io.fintrospect.ContentType
 import io.fintrospect.formats.json.{Argo, JsonFormat}
+import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 
+import scala.util.Try
 import scala.xml.Elem
 
 abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with Retrieval[T, Message]
 with Validatable[T, Message] {
   val contentType: ContentType = spec.contentType
+
+  /**
+    * Attempt to deserialise this Body from the message object
+    */
+  def <--?(message: Message): Try[T] = Try(spec.deserialize(contentFrom(message)))
 
   override def <--(message: Message) = validate(message).right.get.get
 }
