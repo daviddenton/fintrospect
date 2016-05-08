@@ -21,7 +21,7 @@ abstract class QueryParameter[T](spec: ParameterSpec[_], val deserialize: Seq[St
       Try(deserialize(v)) match {
         case Success(d) => Extracted(d)
         case Failure(_) => MissingOrInvalid[T](this)
-      }).getOrElse(Extraction.forParam(this))
+      }).getOrElse(Extraction.forMissingParam(this))
   }
 }
 
