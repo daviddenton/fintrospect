@@ -19,7 +19,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
   with Bindable[Form, Binding]
   with MandatoryRebind[Form, Message, Binding] {
 
-  override def -->(value: Form): Seq[Binding] = {
+  override def -->(value: Form): Seq[Binding] =
     Seq(new RequestBinding(null, t => {
       val content = FormBody.spec.serialize(value)
       t.headerMap.add(Names.CONTENT_TYPE, FormBody.spec.contentType.value)
@@ -27,7 +27,6 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
       t.setContentString(content)
       t
     })) ++ fields.map(f => new FormFieldBinding(f, ""))
-  }
 
   override def iterator = fields.iterator
 
@@ -44,23 +43,19 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
 object FormBody {
   private val spec = new BodySpec[Form](None, ContentTypes.APPLICATION_FORM_URLENCODED, decodeForm, encodeForm)
 
-  private def encodeForm(form: Form): String = {
-    form.flatMap {
-      case (name, values) => values.map {
-        case value => encode(name, "UTF-8") + "=" + encode(value, "UTF-8")
-      }
-    }.mkString("&")
-  }
+  private def encodeForm(form: Form): String = form.flatMap {
+    case (name, values) => values.map {
+      case value => encode(name, "UTF-8") + "=" + encode(value, "UTF-8")
+    }
+  }.mkString("&")
 
-  private def decodeForm(content: String) = {
-    new Form(content
-      .split("&")
-      .filter(_.contains("="))
-      .map {
-        case nvp => (decode(nvp.split("=")(0), "UTF-8"), decode(nvp.split("=")(1), "UTF-8"))
-      }
-      .groupBy(_._1)
-      .mapValues(_.map(_._2))
-      .mapValues(_.toSet))
-  }
+  private def decodeForm(content: String) = new Form(content
+    .split("&")
+    .filter(_.contains("="))
+    .map {
+      case nvp => (decode(nvp.split("=")(0), "UTF-8"), decode(nvp.split("=")(1), "UTF-8"))
+    }
+    .groupBy(_._1)
+    .mapValues(_.map(_._2))
+    .mapValues(_.toSet))
 }
