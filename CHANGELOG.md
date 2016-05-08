@@ -8,6 +8,9 @@ The main API is stable now, but expect some amount of breaking changes around ma
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
+## v12.14.1 (uncut)
+- Bugfix: Empty forms can be retrieved from a request, even when they have required fields (issue #15).
+
 ## v12.14.0
 - Slight refactor of `Auto***` filters to make usage simpler. May involve a rearrangement of implicit parameters (previously 
 included the `Status`) depending on the use-case, but in majority of cases should not be breaking.

@@ -40,8 +40,6 @@ class UniBody[T](spec: BodySpec[T],
 
   override def -->(value: T) = param.of(value)
 
-  override def <--(message: Message) = validate(message).right.get.get
-
   override def iterator = Iterator(param)
 
   override def validate(message: Message): Either[Seq[Parameter], Option[T]] = {

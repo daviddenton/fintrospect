@@ -33,8 +33,14 @@ class FormTest extends FunSpec with ShouldMatchers {
   }
 
   describe("retrieval") {
-    it("handles empty form") {
-      formSpec.from(Request()).size shouldBe 0
+    it("handles empty form - optional") {
+      val optional = FormField.optional.string("field1")
+      Body.form(optional).validate(Request()) shouldBe Right(Some(Form()))
+      Body.form(optional) <-- Request() shouldBe Form()
+    }
+
+    it("handles empty form - required") {
+      formSpec.validate(Request()) shouldBe Left(Seq(field1, field2, field3, field4, field5, field6))
     }
   }
 }
