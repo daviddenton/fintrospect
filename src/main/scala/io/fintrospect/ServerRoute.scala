@@ -6,14 +6,14 @@ import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.parameters.PathParameter
 
 abstract class ServerRoute[RQ, RS](val routeSpec: RouteSpec,
-                               val method: Method,
-                               pathFn: Path => Path,
-                               val pathParams: PathParameter[_]*) {
+                                   val method: Method,
+                                   pathFn: Path => Path,
+                                   val pathParams: PathParameter[_]*) {
 
   def missingOrFailedFrom(request: Request) = {
     val validations = routeSpec.requestParams.map(_.validate(request)) ++
-      routeSpec.body.toSeq.flatMap(_.validate(request))
-    validations.collect { case Left(l) => l }
+      routeSpec.body.toSeq.map(_.validate(request))
+    validations.filter(_.isLeft).map(_.left).flatMap(_.get)
   }
 
   def matches(actualMethod: Method, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
