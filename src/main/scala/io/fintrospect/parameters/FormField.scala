@@ -13,14 +13,13 @@ abstract class FormField[T](spec: ParameterSpec[_], val deserialize: Seq[String]
   override val example = None
   override val where = "form"
 
-  def validate(form: Form): Extraction[T] = {
+  override def <--?(form: Form): Extraction[T] =
     form.get(name).map {
       v => Try(deserialize(v)) match {
         case Success(d) => Extracted(d)
         case Failure(_) => MissingOrInvalid[T](this)
       }
     }.getOrElse(Extraction.forMissingParam[T](this))
-  }
 }
 
 abstract class SingleFormField[T](spec: ParameterSpec[T])
