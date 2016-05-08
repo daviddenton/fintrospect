@@ -20,7 +20,10 @@ object MultiBodyType {
     val supportedContentTypes = Map(services.map(bs => ContentType(bs._1.contentType.value.toLowerCase) -> bs): _*)
 
     def validateAndRespond(request: Request, b: SupportedContentType) = {
-      val invalidParams = b._1.validate(request).collect { case Left(l) => l }
+      val invalidParams = b._1.validate(request) match {
+        case Left(l) => l
+        case Right(_) => Nil
+      }
       if (invalidParams.isEmpty) b._2(request) else Future.value(moduleRenderer.badRequest(invalidParams))
     }
 

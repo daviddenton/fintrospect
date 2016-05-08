@@ -13,13 +13,13 @@ abstract class FormField[T](spec: ParameterSpec[_], val deserialize: Seq[String]
   override val example = None
   override val where = "form"
 
-  def validate(form: Form): Either[Parameter, Option[T]] = {
+  def validate(form: Form): Either[Seq[Parameter], Option[T]] = {
     form.get(name).map {
       v => Try(deserialize(v)) match {
         case Success(d) => Right(Option(d))
-        case Failure(_) => Left(this)
+        case Failure(_) => Left(Seq(this))
       }
-    }.getOrElse(if (required) Left(this) else Right(None))
+    }.getOrElse(if (required) Left(Seq(this)) else Right(None))
   }
 }
 

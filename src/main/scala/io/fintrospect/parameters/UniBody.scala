@@ -40,17 +40,17 @@ class UniBody[T](spec: BodySpec[T],
 
   override def -->(value: T) = param.of(value)
 
-  override def <--(message: Message) = validate(message).head.right.get.get
+  override def <--(message: Message) = validate(message).right.get.get
 
   override def iterator = Iterator(param)
 
-  override def validate(message: Message): Seq[Either[Parameter, Option[T]]] = {
+  override def validate(message: Message): Either[Seq[Parameter], Option[T]] = {
     Try(contentFrom(message)).toOption match {
-      case Some(r) => Seq(Try(spec.deserialize(r)) match {
+      case Some(r) => Try(spec.deserialize(r)) match {
         case Success(v) => Right(Option(v))
-        case Failure(_) => Left(param)
-      })
-      case None => Seq(Left(param))
+        case Failure(_) => Left(Seq(param))
+      }
+      case None => Left(Seq(param))
     }
   }
 }

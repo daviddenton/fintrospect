@@ -21,11 +21,11 @@ class QueryTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(requestWithValueOf("notValid")) shouldEqual Left(param)
+        param.validate(requestWithValueOf("notValid")) shouldEqual Left(Seq(param))
       }
 
       it("does not retrieve non existent value") {
-        param.validate(requestWithValueOf()) shouldEqual Left(param)
+        param.validate(requestWithValueOf()) shouldEqual Left(Seq(param))
       }
 
       it("can rebind valid value") {
@@ -46,12 +46,12 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("fails to retrieve invalid value") {
         val param = Query.required.*.long(paramName)
-        param.validate(requestWithValueOf("qwe","notValid")) shouldEqual Left(param)
+        param.validate(requestWithValueOf("qwe","notValid")) shouldEqual Left(Seq(param))
       }
 
       it("does not retrieve non existent value") {
         val param = Query.required.*.zonedDateTime(paramName)
-        param.validate(requestWithValueOf()) shouldEqual Left(param)
+        param.validate(requestWithValueOf()) shouldEqual Left(Seq(param))
       }
 
       it("can rebind valid value") {
@@ -74,7 +74,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("fails to retrieve invalid value") {
         val param = Query.optional.json(paramName)
-        param.validate(requestWithValueOf("notValid")) shouldEqual Left(param)
+        param.validate(requestWithValueOf("notValid")) shouldEqual Left(Seq(param))
       }
 
       it("does not retrieve non existent value") {
@@ -106,7 +106,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(requestWithValueOf("2015-02-04", "notValid")) shouldEqual Left(param)
+        param.validate(requestWithValueOf("2015-02-04", "notValid")) shouldEqual Left(Seq(param))
       }
 
       it("does not retrieve non existent value") {

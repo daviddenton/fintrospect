@@ -19,8 +19,8 @@ abstract class HeaderParameter[T](spec: ParameterSpec[_], val deserialize: Seq[S
     opt
       .map(v => Try(deserialize(v)) match {
           case Success(d) => Right(Option(d))
-          case Failure(_) => Left(this)
-        }).getOrElse(if (required) Left(this) else Right(None))
+          case Failure(_) => Left(Seq(this))
+        }).getOrElse(if (required) Left(Seq(this)) else Right(None))
   }
 }
 
