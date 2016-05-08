@@ -13,11 +13,12 @@ with Validatable[T, Message] {
   val contentType: ContentType = spec.contentType
 
   /**
-    * Attempt to deserialise this Body from the message object
+    * Attempt to deserialise this Body from the message object. Use this method instead of <--() if you want to not
+    * declare your body parameters in the RouteSpec()
     */
   def <--?(message: Message): Try[T] = Try(spec.deserialize(contentFrom(message)))
 
-  override def <--(message: Message) = validate(message).right.get.get
+  override def <--(message: Message): T = validate(message).right.get.get
 }
 
 /**

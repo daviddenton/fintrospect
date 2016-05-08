@@ -6,12 +6,14 @@ package io.fintrospect.parameters
 trait Retrieval[T, -From] {
 
   /**
-   * Extract the parameter from the target object.
+   * Extract the parameter from the target object. Throws on failure, but that shouldn't be a problem as the pre-validation
+    * stage for declared parameters and bodies handles the failure before user code is entered.
    */
   def <--(from: From): T
 
   /**
-   * Extract the parameter from the target object.
+    * Extract the parameter from the target object. Throws on failure, but that shouldn't be a problem as the pre-validation
+    * stage for declared parameters and bodies handles the failure before user code is entered.
    */
   def from(from: From): T = <--(from)
 }
