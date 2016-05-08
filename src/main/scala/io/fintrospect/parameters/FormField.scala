@@ -17,9 +17,9 @@ abstract class FormField[T](spec: ParameterSpec[_], val deserialize: Seq[String]
     form.get(name).map {
       v => Try(deserialize(v)) match {
         case Success(d) => Extracted(d)
-        case Failure(_) => MissingOrInvalid[T](Seq(this))
+        case Failure(_) => MissingOrInvalid[T](this)
       }
-    }.getOrElse(if (required) MissingOrInvalid(Seq(this)) else Missing())
+    }.getOrElse(if (required) MissingOrInvalid(this) else Missing())
   }
 }
 
