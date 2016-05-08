@@ -31,13 +31,13 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
 
   override def iterator = fields.iterator
 
-  override def validate(message: Message): Either[Seq[Parameter], Option[Form]] = {
+  override def validate(message: Message): Extraction[Form] = {
     Try(FormBody.spec.deserialize(contentFrom(message))) match {
       case Success(form) => {
-        val missingOrInvalidFields = fields.map(_.validate(form)).filter(_.isLeft).map(_.left).flatMap(_.get)
-        if (missingOrInvalidFields.isEmpty) Right(Some(form)) else Left(missingOrInvalidFields)
+        val missingOrInvalidFields = fields.map(_.validate(form)).flatMap(_.invalid)
+        if (missingOrInvalidFields.isEmpty) Extracted(form) else MissingOrInvalid(missingOrInvalidFields)
       }
-      case Failure(e) => Left(fields.filter(_.required))
+      case Failure(e) => MissingOrInvalid(fields.filter(_.required))
     }
   }
 }

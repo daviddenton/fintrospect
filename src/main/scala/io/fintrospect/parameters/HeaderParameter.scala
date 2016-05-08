@@ -13,14 +13,14 @@ abstract class HeaderParameter[T](spec: ParameterSpec[_], val deserialize: Seq[S
   override val paramType = spec.paramType
   val where = "header"
 
-  def validate(message: Message) = {
+  def validate(message: Message): Extraction[T] = {
     val headers = message.headerMap.getAll(name)
     val opt = if(headers.isEmpty) None else Some(headers.toSeq)
     opt
       .map(v => Try(deserialize(v)) match {
-          case Success(d) => Right(Option(d))
-          case Failure(_) => Left(Seq(this))
-        }).getOrElse(if (required) Left(Seq(this)) else Right(None))
+          case Success(d) => Extracted(d)
+          case Failure(_) => MissingOrInvalid[T](Seq(this))
+        }).getOrElse(if (required) MissingOrInvalid[T](Seq(this)) else Missing())
   }
 }
 

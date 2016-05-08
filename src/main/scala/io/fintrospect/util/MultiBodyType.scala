@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
-import io.fintrospect.parameters.Body
+import io.fintrospect.parameters.{MissingOrInvalid, Body}
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 
@@ -19,12 +19,9 @@ object MultiBodyType {
   def apply(services: SupportedContentType*)(implicit moduleRenderer: ModuleRenderer = SimpleJson()): Service[Request, Response] = {
     val supportedContentTypes = Map(services.map(bs => ContentType(bs._1.contentType.value.toLowerCase) -> bs): _*)
 
-    def validateAndRespond(request: Request, b: SupportedContentType) = {
-      val invalidParams = b._1.validate(request) match {
-        case Left(l) => l
-        case Right(_) => Nil
-      }
-      if (invalidParams.isEmpty) b._2(request) else Future.value(moduleRenderer.badRequest(invalidParams))
+    def validateAndRespond(request: Request, body: SupportedContentType) = body._1.validate(request) match {
+      case MissingOrInvalid(invalidParams) => Future.value(moduleRenderer.badRequest(invalidParams))
+      case _ => body._2(request)
     }
 
     def handle(request: Request, contentType: ContentType): Future[Response] =
