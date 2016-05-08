@@ -19,9 +19,9 @@ abstract class QueryParameter[T](spec: ParameterSpec[_], val deserialize: Seq[St
       .map(_.asScala.toSeq)
       .map(v =>
       Try(deserialize(v)) match {
-        case Success(d) => Right(Option(d))
-        case Failure(_) => Left(Seq(this))
-      }).getOrElse(if (required) Left(Seq(this)) else Right(None))
+        case Success(d) => Extracted(d)
+        case Failure(_) => MissingOrInvalid[T](Seq(this))
+      }).getOrElse(if (required) MissingOrInvalid[T](Seq(this)) else Missing())
   }
 }
 
