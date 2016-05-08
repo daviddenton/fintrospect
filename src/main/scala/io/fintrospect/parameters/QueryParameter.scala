@@ -14,15 +14,14 @@ abstract class QueryParameter[T](spec: ParameterSpec[_], val deserialize: Seq[St
   override val paramType = spec.paramType
   override val where = "query"
 
-  def validate(request: Request) = {
+  override def <--?(request: Request) =
     Option(new QueryStringDecoder(request.uri).getParameters.get(name))
       .map(_.asScala.toSeq)
       .map(v =>
-      Try(deserialize(v)) match {
-        case Success(d) => Extracted(d)
-        case Failure(_) => MissingOrInvalid[T](this)
-      }).getOrElse(Extraction.forMissingParam(this))
-  }
+        Try(deserialize(v)) match {
+          case Success(d) => Extracted(d)
+          case Failure(_) => MissingOrInvalid[T](this)
+        }).getOrElse(Extraction.forMissingParam(this))
 }
 
 abstract class SingleQueryParameter[T](spec: ParameterSpec[T])

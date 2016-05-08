@@ -31,7 +31,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
 
   override def iterator = fields.iterator
 
-  override def validate(message: Message): Extraction[Form] = {
+  override def <--?(message: Message): Extraction[Form] =
     Try(FormBody.spec.deserialize(contentFrom(message))) match {
       case Success(form) => {
         val missingOrInvalidFields = fields.map(_.validate(form)).flatMap(_.invalid)
@@ -39,7 +39,6 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
       }
       case Failure(e) => MissingOrInvalid(fields.filter(_.required))
     }
-  }
 }
 
 object FormBody {
