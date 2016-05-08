@@ -15,17 +15,21 @@ sealed trait Extraction[T] {
 case class Missing[T]() extends Extraction[T] {
   override def asTry: Try[Option[T]] = Success(None)
 
-  override val invalid: Seq[Parameter] = Nil
+  override val invalid = Nil
 }
 
 case class Extracted[T](value: T) extends Extraction[T] {
   override def asTry: Try[Option[T]] = Success(Some(value))
 
-  override val invalid: Seq[Parameter] = Nil
+  override val invalid = Nil
 }
 
 case class MissingOrInvalid[T](missingOrInvalid: Seq[Parameter]) extends Extraction[T] {
   override def asTry: Try[Option[T]] = Failure(new InvalidParameters(missingOrInvalid))
 
-  override val invalid: Seq[Parameter] = missingOrInvalid
+  override val invalid = missingOrInvalid
+}
+
+object MissingOrInvalid {
+  def apply[T](p: Parameter): MissingOrInvalid[T] = MissingOrInvalid(Seq(p))
 }
