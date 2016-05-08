@@ -7,12 +7,12 @@ import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import scala.util.{Failure, Success, Try}
 
 /**
- * Represents a single entity which makes up the entirety of an HTTP message body.
- * @param spec the specification of this body type
- * @param theParamType the documented type of this body. Usually this is StringParamType, apart from for JSON, which is ObjectParamType
- * @param theExample an example object of this body
- * @tparam T the type of the request when it has been deserialized from the request
- */
+  * Represents a single entity which makes up the entirety of an HTTP message body.
+  * @param spec the specification of this body type
+  * @param theParamType the documented type of this body. Usually this is StringParamType, apart from for JSON, which is ObjectParamType
+  * @param theExample an example object of this body
+  * @tparam T the type of the request when it has been deserialized from the request
+  */
 class UniBody[T](spec: BodySpec[T],
                  theParamType: ParamType,
                  theExample: Option[T])
@@ -43,12 +43,9 @@ class UniBody[T](spec: BodySpec[T],
   override def iterator = Iterator(param)
 
   override def validate(message: Message): Either[Seq[Parameter], Option[T]] = {
-    Try(contentFrom(message)).toOption match {
-      case Some(r) => Try(spec.deserialize(r)) match {
-        case Success(v) => Right(Option(v))
-        case Failure(_) => Left(Seq(param))
-      }
-      case None => Left(Seq(param))
+    Try(spec.deserialize(contentFrom(message))) match {
+      case Success(v) => Right(Option(v))
+      case Failure(_) => Left(Seq(param))
     }
   }
 }
