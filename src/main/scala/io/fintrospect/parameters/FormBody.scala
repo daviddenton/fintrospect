@@ -29,20 +29,15 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
     })) ++ fields.map(f => new FormFieldBinding(f, ""))
   }
 
-  override def <--(message: Message) = FormBody.spec.deserialize(contentFrom(message))
-
   override def iterator = fields.iterator
 
   override def validate(message: Message): Either[Seq[Parameter], Option[Form]] = {
-    Try(contentFrom(message)) match {
-      case Success(formContent) => Try(FormBody.spec.deserialize(formContent)) match {
-        case Success(form) => {
-          val missingOrInvalidFields = fields.map(_.validate(form)).filter(_.isLeft).map(_.left).flatMap(_.get)
-          if(missingOrInvalidFields.isEmpty) Right(Some(form)) else Left(missingOrInvalidFields)
-        }
-        case Failure(e) => Left(fields.filter(_.required))
+    Try(FormBody.spec.deserialize(contentFrom(message))) match {
+      case Success(form) => {
+        val missingOrInvalidFields = fields.map(_.validate(form)).filter(_.isLeft).map(_.left).flatMap(_.get)
+        if (missingOrInvalidFields.isEmpty) Right(Some(form)) else Left(missingOrInvalidFields)
       }
-      case _ => Left(fields.filter(_.required))
+      case Failure(e) => Left(fields.filter(_.required))
     }
   }
 }
@@ -63,8 +58,8 @@ object FormBody {
       .split("&")
       .filter(_.contains("="))
       .map {
-      case nvp => (decode(nvp.split("=")(0), "UTF-8"), decode(nvp.split("=")(1), "UTF-8"))
-    }
+        case nvp => (decode(nvp.split("=")(0), "UTF-8"), decode(nvp.split("=")(1), "UTF-8"))
+      }
       .groupBy(_._1)
       .mapValues(_.map(_._2))
       .mapValues(_.toSet))
