@@ -13,10 +13,10 @@ sealed trait Extraction[T] {
 }
 
 object Extraction {
-  def forParam[T](p: Parameter): Extraction[T] = if (p.required) MissingOrInvalid(p) else Missing()
+  def forParam[T](p: Parameter): Extraction[T] = if (p.required) MissingOrInvalid(p) else NotProvided()
 }
 
-case class Missing[T]() extends Extraction[T] {
+case class NotProvided[T]() extends Extraction[T] {
   override def asTry: Try[Option[T]] = Success(None)
 
   override val invalid = Nil
