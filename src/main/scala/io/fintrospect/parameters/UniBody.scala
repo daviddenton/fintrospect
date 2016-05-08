@@ -43,7 +43,7 @@ class UniBody[T](spec: BodySpec[T],
   override def iterator = Iterator(param)
 
   override def validate(message: Message): Either[Seq[Parameter], Option[T]] = {
-    <--?(message) match {
+    Try(spec.deserialize(contentFrom(message))) match {
       case Success(v) => Right(Option(v))
       case Failure(_) => Left(Seq(param))
     }
