@@ -18,11 +18,18 @@ class BodyTest extends FunSpec with ShouldMatchers {
 
   describe("body") {
 
+    val body = Body.json(Option("description"), obj("field" -> string("value")))
+
     it("should retrieve the body value from the request") {
       val bodyJson = obj("field" -> string("value"))
       val request = Request("/")
       request.write(pretty(bodyJson))
-      Body.json(Option("description"), obj("field" -> string("value"))) <-- request shouldEqual bodyJson
+      body.validate(request).right.get shouldEqual Some(bodyJson)
+      body <-- request shouldEqual bodyJson
+    }
+
+    it("validation when missing") {
+      body.validate(Request()) shouldEqual Left(body.iterator.toSeq)
     }
   }
 
