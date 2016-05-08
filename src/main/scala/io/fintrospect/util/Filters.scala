@@ -14,6 +14,8 @@ import io.fintrospect.formats.AbstractResponseBuilder
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
 import io.fintrospect.{ContentType, ContentTypes, Headers}
+import org.jboss.netty.handler.codec.http.HttpHeaders.Names
+import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{ACCEPT, DATE, AUTHORIZATION, HOST}
 
 /**
   * General case useful filters
@@ -41,14 +43,14 @@ object Filters {
 
     def AddAccept[T](contentTypes: ContentType*) = Filter.mk[Request, T, Request, T] {
       (req, svc) => {
-        contentTypes.foreach(c => req.headerMap.add("Accept", c.value))
+        contentTypes.foreach(c => req.headerMap.add(ACCEPT, c.value))
         svc(req)
       }
     }
 
     def AddHost[T](authority: Authority) = Filter.mk[Request, T, Request, T] {
       (req, svc) => {
-        req.headerMap("Host") = authority.toString
+        req.headerMap(HOST) = authority.toString
         svc(req)
       }
     }
@@ -56,7 +58,7 @@ object Filters {
     def BasicAuthorization[T](credentials: Credentials) = Filter.mk[Request, T, Request, T] {
       (req, svc) => {
         val base64Credentials = Base64.getEncoder.encodeToString(s"${credentials.username}:${credentials.password}".getBytes(ISO_8859_1))
-        req.headerMap("Authorization") = "Basic " + base64Credentials.trim
+        req.headerMap(AUTHORIZATION) = "Basic " + base64Credentials.trim
         svc(req)
       }
     }
@@ -71,7 +73,7 @@ object Filters {
       (req, svc) => {
         svc(req)
           .map(rsp => {
-            rsp.headerMap("Date") = RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
+            rsp.headerMap(DATE) = RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
             rsp
           })
       }
