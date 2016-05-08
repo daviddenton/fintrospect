@@ -32,7 +32,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
   override def iterator = fields.iterator
 
   override def validate(message: Message): Either[Seq[Parameter], Option[Form]] = {
-    Try(FormBody.spec.deserialize(contentFrom(message))) match {
+    <--?(message) match {
       case Success(form) => {
         val missingOrInvalidFields = fields.map(_.validate(form)).filter(_.isLeft).map(_.left).flatMap(_.get)
         if (missingOrInvalidFields.isEmpty) Right(Some(form)) else Left(missingOrInvalidFields)
