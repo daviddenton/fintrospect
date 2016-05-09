@@ -32,7 +32,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     def add(fieldAndDefinitions: FieldAndDefinitions) = FieldsAndDefinitions(fieldAndDefinitions.field +: fields, fieldAndDefinitions.definitions ++ definitions)
   }
 
-  private def render(parameter: Parameter, schema: Option[Schema]): JsonNode = {
+  private def render(parameter: Parameter, schema: Option[Schema]): JsonNode =
     obj(
       "in" -> string(parameter.where),
       "name" -> string(parameter.name),
@@ -40,7 +40,6 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "required" -> boolean(parameter.required),
       schema.map("schema" -> _.node).getOrElse("type" -> string(parameter.paramType.name))
     )
-  }
 
   private def render(basePath: Path, security: Security, route: ServerRoute[_, _]): FieldAndDefinitions = {
     val FieldsAndDefinitions(responses, responseDefinitions) = render(route.routeSpec.responses)
@@ -72,33 +71,27 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     FieldAndDefinitions(route2, responseDefinitions ++ bodyAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))
   }
 
-  private def render(responses: Seq[ResponseSpec]): FieldsAndDefinitions = {
+  private def render(responses: Seq[ResponseSpec]): FieldsAndDefinitions =
     responses.foldLeft(FieldsAndDefinitions()) {
       case (memo, nextResp) =>
         val newSchema = Try(parse(nextResp.example.get)).toOption.map(schemaGenerator.toSchema).getOrElse(Schema(nullNode(), Nil))
         val newField = nextResp.status.code.toString -> obj("description" -> string(nextResp.description), "schema" -> newSchema.node)
         memo.add(newField, newSchema.definitions)
     }
-  }
 
-  private def render(security: Security) = {
-    val fields = security match {
-      case NoSecurity => Seq()
-      case ApiKey(param, _) => Seq(
-        "api_key" -> obj(
-          "type" -> string("apiKey"),
-          "in" -> string(param.where),
-          "name" -> string(param.name)
-        )
+  private def render(security: Security) = security match {
+    case NoSecurity => obj()
+    case ApiKey(param, _) => obj(Seq(
+      "api_key" -> obj(
+        "type" -> string("apiKey"),
+        "in" -> string(param.where),
+        "name" -> string(param.name)
       )
-    }
-
-    obj(fields)
+    ))
   }
 
-  private def render(apiInfo: ApiInfo): JsonNode = {
+  private def render(apiInfo: ApiInfo): JsonNode =
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
-  }
 
   override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = {
     val pathsAndDefinitions = routes
