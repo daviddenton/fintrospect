@@ -21,11 +21,8 @@ sealed trait Security {
 case class ApiKey[T, K >: Request](param: Parameter with Mandatory[T, K], validateKey: ValidateKey[T]) extends Security {
   val filter = Filter.mk[Request, Response, Request, Response] {
     (request, svc) => Try(param <-- request) match {
-      case Success(apiKey) =>
-        validateKey(apiKey)
-          .flatMap(result => {
-            if (result) svc(request) else Future.value(Response(Unauthorized))
-          })
+      case Success(apiKey) => validateKey(apiKey)
+        .flatMap(result => if (result) svc(request) else Future.value(Response(Unauthorized)))
       case Failure(e) => Future.value(Response(Unauthorized))
     }
   }
