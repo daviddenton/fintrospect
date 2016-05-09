@@ -33,7 +33,7 @@ class RenderMustacheView(responseBuilder: AbstractResponseBuilder[_], baseTempla
 
   private def loadMustache(view: View) = classToMustache.getOrElseUpdate(view.getClass, factory.compile(view.template + ".mustache"))
 
-  override def apply(request: Request, service: Service[Request, View]): Future[Response] = {
+  override def apply(request: Request, service: Service[Request, View]): Future[Response] =
     service(request)
       .flatMap {
         view => {
@@ -48,5 +48,4 @@ class RenderMustacheView(responseBuilder: AbstractResponseBuilder[_], baseTempla
           Status.Ok(Buf.ByteArray.Owned(outputStream.toByteArray))
         }
       }
-  }
 }

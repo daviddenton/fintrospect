@@ -22,7 +22,6 @@ object HipsterXmlModuleRenderer extends ModuleRenderer {
 
   private def renderRoutes(basePath: Path, routes: Seq[ServerRoute[_, _]]): String = HipsterXmlFormat(routes.map(renderRoute(basePath, _)): _*).toString()
 
-  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = {
+  override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response =
     Ok(HipsterXmlFormat(s"<paths>${renderRoutes(basePath, routes)}</paths>").value)
-  }
 }
