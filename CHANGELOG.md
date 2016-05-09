@@ -1,6 +1,6 @@
 <h1 class="githubonly">Roadmap/Release Notes/Migration Guide</h1>
 
-The main API is stable now, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
+The main API is stable, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
 ## Backlog/upcoming
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
