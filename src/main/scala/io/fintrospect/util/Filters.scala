@@ -14,8 +14,7 @@ import io.fintrospect.formats.AbstractResponseBuilder
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
 import io.fintrospect.{ContentType, ContentTypes, Headers}
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{ACCEPT, DATE, AUTHORIZATION, HOST}
+import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{ACCEPT, AUTHORIZATION, DATE, HOST}
 
 /**
   * General case useful filters
