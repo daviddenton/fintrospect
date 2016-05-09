@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{MissingOrInvalid, Body}
+import io.fintrospect.parameters.{Body, MissingOrInvalid}
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 
@@ -30,12 +30,10 @@ object MultiBodyType {
         .getOrElse(UnsupportedMediaType(contentType.value))
 
     Service.mk {
-      request: Request => {
-        (ContentType.header <-- request)
-          .map(value => ContentType(value.toLowerCase()))
-          .map(contentType => handle(request, contentType))
-          .getOrElse(UnsupportedMediaType("missing Content-Type header"))
-      }
+      request: Request => (ContentType.header <-- request)
+        .map(value => ContentType(value.toLowerCase()))
+        .map(contentType => handle(request, contentType))
+        .getOrElse(UnsupportedMediaType("missing Content-Type header"))
     }
   }
 
