@@ -1,8 +1,8 @@
 package io.fintrospect.parameters
 
+import com.twitter.finagle.Filter
 import com.twitter.finagle.http.Status.Unauthorized
 import com.twitter.finagle.http.{Request, Response}
-import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.parameters.ApiKey.ValidateKey
 
@@ -19,16 +19,15 @@ sealed trait Security {
   * Checks the presence of the named Api Key parameter. Filter returns 401 if Api-Key is not found in request.
   */
 case class ApiKey[T, K >: Request](param: Parameter with Mandatory[T, K], validateKey: ValidateKey[T]) extends Security {
-  val filter = new SimpleFilter[Request, Response] {
-    override def apply(request: Request, next: Service[Request, Response]) =
-      Try(param <-- request) match {
-        case Success(apiKey) =>
-          validateKey(apiKey)
-            .flatMap(result => {
-              if (result) next(request) else Future.value(Response(Unauthorized))
-            })
-        case Failure(e) => Future.value(Response(Unauthorized))
-      }
+  val filter = Filter.mk[Request, Response, Request, Response] {
+    (request, svc) => Try(param <-- request) match {
+      case Success(apiKey) =>
+        validateKey(apiKey)
+          .flatMap(result => {
+            if (result) svc(request) else Future.value(Response(Unauthorized))
+          })
+      case Failure(e) => Future.value(Response(Unauthorized))
+    }
   }
 }
 
