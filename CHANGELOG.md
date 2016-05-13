@@ -10,6 +10,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## v12.14.1 (uncut)
 - Bugfix: Empty forms can be retrieved from a request, even when they have required fields (issue #15).
+- Bugfix: Cache filters should only apply to successful responses (issue #16).
 
 ## v12.14.0
 - Slight refactor of `Auto***` filters to make usage simpler. May involve a rearrangement of implicit parameters (previously 

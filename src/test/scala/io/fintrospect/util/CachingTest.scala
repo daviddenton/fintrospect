@@ -62,16 +62,27 @@ class CachingTest extends FunSpec with ShouldMatchers {
         r.headerMap.isEmpty shouldBe true
       }
 
-      it("adds correct headers to GET requests") {
+      it("adds correct headers to GET responses") {
         val r = responseWith(Caching.Response.NoCache(), Request(Method.Get, ""))
         headerOf("Expires")(r) shouldBe "0"
         headerOf("Cache-Control")(r) shouldBe "private, must-revalidate"
+      }
+
+      it("does not add headers if response fails predicate") {
+        val r = responseWith(Caching.Response.NoCache(_ => false), Request(Method.Get, ""))
+        r.headerMap.isEmpty shouldBe true
       }
     }
 
     describe("MaxAge") {
       it("does not cache non-GET requests") {
         val r = responseWith(Caching.Response.MaxAge(Clock.fixed(Instant.now(), ZoneId.systemDefault()), Duration.ofHours(1)), Request(Method.Put, ""))
+        r.headerMap.isEmpty shouldBe true
+      }
+
+      it("does not add headers if predicate fails") {
+        val r = responseWith(Caching.Response.MaxAge(
+          Clock.fixed(Instant.now(), ZoneId.systemDefault()), Duration.ofHours(1), _ => false), Request(Method.Put, ""))
         r.headerMap.isEmpty shouldBe true
       }
 
@@ -84,14 +95,19 @@ class CachingTest extends FunSpec with ShouldMatchers {
     }
 
     describe("Add eTag") {
-      it("passes through when predicate succeeds") {
-        val response: Response = Response()
+      it("adds when predicate succeeds") {
+        val response = Response()
         response.contentString = "bob"
-        result(Caching.Response.AddETag[Request]()(Request(), Service.mk { req => Future.value(response) })).headerMap("ETag") shouldBe "9f9d51bc70ef21ca5c14f307980a29d8"
+        result(Caching.Response.AddETag[Request](_ => true)(Request(), Service.mk { req => Future.value(response) })).headerMap("ETag") shouldBe "9f9d51bc70ef21ca5c14f307980a29d8"
+      }
+
+      it("does not add when predicate fails") {
+        val response = Response()
+        response.contentString = "bob"
+        result(Caching.Response.AddETag[Request](_ => false)(Request(), Service.mk { req => Future.value(response) })).headerMap.get("ETag") shouldBe None
       }
     }
   }
-
 
   def responseWith(caching: Filter[Request, Response, Request, Response], request: Request) = result(caching(request, Service.mk((r) => Future.value(Response()))))
 }
