@@ -60,10 +60,11 @@ object Caching {
     }
 
     /**
-      * By default, only applies when the status code of the response is < 400. This is overridable.
+      * By default, only applies when the status code of the response is < 400. This is overridable and useful -
+      * For example you could combine this with a MaxAge for everything >= 400
       */
     def NoCache(predicate: Response => Boolean = _.statusCode < 400): Filter[Request, Response, Request, Response] = new CacheFilter(predicate) {
-      override def headersFor(response: Response) = Map(CACHE_CONTROL -> "private, must-revalidate", "Expires" -> "0")
+      override def headersFor(response: Response) = Map(CACHE_CONTROL -> "private, must-revalidate", EXPIRES -> "0")
     }
 
     /**
