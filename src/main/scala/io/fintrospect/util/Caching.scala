@@ -7,8 +7,7 @@ import java.time.{Clock, Duration, ZonedDateTime}
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{DATE, VARY, ETAG, EXPIRES, CACHE_CONTROL, IF_MODIFIED_SINCE}
+import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{CACHE_CONTROL, DATE, ETAG, EXPIRES, IF_MODIFIED_SINCE, VARY}
 
 /**
   * Useful filters for applying Cache-Controls to request/responses
@@ -46,12 +45,12 @@ object Caching {
     */
   object Response {
 
-    private abstract class CacheFilter extends SimpleFilter[Request, Response] {
+    private abstract class CacheFilter(predicate: Response => Boolean) extends SimpleFilter[Request, Response] {
       def headersFor(response: Response): Map[String, String]
 
       override def apply(request: Request, next: Service[Request, Response]): Future[Response] = next(request).map {
         response => {
-          val headers = if (request.method == Method.Get) headersFor(response) else Map()
+          val headers = if (request.method == Method.Get && predicate(response)) headersFor(response) else Map()
           for ((key, value) <- headers) {
             response.headerMap(key) = value
           }
@@ -60,11 +59,17 @@ object Caching {
       }
     }
 
-    def NoCache(): Filter[Request, Response, Request, Response] = new CacheFilter {
+    /**
+      * By default, only applies when the status code of the response is < 400. This is overridable.
+      */
+    def NoCache(predicate: Response => Boolean = _.statusCode < 400): Filter[Request, Response, Request, Response] = new CacheFilter(predicate) {
       override def headersFor(response: Response) = Map(CACHE_CONTROL -> "private, must-revalidate", "Expires" -> "0")
     }
 
-    def MaxAge(clock: Clock, maxAge: Duration): Filter[Request, Response, Request, Response] = new CacheFilter {
+    /**
+      * By default, only applies when the status code of the response is < 400. This is overridable.
+      */
+    def MaxAge(clock: Clock, maxAge: Duration, predicate: Response => Boolean = _.statusCode < 400): Filter[Request, Response, Request, Response] = new CacheFilter(predicate) {
       override def headersFor(response: Response) = Map(
         CACHE_CONTROL -> Seq("public", new MaxAgeTtl(maxAge).toHeaderValue).mkString(", "),
         EXPIRES -> RFC_1123_DATE_TIME.format(now(response).plusSeconds(maxAge.getSeconds)))
@@ -81,13 +86,18 @@ object Caching {
       }
     }
 
-    // Stolen from http://stackoverflow.com/questions/26423662/scalatra-response-hmac-calulation
-    def AddETag[T](): Filter[T, Response, T, Response] = Filter.mk[T, Response, T, Response] {
+    /**
+      * Hash algo stolen from http://stackoverflow.com/questions/26423662/scalatra-response-hmac-calulation
+      * By default, only applies when the status code of the response is < 400. This is overridable.
+      */
+    def AddETag[T](predicate: Response => Boolean = _.statusCode < 400): Filter[T, Response, T, Response] = Filter.mk[T, Response, T, Response] {
       (req, svc) => svc(req)
         .map {
           rsp => {
-            val hashedBody = MessageDigest.getInstance("MD5").digest(rsp.contentString.getBytes).map("%02x".format(_)).mkString
-            rsp.headerMap(ETAG) = hashedBody
+            if(predicate(rsp)) {
+              val hashedBody = MessageDigest.getInstance("MD5").digest(rsp.contentString.getBytes).map("%02x".format(_)).mkString
+              rsp.headerMap(ETAG) = hashedBody
+            }
             rsp
           }
         }
@@ -96,11 +106,12 @@ object Caching {
     /**
       * Applies the passed cache timings (Cache-Control, Expires, Vary) to responses, but only if they are not there already.
       * Use this for adding default cache settings.
+      * By default, only applies when the status code of the response is < 400. This is overridable.
       */
-    def FallbackCacheControl(clock: Clock, defaultCacheTimings: DefaultCacheTimings) = new SimpleFilter[Request, Response] {
+    def FallbackCacheControl(clock: Clock, defaultCacheTimings: DefaultCacheTimings, predicate: Response => Boolean = _.statusCode < 400) = new SimpleFilter[Request, Response] {
       override def apply(request: Request, next: Service[Request, Response]): Future[Response] = next(request).map {
         response => request.method match {
-          case Method.Get => addDefaultCacheHeadersIfAbsent(response)
+          case Method.Get if predicate(response) => addDefaultCacheHeadersIfAbsent(response)
           case _ => response
         }
       }
