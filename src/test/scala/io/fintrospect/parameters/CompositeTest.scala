@@ -9,31 +9,28 @@ class CompositeTest extends FunSpec with ShouldMatchers {
 
   describe("Composite") {
 
-    val optionalString = Query.optional.string("name")
-    val requiredInt = Query.required.int("name2")
-
     it("successfully extracts when all parameters present") {
       val c = Composite {
         request =>
-          (for {
-            str <- optionalString.validate(request).asRight
-            int <- requiredInt.validate(request).asRight
-          } yield Example(str, int.get)).fold(MissingOrInvalid[Example], Extracted(_))
+          for {
+            str <- Query.optional.string("name").validate(request).asRight
+            int <- Query.required.int("name2").validate(request).asRight
+          } yield Example(str, int.get)
       }
 
       c <--? Request("/?name=query1&name2=12") shouldBe Extracted(Example(Some("query1"), 12))
     }
 
     it("reports when not all parameters present") {
+      val int = Query.required.int("name2")
       val c = Composite {
-        request =>
-          (for {
-            name <- optionalString.validate(request).asRight
-            name2 <- requiredInt.validate(request).asRight
-          } yield Example(name, name2.get)).fold(MissingOrInvalid[Example], Extracted(_))
+        request => for {
+          name <- Query.optional.string("name").validate(request).asRight
+          name2 <- int.validate(request).asRight
+        } yield Example(name, name2.get)
       }
 
-      c <--? Request("/?name=query1") shouldBe MissingOrInvalid(requiredInt)
+      c <--? Request("/?name=query1") shouldBe MissingOrInvalid(int)
     }
   }
 
