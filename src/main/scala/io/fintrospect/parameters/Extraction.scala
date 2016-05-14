@@ -18,6 +18,7 @@ sealed trait Extraction[T] {
 }
 
 object Extraction {
+
   def forMissingParam[T](p: Parameter): Extraction[T] = if (p.required) MissingOrInvalid(p) else NotProvided()
 }
 
