@@ -1,37 +1,21 @@
 package io.fintrospect.parameters
 
-import scala.util.{Failure, Success, Try}
-
-abstract class FormField[T](spec: ParameterSpec[_], val deserialize: Seq[String] => T)
+trait FormField[T]
   extends BodyParameter
-  with Validatable[T, Form]
   with Bindable[T, FormFieldBinding] {
-
-  override val name = spec.name
-  override val description = spec.description
-  override val paramType = spec.paramType
   override val example = None
   override val where = "form"
 
-  override def <--?(form: Form): Extraction[T] =
-    form.get(name).map {
-      v => Try(deserialize(v)) match {
-        case Success(d) => Extracted(d)
-        case Failure(_) => MissingOrInvalid[T](this)
-      }
-    }.getOrElse(Extraction.forMissingParam[T](this))
+  protected def valuesFrom(form: Form): Option[Seq[String]] = form.get(name)
 }
 
 abstract class SingleFormField[T](spec: ParameterSpec[T])
-  extends FormField[T](spec, xs => spec.deserialize(xs.head)) {
-
-  def -->(value: T) = Seq(new FormFieldBinding(this, spec.serialize(value)))
+  extends SingleParameter[T, Form, FormFieldBinding](spec, new FormFieldBinding(_, _)) with FormField[T] {
 }
 
-abstract class MultiFormField[T](spec: ParameterSpec[T])
-  extends FormField[Seq[T]](spec, xs => xs.map(spec.deserialize)) {
 
-  def -->(value: Seq[T]) = value.map(v => new FormFieldBinding(this, spec.serialize(v)))
+abstract class MultiFormField[T](spec: ParameterSpec[T])
+  extends MultiParameter[T, Form, FormFieldBinding](spec, new FormFieldBinding(_, _)) with FormField[Seq[T]] {
 }
 
 object FormField {

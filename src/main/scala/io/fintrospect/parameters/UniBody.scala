@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Message
+import io.fintrospect.parameters.InvalidParameter.Invalid
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
@@ -45,6 +46,6 @@ class UniBody[T](spec: BodySpec[T],
   override def <--?(message: Message): Extraction[T] =
     Try(spec.deserialize(contentFrom(message))) match {
       case Success(v) => Extracted(v)
-      case Failure(_) => MissingOrInvalid(Seq(param))
+      case Failure(_) => ExtractionFailed(Invalid(param))
     }
 }

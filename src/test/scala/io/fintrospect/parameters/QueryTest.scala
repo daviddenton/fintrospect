@@ -4,6 +4,7 @@ import java.time.LocalDate
 
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
+import io.fintrospect.parameters.InvalidParameter.{Missing, Invalid}
 import org.scalatest._
 
 
@@ -21,11 +22,11 @@ class QueryTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(requestWithValueOf("notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
-        param.validate(requestWithValueOf()) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf()) shouldEqual ExtractionFailed(Missing(param))
       }
 
       it("can rebind valid value") {
@@ -46,12 +47,12 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("fails to retrieve invalid value") {
         val param = Query.required.*.long(paramName)
-        param.validate(requestWithValueOf("qwe","notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf("qwe","notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
         val param = Query.required.*.zonedDateTime(paramName)
-        param.validate(requestWithValueOf()) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf()) shouldEqual ExtractionFailed(Missing(param))
       }
 
       it("can rebind valid value") {
@@ -68,13 +69,13 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("retrieves value from field") {
         val param = Query.optional.localDate(paramName)
-        param.validate(requestWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        param.validate(requestWithValueOf("2015-02-04")) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
         param <-- requestWithValueOf("2015-02-04") shouldEqual Option(LocalDate.of(2015, 2, 4))
       }
 
       it("fails to retrieve invalid value") {
         val param = Query.optional.json(paramName)
-        param.validate(requestWithValueOf("notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
@@ -101,12 +102,12 @@ class QueryTest extends FunSpec with ShouldMatchers {
       val param = Query.optional.multi.localDate(paramName)
 
       it("retrieves value from field") {
-        param.validate(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        param.validate(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
         param <-- requestWithValueOf("2015-02-04", "2015-02-05") shouldEqual Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(requestWithValueOf("2015-02-04", "notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {

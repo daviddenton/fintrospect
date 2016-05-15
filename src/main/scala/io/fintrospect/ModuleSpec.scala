@@ -8,7 +8,7 @@ import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 import io.fintrospect.ModuleSpec.ModifyPath
 import io.fintrospect.Types.ServiceBinding
-import io.fintrospect.parameters.{NoSecurity, Parameter, Security}
+import io.fintrospect.parameters.{InvalidParameter, NoSecurity, Parameter, Security}
 import io.fintrospect.renderers.ModuleRenderer
 
 import scala.PartialFunction.empty
@@ -22,7 +22,7 @@ object ModuleSpec {
   def apply(basePath: Path): ModuleSpec[Request, Response] = apply(basePath, new ModuleRenderer {
     override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = Response(NotFound)
 
-    override def badRequest(badParameters: Seq[Parameter]): Response = Response(BadRequest)
+    override def badRequest(badParameters: Seq[InvalidParameter]): Response = Response(BadRequest)
 
     override def notFound(request: Request): Response = Response(NotFound)
   })

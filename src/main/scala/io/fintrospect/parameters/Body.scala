@@ -4,14 +4,13 @@ import com.twitter.finagle.http.Message
 import io.fintrospect.ContentType
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 
-import scala.util.{Failure, Success, Try}
 import scala.xml.Elem
 
 abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with Retrieval[T, Message]
 with Validatable[T, Message] {
   val contentType: ContentType = spec.contentType
 
-  override def <--(message: Message): T = validate(message).asTry.get.get
+  override def <--(message: Message): T = validate(message).asRight.get.get
 }
 
 /**
@@ -37,5 +36,5 @@ object Body {
   /**
     * HTML encoded form HTTP message body.
     */
-  def form(fields: FormField[_] with Retrieval[_, Form]*): FormBody = new FormBody(fields)
+  def form(fields: FormField[_] with Retrieval[_, Form] with Validatable[_, Form]*): FormBody = new FormBody(fields)
 }

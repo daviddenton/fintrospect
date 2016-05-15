@@ -14,7 +14,7 @@ import scala.util.{Failure, Success, Try}
 /**
   * Forms are effectively modelled as a collection of fields.
   */
-class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
+class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form] with Validatable[_, Form]])
   extends Body[Form](FormBody.spec)
   with Bindable[Form, Binding]
   with MandatoryRebind[Form, Message, Binding] {
@@ -34,9 +34,9 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
     Try(FormBody.spec.deserialize(contentFrom(message))) match {
       case Success(form) => {
         val missingOrInvalidFields = fields.map(_.validate(form)).flatMap(_.invalid)
-        if (missingOrInvalidFields.isEmpty) Extracted(form) else MissingOrInvalid(missingOrInvalidFields)
+        if (missingOrInvalidFields.isEmpty) Extracted(form) else ExtractionFailed(missingOrInvalidFields)
       }
-      case Failure(e) => MissingOrInvalid(fields.filter(_.required))
+      case Failure(e) => ExtractionFailed(fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
     }
 }
 

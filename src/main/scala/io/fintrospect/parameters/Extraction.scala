@@ -1,25 +1,32 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
+
 import scala.util.Either.RightProjection
 import scala.util.{Failure, Success, Try}
-
-class InvalidParameters(invalid: Seq[Parameter]) extends Exception(
-  invalid.flatMap(_.description).mkString(", ")
-)
 
 /**
   * Result of an attempt to extract a parameter from a target
   */
-sealed trait Extraction[T] {
-  def asRight: RightProjection[Seq[Parameter], Option[T]]
-  def asTry: Try[Option[T]]
+sealed trait Extraction[+T] {
+  def map[O](f: T => O): Extraction[O]
 
-  val invalid: Seq[Parameter]
+  def asRight: RightProjection[Seq[InvalidParameter], Option[T]]
+
+  val invalid: Seq[InvalidParameter]
 }
 
 object Extraction {
-
-  def forMissingParam[T](p: Parameter): Extraction[T] = if (p.required) MissingOrInvalid(p) else NotProvided()
+  def apply[T](parameter: Parameter,
+               deserialize: Seq[String] => T,
+               fromInput: Option[Seq[String]]): Extraction[T] =
+    fromInput.map {
+      v =>
+        Try(deserialize(v)) match {
+          case Success(d) => Extracted(d)
+          case Failure(_) => ExtractionFailed(Invalid(parameter))
+        }
+    }.getOrElse(if (parameter.required) ExtractionFailed(Missing(parameter)) else NotProvided())
 }
 
 /**
@@ -28,9 +35,9 @@ object Extraction {
 case class NotProvided[T]() extends Extraction[T] {
   def asRight = Right(None).right
 
-  override def asTry: Try[Option[T]] = Success(None)
-
   override val invalid = Nil
+
+  override def map[O](f: (T) => O) = NotProvided()
 }
 
 /**
@@ -39,22 +46,20 @@ case class NotProvided[T]() extends Extraction[T] {
 case class Extracted[T](value: T) extends Extraction[T] {
   def asRight = Right(Some(value)).right
 
-  override def asTry: Try[Option[T]] = Success(Some(value))
-
   override val invalid = Nil
+
+  override def map[O](f: (T) => O) = Extracted(f(value))
 }
 
 /**
-  * Represents a parameter which was either required and missing, or provided and in an invalid format
+  * Represents a parameter which could not be extracted
   */
-case class MissingOrInvalid[T](missingOrInvalid: Seq[Parameter]) extends Extraction[T] {
-  def asRight = Left(missingOrInvalid).right
+case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extraction[T] {
+  def asRight = Left(invalid).right
+  override def map[O](f: (T) => O) = ExtractionFailed(invalid)
 
-  override def asTry: Try[Option[T]] = Failure(new InvalidParameters(missingOrInvalid))
-
-  override val invalid = missingOrInvalid
 }
 
-object MissingOrInvalid {
-  def apply[T](p: Parameter): MissingOrInvalid[T] = MissingOrInvalid(Seq(p))
+object ExtractionFailed {
+  def apply[T](p: InvalidParameter): ExtractionFailed[T] = ExtractionFailed(Seq(p))
 }
