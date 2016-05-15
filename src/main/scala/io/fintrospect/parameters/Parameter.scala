@@ -14,7 +14,7 @@ trait Parameter {
   override def toString = s"Parameter(name=$name,where=$where,paramType=${paramType.name})"
 }
 
-abstract class SingleParameter[T, From, B <: Binding](val spec: ParameterSpec[T], fn: (Parameter, String) => B) {
+abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], fn: (Parameter, String) => B) {
   self: Parameter with Bindable[T, B] =>
 
   override val name = spec.name
@@ -28,7 +28,7 @@ abstract class SingleParameter[T, From, B <: Binding](val spec: ParameterSpec[T]
   protected def extract(from: From) = Extraction(this, xs => spec.deserialize(xs.head), valuesFrom(from))
 }
 
-abstract class MultiParameter[T, From, B <: Binding](val spec: ParameterSpec[T], fn: (Parameter, String) => B) {
+abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], fn: (Parameter, String) => B) {
   self: Parameter with Bindable[Seq[T], B] =>
 
   override val name = spec.name
