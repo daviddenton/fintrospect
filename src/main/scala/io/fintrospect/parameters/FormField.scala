@@ -5,9 +5,6 @@ trait FormField[T]
   with Bindable[T, FormFieldBinding] {
   val spec: ParameterSpec[_]
 
-  override val name = spec.name
-  override val description = spec.description
-  override val paramType = spec.paramType
   override val example = None
   override val where = "form"
 

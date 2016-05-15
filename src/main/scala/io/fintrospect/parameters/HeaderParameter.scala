@@ -8,9 +8,6 @@ trait HeaderParameter[T]
 
   val spec: ParameterSpec[_]
 
-  override val name = spec.name
-  override val description = spec.description
-  override val paramType = spec.paramType
   val where = "header"
 
   protected def valuesFrom(message: Message): Option[Seq[String]] = {
