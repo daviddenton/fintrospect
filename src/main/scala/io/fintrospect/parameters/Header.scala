@@ -1,9 +1,6 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Message
-import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
-
-import scala.util.{Failure, Success, Try}
 
 /**
   * Parameters which are bound to request/response headers
