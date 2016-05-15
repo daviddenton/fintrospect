@@ -19,11 +19,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to validate invalid value") {
-        field.validate(formWithValueOf("notValid")) shouldEqual MissingOrInvalid(Seq(field))
+        field.validate(formWithValueOf("notValid")) shouldEqual Invalid(Seq(field))
       }
 
       it("does not validate non existent value") {
-        field.validate(formWithValueOf()) shouldEqual MissingOrInvalid(Seq(field))
+        field.validate(formWithValueOf()) shouldEqual Missing(Seq(field))
       }
 
       it("can rebind valid value") {
@@ -42,11 +42,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to validate invalid value") {
-        field.validate(formWithValueOf("2015-02-04", "notValid")) shouldEqual MissingOrInvalid(Seq(field))
+        field.validate(formWithValueOf("2015-02-04", "notValid")) shouldEqual Invalid(Seq(field))
       }
 
       it("does not validate non existent value") {
-        field.validate(formWithValueOf()) shouldEqual MissingOrInvalid(Seq(field))
+        field.validate(formWithValueOf()) shouldEqual Missing(Seq(field))
       }
 
       it("can rebind valid value") {
@@ -66,7 +66,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     }
 
     it("fails to validate invalid value") {
-      field.validate(formWithValueOf("notValid")) shouldEqual MissingOrInvalid(Seq(field))
+      field.validate(formWithValueOf("notValid")) shouldEqual Invalid(Seq(field))
     }
 
     it("does not validate non existent value") {

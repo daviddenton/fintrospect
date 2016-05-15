@@ -40,7 +40,7 @@ class FormTest extends FunSpec with ShouldMatchers {
     }
 
     it("handles empty form - required") {
-      formSpec.validate(Request()) shouldBe MissingOrInvalid(Seq(field1, field2, field3, field4, field5, field6))
+      formSpec.validate(Request()) shouldBe Invalid(Seq(field1, field2, field3, field4, field5, field6))
     }
   }
 }

@@ -13,7 +13,7 @@ with Validatable[T, Request] {
 
 object Composite {
   def apply[T](fn: Request => Either[Seq[Parameter], T]) = new Composite[T] {
-    override def <--?(from: Request): Extraction[T] = fn(from).fold(MissingOrInvalid[T], Extracted(_))
+    override def <--?(from: Request): Extraction[T] = fn(from).fold(Invalid[T], Extracted(_))
   }
 }
 
