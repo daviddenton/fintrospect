@@ -16,7 +16,7 @@ abstract class FormField[T](spec: ParameterSpec[_])
 abstract class SingleFormField[T](spec: ParameterSpec[T])
   extends FormField[T](spec) {
 
-  def get(form: Form) = Extraction.extract(this, xs => spec.deserialize(xs.head), extract(form))
+  protected def get(form: Form) = Extraction(this, xs => spec.deserialize(xs.head), extract(form))
 
   def -->(value: T) = Seq(new FormFieldBinding(this, spec.serialize(value)))
 }
@@ -24,7 +24,7 @@ abstract class SingleFormField[T](spec: ParameterSpec[T])
 abstract class MultiFormField[T](spec: ParameterSpec[T])
   extends FormField[Seq[T]](spec) {
 
-  def get(form: Form): Extraction[Seq[T]] = Extraction.extract(this, xs => xs.map(spec.deserialize), extract(form))
+  protected def get(form: Form) = Extraction(this, xs => xs.map(spec.deserialize), extract(form))
 
   def -->(value: Seq[T]) = value.map(v => new FormFieldBinding(this, spec.serialize(v)))
 }

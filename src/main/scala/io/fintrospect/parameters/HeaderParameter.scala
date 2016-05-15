@@ -19,7 +19,7 @@ abstract class HeaderParameter[T](spec: ParameterSpec[_])
 abstract class SingleHeaderParameter[T](spec: ParameterSpec[T])
   extends HeaderParameter[T](spec) {
 
-  def get(message: Message) = Extraction.extract(this, xs => spec.deserialize(xs.head), extract(message))
+  protected def get(message: Message) = Extraction(this, xs => spec.deserialize(xs.head), extract(message))
 
   override def -->(value: T) = Seq(new RequestBinding(this, {
     req: Request => {
@@ -32,7 +32,7 @@ abstract class SingleHeaderParameter[T](spec: ParameterSpec[T])
 abstract class MultiHeaderParameter[T](spec: ParameterSpec[T])
   extends HeaderParameter[Seq[T]](spec) {
 
-  def get(message: Message) = Extraction.extract(this, xs => xs.map(spec.deserialize), extract(message))
+  protected def get(message: Message) = Extraction(this, xs => xs.map(spec.deserialize), extract(message))
 
   override def -->(value: Seq[T]) = value.map(v => new RequestBinding(this, {
     req: Request => {
