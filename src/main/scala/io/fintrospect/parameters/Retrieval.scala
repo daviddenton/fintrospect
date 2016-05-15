@@ -21,6 +21,10 @@ trait Retrieval[T, -From] {
 trait Mandatory[T, From] extends Retrieval[T, From] with Parameter with Validatable[T, From] {
   override val required = true
 
+  def get(from: From): Extraction[T]
+
+  override def <--?(from: From): Extraction[T] = get(from).map(identity)
+
   override def <--(from: From): T = validate(from).asRight.get.get
 }
 
