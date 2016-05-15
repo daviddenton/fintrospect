@@ -16,10 +16,12 @@ abstract class HeaderParameter[T](spec: ParameterSpec[_], val deserialize: Seq[S
   protected def get[O](message: Message, fn: T => O): Extraction[O] = {
     val headers = message.headerMap.getAll(name)
     val opt = if (headers.isEmpty) None else Some(headers.toSeq)
-    opt.map(v => Try(deserialize(v)) match {
-      case Success(d) => Extracted(fn(d))
-      case Failure(_) => ExtractionFailed(Invalid(this))
-    }).getOrElse(if(required) ExtractionFailed(Missing(this)) else NotProvided())
+    opt.map {
+      v => Try(deserialize(v)) match {
+        case Success(d) => Extracted(fn(d))
+        case Failure(_) => ExtractionFailed(Invalid(this))
+      }
+    }.getOrElse(if (required) ExtractionFailed(Missing(this)) else NotProvided())
   }
 }
 
