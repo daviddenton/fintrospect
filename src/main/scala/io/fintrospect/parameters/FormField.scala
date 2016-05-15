@@ -14,11 +14,11 @@ object FormFieldExtractAndRebind extends ExtractAndRebind[Form, FormFieldBinding
 }
 
 abstract class SingleFormField[T](spec: ParameterSpec[T])
-  extends SingleParameter[T, Form, FormFieldBinding](spec, FormFieldExtractAndRebind) with FormField[T] {
+  extends SingleParameter(spec, FormFieldExtractAndRebind) with FormField[T] {
 }
 
 abstract class MultiFormField[T](spec: ParameterSpec[T])
-  extends MultiParameter[T, Form, FormFieldBinding](spec, FormFieldExtractAndRebind) with FormField[Seq[T]] {
+  extends MultiParameter(spec, FormFieldExtractAndRebind) with FormField[Seq[T]] {
 }
 
 object FormField {
@@ -44,18 +44,18 @@ object FormField {
   }
 
   val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
-    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Mandatory[T]
+    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField(spec) with Mandatory[T]
 
     override val multi = new Parameters[MultiFormField, MandatorySeq] {
-      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with MandatorySeq[T]
+      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with MandatorySeq[T]
     }
   }
 
   val optional = new Parameters[FormField, Optional] with MultiParameters[MultiFormField, OptionalSeq] {
-    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Optional[T]
+    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField(spec) with Optional[T]
 
     override val multi = new Parameters[MultiFormField, OptionalSeq] {
-      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with OptionalSeq[T]
+      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with OptionalSeq[T]
     }
   }
 }
