@@ -13,6 +13,15 @@ abstract class FormField[T](spec: ParameterSpec[_], val deserialize: Seq[String]
   override val paramType = spec.paramType
   override val example = None
   override val where = "form"
+
+  protected def get[O](form: Form, fn: T => O, default: Extraction[O]): Extraction[O] =
+    form.get(name).map {
+      v => Try(deserialize(v)) match {
+        case Success(d) => Extracted[O](fn(d))
+        case Failure(_) => ExtractionFailed(Invalid(this))
+      }
+    }.getOrElse(default)
+
 }
 
 abstract class SingleFormField[T](spec: ParameterSpec[T])
@@ -49,34 +58,26 @@ object FormField {
     self: Bindable[Seq[T], FormFieldBinding] =>
   }
 
-  private def get[I, O](field: FormField[I], form: Form, fn: I => O, default: Extraction[O]): Extraction[O] =
-    form.get(field.name).map {
-      v => Try(field.deserialize(v)) match {
-        case Success(d) => Extracted[O](fn(d))
-        case Failure(_) => ExtractionFailed(Invalid(field))
-      }
-    }.getOrElse(default)
-
   val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Mandatory[T] {
-      override def <--?(form: Form) = get[T, T](this, form, identity, ExtractionFailed(Missing(this)))
+      override def <--?(form: Form) = get[T](form, identity, ExtractionFailed(Missing(this)))
     }
 
     override val multi = new Parameters[MultiFormField, MandatorySeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with MandatorySeq[T] {
-        override def <--?(form: Form) = get[Seq[T], Seq[T]](this, form, identity, ExtractionFailed(Missing(this)))
+        override def <--?(form: Form) = get[Seq[T]](form, identity, ExtractionFailed(Missing(this)))
       }
     }
   }
 
   val optional = new Parameters[FormField, Optional] with MultiParameters[MultiFormField, OptionalSeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Optional[T] {
-      override def <--?(form: Form) = get[T, Option[T]](this, form, Some(_), NotProvided())
+      override def <--?(form: Form) = get[Option[T]](form, Some(_), NotProvided())
     }
 
     override val multi = new Parameters[MultiFormField, OptionalSeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with OptionalSeq[T] {
-        override def <--?(form: Form) = get[Seq[T], Option[Seq[T]]](this, form, Some(_), NotProvided())
+        override def <--?(form: Form) = get[Option[Seq[T]]](form, Some(_), NotProvided())
       }
     }
   }
