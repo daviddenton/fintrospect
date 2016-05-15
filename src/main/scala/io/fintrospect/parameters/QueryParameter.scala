@@ -18,9 +18,9 @@ object QueryExtractAndRebind extends ExtractAndRebind[Request, QueryBinding] {
 }
 
 abstract class SingleQueryParameter[T](spec: ParameterSpec[T])
-  extends SingleParameter[T, Request, QueryBinding](spec, QueryExtractAndRebind) with QueryParameter[T] {
+  extends SingleParameter(spec, QueryExtractAndRebind) with QueryParameter[T] {
 }
 
 abstract class MultiQueryParameter[T](spec: ParameterSpec[T])
-  extends MultiParameter[T, Request, QueryBinding](spec, QueryExtractAndRebind) with QueryParameter[Seq[T]] {
+  extends MultiParameter(spec, QueryExtractAndRebind) with QueryParameter[Seq[T]] {
 }

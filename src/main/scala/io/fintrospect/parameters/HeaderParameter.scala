@@ -25,10 +25,10 @@ object HeaderExtractAndRebind extends ExtractAndRebind[Message, RequestBinding] 
 }
 
 abstract class SingleHeaderParameter[T](spec: ParameterSpec[T])
-  extends SingleParameter[T, Message, RequestBinding](spec, HeaderExtractAndRebind) with HeaderParameter[T] {
+  extends SingleParameter(spec, HeaderExtractAndRebind) with HeaderParameter[T] {
 }
 
 abstract class MultiHeaderParameter[T](spec: ParameterSpec[T])
-  extends MultiParameter[T, Message, RequestBinding](spec, HeaderExtractAndRebind) with HeaderParameter[Seq[T]] {
+  extends MultiParameter(spec, HeaderExtractAndRebind) with HeaderParameter[Seq[T]] {
 }
 
