@@ -30,24 +30,24 @@ object Header {
 
   val required = new Parameters[HeaderParameter, Mandatory] with MultiParameters[MultiHeaderParameter, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleHeaderParameter[T](spec) with Mandatory[T] {
-      override def <--?(message: Message) = get(message, identity)
+      override def <--?(message: Message) = get(message).map(identity)
     }
 
     override val multi = new Parameters[MultiHeaderParameter, MandatorySeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiHeaderParameter[T](spec) with MandatorySeq[T] {
-        override def <--?(message: Message) = get(message, identity)
+        override def <--?(message: Message) = get(message).map(identity)
       }
     }
   }
 
   val optional = new Parameters[HeaderParameter, Optional] with MultiParameters[MultiHeaderParameter, OptionalSeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleHeaderParameter[T](spec) with Optional[T] {
-      override def <--?(message: Message) = get(message, Some(_))
+      override def <--?(message: Message) = get(message).map(Some(_))
     }
 
     override val multi = new Parameters[MultiHeaderParameter, OptionalSeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiHeaderParameter[T](spec) with OptionalSeq[T] {
-        override def <--?(message: Message) = get(message, Some(_))
+        override def <--?(message: Message) = get(message).map(Some(_))
       }
     }
 

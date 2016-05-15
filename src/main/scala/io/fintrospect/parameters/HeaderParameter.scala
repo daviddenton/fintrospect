@@ -11,9 +11,9 @@ abstract class HeaderParameter[T](spec: ParameterSpec[_], val deserialize: Seq[S
   override val paramType = spec.paramType
   val where = "header"
 
-  protected def get[O](message: Message, fn: T => O): Extraction[O] = {
+  protected def get(message: Message): Extraction[T] = {
     val headers = message.headerMap.getAll(name)
-    Extractor.extract(this, if (headers.isEmpty) None else Some(headers.toSeq)).map(fn)
+    Extractor.extract(this, if (headers.isEmpty) None else Some(headers.toSeq))
   }
 }
 
