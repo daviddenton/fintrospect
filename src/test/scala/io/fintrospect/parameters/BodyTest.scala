@@ -29,7 +29,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
     }
 
     it("validation when missing") {
-      body.validate(Request()) shouldEqual MissingOrInvalid(body.iterator.toSeq)
+      body.validate(Request()) shouldEqual Invalid(body.iterator.toSeq)
     }
   }
 

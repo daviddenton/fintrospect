@@ -20,11 +20,11 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(messageWithHeaderValueOf(Option("notValid"))) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(messageWithHeaderValueOf(Option("notValid"))) shouldEqual Invalid(Seq(param))
       }
 
       it("does not retrieve non existent value") {
-        param.validate(messageWithHeaderValueOf(None)) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(messageWithHeaderValueOf(None)) shouldEqual Missing(Seq(param))
       }
 
       it("can rebind valid value") {
@@ -46,12 +46,12 @@ class HeaderTest extends FunSpec with ShouldMatchers {
 
       it("fails to retrieve invalid value") {
         val param = Header.required.*.long(paramName)
-        param.validate(messageWithValueOf("qwe", "notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(messageWithValueOf("qwe", "notValid")) shouldEqual Invalid(Seq(param))
       }
 
       it("does not retrieve non existent value") {
         val param = Header.required.*.zonedDateTime(paramName)
-        param.validate(messageWithValueOf()) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(messageWithValueOf()) shouldEqual Missing(Seq(param))
       }
 
       it("can rebind valid value") {
@@ -75,7 +75,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(messageWithHeaderValueOf(Option("notValid"))) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(messageWithHeaderValueOf(Option("notValid"))) shouldEqual Invalid(Seq(param))
       }
 
       it("does not retrieve non existent value") {
@@ -108,7 +108,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(messageWithValueOf("2015-02-04", "notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(messageWithValueOf("2015-02-04", "notValid")) shouldEqual Invalid(Seq(param))
       }
 
       it("does not retrieve non existent value") {

@@ -21,11 +21,11 @@ class QueryTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(requestWithValueOf("notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf("notValid")) shouldEqual Invalid(Seq(param))
       }
 
       it("does not retrieve non existent value") {
-        param.validate(requestWithValueOf()) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf()) shouldEqual Missing(Seq(param))
       }
 
       it("can rebind valid value") {
@@ -46,12 +46,12 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("fails to retrieve invalid value") {
         val param = Query.required.*.long(paramName)
-        param.validate(requestWithValueOf("qwe","notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf("qwe","notValid")) shouldEqual Invalid(Seq(param))
       }
 
       it("does not retrieve non existent value") {
         val param = Query.required.*.zonedDateTime(paramName)
-        param.validate(requestWithValueOf()) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf()) shouldEqual Missing(Seq(param))
       }
 
       it("can rebind valid value") {
@@ -74,7 +74,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("fails to retrieve invalid value") {
         val param = Query.optional.json(paramName)
-        param.validate(requestWithValueOf("notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf("notValid")) shouldEqual Invalid(Seq(param))
       }
 
       it("does not retrieve non existent value") {
@@ -106,7 +106,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(requestWithValueOf("2015-02-04", "notValid")) shouldEqual MissingOrInvalid(Seq(param))
+        param.validate(requestWithValueOf("2015-02-04", "notValid")) shouldEqual Invalid(Seq(param))
       }
 
       it("does not retrieve non existent value") {

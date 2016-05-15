@@ -30,7 +30,7 @@ class CompositeTest extends FunSpec with ShouldMatchers {
         } yield Example(name, name2.get)
       }
 
-      c <--? Request("/?name=query1") shouldBe MissingOrInvalid(int)
+      c <--? Request("/?name=query1") shouldBe Invalid(int)
     }
   }
 
