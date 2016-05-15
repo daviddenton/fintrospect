@@ -1,5 +1,7 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.parameters.InvalidParameter.Missing
+
 import scala.util.Either.RightProjection
 
 /**
@@ -12,7 +14,7 @@ sealed trait Extraction[T] {
 }
 
 object Extraction {
-  def forMissingParam[T](p: Parameter): Extraction[T] = if (p.required) Missing(p) else NotProvided()
+  def forMissingParam[T](p: Parameter): Extraction[T] = if (p.required) ExtractionFailed(Missing(p)) else NotProvided()
 }
 
 /**
@@ -34,27 +36,12 @@ case class Extracted[T](value: T) extends Extraction[T] {
 }
 
 /**
-  * Represents a parameter which was required and missing
+  * Represents a parameter which could not be extracted
   */
-case class Missing[T](params: Seq[Parameter]) extends Extraction[T] {
+case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extraction[T] {
   def asRight = Left(invalid).right
-
-  override val invalid = params.map(InvalidParameter(_, "Missing"))
 }
 
-object Missing {
-  def apply[T](p: Parameter): Missing[T] = Missing(Seq(p))
-}
-
-/**
-  * Represents a parameter which was provided and in an invalid format
-  */
-case class Invalid[T](params: Seq[Parameter]) extends Extraction[T] {
-  def asRight = Left(invalid).right
-
-  override val invalid = params.map(InvalidParameter(_, "Missing"))
-}
-
-object Invalid {
-  def apply[T](p: Parameter): Invalid[T] = Invalid(Seq(p))
+object ExtractionFailed {
+  def apply[T](p: InvalidParameter): ExtractionFailed[T] = ExtractionFailed(Seq(p))
 }

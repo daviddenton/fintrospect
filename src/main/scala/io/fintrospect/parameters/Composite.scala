@@ -14,7 +14,7 @@ with Validatable[T, Request] {
 object Composite {
   def apply[T](fn: Request => Either[Seq[InvalidParameter], T]) = new Composite[T] {
     override def <--?(from: Request): Extraction[T] = {
-      fn(from).fold(ip => Invalid[T](ip.map(_.param)), Extracted(_))
+      fn(from).fold(ip => ExtractionFailed[T](ip), Extracted(_))
     }
   }
 }
