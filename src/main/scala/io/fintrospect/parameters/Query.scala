@@ -30,24 +30,24 @@ object Query {
 
   val required = new Parameters[QueryParameter, Mandatory] with MultiParameters[MultiQueryParameter, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Mandatory[T] {
-      override def <--?(request: Request) = get[T](request, identity, ExtractionFailed(Missing(this)))
+      override def <--?(request: Request) = get[T](request, identity)
     }
 
     override val multi = new Parameters[MultiQueryParameter, MandatorySeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiQueryParameter[T](spec) with MandatorySeq[T] {
-        override def <--?(request: Request) = get[Seq[T]](request, identity, ExtractionFailed(Missing(this)))
+        override def <--?(request: Request) = get[Seq[T]](request, identity)
       }
     }
   }
 
   val optional = new Parameters[QueryParameter, Optional] with MultiParameters[MultiQueryParameter, OptionalSeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Optional[T] {
-      override def <--?(request: Request) = get[Option[T]](request, Some(_), NotProvided())
+      override def <--?(request: Request) = get[Option[T]](request, Some(_))
     }
 
     override val multi = new Parameters[MultiQueryParameter, OptionalSeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiQueryParameter[T](spec) with OptionalSeq[T] {
-        override def <--?(request: Request) = get[Option[Seq[T]]](request, Some(_), NotProvided())
+        override def <--?(request: Request) = get[Option[Seq[T]]](request, Some(_))
       }
     }
   }

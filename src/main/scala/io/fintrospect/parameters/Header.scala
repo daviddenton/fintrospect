@@ -34,12 +34,12 @@ object Header {
   val required = new Parameters[HeaderParameter, Mandatory] with MultiParameters[MultiHeaderParameter, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleHeaderParameter[T](spec)
       with Mandatory[T] {
-      override def <--?(message: Message) = get[T](message, identity, ExtractionFailed(Missing(this)))
+      override def <--?(message: Message) = get[T](message, identity)
     }
 
     override val multi = new Parameters[MultiHeaderParameter, MandatorySeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiHeaderParameter[T](spec) with MandatorySeq[T] {
-        override def <--?(message: Message) = get[Seq[T]](message, identity, ExtractionFailed(Missing(this)))
+        override def <--?(message: Message) = get[Seq[T]](message, identity)
       }
     }
   }
@@ -47,12 +47,12 @@ object Header {
   val optional = new Parameters[HeaderParameter, Optional] with MultiParameters[MultiHeaderParameter, OptionalSeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleHeaderParameter[T](spec)
       with Optional[T] {
-      override def <--?(message: Message) = get[Option[T]](message, Some(_), NotProvided())
+      override def <--?(message: Message) = get[Option[T]](message, Some(_))
     }
 
     override val multi = new Parameters[MultiHeaderParameter, OptionalSeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiHeaderParameter[T](spec) with OptionalSeq[T] {
-        override def <--?(message: Message) = get[Option[Seq[T]]](message, Some(_), NotProvided())
+        override def <--?(message: Message) = get[Option[Seq[T]]](message, Some(_))
       }
     }
 
