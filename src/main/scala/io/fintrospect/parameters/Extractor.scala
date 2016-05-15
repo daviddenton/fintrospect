@@ -6,10 +6,12 @@ import scala.util.{Failure, Success, Try}
 
 object Extractor {
 
-  def extract[T](parameter: Parameter with Deserialisable[T], fromInput: Option[Seq[String]]): Extraction[T] = {
+  def extract[T](parameter: Parameter,
+                 deserialize: Seq[String] => T,
+                 fromInput: Option[Seq[String]]): Extraction[T] = {
     fromInput.map {
       v =>
-        Try(parameter.deserialize(v)) match {
+        Try(deserialize(v)) match {
           case Success(d) => Extracted(d)
           case Failure(_) => ExtractionFailed(Invalid(parameter))
         }
