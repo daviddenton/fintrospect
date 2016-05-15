@@ -8,6 +8,8 @@ import scala.util.Either.RightProjection
   * Result of an attempt to extract a parameter from a target
   */
 sealed trait Extraction[+T] {
+  def map[O](f: T => O): Extraction[O]
+
   def asRight: RightProjection[Seq[InvalidParameter], Option[T]]
 
   val invalid: Seq[InvalidParameter]
@@ -24,6 +26,8 @@ case class NotProvided[T]() extends Extraction[T] {
   def asRight = Right(None).right
 
   override val invalid = Nil
+
+  override def map[O](f: (T) => O) = NotProvided()
 }
 
 /**
@@ -33,6 +37,8 @@ case class Extracted[T](value: T) extends Extraction[T] {
   def asRight = Right(Some(value)).right
 
   override val invalid = Nil
+
+  override def map[O](f: (T) => O) = Extracted(f(value))
 }
 
 /**
@@ -40,6 +46,8 @@ case class Extracted[T](value: T) extends Extraction[T] {
   */
 case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extraction[T] {
   def asRight = Left(invalid).right
+  override def map[O](f: (T) => O) = ExtractionFailed(invalid)
+
 }
 
 object ExtractionFailed {

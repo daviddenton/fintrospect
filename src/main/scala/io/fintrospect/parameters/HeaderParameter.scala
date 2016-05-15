@@ -1,12 +1,10 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.{Message, Request}
-import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
-
-import scala.util.{Failure, Success, Try}
 
 abstract class HeaderParameter[T](spec: ParameterSpec[_], val deserialize: Seq[String] => T)
   extends Parameter
+  with Deserialisable[T]
   with Bindable[T, RequestBinding] {
   override val name = spec.name
   override val description = spec.description
@@ -15,13 +13,7 @@ abstract class HeaderParameter[T](spec: ParameterSpec[_], val deserialize: Seq[S
 
   protected def get[O](message: Message, fn: T => O): Extraction[O] = {
     val headers = message.headerMap.getAll(name)
-    val opt = if (headers.isEmpty) None else Some(headers.toSeq)
-    opt.map {
-      v => Try(deserialize(v)) match {
-        case Success(d) => Extracted(fn(d))
-        case Failure(_) => ExtractionFailed(Invalid(this))
-      }
-    }.getOrElse(if (required) ExtractionFailed(Missing(this)) else NotProvided())
+    Extractor.extract(this, if (headers.isEmpty) None else Some(headers.toSeq)).map(fn)
   }
 }
 
