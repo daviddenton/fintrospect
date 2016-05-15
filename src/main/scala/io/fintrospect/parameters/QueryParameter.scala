@@ -1,6 +1,8 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
+import io.fintrospect.parameters.ExtractionFailed$
+import io.fintrospect.parameters.InvalidParameter.Invalid
 import org.jboss.netty.handler.codec.http.QueryStringDecoder
 
 import scala.collection.JavaConverters._
@@ -20,7 +22,7 @@ abstract class QueryParameter[T](spec: ParameterSpec[_], val deserialize: Seq[St
       .map(v =>
         Try(deserialize(v)) match {
           case Success(d) => Extracted(d)
-          case Failure(_) => Invalid[T](this)
+          case Failure(_) => ExtractionFailed[T](Invalid(this))
         }).getOrElse(Extraction.forMissingParam(this))
 }
 

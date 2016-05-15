@@ -1,6 +1,8 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.{Message, Request}
+import io.fintrospect.parameters.ExtractionFailed$
+import io.fintrospect.parameters.InvalidParameter.Invalid
 
 import scala.util.{Failure, Success, Try}
 
@@ -19,7 +21,7 @@ abstract class HeaderParameter[T](spec: ParameterSpec[_], val deserialize: Seq[S
     opt
       .map(v => Try(deserialize(v)) match {
         case Success(d) => Extracted(d)
-        case Failure(_) => Invalid[T](this)
+        case Failure(_) => ExtractionFailed[T](Invalid(this))
       }).getOrElse(Extraction.forMissingParam(this))
   }
 }

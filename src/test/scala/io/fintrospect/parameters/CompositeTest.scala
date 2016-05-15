@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
+import io.fintrospect.parameters.InvalidParameter.Missing
 import org.scalatest._
 
 class CompositeTest extends FunSpec with ShouldMatchers {
@@ -30,7 +31,7 @@ class CompositeTest extends FunSpec with ShouldMatchers {
         } yield Example(name, name2.get)
       }
 
-      c <--? Request("/?name=query1") shouldBe Invalid(int)
+      c <--? Request("/?name=query1") shouldBe ExtractionFailed(Missing(int))
     }
   }
 

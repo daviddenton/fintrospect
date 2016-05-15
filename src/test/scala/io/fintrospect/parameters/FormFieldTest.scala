@@ -3,6 +3,7 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
+import io.fintrospect.parameters.InvalidParameter.{Missing, Invalid}
 import org.scalatest._
 
 class FormFieldTest extends FunSpec with ShouldMatchers {
@@ -19,11 +20,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to validate invalid value") {
-        field.validate(formWithValueOf("notValid")) shouldEqual Invalid(Seq(field))
+        field.validate(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
       }
 
       it("does not validate non existent value") {
-        field.validate(formWithValueOf()) shouldEqual Missing(Seq(field))
+        field.validate(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
       }
 
       it("can rebind valid value") {
@@ -42,11 +43,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to validate invalid value") {
-        field.validate(formWithValueOf("2015-02-04", "notValid")) shouldEqual Invalid(Seq(field))
+        field.validate(formWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(field))
       }
 
       it("does not validate non existent value") {
-        field.validate(formWithValueOf()) shouldEqual Missing(Seq(field))
+        field.validate(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
       }
 
       it("can rebind valid value") {
@@ -66,7 +67,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     }
 
     it("fails to validate invalid value") {
-      field.validate(formWithValueOf("notValid")) shouldEqual Invalid(Seq(field))
+      field.validate(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
     }
 
     it("does not validate non existent value") {
