@@ -9,9 +9,6 @@ trait QueryParameter[T]
   extends Parameter with Bindable[T, QueryBinding] {
 
   val spec: ParameterSpec[_]
-  override val name = spec.name
-  override val description = spec.description
-  override val paramType = spec.paramType
   override val where = "query"
 
   protected def valuesFrom(request: Request): Option[Seq[String]] =

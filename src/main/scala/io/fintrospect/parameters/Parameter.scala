@@ -17,6 +17,10 @@ trait Parameter {
 abstract class SingleParameter[T, From, B <: Binding](val spec: ParameterSpec[T], fn: (Parameter, String) => B) {
   self: Parameter with Bindable[T, B] =>
 
+  override val name = spec.name
+  override val description = spec.description
+  override val paramType = spec.paramType
+
   override def -->(value: T) = Seq(fn(this, spec.serialize(value)))
 
   protected def valuesFrom(from: From): Option[Seq[String]]
@@ -26,6 +30,10 @@ abstract class SingleParameter[T, From, B <: Binding](val spec: ParameterSpec[T]
 
 abstract class MultiParameter[T, From, B <: Binding](val spec: ParameterSpec[T], fn: (Parameter, String) => B) {
   self: Parameter with Bindable[Seq[T], B] =>
+
+  override val name = spec.name
+  override val description = spec.description
+  override val paramType = spec.paramType
 
   override def -->(value: Seq[T]) = value.map(v => fn(this, spec.serialize(v)))
 
