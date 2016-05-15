@@ -13,11 +13,10 @@ abstract class QueryParameter[T](spec: ParameterSpec[_], val deserialize: Seq[St
   override val paramType = spec.paramType
   override val where = "query"
 
-  protected def get[O](request: Request, fn: T => O): Extraction[O] = {
+  protected def get(request: Request) = {
     val strings = Option(new QueryStringDecoder(request.uri).getParameters.get(name))
       .map(_.asScala.toSeq)
-
-    Extractor.extract(this, strings).map(fn)
+    Extractor.extract(this, strings)
   }
 }
 
