@@ -3,6 +3,8 @@ package io.fintrospect.parameters
 import scala.util.Either.RightProjection
 import scala.util.{Failure, Success, Try}
 
+case class InvalidParameter(param: Parameter, reason: String)
+
 class InvalidParameters(invalid: Seq[Parameter]) extends Exception(
   invalid.flatMap(_.description).mkString(", ")
 )
@@ -14,7 +16,7 @@ sealed trait Extraction[T] {
   def asRight: RightProjection[Seq[Parameter], Option[T]]
   def asTry: Try[Option[T]]
 
-  val invalid: Seq[Parameter]
+  val invalid: Seq[InvalidParameter]
 }
 
 object Extraction {
@@ -51,7 +53,7 @@ case class Missing[T](params: Seq[Parameter]) extends Extraction[T] {
 
   override def asTry: Try[Option[T]] = Failure(new InvalidParameters(params))
 
-  override val invalid = params
+  override val invalid = params.map(InvalidParameter(_, "Missing"))
 }
 
 object Missing {
@@ -66,7 +68,7 @@ case class Invalid[T](params: Seq[Parameter]) extends Extraction[T] {
 
   override def asTry: Try[Option[T]] = Failure(new InvalidParameters(params))
 
-  override val invalid = params
+  override val invalid = params.map(InvalidParameter(_, "Missing"))
 }
 
 object Invalid {

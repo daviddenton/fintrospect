@@ -4,7 +4,7 @@ import com.twitter.finagle.http.Status.NotFound
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.ServerRoute
-import io.fintrospect.parameters.{Parameter, Security}
+import io.fintrospect.parameters.{InvalidParameter, Parameter, Security}
 
 /**
  * This is used to render the various standard responses (bad request/the description route).
@@ -13,7 +13,7 @@ import io.fintrospect.parameters.{Parameter, Security}
 trait ModuleRenderer {
   def notFound(request: Request): Response = Response(NotFound)
 
-  def badRequest(badParameters: Seq[Parameter]): Response
+  def badRequest(badParameters: Seq[InvalidParameter]): Response
 
   def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response
 }
