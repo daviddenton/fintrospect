@@ -6,11 +6,9 @@ import io.fintrospect.formats.json.{Argo, JsonFormat}
 
 import scala.xml.Elem
 
-abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with Retrieval[T, Message]
+abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with Mandatory[T, Message]
 with Validatable[T, Message] {
   val contentType: ContentType = spec.contentType
-
-  override def <--(message: Message): T = validate(message).asRight.get.get
 }
 
 /**
