@@ -10,7 +10,7 @@ trait HeaderParameter[T]
 }
 
 
-object HeaderExtractAndRebind extends ExtractAndRebind[Message, RequestBinding] {
+object HeaderExtractAndRebind extends ParameterExtractAndBind[Message, RequestBinding] {
   def newBinding(parameter: Parameter, value: String) = new RequestBinding(parameter, {
     req: Request => {
       req.headerMap.add(parameter.name, value)
