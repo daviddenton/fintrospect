@@ -21,12 +21,12 @@ abstract class SingleQueryParameter[T](spec: ParameterSpec[T])
   extends QueryParameter[T](spec) {
   override def -->(value: T) = Seq(new QueryBinding(this, spec.serialize(value)))
 
-  protected def get(request: Request) = Extractor.extract(this, xs => spec.deserialize(xs.head), extract(request))
+  protected def get(request: Request) = Extraction.extract(this, xs => spec.deserialize(xs.head), extract(request))
 }
 
 abstract class MultiQueryParameter[T](spec: ParameterSpec[T])
   extends QueryParameter[Seq[T]](spec) {
   override def -->(value: Seq[T]) = value.map(v => new QueryBinding(this, spec.serialize(v)))
 
-  protected def get(request: Request) = Extractor.extract(this, xs => xs.map(spec.deserialize), extract(request))
+  protected def get(request: Request) = Extraction.extract(this, xs => xs.map(spec.deserialize), extract(request))
 }

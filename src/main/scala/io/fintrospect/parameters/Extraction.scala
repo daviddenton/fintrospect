@@ -1,8 +1,9 @@
 package io.fintrospect.parameters
 
-import io.fintrospect.parameters.InvalidParameter.Missing
+import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
 
 import scala.util.Either.RightProjection
+import scala.util.{Failure, Success, Try}
 
 /**
   * Result of an attempt to extract a parameter from a target
@@ -16,7 +17,16 @@ sealed trait Extraction[+T] {
 }
 
 object Extraction {
-  def forMissingParam[T](p: Parameter): Extraction[T] = if (p.required) ExtractionFailed(Missing(p)) else NotProvided()
+  def extract[T](parameter: Parameter,
+                 deserialize: Seq[String] => T,
+                 fromInput: Option[Seq[String]]): Extraction[T] =
+    fromInput.map {
+      v =>
+        Try(deserialize(v)) match {
+          case Success(d) => Extracted(d)
+          case Failure(_) => ExtractionFailed(Invalid(parameter))
+        }
+    }.getOrElse(if (parameter.required) ExtractionFailed(Missing(parameter)) else NotProvided())
 }
 
 /**
