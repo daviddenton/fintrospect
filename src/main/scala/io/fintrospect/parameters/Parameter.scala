@@ -14,7 +14,15 @@ trait Parameter {
   override def toString = s"Parameter(name=$name,where=$where,paramType=${paramType.name})"
 }
 
-abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ExtractAndRebind[From, B]) {
+/**
+  * Parameter location specific utility functions to assist with extraction and binding of values
+  */
+trait ParameterExtractAndBind[From, B <: Binding] {
+  def newBinding(parameter: Parameter, value: String): B
+  def valuesFrom(parameter: Parameter, from: From): Option[Seq[String]]
+}
+
+abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, B]) {
   self: Parameter with Bindable[T, B] =>
 
   override val name = spec.name
@@ -26,7 +34,7 @@ abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], ea
   protected def extract(from: From) = Extraction(this, xs => spec.deserialize(xs.head), eab.valuesFrom(this, from))
 }
 
-abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ExtractAndRebind[From, B]) {
+abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, B]) {
 
   self: Parameter with Bindable[Seq[T], B] =>
 
