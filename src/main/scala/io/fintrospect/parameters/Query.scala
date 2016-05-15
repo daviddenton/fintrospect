@@ -36,14 +36,10 @@ object Query {
   }
 
   val optional = new Parameters[QueryParameter, Optional] with MultiParameters[MultiQueryParameter, OptionalSeq] {
-    override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Optional[T] {
-      override def <--?(request: Request) = get(request).map(Some(_))
-    }
+    override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Optional[T]
 
     override val multi = new Parameters[MultiQueryParameter, OptionalSeq] {
-      override def apply[T](spec: ParameterSpec[T]) = new MultiQueryParameter[T](spec) with OptionalSeq[T] {
-        override def <--?(request: Request) = get(request).map(Some(_))
-      }
+      override def apply[T](spec: ParameterSpec[T]) = new MultiQueryParameter[T](spec) with OptionalSeq[T]
     }
   }
 }

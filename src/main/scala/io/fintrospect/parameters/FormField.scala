@@ -60,14 +60,10 @@ object FormField {
   }
 
   val optional = new Parameters[FormField, Optional] with MultiParameters[MultiFormField, OptionalSeq] {
-    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Optional[T] {
-      override def <--?(form: Form) = get(form).map(Some(_))
-    }
+    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Optional[T]
 
     override val multi = new Parameters[MultiFormField, OptionalSeq] {
-      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with OptionalSeq[T] {
-        override def <--?(form: Form) = get(form).map(Some(_))
-      }
+      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with OptionalSeq[T]
     }
   }
 }
