@@ -5,9 +5,10 @@ import org.jboss.netty.handler.codec.http.QueryStringDecoder
 
 import scala.collection.JavaConverters._
 
-abstract class QueryParameter[T](spec: ParameterSpec[_])
+trait QueryParameter[T]
   extends Parameter with Bindable[T, QueryBinding] {
 
+  val spec: ParameterSpec[_]
   override val name = spec.name
   override val description = spec.description
   override val paramType = spec.paramType
@@ -18,15 +19,9 @@ abstract class QueryParameter[T](spec: ParameterSpec[_])
 }
 
 abstract class SingleQueryParameter[T](spec: ParameterSpec[T])
-  extends QueryParameter[T](spec) {
-  override def -->(value: T) = Seq(new QueryBinding(this, spec.serialize(value)))
-
-  protected def extract(request: Request) = Extraction(this, xs => spec.deserialize(xs.head), valuesFrom(request))
+  extends SingleParameter[T, Request, QueryBinding](spec, new QueryBinding(_, _)) with QueryParameter[T] {
 }
 
 abstract class MultiQueryParameter[T](spec: ParameterSpec[T])
-  extends QueryParameter[Seq[T]](spec) {
-  override def -->(value: Seq[T]) = value.map(v => new QueryBinding(this, spec.serialize(v)))
-
-  protected def extract(request: Request) = Extraction(this, xs => xs.map(spec.deserialize), valuesFrom(request))
+  extends MultiParameter[T, Request, QueryBinding](spec, new QueryBinding(_, _)) with QueryParameter[Seq[T]] {
 }
