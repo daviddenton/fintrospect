@@ -8,7 +8,11 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
-## v12.14.1 (uncut)
+## v13.0.0
+- (Small) breaking change: Added reasons to invalid parameter validation. This means that the `badRequest()` method of `ModuleRenderer` implementations need to 
+change to also take the `Seq(InvalidParameter)` instead of just `Seq[Parameter]`. Easily fix by adding `params.map(_.parameter)` if you want to ignore the reason.
+
+## v12.14.1
 - Bugfix: Empty forms can be retrieved from a request, even when they have required fields (issue #15).
 - Bugfix: Cache filters should only apply to successful responses (issue #16).
 
