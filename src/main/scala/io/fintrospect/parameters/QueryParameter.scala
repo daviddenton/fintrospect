@@ -7,8 +7,6 @@ import scala.collection.JavaConverters._
 
 trait QueryParameter[T]
   extends Parameter with Bindable[T, QueryBinding] {
-
-  val spec: ParameterSpec[_]
   override val where = "query"
 
   protected def valuesFrom(request: Request): Option[Seq[String]] =

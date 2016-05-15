@@ -3,8 +3,6 @@ package io.fintrospect.parameters
 trait FormField[T]
   extends BodyParameter
   with Bindable[T, FormFieldBinding] {
-  val spec: ParameterSpec[_]
-
   override val example = None
   override val where = "form"
 

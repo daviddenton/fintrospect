@@ -6,8 +6,6 @@ trait HeaderParameter[T]
   extends Parameter
   with Bindable[T, RequestBinding] {
 
-  val spec: ParameterSpec[_]
-
   val where = "header"
 
   protected def valuesFrom(message: Message): Option[Seq[String]] = {
