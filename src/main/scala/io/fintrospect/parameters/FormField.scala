@@ -52,12 +52,10 @@ object FormField {
   }
 
   val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
-    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Mandatory[T] {
-    }
+    override def apply[T](spec: ParameterSpec[T]) = new SingleFormField[T](spec) with Mandatory[T]
 
     override val multi = new Parameters[MultiFormField, MandatorySeq] {
-      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with MandatorySeq[T] {
-      }
+      override def apply[T](spec: ParameterSpec[T]) = new MultiFormField[T](spec) with MandatorySeq[T]
     }
   }
 

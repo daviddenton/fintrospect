@@ -28,12 +28,10 @@ object Query {
   }
 
   val required = new Parameters[QueryParameter, Mandatory] with MultiParameters[MultiQueryParameter, MandatorySeq] {
-    override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Mandatory[T] {
-    }
+    override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter[T](spec) with Mandatory[T]
 
     override val multi = new Parameters[MultiQueryParameter, MandatorySeq] {
-      override def apply[T](spec: ParameterSpec[T]) = new MultiQueryParameter[T](spec) with MandatorySeq[T] {
-      }
+      override def apply[T](spec: ParameterSpec[T]) = new MultiQueryParameter[T](spec) with MandatorySeq[T]
     }
   }
 
