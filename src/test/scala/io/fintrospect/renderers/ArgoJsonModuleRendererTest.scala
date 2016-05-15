@@ -8,7 +8,7 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.ContentTypes.{APPLICATION_ATOM_XML, APPLICATION_JSON, APPLICATION_SVG_XML}
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat.{number, obj, parse}
-import io.fintrospect.parameters.{ApiKey, Body, FormField, Header, Path, Query}
+import io.fintrospect.parameters.{InvalidParameter, ApiKey, Body, FormField, Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.{contentFrom, statusAndContentFrom}
 import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -56,7 +56,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
     }
 
     it("can build 400") {
-      val response = statusAndContentFrom(renderer.badRequest(Seq(Query.required.string("bob"))))
+      val response = statusAndContentFrom(renderer.badRequest(Seq(InvalidParameter(Query.required.string("bob"), "missing"))))
       response._1 shouldBe Status.BadRequest
       parse(response._2).getStringValue("message") shouldBe "Missing/invalid parameters"
     }

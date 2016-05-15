@@ -3,6 +3,7 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
+import io.fintrospect.parameters.InvalidParameter.{Missing, Invalid}
 import org.scalatest._
 
 class FormFieldTest extends FunSpec with ShouldMatchers {
@@ -19,11 +20,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to validate invalid value") {
-        field.validate(formWithValueOf("notValid")) shouldEqual MissingOrInvalid(Seq(field))
+        field.validate(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
       }
 
       it("does not validate non existent value") {
-        field.validate(formWithValueOf()) shouldEqual MissingOrInvalid(Seq(field))
+        field.validate(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
       }
 
       it("can rebind valid value") {
@@ -42,11 +43,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to validate invalid value") {
-        field.validate(formWithValueOf("2015-02-04", "notValid")) shouldEqual MissingOrInvalid(Seq(field))
+        field.validate(formWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(field))
       }
 
       it("does not validate non existent value") {
-        field.validate(formWithValueOf()) shouldEqual MissingOrInvalid(Seq(field))
+        field.validate(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
       }
 
       it("can rebind valid value") {
@@ -61,12 +62,12 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     val field = FormField.optional.localDate(paramName)
 
     it("validates value from form field") {
-      field.validate(formWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+      field.validate(formWithValueOf("2015-02-04")) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
       field <-- formWithValueOf("2015-02-04") shouldEqual Option(LocalDate.of(2015, 2, 4))
     }
 
     it("fails to validate invalid value") {
-      field.validate(formWithValueOf("notValid")) shouldEqual MissingOrInvalid(Seq(field))
+      field.validate(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
     }
 
     it("does not validate non existent value") {
@@ -86,10 +87,6 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     }
   }
 
-
-  private def requestWithValueOf(value: String*) = {
-    Request(value.map(value => paramName -> value): _*)
-  }
   private def formWithValueOf(value: String*) = {
     if(value.isEmpty) new Form(Map()) else new Form(Map(paramName -> value.toSet))
   }
