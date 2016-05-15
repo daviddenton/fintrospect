@@ -34,7 +34,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form]])
     Try(FormBody.spec.deserialize(contentFrom(message))) match {
       case Success(form) => {
         val missingOrInvalidFields = fields.map(_.validate(form)).flatMap(_.invalid)
-        if (missingOrInvalidFields.isEmpty) Extracted(form) else Invalid(missingOrInvalidFields)
+        if (missingOrInvalidFields.isEmpty) Extracted(form) else Invalid(missingOrInvalidFields.map(_.param))
       }
       case Failure(e) => Invalid(fields.filter(_.required))
     }

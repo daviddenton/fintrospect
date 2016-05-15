@@ -8,11 +8,11 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.ServerRoute
 import io.fintrospect.formats.Xml.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{Parameter, Security}
+import io.fintrospect.parameters.{InvalidParameter, Parameter, Security}
 
 class SiteMapModuleRenderer(baseUrl: URL) extends ModuleRenderer {
 
-  override def badRequest(badParameters: Seq[Parameter]): Response = BadRequest(badParameters.toString())
+  override def badRequest(badParameters: Seq[InvalidParameter]): Response = BadRequest(badParameters.toString())
 
   override def notFound(request: Request): Response = NotFound()
 
