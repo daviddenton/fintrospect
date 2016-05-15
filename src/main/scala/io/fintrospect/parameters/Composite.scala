@@ -8,7 +8,7 @@ import com.twitter.finagle.http.Request
   */
 abstract class Composite[T] extends Retrieval[T, Request]
 with Validatable[T, Request] {
-  override def <--(message: Request): T = validate(message).asTry.get.get
+  override def <--(message: Request): T = validate(message).asRight.get.get
 }
 
 object Composite {
