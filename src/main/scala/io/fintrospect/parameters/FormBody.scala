@@ -15,7 +15,7 @@ import scala.util.{Failure, Success, Try}
   * Forms are effectively modelled as a collection of fields.
   */
 class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form] with Validatable[_, Form]])
-  extends Body(FormBody.spec)
+  extends Body[Form](FormBody.spec)
   with Bindable[Form, Binding]
   with MandatoryRebind[Form, Message, Binding] {
 
