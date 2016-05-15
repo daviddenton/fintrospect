@@ -5,17 +5,20 @@ trait FormField[T]
   with Bindable[T, FormFieldBinding] {
   override val example = None
   override val where = "form"
+}
 
-  protected def valuesFrom(form: Form): Option[Seq[String]] = form.get(name)
+object FormFieldExtractAndRebind extends ExtractAndRebind[Form, FormFieldBinding] {
+  def newBinding(parameter: Parameter, value: String) = new FormFieldBinding(parameter, value)
+
+  def valuesFrom(parameter: Parameter, form: Form): Option[Seq[String]] = form.get(parameter.name)
 }
 
 abstract class SingleFormField[T](spec: ParameterSpec[T])
-  extends SingleParameter[T, Form, FormFieldBinding](spec, new FormFieldBinding(_, _)) with FormField[T] {
+  extends SingleParameter[T, Form, FormFieldBinding](spec, FormFieldExtractAndRebind) with FormField[T] {
 }
 
-
 abstract class MultiFormField[T](spec: ParameterSpec[T])
-  extends MultiParameter[T, Form, FormFieldBinding](spec, new FormFieldBinding(_, _)) with FormField[Seq[T]] {
+  extends MultiParameter[T, Form, FormFieldBinding](spec, FormFieldExtractAndRebind) with FormField[Seq[T]] {
 }
 
 object FormField {

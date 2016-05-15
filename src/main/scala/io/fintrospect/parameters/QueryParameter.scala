@@ -8,15 +8,19 @@ import scala.collection.JavaConverters._
 trait QueryParameter[T]
   extends Parameter with Bindable[T, QueryBinding] {
   override val where = "query"
+}
 
-  protected def valuesFrom(request: Request): Option[Seq[String]] =
-    Option(new QueryStringDecoder(request.uri).getParameters.get(name)).map(_.asScala.toSeq)
+object QueryExtractAndRebind extends ExtractAndRebind[Request, QueryBinding] {
+  def newBinding(parameter: Parameter, value: String) = new QueryBinding(parameter, value)
+
+  def valuesFrom(parameter: Parameter, request: Request): Option[Seq[String]] =
+    Option(new QueryStringDecoder(request.uri).getParameters.get(parameter.name)).map(_.asScala.toSeq)
 }
 
 abstract class SingleQueryParameter[T](spec: ParameterSpec[T])
-  extends SingleParameter[T, Request, QueryBinding](spec, new QueryBinding(_, _)) with QueryParameter[T] {
+  extends SingleParameter[T, Request, QueryBinding](spec, QueryExtractAndRebind) with QueryParameter[T] {
 }
 
 abstract class MultiQueryParameter[T](spec: ParameterSpec[T])
-  extends MultiParameter[T, Request, QueryBinding](spec, new QueryBinding(_, _)) with QueryParameter[Seq[T]] {
+  extends MultiParameter[T, Request, QueryBinding](spec, QueryExtractAndRebind) with QueryParameter[Seq[T]] {
 }
