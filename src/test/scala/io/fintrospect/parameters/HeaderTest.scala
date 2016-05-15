@@ -71,7 +71,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       val param = Header.optional.localDate(paramName)
 
       it("validate value from field") {
-        param.validate(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        param.validate(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
         param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldEqual Option(LocalDate.of(2015, 2, 4))
       }
 
@@ -104,7 +104,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       val param = Header.optional.multi.localDate(paramName)
 
       it("retrieves value from field") {
-        param.validate(messageWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        param.validate(messageWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
         param <-- messageWithValueOf("2015-02-04", "2015-02-05") shouldEqual Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
       }
 

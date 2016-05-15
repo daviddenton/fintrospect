@@ -29,12 +29,12 @@ case class RouteSpec private(summary: String,
   /**
    * Register a header parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: HeaderParameter[_]): RouteSpec = copy(requestParams = rp +: requestParams)
+  def taking(rp: HeaderParameter[_] with Validatable[_, Request]): RouteSpec = copy(requestParams = rp +: requestParams)
 
   /**
    * Register a query parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: QueryParameter[_]): RouteSpec = copy(requestParams = rp +: requestParams)
+  def taking(rp: QueryParameter[_] with Validatable[_, Request]): RouteSpec = copy(requestParams = rp +: requestParams)
 
   /**
    * Register the expected content of the body.

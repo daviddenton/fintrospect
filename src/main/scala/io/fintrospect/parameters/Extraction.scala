@@ -7,7 +7,7 @@ import scala.util.Either.RightProjection
 /**
   * Result of an attempt to extract a parameter from a target
   */
-sealed trait Extraction[T] {
+sealed trait Extraction[+T] {
   def asRight: RightProjection[Seq[InvalidParameter], Option[T]]
 
   val invalid: Seq[InvalidParameter]

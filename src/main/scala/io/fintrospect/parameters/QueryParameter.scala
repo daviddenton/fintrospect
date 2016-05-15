@@ -1,29 +1,12 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.ExtractionFailed$
-import io.fintrospect.parameters.InvalidParameter.Invalid
-import org.jboss.netty.handler.codec.http.QueryStringDecoder
-
-import scala.collection.JavaConverters._
-import scala.util.{Failure, Success, Try}
-
 abstract class QueryParameter[T](spec: ParameterSpec[_], val deserialize: Seq[String] => T)
-  extends Parameter with Validatable[T, Request] with Bindable[T, QueryBinding] {
+  extends Parameter with Bindable[T, QueryBinding] {
 
   override val name = spec.name
   override val description = spec.description
   override val paramType = spec.paramType
   override val where = "query"
-
-  override def <--?(request: Request) =
-    Option(new QueryStringDecoder(request.uri).getParameters.get(name))
-      .map(_.asScala.toSeq)
-      .map(v =>
-        Try(deserialize(v)) match {
-          case Success(d) => Extracted(d)
-          case Failure(_) => ExtractionFailed[T](Invalid(this))
-        }).getOrElse(Extraction.forMissingParam(this))
 }
 
 abstract class SingleQueryParameter[T](spec: ParameterSpec[T])

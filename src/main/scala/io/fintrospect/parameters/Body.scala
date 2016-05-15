@@ -37,5 +37,5 @@ object Body {
   /**
     * HTML encoded form HTTP message body.
     */
-  def form(fields: FormField[_] with Retrieval[_, Form]*): FormBody = new FormBody(fields)
+  def form(fields: FormField[_] with Retrieval[_, Form] with Validatable[_, Form]*): FormBody = new FormBody(fields)
 }
