@@ -4,7 +4,6 @@ import com.twitter.finagle.http.Message
 import io.fintrospect.ContentType
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 
-import scala.util.{Failure, Success, Try}
 import scala.xml.Elem
 
 abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with Retrieval[T, Message]

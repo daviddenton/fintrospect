@@ -1,7 +1,6 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.InvalidParameter.Missing
 
 /**
   * Parameters which are bound to the query part of a URL
