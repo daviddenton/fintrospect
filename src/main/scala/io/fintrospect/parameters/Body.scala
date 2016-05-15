@@ -11,7 +11,7 @@ abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with R
 with Validatable[T, Message] {
   val contentType: ContentType = spec.contentType
 
-  override def <--(message: Message): T = validate(message).asTry.get.get
+  override def <--(message: Message): T = validate(message).asRight.get.get
 }
 
 /**
