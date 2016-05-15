@@ -18,8 +18,8 @@ trait Retrieval[T, -From] {
   def from(from: From): T = <--(from)
 }
 
-trait Mandatory[T, From] extends Retrieval[T, From] with Parameter with Validatable[T, From] {
-  override val required = true
+trait Mandatory[T, From] extends Retrieval[T, From] with Validatable[T, From] {
+  val required = true
 
   protected def extract(from: From): Extraction[T]
 
@@ -28,8 +28,8 @@ trait Mandatory[T, From] extends Retrieval[T, From] with Parameter with Validata
   override def <--(from: From): T = validate(from).asRight.get.get
 }
 
-trait Optional[T, From] extends Retrieval[Option[T], From] with Parameter with Validatable[Option[T], From] {
-  override val required = false
+trait Optional[T, From] extends Retrieval[Option[T], From] with Validatable[Option[T], From] {
+  val required = false
 
   protected def extract(from: From): Extraction[T]
 
