@@ -17,7 +17,7 @@ import scala.util.{Failure, Success, Try}
 class UniBody[T](spec: BodySpec[T],
                  theParamType: ParamType,
                  theExample: Option[T])
-  extends Body[T](spec)
+  extends Body(spec)
   with Bindable[T, RequestBinding]
   with MandatoryRebind[T, Message, RequestBinding] {
 
