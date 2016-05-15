@@ -52,9 +52,7 @@ object FormBody {
   private def decodeForm(content: String) = new Form(content
     .split("&")
     .filter(_.contains("="))
-    .map {
-      case nvp => (decode(nvp.split("=")(0), "UTF-8"), decode(nvp.split("=")(1), "UTF-8"))
-    }
+    .map(nvp => (decode(nvp.split("=")(0), "UTF-8"), decode(nvp.split("=")(1), "UTF-8")))
     .groupBy(_._1)
     .mapValues(_.map(_._2))
     .mapValues(_.toSet))
