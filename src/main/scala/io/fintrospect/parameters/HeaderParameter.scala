@@ -1,29 +1,14 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.{Message, Request}
-import io.fintrospect.parameters.ExtractionFailed$
-import io.fintrospect.parameters.InvalidParameter.Invalid
-
-import scala.util.{Failure, Success, Try}
+import com.twitter.finagle.http.Request
 
 abstract class HeaderParameter[T](spec: ParameterSpec[_], val deserialize: Seq[String] => T)
   extends Parameter
-  with Validatable[T, Message]
   with Bindable[T, RequestBinding] {
   override val name = spec.name
   override val description = spec.description
   override val paramType = spec.paramType
   val where = "header"
-
-  override def <--?(message: Message): Extraction[T] = {
-    val headers = message.headerMap.getAll(name)
-    val opt = if (headers.isEmpty) None else Some(headers.toSeq)
-    opt
-      .map(v => Try(deserialize(v)) match {
-        case Success(d) => Extracted(d)
-        case Failure(_) => ExtractionFailed[T](Invalid(this))
-      }).getOrElse(Extraction.forMissingParam(this))
-  }
 }
 
 abstract class SingleHeaderParameter[T](spec: ParameterSpec[T])

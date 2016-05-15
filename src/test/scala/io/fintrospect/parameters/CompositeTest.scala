@@ -16,7 +16,7 @@ class CompositeTest extends FunSpec with ShouldMatchers {
           for {
             str <- Query.optional.string("name").validate(request).asRight
             int <- Query.required.int("name2").validate(request).asRight
-          } yield Example(str, int.get)
+          } yield Example(str.get, int.get)
       }
 
       c <--? Request("/?name=query1&name2=12") shouldBe Extracted(Example(Some("query1"), 12))
@@ -28,7 +28,7 @@ class CompositeTest extends FunSpec with ShouldMatchers {
         request => for {
           name <- Query.optional.string("name").validate(request).asRight
           name2 <- int.validate(request).asRight
-        } yield Example(name, name2.get)
+        } yield Example(name.get, name2.get)
       }
 
       c <--? Request("/?name=query1") shouldBe ExtractionFailed(Missing(int))

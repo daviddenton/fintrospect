@@ -69,7 +69,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("retrieves value from field") {
         val param = Query.optional.localDate(paramName)
-        param.validate(requestWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        param.validate(requestWithValueOf("2015-02-04")) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
         param <-- requestWithValueOf("2015-02-04") shouldEqual Option(LocalDate.of(2015, 2, 4))
       }
 
@@ -102,7 +102,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
       val param = Query.optional.multi.localDate(paramName)
 
       it("retrieves value from field") {
-        param.validate(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        param.validate(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
         param <-- requestWithValueOf("2015-02-04", "2015-02-05") shouldEqual Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
       }
 
