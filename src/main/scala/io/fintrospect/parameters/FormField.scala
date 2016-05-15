@@ -10,13 +10,13 @@ abstract class FormField[T](spec: ParameterSpec[_])
   override val example = None
   override val where = "form"
 
-  protected def extract(form: Form): Option[Seq[String]] = form.get(name)
+  protected def valuesFrom(form: Form): Option[Seq[String]] = form.get(name)
 }
 
 abstract class SingleFormField[T](spec: ParameterSpec[T])
   extends FormField[T](spec) {
 
-  protected def get(form: Form) = Extraction(this, xs => spec.deserialize(xs.head), extract(form))
+  protected def extract(form: Form) = Extraction(this, xs => spec.deserialize(xs.head), valuesFrom(form))
 
   def -->(value: T) = Seq(new FormFieldBinding(this, spec.serialize(value)))
 }
@@ -24,7 +24,7 @@ abstract class SingleFormField[T](spec: ParameterSpec[T])
 abstract class MultiFormField[T](spec: ParameterSpec[T])
   extends FormField[Seq[T]](spec) {
 
-  protected def get(form: Form) = Extraction(this, xs => xs.map(spec.deserialize), extract(form))
+  protected def extract(form: Form) = Extraction(this, xs => xs.map(spec.deserialize), valuesFrom(form))
 
   def -->(value: Seq[T]) = value.map(v => new FormFieldBinding(this, spec.serialize(v)))
 }

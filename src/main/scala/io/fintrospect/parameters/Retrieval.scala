@@ -21,9 +21,9 @@ trait Retrieval[T, -From] {
 trait Mandatory[T, From] extends Retrieval[T, From] with Parameter with Validatable[T, From] {
   override val required = true
 
-  protected def get(from: From): Extraction[T]
+  protected def extract(from: From): Extraction[T]
 
-  override def <--?(from: From): Extraction[T] = get(from).map(identity)
+  override def <--?(from: From): Extraction[T] = extract(from).map(identity)
 
   override def <--(from: From): T = validate(from).asRight.get.get
 }
@@ -31,9 +31,9 @@ trait Mandatory[T, From] extends Retrieval[T, From] with Parameter with Validata
 trait Optional[T, From] extends Retrieval[Option[T], From] with Parameter with Validatable[Option[T], From] {
   override val required = false
 
-  protected def get(from: From): Extraction[T]
+  protected def extract(from: From): Extraction[T]
 
-  override def <--?(from: From) = get(from).map(Some(_))
+  override def <--?(from: From) = extract(from).map(Some(_))
 
   def <--(from: From): Option[T] = validate(from).asRight.get.flatMap(i => i)
 }
