@@ -8,7 +8,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
-## v13.0.0
+## 12.15.0
 - (Small) breaking change: Added reasons to invalid parameter validation. This means that the `badRequest()` method of `ModuleRenderer` implementations need to 
 change to also take the `Seq(InvalidParameter)` instead of just `Seq[Parameter]`. Easily fix by adding `params.map(_.parameter)` if you want to ignore the reason.
 

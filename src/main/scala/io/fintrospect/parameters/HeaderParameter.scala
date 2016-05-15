@@ -10,7 +10,7 @@ abstract class HeaderParameter[T](spec: ParameterSpec[_])
   override val paramType = spec.paramType
   val where = "header"
 
-  protected def extract(message: Message): Option[Seq[String]] = {
+  protected def valuesFrom(message: Message): Option[Seq[String]] = {
     val headers = message.headerMap.getAll(name)
     if (headers.isEmpty) None else Some(headers.toSeq)
   }
@@ -19,7 +19,7 @@ abstract class HeaderParameter[T](spec: ParameterSpec[_])
 abstract class SingleHeaderParameter[T](spec: ParameterSpec[T])
   extends HeaderParameter[T](spec) {
 
-  protected def get(message: Message) = Extraction(this, xs => spec.deserialize(xs.head), extract(message))
+  protected def extract(message: Message) = Extraction(this, xs => spec.deserialize(xs.head), valuesFrom(message))
 
   override def -->(value: T) = Seq(new RequestBinding(this, {
     req: Request => {
@@ -32,7 +32,7 @@ abstract class SingleHeaderParameter[T](spec: ParameterSpec[T])
 abstract class MultiHeaderParameter[T](spec: ParameterSpec[T])
   extends HeaderParameter[Seq[T]](spec) {
 
-  protected def get(message: Message) = Extraction(this, xs => xs.map(spec.deserialize), extract(message))
+  protected def extract(message: Message) = Extraction(this, xs => xs.map(spec.deserialize), valuesFrom(message))
 
   override def -->(value: Seq[T]) = value.map(v => new RequestBinding(this, {
     req: Request => {
