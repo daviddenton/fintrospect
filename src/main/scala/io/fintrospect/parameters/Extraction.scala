@@ -13,7 +13,7 @@ class InvalidParameters(invalid: Seq[Parameter]) extends Exception(
   * Result of an attempt to extract a parameter from a target
   */
 sealed trait Extraction[T] {
-  def asRight: RightProjection[Seq[Parameter], Option[T]]
+  def asRight: RightProjection[Seq[InvalidParameter], Option[T]]
   def asTry: Try[Option[T]]
 
   val invalid: Seq[InvalidParameter]
@@ -49,7 +49,7 @@ case class Extracted[T](value: T) extends Extraction[T] {
   * Represents a parameter which was required and missing
   */
 case class Missing[T](params: Seq[Parameter]) extends Extraction[T] {
-  def asRight = Left(params).right
+  def asRight = Left(invalid).right
 
   override def asTry: Try[Option[T]] = Failure(new InvalidParameters(params))
 
@@ -64,7 +64,7 @@ object Missing {
   * Represents a parameter which was provided and in an invalid format
   */
 case class Invalid[T](params: Seq[Parameter]) extends Extraction[T] {
-  def asRight = Left(params).right
+  def asRight = Left(invalid).right
 
   override def asTry: Try[Option[T]] = Failure(new InvalidParameters(params))
 
