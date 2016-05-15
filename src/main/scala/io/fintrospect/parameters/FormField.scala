@@ -17,7 +17,7 @@ abstract class FormField[T](spec: ParameterSpec[_], val deserialize: Seq[String]
   protected def get[O](form: Form, fn: T => O): Extraction[O] =
     form.get(name).map {
       v => Try(deserialize(v)) match {
-        case Success(d) => Extracted[O](fn(d))
+        case Success(d) => Extracted(fn(d))
         case Failure(_) => ExtractionFailed(Invalid(this))
       }
     }.getOrElse(if(required) ExtractionFailed(Missing(this)) else NotProvided())

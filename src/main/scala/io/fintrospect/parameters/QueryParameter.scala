@@ -18,11 +18,13 @@ abstract class QueryParameter[T](spec: ParameterSpec[_], val deserialize: Seq[St
   protected def get[O](request: Request, fn: T => O): Extraction[O] =
     Option(new QueryStringDecoder(request.uri).getParameters.get(name))
       .map(_.asScala.toSeq)
-      .map(v =>
-        Try(deserialize(v)) match {
-          case Success(d) => Extracted(fn(d))
-          case Failure(_) => ExtractionFailed(Invalid(this))
-        }).getOrElse(if(required) ExtractionFailed(Missing(this)) else NotProvided())
+      .map {
+        v =>
+          Try(deserialize(v)) match {
+            case Success(d) => Extracted(fn(d))
+            case Failure(_) => ExtractionFailed(Invalid(this))
+          }
+      }.getOrElse(if (required) ExtractionFailed(Missing(this)) else NotProvided())
 }
 
 abstract class SingleQueryParameter[T](spec: ParameterSpec[T])
