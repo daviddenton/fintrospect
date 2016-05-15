@@ -2,23 +2,25 @@ package io.fintrospect.parameters
 
 import com.twitter.finagle.http.{Message, Request}
 
-abstract class HeaderParameter[T](spec: ParameterSpec[_], val deserialize: Seq[String] => T)
+abstract class HeaderParameter[T](spec: ParameterSpec[_])
   extends Parameter
-  with Deserialisable[T]
   with Bindable[T, RequestBinding] {
   override val name = spec.name
   override val description = spec.description
   override val paramType = spec.paramType
   val where = "header"
 
-  protected def get(message: Message): Extraction[T] = {
+  protected def extract(message: Message): Option[Seq[String]] = {
     val headers = message.headerMap.getAll(name)
-    Extractor.extract(this, if (headers.isEmpty) None else Some(headers.toSeq))
+    if (headers.isEmpty) None else Some(headers.toSeq)
   }
 }
 
 abstract class SingleHeaderParameter[T](spec: ParameterSpec[T])
-  extends HeaderParameter[T](spec, xs => spec.deserialize(xs.head)) {
+  extends HeaderParameter[T](spec) {
+
+  protected def get(message: Message) = Extractor.extract(this, xs => spec.deserialize(xs.head), extract(message))
+
   override def -->(value: T) = Seq(new RequestBinding(this, {
     req: Request => {
       req.headerMap.add(spec.name, spec.serialize(value))
@@ -28,7 +30,10 @@ abstract class SingleHeaderParameter[T](spec: ParameterSpec[T])
 }
 
 abstract class MultiHeaderParameter[T](spec: ParameterSpec[T])
-  extends HeaderParameter[Seq[T]](spec, xs => xs.map(spec.deserialize)) {
+  extends HeaderParameter[Seq[T]](spec) {
+
+  protected def get(message: Message) = Extractor.extract(this, xs => xs.map(spec.deserialize), extract(message))
+
   override def -->(value: Seq[T]) = value.map(v => new RequestBinding(this, {
     req: Request => {
       req.headerMap.add(spec.name, spec.serialize(v))
