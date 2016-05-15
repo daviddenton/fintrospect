@@ -1,8 +1,9 @@
 package io.fintrospect.parameters
 
-abstract class FormField[T](spec: ParameterSpec[_])
+trait FormField[T]
   extends BodyParameter
   with Bindable[T, FormFieldBinding] {
+  val spec: ParameterSpec[_]
 
   override val name = spec.name
   override val description = spec.description
@@ -14,19 +15,12 @@ abstract class FormField[T](spec: ParameterSpec[_])
 }
 
 abstract class SingleFormField[T](spec: ParameterSpec[T])
-  extends FormField[T](spec) {
-
-  protected def extract(form: Form) = Extraction(this, xs => spec.deserialize(xs.head), valuesFrom(form))
-
-  def -->(value: T) = Seq(new FormFieldBinding(this, spec.serialize(value)))
+  extends SingleParameter[T, Form, FormFieldBinding](spec, new FormFieldBinding(_, _)) with FormField[T] {
 }
 
+
 abstract class MultiFormField[T](spec: ParameterSpec[T])
-  extends FormField[Seq[T]](spec) {
-
-  protected def extract(form: Form) = Extraction(this, xs => xs.map(spec.deserialize), valuesFrom(form))
-
-  def -->(value: Seq[T]) = value.map(v => new FormFieldBinding(this, spec.serialize(v)))
+  extends MultiParameter[T, Form, FormFieldBinding](spec, new FormFieldBinding(_, _)) with FormField[Seq[T]] {
 }
 
 object FormField {
