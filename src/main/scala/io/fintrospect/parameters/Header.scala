@@ -37,14 +37,10 @@ object Header {
   }
 
   val optional = new Parameters[HeaderParameter, Optional] with MultiParameters[MultiHeaderParameter, OptionalSeq] {
-    override def apply[T](spec: ParameterSpec[T]) = new SingleHeaderParameter[T](spec) with Optional[T] {
-      override def <--?(message: Message) = get(message).map(Some(_))
-    }
+    override def apply[T](spec: ParameterSpec[T]) = new SingleHeaderParameter[T](spec) with Optional[T]
 
     override val multi = new Parameters[MultiHeaderParameter, OptionalSeq] {
-      override def apply[T](spec: ParameterSpec[T]) = new MultiHeaderParameter[T](spec) with OptionalSeq[T] {
-        override def <--?(message: Message) = get(message).map(Some(_))
-      }
+      override def apply[T](spec: ParameterSpec[T]) = new MultiHeaderParameter[T](spec) with OptionalSeq[T]
     }
 
   }
