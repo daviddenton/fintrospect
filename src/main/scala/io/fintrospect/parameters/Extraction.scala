@@ -17,9 +17,9 @@ sealed trait Extraction[+T] {
 }
 
 object Extraction {
-  def extract[T](parameter: Parameter,
-                 deserialize: Seq[String] => T,
-                 fromInput: Option[Seq[String]]): Extraction[T] =
+  def apply[T](parameter: Parameter,
+               deserialize: Seq[String] => T,
+               fromInput: Option[Seq[String]]): Extraction[T] =
     fromInput.map {
       v =>
         Try(deserialize(v)) match {
