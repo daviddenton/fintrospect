@@ -41,18 +41,20 @@ class CompositeTest extends FunSpec with ShouldMatchers {
       case class Range(startDate: LocalDate, endDate: LocalDate)
 
       val start = Query.optional.localDate("start")
+      val middle = Query.optional.localDate("middle")
       val end = Query.required.localDate("end")
 
-      val c = Composite[Request, Range] {
+      val c = Composite {
         request: Request => {
           for {
             startDate <- start.validate(request)
-            endDate <- end.validate(request, "not before start", _.isAfter(startDate.get))
+            middleDate <- middle.validate(request, "not after start", _.get.isAfter(startDate.get))
+            endDate <- end.validate(request, "not after middle", _.isAfter(middleDate.get))
           } yield Range(startDate.get, endDate)
         }
       }
 
-      c <--? Request("/?start=2001-01-01&end=2000-01-01") shouldBe ExtractionFailed(InvalidParameter(end, "not before start"))
+      c <--? Request("/?start=2001-01-01&middle=2000-01-01&end=2002-01-01") shouldBe ExtractionFailed(InvalidParameter(middle, "not after start"))
     }
   }
 
