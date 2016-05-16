@@ -5,9 +5,11 @@ package io.fintrospect.parameters
   * number of query parameters in a Request.
   */
 object Composite {
-  def apply[From, O](fn: From => Either[Seq[InvalidParameter], O]) = new Mandatory[O, From] {
-    override protected def extract(from: From): Extraction[O] = fn(from).fold(ip => ExtractionFailed[O](ip), Extracted(_))
+  def apply[From, O](fn: From => Extraction[O]) = new Mandatory[O, From] {
+    override protected def extract(from: From): Extraction[O] = fn(from)
   }
 }
+
+
 
 
