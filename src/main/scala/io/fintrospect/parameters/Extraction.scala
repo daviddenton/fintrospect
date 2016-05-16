@@ -6,7 +6,7 @@ import scala.util.Either.RightProjection
 import scala.util.{Failure, Success, Try}
 
 /**
-  * Result of an attempt to extract a parameter from a target
+  * Result of an attempt to extract an object from a target
   */
 sealed trait Extraction[+T] {
   def flatMap[O](f: T => Extraction[O]): Extraction[O]
@@ -32,7 +32,7 @@ object Extraction {
 }
 
 /**
-  * Represents an optional parameter which was not provided
+  * Represents an optional object which was not provided
   */
 case class NotProvided[T]() extends Extraction[T] {
   def flatMap[O](f: T => Extraction[O]) = NotProvided()
@@ -45,7 +45,7 @@ case class NotProvided[T]() extends Extraction[T] {
 }
 
 /**
-  * Represents a parameter which was provided and extracted successfully
+  * Represents a object which was provided and extracted successfully
   */
 case class Extracted[T](value: T) extends Extraction[T] {
   def flatMap[O](f: T => Extraction[O]) = f(value)
@@ -58,7 +58,7 @@ case class Extracted[T](value: T) extends Extraction[T] {
 }
 
 /**
-  * Represents a parameter which could not be extracted
+  * Represents a object which could not be extracted due to it being invalid or missing when required
   */
 case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extraction[T] {
   def flatMap[O](f: T => Extraction[O]) = ExtractionFailed(invalid)
