@@ -9,6 +9,8 @@ import scala.util.{Failure, Success, Try}
   * Result of an attempt to extract a parameter from a target
   */
 sealed trait Extraction[+T] {
+  def flatMap[O](f: T => Extraction[O]): Extraction[O]
+
   def map[O](f: T => O): Extraction[O]
 
   def asRight: RightProjection[Seq[InvalidParameter], Option[T]]
@@ -33,6 +35,8 @@ object Extraction {
   * Represents an optional parameter which was not provided
   */
 case class NotProvided[T]() extends Extraction[T] {
+  def flatMap[O](f: T => Extraction[O]) = NotProvided()
+
   def asRight = Right(None).right
 
   override val invalid = Nil
@@ -44,6 +48,8 @@ case class NotProvided[T]() extends Extraction[T] {
   * Represents a parameter which was provided and extracted successfully
   */
 case class Extracted[T](value: T) extends Extraction[T] {
+  def flatMap[O](f: T => Extraction[O]) = f(value)
+
   def asRight = Right(Some(value)).right
 
   override val invalid = Nil
@@ -55,7 +61,10 @@ case class Extracted[T](value: T) extends Extraction[T] {
   * Represents a parameter which could not be extracted
   */
 case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extraction[T] {
+  def flatMap[O](f: T => Extraction[O]) = ExtractionFailed(invalid)
+
   def asRight = Left(invalid).right
+
   override def map[O](f: (T) => O) = ExtractionFailed(invalid)
 
 }
