@@ -10,7 +10,8 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## 12.15.0 (uncut)
 - (Small) breaking change: Added reasons to invalid parameter validation. This means that the `badRequest()` method of `ModuleRenderer` implementations need to 
-change to also take the `Seq(InvalidParameter)` instead of just `Seq[Parameter]`. Easily fix by adding `params.map(_.parameter)` if you want to ignore the reason.
+change to also take the `Seq(InvalidParameter)` instead of just `Seq[Parameter]`. Easily fix by inserting the first line of `val params = invalidParams.map(_.parameter)` 
+into your `badRequest()` if you want to ignore the reason.
 
 ## v12.14.1
 - Bugfix: Empty forms can be retrieved from a request, even when they have required fields (issue #15).
