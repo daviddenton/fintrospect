@@ -23,7 +23,7 @@ trait Mandatory[T, -From] extends Retrieval[T, From] with Validatable[T, From] {
 
   protected def extract(from: From): Extraction[T]
 
-  override def <--?(from: From): Extraction[T] = extract(from).map(identity)
+  override def <--?(from: From): Extraction[T] = extract(from)
 
   override def <--(from: From): T = validate(from) match {
     case Extracted(t) => t
@@ -36,7 +36,7 @@ trait Optional[T, -From] extends Retrieval[Option[T], From] with Validatable[Opt
 
   protected def extract(from: From): Extraction[T]
 
-  override def <--?(from: From) = extract(from).map(Some(_))
+  override def <--?(from: From): Extraction[Option[T]] = extract(from).map(Some(_))
 
   def <--(from: From): Option[T] = validate(from) match {
     case Extracted(t) => t
