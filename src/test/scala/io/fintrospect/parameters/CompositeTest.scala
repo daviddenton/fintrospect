@@ -43,7 +43,7 @@ class CompositeTest extends FunSpec with ShouldMatchers {
       val start = Query.optional.localDate("start")
       val end = Query.required.localDate("end")
 
-      val c = Composite.apply[Request, Range] {
+      val c = Composite[Request, Range] {
         request: Request => {
           for {
             startDate <- start.validate(request)
