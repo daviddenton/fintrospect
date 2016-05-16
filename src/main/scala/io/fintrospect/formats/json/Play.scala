@@ -8,8 +8,6 @@ import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.AutoFilters
-import io.fintrospect.formats.json.Argonaut.Filters.{AutoIn, _AutoOptionalOut}
-import io.fintrospect.formats.json.Circe.Filters._AutoOut
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import play.api.libs.json.{Json, _}

@@ -8,7 +8,7 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.ServerRoute
 import io.fintrospect.formats.Xml.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{InvalidParameter, Parameter, Security}
+import io.fintrospect.parameters.{InvalidParameter, Security}
 
 class SiteMapModuleRenderer(baseUrl: URL) extends ModuleRenderer {
 

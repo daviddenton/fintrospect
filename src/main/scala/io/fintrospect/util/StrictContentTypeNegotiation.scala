@@ -4,8 +4,8 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.NotAcceptable
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.formats.json.Argo
-import io.fintrospect.{ContentTypes, ContentType}
-import Argo.ResponseBuilder.implicits._
+import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
+import io.fintrospect.{ContentType, ContentTypes}
 
 /**
   * Service which allows strict content type negotiation (for multiple types) to be supported on a single route. Note that due to Content-Type

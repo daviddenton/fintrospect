@@ -1,7 +1,5 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.Request
-
 trait FormField[T]
   extends BodyParameter
   with Bindable[T, FormFieldBinding] {

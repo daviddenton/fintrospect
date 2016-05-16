@@ -6,7 +6,7 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.formats.json.Argo.JsonFormat.{Field, array, boolean, nullNode, obj, parse, string}
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{InvalidParameter, ApiKey, NoSecurity, Parameter, Security}
+import io.fintrospect.parameters.{ApiKey, InvalidParameter, NoSecurity, Parameter, Security}
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 import io.fintrospect.{ResponseSpec, ServerRoute}
