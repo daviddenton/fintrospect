@@ -8,10 +8,11 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
-## 12.15.0 (uncut)
+## 12.15.0
 - (Small) breaking change: Added reasons to invalid parameter validation. This means that the `badRequest()` method of `ModuleRenderer` implementations need to 
 change to also take the `Seq(InvalidParameter)` instead of just `Seq[Parameter]`. Easily fix by inserting the first line of `val params = invalidParams.map(_.parameter)` 
 into your `badRequest()` if you want to ignore the reason.
+- Massive tidy-up of Extraction logic + introduction of experimental support for cross-parameter validation via for comprehensions
 
 ## v12.14.1
 - Bugfix: Empty forms can be retrieved from a request, even when they have required fields (issue #15).
