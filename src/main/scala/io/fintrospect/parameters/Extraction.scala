@@ -2,7 +2,6 @@ package io.fintrospect.parameters
 
 import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
 
-import scala.util.Either.RightProjection
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -12,8 +11,6 @@ sealed trait Extraction[+T] {
   def flatMap[O](f: T => Extraction[O]): Extraction[O]
 
   def map[O](f: T => O): Extraction[O]
-
-  def asRight: RightProjection[Seq[InvalidParameter], Option[T]]
 
   val invalid: Seq[InvalidParameter]
 }
@@ -37,8 +34,6 @@ object Extraction {
 case class NotProvided[T]() extends Extraction[T] {
   def flatMap[O](f: T => Extraction[O]) = NotProvided()
 
-  def asRight = Right(None).right
-
   override val invalid = Nil
 
   override def map[O](f: (T) => O) = NotProvided()
@@ -49,8 +44,6 @@ case class NotProvided[T]() extends Extraction[T] {
   */
 case class Extracted[T](value: T) extends Extraction[T] {
   def flatMap[O](f: T => Extraction[O]) = f(value)
-
-  def asRight = Right(Some(value)).right
 
   override val invalid = Nil
 
@@ -63,10 +56,7 @@ case class Extracted[T](value: T) extends Extraction[T] {
 case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extraction[T] {
   def flatMap[O](f: T => Extraction[O]) = ExtractionFailed(invalid)
 
-  def asRight = Left(invalid).right
-
   override def map[O](f: (T) => O) = ExtractionFailed(invalid)
-
 }
 
 object ExtractionFailed {
