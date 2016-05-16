@@ -7,7 +7,7 @@ import io.fintrospect.ServerRoute
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat.{Field, obj}
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{InvalidParameter, Parameter, Security}
+import io.fintrospect.parameters.{InvalidParameter, Security}
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 
 /**
