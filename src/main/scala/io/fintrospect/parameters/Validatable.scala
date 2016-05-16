@@ -15,4 +15,13 @@ trait Validatable[T, -From] {
     * declare your parameters in the RouteSpec().
     */
   def validate(from: From): Extraction[T] = <--?(from)
+
+}
+
+trait ValidatableParameter[T, -From] {
+  self: Parameter with Validatable[T, From] =>
+
+  def validate(from: From, reason: String, predicate: T => Boolean): Extraction[T] = {
+    <--?(from).flatMap[T](v => if (predicate(v)) Extracted(v) else ExtractionFailed(InvalidParameter(this, reason)))
+  }
 }
