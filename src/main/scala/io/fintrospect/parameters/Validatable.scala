@@ -5,14 +5,12 @@ package io.fintrospect.parameters
   */
 trait Validatable[T, -From] {
   /**
-    * Attempt to deserialise from the message object. Only use this method instead of <--() if you want to not
-    * declare your parameters in the RouteSpec().
+    * Attempt to manually deserialise from the message object.
     */
   def <--?(from: From): Extraction[T]
 
   /**
-    * Attempt to deserialise from the message object. Only use this method instead of <--() if you want to not
-    * declare your parameters in the RouteSpec().
+    * Attempt to manually deserialise from the message object.
     */
   def validate(from: From): Extraction[T] = <--?(from)
 
@@ -21,7 +19,15 @@ trait Validatable[T, -From] {
 trait ValidatableParameter[T, -From] {
   self: Parameter with Validatable[T, From] =>
 
-  def validate(from: From, reason: String, predicate: T => Boolean): Extraction[T] = {
+  /**
+    * Attempt to manually deserialise from the message object, adding a validation predicate and reason for failure.
+    */
+  def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[T] = {
     <--?(from).flatMap[T](v => if (predicate(v)) Extracted(v) else ExtractionFailed(InvalidParameter(this, reason)))
   }
+
+  /**
+    * Attempt to manually deserialise from the message object, adding a validation predicate and reason for failure.
+    */
+  def validate(from: From, reason: String, predicate: T => Boolean): Extraction[T] = <--?(from, reason, predicate)
 }
