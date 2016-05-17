@@ -8,11 +8,15 @@ import java.util.Base64
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.Status.NotAcceptable
 import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.util.Future
 import io.fintrospect.ContentType.fromAcceptHeaders
 import io.fintrospect.configuration.{Authority, Credentials}
 import io.fintrospect.formats.AbstractResponseBuilder
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
+import io.fintrospect.parameters.{Extracted, Extraction, ExtractionFailed, NotProvided}
+import io.fintrospect.renderers.ModuleRenderer
+import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{ContentType, ContentTypes, Headers}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{ACCEPT, AUTHORIZATION, DATE, HOST}
 
@@ -61,6 +65,22 @@ object Filters {
         svc(req)
       }
     }
+
+    /**
+      * Extracts the input objects and feeds them into the underlying service.
+      */
+    def ExtractingRequest[I](fn: Request => Extraction[I])
+                            (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
+    Filter[Request, Response, I, Response] = Filter.mk[Request, Response, I, Response] {
+      (req, svc) => {
+        fn(req) match {
+          case Extracted(x) => svc(x)
+          case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
+          case NotProvided() => Future.value(moduleRenderer.badRequest(Nil))
+        }
+      }
+    }
+
   }
 
   /**
