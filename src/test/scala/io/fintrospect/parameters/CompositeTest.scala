@@ -47,9 +47,9 @@ class CompositeTest extends FunSpec with ShouldMatchers {
       val c = Composite {
         request: Request => {
           for {
-            startDate <- start.validate(request)
-            middleDate <- middle.validate(request, "not after start", _.get.isAfter(startDate.get))
-            endDate <- end.validate(request, "not after middle", _.isAfter(middleDate.get))
+            startDate <- start <--? request
+            middleDate <- middle <--?(request, "not after start", _.get.isAfter(startDate.get))
+            endDate <- end <--?(request, "not after middle", _.isAfter(middleDate.get))
           } yield Range(startDate.get, endDate)
         }
       }
