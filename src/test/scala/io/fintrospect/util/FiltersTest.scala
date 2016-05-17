@@ -5,12 +5,14 @@ import java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME
 import java.time.{Duration, ZonedDateTime}
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.{NotAcceptable, Ok}
+import com.twitter.finagle.http.Status.{BadRequest, NotAcceptable, Ok}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
 import io.fintrospect.ContentTypes.{APPLICATION_XHTML_XML, APPLICATION_XML, WILDCARD}
 import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
+import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
+import io.fintrospect.parameters.{ExtractionFailed, Extracted}
 import io.fintrospect.util.Filters.Request.{AddHost, BasicAuthorization, StrictAccept}
 import io.fintrospect.util.Filters.Response.{AddDate, CatchAll, ReportingRouteLatency}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
@@ -21,6 +23,38 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 class FiltersTest extends FunSpec with ShouldMatchers {
 
   describe("Request") {
+
+    describe("ExtractingRequest") {
+      it("when extracts request object successfully, passes through to service") {
+        val message = "hello"
+
+        val filter = Filters.Request.ExtractingRequest {
+          req => Extracted(message)
+        }
+        val response = result(filter(Request(), Service.mk { message => Ok(message) }))
+
+        response.status shouldBe Ok
+        response.contentString shouldBe message
+      }
+
+      it("when extract fails normally then return bad request") {
+        val filter = Filters.Request.ExtractingRequest[String] {
+          req => ExtractionFailed(Seq())
+        }
+        val response = result(filter(Request(), Service.mk { message => Ok(message) }))
+
+        response.status shouldBe BadRequest
+      }
+
+      it("when extraction fails with no object at all then return bad request") {
+        val filter = Filters.Request.ExtractingRequest[String] {
+          req => ExtractionFailed(Seq())
+        }
+        val response = result(filter(Request(), Service.mk { message => Ok(message) }))
+
+        response.status shouldBe BadRequest
+      }
+    }
 
     describe("StrictAccept") {
       it("passes through when no accept header") {
@@ -46,21 +80,21 @@ class FiltersTest extends FunSpec with ShouldMatchers {
       }
     }
 
-    describe("Add authority host header") {
-      it("works") {
+    describe("AddHost") {
+      it("adds authority host header") {
         val authority = Authority(Host.localhost, Port(9865))
         result(AddHost(authority)(Request(), Service.mk { req => Future.value(headerOf("Host")(req)) })) shouldBe authority.toString
       }
     }
 
-    describe("Add basic authorization header") {
-      it("works") {
+    describe("BasicAuthorization") {
+      it("adds basic authorization header") {
         result(BasicAuthorization(Credentials("hello", "kitty"))(Request(), Service.mk { req => Future.value(headerOf("Authorization")(req)) })) shouldBe "Basic aGVsbG86a2l0dHk="
       }
     }
 
-    describe("Adds accept header") {
-      it("works") {
+    describe("AddAccept") {
+      it("adds accept header") {
         result(Filters.Request.AddAccept(ContentTypes.APPLICATION_ATOM_XML, ContentTypes.APPLICATION_JSON)(Request(), Service.mk { req => Future.value(headerOf("Accept")(req)) })) shouldBe "application/atom+xml, application/json"
       }
     }

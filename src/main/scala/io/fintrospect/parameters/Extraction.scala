@@ -1,6 +1,10 @@
 package io.fintrospect.parameters
 
+import com.twitter.finagle.Filter
+import com.twitter.finagle.http.{Request, Response}
+import com.twitter.util.Future
 import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
+import io.fintrospect.renderers.ModuleRenderer
 
 import scala.util.{Failure, Success, Try}
 
@@ -62,3 +66,4 @@ case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extractio
 object ExtractionFailed {
   def apply[T](p: InvalidParameter): ExtractionFailed[T] = ExtractionFailed(Seq(p))
 }
+
