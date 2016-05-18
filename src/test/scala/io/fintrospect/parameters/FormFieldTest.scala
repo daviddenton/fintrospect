@@ -15,7 +15,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       val field = FormField.required.localDate(paramName)
 
       it("validates value from form field") {
-        field.validate(formWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        field.validate(formWithValueOf("2015-02-04")) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
         field <-- formWithValueOf("2015-02-04") shouldEqual LocalDate.of(2015, 2, 4)
       }
 
@@ -38,7 +38,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       val field = FormField.required.multi.localDate(paramName)
 
       it("validates value from form field") {
-        field.validate(formWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        field.validate(formWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
         field <-- formWithValueOf("2015-02-04", "2015-02-05") shouldEqual Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
@@ -71,7 +71,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     }
 
     it("does not validate non existent value") {
-      field.validate(formWithValueOf()) shouldEqual NotProvided()
+      field.validate(formWithValueOf()) shouldEqual Extracted(None)
       field <-- formWithValueOf() shouldEqual None
     }
 

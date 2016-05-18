@@ -8,7 +8,7 @@ import org.scalatest._
 
 class CompositeTest extends FunSpec with ShouldMatchers {
 
-  case class Example(a: Option[String], b: Int)
+  case class Example(a: Option[String], b: Option[String], c: Int)
 
   describe("Composite") {
 
@@ -16,21 +16,33 @@ class CompositeTest extends FunSpec with ShouldMatchers {
       val c = Composite {
         request: Request =>
           for {
-            str <- Query.optional.string("name").validate(request)
-            int <- Query.required.int("name2").validate(request)
-          } yield Example(str, int)
+            name1 <- Query.optional.string("name1").validate(request)
+            name2 <- Query.optional.string("name2").validate(request)
+            name3 <- Query.required.int("name3").validate(request)
+          } yield Some(Example(name1, name2, name3.get))
       }
 
-      c <--? Request("/?name=query1&name2=12") shouldBe Extracted(Example(Some("query1"), 12))
+      c <--? Request("/?name1=query1&name3=12") shouldBe Extracted(Some(Example(Some("query1"), None, 12)))
     }
 
     it("reports when not all parameters present") {
-      val int = Query.required.int("name2")
+
+//      val map = Query.optional.string("name1").validate(Request())
+//        .flatMap(o1 => {
+//        Query.optional.string("name2").validate(Request())
+//          .flatMap(o2 =>
+//          Query.required.string("name3").validate(Request())
+//            .flatMap(o3 => Extracted(Some((o1, o2, o3.get))))
+//          )
+//      })
+
+      val int = Query.required.int("name3")
       val c = Composite {
         request: Request => for {
-          name <- Query.optional.string("name").validate(request)
-          name2 <- int.validate(request)
-        } yield Example(name, name2)
+          name1 <- Query.optional.string("name1").validate(request)
+          name2 <- Query.optional.string("name2").validate(request)
+          name3 <- int.validate(request)
+        } yield Some(Example(name1, name2, name3.get))
       }
 
       c <--? Request("/?name=query1") shouldBe ExtractionFailed(Missing(int))
@@ -38,7 +50,7 @@ class CompositeTest extends FunSpec with ShouldMatchers {
 
     it("validation error between parameters") {
 
-      case class Range(startDate: LocalDate, endDate: LocalDate)
+      case class Range(startDate: LocalDate, middleDate: Option[LocalDate], endDate: LocalDate)
 
       val start = Query.optional.localDate("start")
       val middle = Query.optional.localDate("middle")
@@ -48,13 +60,13 @@ class CompositeTest extends FunSpec with ShouldMatchers {
         request: Request => {
           for {
             startDate <- start <--? request
-            middleDate <- middle <--?(request, "not after start", _.get.isAfter(startDate.get))
-            endDate <- end <--?(request, "not after middle", _.isAfter(middleDate.get))
-          } yield Range(startDate.get, endDate)
+            middleDate <- middle <--?(request, "not after start", (i:LocalDate) => i.isAfter(startDate.get))
+            endDate <- end <--?(request, "not after start", e => startDate.map(s => e.isAfter(s)).getOrElse(true))
+          } yield Some(Range(startDate.get, middleDate, endDate.get))
         }
       }
 
-      c <--? Request("/?start=2001-01-01&middle=2000-01-01&end=2002-01-01") shouldBe ExtractionFailed(InvalidParameter(middle, "not after start"))
+      c <--? Request("/?start=2002-01-01&end=2001-01-01") shouldBe ExtractionFailed(InvalidParameter(end, "not after start"))
     }
   }
 

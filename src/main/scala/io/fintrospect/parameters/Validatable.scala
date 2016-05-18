@@ -23,7 +23,7 @@ trait ValidatableParameter[T, -From] {
     * Attempt to manually deserialise from the message object, adding a validation predicate and reason for failure.
     */
   def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[T] = {
-    <--?(from).flatMap[T](v => if (predicate(v)) Extracted(v) else ExtractionFailed(InvalidParameter(this, reason)))
+    <--?(from).flatMap[T](v => if (v.map(predicate).getOrElse(true)) Extracted(v) else ExtractionFailed(InvalidParameter(this, reason)))
   }
 
   /**
