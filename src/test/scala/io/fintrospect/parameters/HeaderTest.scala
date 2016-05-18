@@ -16,7 +16,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       val param = Header.required.localDate(paramName)
 
       it("validate value from field") {
-        param.validate(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
+        param.validate(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
         param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldEqual LocalDate.of(2015, 2, 4)
       }
 
@@ -41,7 +41,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
 
       it("retrieves value from field") {
         val param = Header.required.multi.localDate(paramName)
-        param.validate(messageWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
+        param.validate(messageWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
         param <-- messageWithValueOf("2015-02-04", "2015-02-05") shouldEqual Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
@@ -71,7 +71,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       val param = Header.optional.localDate(paramName)
 
       it("validate value from field") {
-        param.validate(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
+        param.validate(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
         param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldEqual Option(LocalDate.of(2015, 2, 4))
       }
 
@@ -80,7 +80,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("does not retrieve non existent value") {
-        param.validate(messageWithHeaderValueOf(None)) shouldEqual Extracted(None)
+        param.validate(messageWithHeaderValueOf(None)) shouldEqual NotProvided()
         param <-- Request() shouldEqual None
       }
 
@@ -104,7 +104,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       val param = Header.optional.multi.localDate(paramName)
 
       it("retrieves value from field") {
-        param.validate(messageWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
+        param.validate(messageWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
         param <-- messageWithValueOf("2015-02-04", "2015-02-05") shouldEqual Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
       }
 
@@ -113,7 +113,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("does not retrieve non existent value") {
-        param.validate(messageWithValueOf()) shouldEqual Extracted(None)
+        param.validate(messageWithValueOf()) shouldEqual NotProvided()
         param <-- Request() shouldEqual None
       }
 

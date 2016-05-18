@@ -14,7 +14,7 @@ import io.fintrospect.configuration.{Authority, Credentials}
 import io.fintrospect.formats.AbstractResponseBuilder
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{Extracted, Extraction, ExtractionFailed}
+import io.fintrospect.parameters.{Extracted, Extraction, ExtractionFailed, NotProvided}
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{ContentType, ContentTypes, Headers}
@@ -74,8 +74,8 @@ object Filters {
     Filter[Request, Response, I, Response] = Filter.mk[Request, Response, I, Response] {
       (req, svc) => {
         fn(req) match {
-          case Extracted(x) if x.isDefined => svc(x.get)
-          case Extracted(x) if x.isEmpty => Future.value(moduleRenderer.badRequest(Seq()))
+          case Extracted(x)=> svc(x)
+          case NotProvided() => Future.value(moduleRenderer.badRequest(Seq()))
           case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
         }
       }

@@ -23,21 +23,33 @@ object Extraction {
     fromInput.map {
       v =>
         Try(deserialize(v)) match {
-          case Success(d) => Extracted(Some(d))
+          case Success(d) => Extracted(d)
           case Failure(_) => ExtractionFailed(Invalid(parameter))
         }
-    }.getOrElse(if (parameter.required) ExtractionFailed(Missing(parameter)) else Extracted(None))
+    }.getOrElse(if (parameter.required) ExtractionFailed(Missing(parameter)) else NotProvided())
 }
 
 /**
   * Represents a object which was provided and extracted successfully
   */
-case class Extracted[T](value: Option[T]) extends Extraction[T] {
-  def flatMap[O](f: Option[T] => Extraction[O]) = f(value)
+case class Extracted[T](value: T) extends Extraction[T] {
+  def flatMap[O](f: Option[T] => Extraction[O]) = f(Some(value))
 
   override val invalid = Nil
 
-  override def map[O](f: Option[T] => Option[O]) = Extracted(f(value))
+  override def map[O](f: Option[T] => Option[O]) = f(Some(value)).map(Extracted(_)).getOrElse(NotProvided())
+}
+
+object Extracted {
+  def from[T](t: Option[T]) = t.map(Extracted(_)).getOrElse(NotProvided())
+}
+
+case class NotProvided[T]() extends Extraction[T] {
+  def flatMap[O](f: Option[T] => Extraction[O]) = f(None)
+
+  override val invalid = Nil
+
+  override def map[O](f: Option[T] => Option[O]) = f(None).map(Extracted(_)).getOrElse(NotProvided())
 }
 
 /**

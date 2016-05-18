@@ -26,7 +26,7 @@ trait Mandatory[T, -From] extends Retrieval[T, From] with Validatable[T, From] {
   override def <--?(from: From): Extraction[T] = extract(from)
 
   override def <--(from: From): T = validate(from) match {
-    case Extracted(t) => t.get
+    case Extracted(t) => t
     case _ => throw new IllegalStateException("Extraction should not have failed")
   }
 }
@@ -39,7 +39,8 @@ trait Optional[T, -From] extends Retrieval[Option[T], From] with Validatable[T, 
   override def <--?(from: From): Extraction[T] = extract(from)
 
   def <--(from: From): Option[T] = validate(from) match {
-    case Extracted(t) => t
+    case Extracted(t) => Some(t)
+    case NotProvided() => None
     case _ => throw new IllegalStateException("Extraction should not have failed")
   }
 }

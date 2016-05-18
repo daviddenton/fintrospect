@@ -22,19 +22,23 @@ class CompositeTest extends FunSpec with ShouldMatchers {
           } yield Some(Example(name1, name2, name3.get))
       }
 
-      c <--? Request("/?name1=query1&name3=12") shouldBe Extracted(Some(Example(Some("query1"), None, 12)))
+      c <--? Request("/?name1=query1&name2=rwer&name3=12") shouldBe Extracted(Example(Some("query1"), Some("rwer"), 12))
     }
 
-    it("reports when not all parameters present") {
+    it("reports error when not all parameters present") {
+      val int = Query.required.int("name3")
+      val c = Composite {
+        request: Request => for {
+          name1 <- Query.optional.string("name1").validate(request)
+          name2 <- Query.optional.string("name2").validate(request)
+          name3 <- int.validate(request)
+        } yield Some(Example(name1, name2, name3.get))
+      }
 
-//      val map = Query.optional.string("name1").validate(Request())
-//        .flatMap(o1 => {
-//        Query.optional.string("name2").validate(Request())
-//          .flatMap(o2 =>
-//          Query.required.string("name3").validate(Request())
-//            .flatMap(o3 => Extracted(Some((o1, o2, o3.get))))
-//          )
-//      })
+      c <--? Request("/?name1=query1") shouldBe ExtractionFailed(Missing(int))
+    }
+
+    it("extracted when only optional parameters missing") {
 
       val int = Query.required.int("name3")
       val c = Composite {
@@ -45,7 +49,7 @@ class CompositeTest extends FunSpec with ShouldMatchers {
         } yield Some(Example(name1, name2, name3.get))
       }
 
-      c <--? Request("/?name=query1") shouldBe ExtractionFailed(Missing(int))
+      c <--? Request("/?name3=123") shouldBe Extracted(Example(None, None, 123))
     }
 
     it("validation error between parameters") {
