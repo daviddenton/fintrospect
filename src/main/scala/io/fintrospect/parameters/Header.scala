@@ -20,17 +20,17 @@ object Header {
   }
 
   trait Optional[T] extends io.fintrospect.parameters.Optional[T, Message]
-  with ValidatableParameter[Option[T], Message]
+  with ValidatableParameter[T, Message]
   with OptionalRebind[T, Message, RequestBinding]
   with OptionalBindable[T, RequestBinding] {
-    self: Parameter with Validatable[Option[T], Message] with Bindable[T, RequestBinding] =>
+    self: Parameter with Validatable[T, Message] with Bindable[T, RequestBinding] =>
   }
 
   trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Seq[T], Message]
-  with ValidatableParameter[Option[Seq[T]], Message]
+  with ValidatableParameter[Seq[T], Message]
   with OptionalRebind[Seq[T], Message, RequestBinding]
   with OptionalBindable[Seq[T], RequestBinding] {
-    self: Parameter with Validatable[Option[Seq[T]], Message] with Bindable[Seq[T], RequestBinding] =>
+    self: Parameter with Validatable[Seq[T], Message] with Bindable[Seq[T], RequestBinding] =>
   }
 
   val required = new Parameters[HeaderParameter, Mandatory] with MultiParameters[MultiHeaderParameter, MandatorySeq] {

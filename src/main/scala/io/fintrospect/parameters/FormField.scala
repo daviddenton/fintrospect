@@ -36,17 +36,17 @@ object FormField {
   }
 
   trait Optional[T] extends io.fintrospect.parameters.Optional[T, Form]
-  with ValidatableParameter[Option[T], Form]
+  with ValidatableParameter[T, Form]
   with OptionalRebind[T, Form, FormFieldBinding]
   with OptionalBindable[T, FormFieldBinding] {
-    self: Parameter with Validatable[Option[T], Form] with Bindable[T, FormFieldBinding] =>
+    self: Parameter with Validatable[T, Form] with Bindable[T, FormFieldBinding] =>
   }
 
   trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Seq[T], Form]
-  with ValidatableParameter[Option[Seq[T]], Form]
+  with ValidatableParameter[Seq[T], Form]
   with OptionalRebind[Seq[T], Form, FormFieldBinding]
   with OptionalBindable[Seq[T], FormFieldBinding] {
-    self: Parameter with Validatable[Option[Seq[T]], Form] with Bindable[Seq[T], FormFieldBinding] =>
+    self: Parameter with Validatable[Seq[T], Form] with Bindable[Seq[T], FormFieldBinding] =>
   }
 
   val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
