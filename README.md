@@ -41,7 +41,7 @@ Add the following lines to ```build.sbt```:
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.35.0"
-libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.15.0"
+libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.16.0"
 ```
 
 ## See the code
