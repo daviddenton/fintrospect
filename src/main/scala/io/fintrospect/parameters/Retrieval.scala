@@ -40,7 +40,7 @@ trait Optional[T, -From] extends Retrieval[Option[T], From] with Validatable[T, 
 
   def <--(from: From): Option[T] = validate(from) match {
     case Extracted(t) => Some(t)
-    case NotProvided() => None
+    case NotProvided => None
     case _ => throw new IllegalStateException("Extraction should not have failed")
   }
 }

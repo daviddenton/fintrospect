@@ -80,7 +80,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("does not retrieve non existent value") {
-        param.validate(messageWithHeaderValueOf(None)) shouldEqual NotProvided()
+        param.validate(messageWithHeaderValueOf(None)) shouldEqual NotProvided
         param <-- Request() shouldEqual None
       }
 
@@ -113,7 +113,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("does not retrieve non existent value") {
-        param.validate(messageWithValueOf()) shouldEqual NotProvided()
+        param.validate(messageWithValueOf()) shouldEqual NotProvided
         param <-- Request() shouldEqual None
       }
 

@@ -75,7 +75,7 @@ object Filters {
       (req, svc) => {
         fn(req) match {
           case Extracted(x)=> svc(x)
-          case NotProvided() => Future.value(moduleRenderer.badRequest(Seq()))
+          case NotProvided => Future.value(moduleRenderer.badRequest(Seq()))
           case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
         }
       }

@@ -71,7 +71,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     }
 
     it("does not validate non existent value") {
-      field.validate(formWithValueOf()) shouldEqual NotProvided()
+      field.validate(formWithValueOf()) shouldEqual NotProvided
       field <-- formWithValueOf() shouldEqual None
     }
 
