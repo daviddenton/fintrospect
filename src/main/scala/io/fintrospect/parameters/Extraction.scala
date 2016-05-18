@@ -1,13 +1,8 @@
 package io.fintrospect.parameters
 
-import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
-
-import scala.util.{Failure, Success, Try}
-
 /**
   * Result of an attempt to extract an object from a target
   */
-
 sealed trait Extraction[+T] {
   def flatMap[O](f: Option[T] => Extraction[O]): Extraction[O]
 
@@ -17,16 +12,10 @@ sealed trait Extraction[+T] {
 }
 
 object Extraction {
-  def apply[T](parameter: Parameter,
-               deserialize: Seq[String] => T,
-               fromInput: Option[Seq[String]]): Extraction[T] =
-    fromInput.map {
-      v =>
-        Try(deserialize(v)) match {
-          case Success(d) => Extracted(d)
-          case Failure(_) => ExtractionFailed(Invalid(parameter))
-        }
-    }.getOrElse(if (parameter.required) ExtractionFailed(Missing(parameter)) else NotProvided)
+  /**
+    * Wraps in a successful extraction.
+    */
+  def apply[T](t: Option[T]): Extraction[T] = t.map(Extracted(_)).getOrElse(NotProvided)
 }
 
 /**
@@ -37,11 +26,7 @@ case class Extracted[T](value: T) extends Extraction[T] {
 
   override val invalid = Nil
 
-  override def map[O](f: Option[T] => Option[O]) = Extracted.from(f(Some(value)))
-}
-
-object Extracted {
-  def from[T](t: Option[T]) = t.map(Extracted(_)).getOrElse(NotProvided)
+  override def map[O](f: Option[T] => Option[O]) = Extraction(f(Some(value)))
 }
 
 /**
@@ -52,7 +37,7 @@ object NotProvided extends Extraction[Nothing] {
 
   override val invalid = Nil
 
-  override def map[O](f: Option[Nothing] => Option[O]) = Extracted.from(f(None))
+  override def map[O](f: Option[Nothing] => Option[O]) = Extraction(f(None))
 }
 
 /**

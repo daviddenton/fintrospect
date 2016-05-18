@@ -1,5 +1,9 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
+
+import scala.util.{Failure, Success, Try}
+
 /**
   * A parameter is a name-value pair which can be encoded into an HTTP message. Sub-types
   * represent the various places in which values are encoded (eg. header/form/query/path)
@@ -12,6 +16,16 @@ trait Parameter {
   val paramType: ParamType
 
   override def toString = s"Parameter(name=$name,where=$where,paramType=${paramType.name})"
+
+  protected def extractFrom[T](deserialize: Seq[String] => T,
+                     fromInput: Option[Seq[String]]): Extraction[T] =
+    fromInput.map {
+      v =>
+        Try(deserialize(v)) match {
+          case Success(d) => Extracted(d)
+          case Failure(_) => ExtractionFailed(Invalid(this))
+        }
+    }.getOrElse(if (required) ExtractionFailed(Missing(this)) else NotProvided)
 }
 
 /**
@@ -31,7 +45,7 @@ abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], ea
 
   override def -->(value: T) = Seq(eab.newBinding(this, spec.serialize(value)))
 
-  protected def extract(from: From) = Extraction(this, xs => spec.deserialize(xs.head), eab.valuesFrom(this, from))
+  protected def extract(from: From) = extractFrom(xs => spec.deserialize(xs.head), eab.valuesFrom(this, from))
 }
 
 abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, B]) {
@@ -44,5 +58,5 @@ abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab
 
   override def -->(value: Seq[T]) = value.map(v => eab.newBinding(this, spec.serialize(v)))
 
-  protected def extract(from: From) = Extraction(this, xs => xs.map(spec.deserialize), eab.valuesFrom(this, from))
+  protected def extract(from: From) = extractFrom(xs => xs.map(spec.deserialize), eab.valuesFrom(this, from))
 }
