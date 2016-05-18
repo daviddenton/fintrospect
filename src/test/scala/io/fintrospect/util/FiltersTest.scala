@@ -48,7 +48,7 @@ class FiltersTest extends FunSpec with ShouldMatchers {
 
       it("when extraction fails with no object at all then return bad request") {
         val filter = Filters.Request.ExtractingRequest[String] {
-          req => NotProvided()
+          req => NotProvided
         }
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 

@@ -80,7 +80,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("does not retrieve non existent value") {
         val param = Query.optional.xml(paramName)
-        param.validate(requestWithValueOf()) shouldEqual NotProvided()
+        param.validate(requestWithValueOf()) shouldEqual NotProvided
         param <-- Request() shouldEqual None
       }
 
@@ -111,7 +111,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
       }
 
       it("does not retrieve non existent value") {
-        param.validate(requestWithValueOf()) shouldEqual NotProvided()
+        param.validate(requestWithValueOf()) shouldEqual NotProvided
         param <-- Request() shouldEqual None
       }
 
