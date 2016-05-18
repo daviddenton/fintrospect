@@ -37,19 +37,22 @@ case class Extracted[T](value: T) extends Extraction[T] {
 
   override val invalid = Nil
 
-  override def map[O](f: Option[T] => Option[O]) = f(Some(value)).map(Extracted(_)).getOrElse(NotProvided)
+  override def map[O](f: Option[T] => Option[O]) = Extracted.from(f(Some(value)))
 }
 
 object Extracted {
   def from[T](t: Option[T]) = t.map(Extracted(_)).getOrElse(NotProvided)
 }
 
+/**
+  * Represents an optional object which was not provided - this is still a non-failing case
+  */
 object NotProvided extends Extraction[Nothing] {
   def flatMap[O](f: Option[Nothing] => Extraction[O]) = f(None)
 
   override val invalid = Nil
 
-  override def map[O](f: Option[Nothing] => Option[O]) = f(None).map(Extracted(_)).getOrElse(NotProvided)
+  override def map[O](f: Option[Nothing] => Option[O]) = Extracted.from(f(None))
 }
 
 /**
