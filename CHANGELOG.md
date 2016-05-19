@@ -8,6 +8,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
+## 12.17.0 (uncut)
+- More experimental extraction logic, including rename of `Validatable` -> `Extractable`
+
 ## 12.16.0
 - Added utility filters
 - More work on composites and extraction
