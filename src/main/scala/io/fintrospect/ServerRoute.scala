@@ -10,7 +10,7 @@ abstract class ServerRoute[RQ, RS](val routeSpec: RouteSpec,
                                    pathFn: Path => Path,
                                    val pathParams: PathParameter[_]*) {
 
-  def missingOrFailedFrom(request: Request) = routeSpec.requestParams.++(routeSpec.body).map(_.validate(request)).flatMap(_.invalid)
+  def missingOrFailedFrom(request: Request) = routeSpec.requestParams.++(routeSpec.body).map(_.extract(request)).flatMap(_.invalid)
 
   def matches(actualMethod: Method, basePath: Path, actualPath: Path) = actualMethod == method && actualPath == pathFn(basePath)
 

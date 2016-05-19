@@ -17,16 +17,16 @@ class QueryTest extends FunSpec with ShouldMatchers {
       val param = Query.required.localDate(paramName)
 
       it("retrieves value from field") {
-        param.validate(requestWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        param.extract(requestWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
         param <-- requestWithValueOf("2015-02-04") shouldEqual LocalDate.of(2015, 2, 4)
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(requestWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(requestWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
-        param.validate(requestWithValueOf()) shouldEqual ExtractionFailed(Missing(param))
+        param.extract(requestWithValueOf()) shouldEqual ExtractionFailed(Missing(param))
       }
 
       it("can rebind valid value") {
@@ -41,18 +41,18 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("retrieves value from field") {
         val param = Query.required.multi.localDate(paramName)
-        param.validate(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        param.extract(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
         param <-- requestWithValueOf("2015-02-04", "2015-02-05") shouldEqual Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
       it("fails to retrieve invalid value") {
         val param = Query.required.*.long(paramName)
-        param.validate(requestWithValueOf("qwe","notValid")) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(requestWithValueOf("qwe","notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
         val param = Query.required.*.zonedDateTime(paramName)
-        param.validate(requestWithValueOf()) shouldEqual ExtractionFailed(Missing(param))
+        param.extract(requestWithValueOf()) shouldEqual ExtractionFailed(Missing(param))
       }
 
       it("can rebind valid value") {
@@ -69,18 +69,18 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("retrieves value from field") {
         val param = Query.optional.localDate(paramName)
-        param.validate(requestWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        param.extract(requestWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
         param <-- requestWithValueOf("2015-02-04") shouldEqual Option(LocalDate.of(2015, 2, 4))
       }
 
       it("fails to retrieve invalid value") {
         val param = Query.optional.json(paramName)
-        param.validate(requestWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(requestWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
         val param = Query.optional.xml(paramName)
-        param.validate(requestWithValueOf()) shouldEqual NotProvided
+        param.extract(requestWithValueOf()) shouldEqual NotProvided
         param <-- Request() shouldEqual None
       }
 
@@ -102,16 +102,16 @@ class QueryTest extends FunSpec with ShouldMatchers {
       val param = Query.optional.multi.localDate(paramName)
 
       it("retrieves value from field") {
-        param.validate(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        param.extract(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
         param <-- requestWithValueOf("2015-02-04", "2015-02-05") shouldEqual Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
       }
 
       it("fails to retrieve invalid value") {
-        param.validate(requestWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(requestWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
-        param.validate(requestWithValueOf()) shouldEqual NotProvided
+        param.extract(requestWithValueOf()) shouldEqual NotProvided
         param <-- Request() shouldEqual None
       }
 

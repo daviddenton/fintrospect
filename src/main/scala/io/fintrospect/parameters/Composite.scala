@@ -6,7 +6,7 @@ package io.fintrospect.parameters
   */
 object Composite {
   def apply[From, O](fn: From => Extraction[O]) = new Mandatory[O, From] {
-    override protected def extract(from: From): Extraction[O] = fn(from)
+    override def <--?(from: From): Extraction[O] = fn(from)
   }
 }
 
