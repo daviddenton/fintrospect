@@ -6,20 +6,23 @@ import com.twitter.finagle.http.Request
 import io.fintrospect.parameters.InvalidParameter.Missing
 import org.scalatest._
 
-class CompositeTest extends FunSpec with ShouldMatchers {
+class ExtractableTest extends FunSpec with ShouldMatchers {
 
   case class Example(a: Option[String], b: Option[String], c: Int)
 
-  describe("Composite") {
+  describe("Extractable") {
 
     it("successfully extracts when all parameters present") {
-      val c = Composite {
-        request: Request =>
-          for {
+      val c = Extractable.mk {
+        request: Request => {
+
+          val a: Extraction[Example] = for {
             name1 <- Query.optional.string("name1").extract(request)
             name2 <- Query.optional.string("name2").extract(request)
             name3 <- Query.required.int("name3").extract(request)
           } yield Some(Example(name1, name2, name3.get))
+          a
+        }
       }
 
       c <--? Request("/?name1=query1&name2=rwer&name3=12") shouldBe Extracted(Example(Some("query1"), Some("rwer"), 12))
@@ -27,7 +30,7 @@ class CompositeTest extends FunSpec with ShouldMatchers {
 
     it("reports error when not all parameters present") {
       val int = Query.required.int("name3")
-      val c = Composite {
+      val c = Extractable.mk {
         request: Request => for {
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
@@ -41,7 +44,7 @@ class CompositeTest extends FunSpec with ShouldMatchers {
     it("extracted when only optional parameters missing") {
 
       val int = Query.required.int("name3")
-      val c = Composite {
+      val c = Extractable.mk {
         request: Request => for {
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
@@ -60,11 +63,11 @@ class CompositeTest extends FunSpec with ShouldMatchers {
       val middle = Query.optional.localDate("middle")
       val end = Query.required.localDate("end")
 
-      val c = Composite {
+      val c = Extractable.mk {
         request: Request => {
           for {
             startDate <- start <--? request
-            middleDate <- middle <--?(request, "not after start", (i:LocalDate) => i.isAfter(startDate.get))
+            middleDate <- middle <--?(request, "not after start", (i: LocalDate) => i.isAfter(startDate.get))
             endDate <- end <--?(request, "not after start", e => startDate.map(s => e.isAfter(s)).getOrElse(true))
           } yield Some(Range(startDate.get, middleDate, endDate.get))
         }

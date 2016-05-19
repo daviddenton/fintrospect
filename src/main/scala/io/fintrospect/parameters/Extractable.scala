@@ -17,8 +17,11 @@ trait Extractable[-From, T] {
 }
 
 object Extractable {
-  def mk[From, T](fn:From => Extracted[T]): Extractable[From, T] = new Extractable[From, T] {
-    override def <--?(from: From): Extraction[T] = ???
+  /**
+    * Create an extractable from a simple function. This is stylistic, similar to Service.mk and Filter.mk
+    */
+  def mk[From, T](fn:From => Extraction[T]): Extractable[From, T] = new Extractable[From, T] {
+    override def <--?(from: From): Extraction[T] = fn(from)
   }
 }
 
