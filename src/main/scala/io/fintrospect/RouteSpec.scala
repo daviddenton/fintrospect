@@ -13,7 +13,7 @@ case class RouteSpec private(summary: String,
                              produces: Set[ContentType],
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
-                             requestParams: Seq[Parameter with Extractable[_, Request]],
+                             requestParams: Seq[Parameter with Extractable[Request, _]],
                              responses: Seq[ResponseSpec]) {
 
   /**
@@ -29,12 +29,12 @@ case class RouteSpec private(summary: String,
   /**
    * Register a header parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: HeaderParameter[_] with Extractable[_, Request]): RouteSpec = copy(requestParams = rp +: requestParams)
+  def taking(rp: HeaderParameter[_] with Extractable[Request, _]): RouteSpec = copy(requestParams = rp +: requestParams)
 
   /**
    * Register a query parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
    */
-  def taking(rp: QueryParameter[_] with Extractable[_, Request]): RouteSpec = copy(requestParams = rp +: requestParams)
+  def taking(rp: QueryParameter[_] with Extractable[Request, _]): RouteSpec = copy(requestParams = rp +: requestParams)
 
   /**
    * Register the expected content of the body.

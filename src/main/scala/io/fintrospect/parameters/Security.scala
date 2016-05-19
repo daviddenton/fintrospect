@@ -18,7 +18,7 @@ sealed trait Security {
 /**
   * Checks the presence of the named Api Key parameter. Filter returns 401 if Api-Key is not found in request.
   */
-case class ApiKey[T, K >: Request](param: Parameter with Mandatory[T, K], validateKey: ValidateKey[T]) extends Security {
+case class ApiKey[T, K >: Request](param: Parameter with Mandatory[K, T], validateKey: ValidateKey[T]) extends Security {
   val filter = Filter.mk[Request, Response, Request, Response] {
     (request, svc) => Try(param <-- request) match {
       case Success(apiKey) => validateKey(apiKey)

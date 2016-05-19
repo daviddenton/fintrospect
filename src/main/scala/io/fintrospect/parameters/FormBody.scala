@@ -14,10 +14,10 @@ import scala.util.{Failure, Success, Try}
 /**
   * Forms are effectively modelled as a collection of fields.
   */
-class FormBody(fields: Seq[FormField[_] with Retrieval[_, Form] with Extractable[_, Form]])
+class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractable[Form, _]])
   extends Body[Form](FormBody.spec)
   with Bindable[Form, Binding]
-  with MandatoryRebind[Form, Message, Binding] {
+  with MandatoryRebind[Message, Form, Binding] {
 
   override def -->(value: Form): Seq[Binding] =
     Seq(new RequestBinding(null, t => {
