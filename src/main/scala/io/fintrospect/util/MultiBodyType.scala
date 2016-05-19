@@ -19,7 +19,7 @@ object MultiBodyType {
   def apply(services: SupportedContentType*)(implicit moduleRenderer: ModuleRenderer = SimpleJson()): Service[Request, Response] = {
     val supportedContentTypes = Map(services.map(bs => ContentType(bs._1.contentType.value.toLowerCase) -> bs): _*)
 
-    def validateAndRespond(request: Request, body: SupportedContentType) = body._1.validate(request) match {
+    def validateAndRespond(request: Request, body: SupportedContentType) = body._1.extract(request) match {
       case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
       case _ => body._2(request)
     }

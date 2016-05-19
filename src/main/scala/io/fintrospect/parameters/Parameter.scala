@@ -45,7 +45,7 @@ abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], ea
 
   override def -->(value: T) = Seq(eab.newBinding(this, spec.serialize(value)))
 
-  protected def extract(from: From) = extractFrom(xs => spec.deserialize(xs.head), eab.valuesFrom(this, from))
+  def <--?(from: From) = extractFrom(xs => spec.deserialize(xs.head), eab.valuesFrom(this, from))
 }
 
 abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, B]) {
@@ -58,5 +58,5 @@ abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab
 
   override def -->(value: Seq[T]) = value.map(v => eab.newBinding(this, spec.serialize(v)))
 
-  protected def extract(from: From) = extractFrom(xs => xs.map(spec.deserialize), eab.valuesFrom(this, from))
+  def <--?(from: From): Extraction[Seq[T]] = extractFrom(xs => xs.map(spec.deserialize), eab.valuesFrom(this, from))
 }

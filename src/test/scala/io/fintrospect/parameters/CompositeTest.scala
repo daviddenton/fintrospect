@@ -16,9 +16,9 @@ class CompositeTest extends FunSpec with ShouldMatchers {
       val c = Composite {
         request: Request =>
           for {
-            name1 <- Query.optional.string("name1").validate(request)
-            name2 <- Query.optional.string("name2").validate(request)
-            name3 <- Query.required.int("name3").validate(request)
+            name1 <- Query.optional.string("name1").extract(request)
+            name2 <- Query.optional.string("name2").extract(request)
+            name3 <- Query.required.int("name3").extract(request)
           } yield Some(Example(name1, name2, name3.get))
       }
 
@@ -29,9 +29,9 @@ class CompositeTest extends FunSpec with ShouldMatchers {
       val int = Query.required.int("name3")
       val c = Composite {
         request: Request => for {
-          name1 <- Query.optional.string("name1").validate(request)
-          name2 <- Query.optional.string("name2").validate(request)
-          name3 <- int.validate(request)
+          name1 <- Query.optional.string("name1").extract(request)
+          name2 <- Query.optional.string("name2").extract(request)
+          name3 <- int.extract(request)
         } yield Some(Example(name1, name2, name3.get))
       }
 
@@ -43,9 +43,9 @@ class CompositeTest extends FunSpec with ShouldMatchers {
       val int = Query.required.int("name3")
       val c = Composite {
         request: Request => for {
-          name1 <- Query.optional.string("name1").validate(request)
-          name2 <- Query.optional.string("name2").validate(request)
-          name3 <- int.validate(request)
+          name1 <- Query.optional.string("name1").extract(request)
+          name2 <- Query.optional.string("name2").extract(request)
+          name3 <- int.extract(request)
         } yield Some(Example(name1, name2, name3.get))
       }
 

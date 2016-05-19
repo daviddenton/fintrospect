@@ -15,16 +15,16 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       val field = FormField.required.localDate(paramName)
 
       it("validates value from form field") {
-        field.validate(formWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        field.extract(formWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
         field <-- formWithValueOf("2015-02-04") shouldEqual LocalDate.of(2015, 2, 4)
       }
 
       it("fails to validate invalid value") {
-        field.validate(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
+        field.extract(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
       }
 
       it("does not validate non existent value") {
-        field.validate(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
+        field.extract(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
       }
 
       it("can rebind valid value") {
@@ -38,16 +38,16 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       val field = FormField.required.multi.localDate(paramName)
 
       it("validates value from form field") {
-        field.validate(formWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        field.extract(formWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
         field <-- formWithValueOf("2015-02-04", "2015-02-05") shouldEqual Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
       it("fails to validate invalid value") {
-        field.validate(formWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(field))
+        field.extract(formWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(field))
       }
 
       it("does not validate non existent value") {
-        field.validate(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
+        field.extract(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
       }
 
       it("can rebind valid value") {
@@ -62,16 +62,16 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     val field = FormField.optional.localDate(paramName)
 
     it("validates value from form field") {
-      field.validate(formWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+      field.extract(formWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
       field <-- formWithValueOf("2015-02-04") shouldEqual Option(LocalDate.of(2015, 2, 4))
     }
 
     it("fails to validate invalid value") {
-      field.validate(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
+      field.extract(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
     }
 
     it("does not validate non existent value") {
-      field.validate(formWithValueOf()) shouldEqual NotProvided
+      field.extract(formWithValueOf()) shouldEqual NotProvided
       field <-- formWithValueOf() shouldEqual None
     }
 

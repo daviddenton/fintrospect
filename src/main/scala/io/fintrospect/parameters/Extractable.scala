@@ -1,9 +1,9 @@
 package io.fintrospect.parameters
 
 /**
-  * Provides validation about the presence of a value parameter/entity value in a particular context
+  * Mechanism to extract (or fail to extract) an entity value from a particular 'From' context
   */
-trait Validatable[T, -From] {
+trait Extractable[T, -From] {
   /**
     * Attempt to manually deserialise from the message object.
     */
@@ -11,13 +11,17 @@ trait Validatable[T, -From] {
 
   /**
     * Attempt to manually deserialise from the message object.
+    * User-friendly synonym for <--?(), which is why the method is final.
     */
-  def validate(from: From): Extraction[T] = <--?(from)
+  final def extract(from: From): Extraction[T] = <--?(from)
 
 }
 
-trait ValidatableParameter[T, -From] {
-  self: Parameter with Validatable[T, From] =>
+/**
+  * Mechanism to extract (or fail to extract) a parameter from a particular 'From' context, adding
+  */
+trait ExtractableParameter[T, -From] {
+  self: Parameter with Extractable[T, From] =>
 
   /**
     * Attempt to manually deserialise from the message object, adding a validation predicate and reason for failure.
@@ -28,6 +32,7 @@ trait ValidatableParameter[T, -From] {
 
   /**
     * Attempt to manually deserialise from the message object, adding a validation predicate and reason for failure.
+    * User-friendly synonym for <--?(), which is why the method is final.
     */
-  def validate(from: From, reason: String, predicate: T => Boolean): Extraction[T] = <--?(from, reason, predicate)
+  final def extract(from: From, reason: String, predicate: T => Boolean): Extraction[T] = <--?(from, reason, predicate)
 }
