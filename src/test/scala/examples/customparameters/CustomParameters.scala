@@ -1,7 +1,6 @@
 package examples.customparameters
 
 import com.twitter.finagle.http.Request
-import examples.customparameters.Email.spec
 import io.fintrospect.parameters.{Header, ParameterSpec, Path, Query, StringParamType}
 
 import scala.language.reflectiveCalls
@@ -14,11 +13,11 @@ import scala.language.reflectiveCalls
 // Custom domain type
 case class EmailAddress(value: String)
 
-// Define how the parameters are serialized from/to the target Parameter type
-object Email {
+// EmailAddress how the parameters are serialized from/to the target Parameter type
+object EmailAddress {
   private def emailFrom(value: String): EmailAddress = {
     val emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$".r
-    emailPattern.findFirstIn(value).map(EmailAddress).get
+    emailPattern.findFirstIn(value).map(EmailAddress(_)).get
   }
 
   private def emailTo(email: EmailAddress): String = email.value
@@ -29,9 +28,9 @@ object Email {
 object CustomParameters extends App {
 
   // Reuse the spec in different parts of the request
-  val optionalEmailQueryParameter = Query.optional(Email.spec)
-  val requiredEmailHeader = Header.required(Email.spec)
-  val requiredEmailPathSegment = Path(Email.spec)
+  val optionalEmailQueryParameter = Query.optional(EmailAddress.spec)
+  val requiredEmailHeader = Header.required(EmailAddress.spec)
+  val requiredEmailPathSegment = Path(EmailAddress.spec)
 
   println("missing email: " + (optionalEmailQueryParameter <-- Request("/")))
   println("valid email: " + (optionalEmailQueryParameter <-- Request("/", "theEmailAddress" -> "myemail@somedomain.com")))
