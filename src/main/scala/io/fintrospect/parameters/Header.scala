@@ -7,30 +7,30 @@ import com.twitter.finagle.http.Message
   */
 object Header {
 
-  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, Message]
-  with ExtractableParameter[T, Message]
-  with MandatoryRebind[T, Message, RequestBinding] {
-    self: Parameter with Extractable[T, Message] with Bindable[T, RequestBinding] =>
+  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[Message, T]
+  with ExtractableParameter[Message, T]
+  with MandatoryRebind[Message, T, RequestBinding] {
+    self: Parameter with Extractable[Message, T] with Bindable[T, RequestBinding] =>
   }
 
-  trait MandatorySeq[T] extends io.fintrospect.parameters.Mandatory[Seq[T], Message]
-  with ExtractableParameter[Seq[T], Message]
-  with MandatoryRebind[Seq[T], Message, RequestBinding] {
-    self: Parameter with Extractable[Seq[T], Message] with Bindable[Seq[T], RequestBinding] =>
+  trait MandatorySeq[T] extends io.fintrospect.parameters.Mandatory[Message, Seq[T]]
+  with ExtractableParameter[Message, Seq[T]]
+  with MandatoryRebind[Message, Seq[T], RequestBinding] {
+    self: Parameter with Extractable[Message, Seq[T]] with Bindable[Seq[T], RequestBinding] =>
   }
 
-  trait Optional[T] extends io.fintrospect.parameters.Optional[T, Message]
-  with ExtractableParameter[T, Message]
-  with OptionalRebind[T, Message, RequestBinding]
+  trait Optional[T] extends io.fintrospect.parameters.Optional[Message, T]
+  with ExtractableParameter[Message, T]
+  with OptionalRebind[Message, T, RequestBinding]
   with OptionalBindable[T, RequestBinding] {
-    self: Parameter with Extractable[T, Message] with Bindable[T, RequestBinding] =>
+    self: Parameter with Extractable[Message, T] with Bindable[T, RequestBinding] =>
   }
 
-  trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Seq[T], Message]
-  with ExtractableParameter[Seq[T], Message]
-  with OptionalRebind[Seq[T], Message, RequestBinding]
+  trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Message, Seq[T]]
+  with ExtractableParameter[Message, Seq[T]]
+  with OptionalRebind[Message, Seq[T], RequestBinding]
   with OptionalBindable[Seq[T], RequestBinding] {
-    self: Parameter with Extractable[Seq[T], Message] with Bindable[Seq[T], RequestBinding] =>
+    self: Parameter with Extractable[Message, Seq[T]] with Bindable[Seq[T], RequestBinding] =>
   }
 
   val required = new Parameters[HeaderParameter, Mandatory] with MultiParameters[MultiHeaderParameter, MandatorySeq] {

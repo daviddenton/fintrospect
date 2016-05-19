@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 /**
   * Represents the ability to retrieve a parameter value from an enclosing object (request/form etc..)
   */
-trait Retrieval[T, -From] {
+trait Retrieval[-From, T] {
 
   /**
     * Extract the parameter from the target object. Throws on failure, but that shouldn't be a problem as the pre-validation
@@ -19,7 +19,7 @@ trait Retrieval[T, -From] {
   final def from(from: From): T = <--(from)
 }
 
-trait Mandatory[T, -From] extends Retrieval[T, From] with Extractable[T, From] {
+trait Mandatory[-From, T] extends Retrieval[From, T] with Extractable[From, T] {
   val required = true
 
   override def <--(from: From): T = extract(from) match {
@@ -28,7 +28,7 @@ trait Mandatory[T, -From] extends Retrieval[T, From] with Extractable[T, From] {
   }
 }
 
-trait Optional[T, -From] extends Retrieval[Option[T], From] with Extractable[T, From] {
+trait Optional[-From, T] extends Retrieval[From, Option[T]] with Extractable[From, T] {
   val required = false
 
   def <--(from: From): Option[T] = extract(from) match {

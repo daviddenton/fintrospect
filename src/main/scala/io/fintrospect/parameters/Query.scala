@@ -7,30 +7,30 @@ import com.twitter.finagle.http.Request
   */
 object Query {
 
-  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[T, Request]
-  with ExtractableParameter[T, Request]
-  with MandatoryRebind[T, Request, QueryBinding] {
-    self: Parameter with Extractable[T, Request] with Bindable[T, QueryBinding] =>
+  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[Request, T]
+  with ExtractableParameter[Request, T]
+  with MandatoryRebind[Request, T, QueryBinding] {
+    self: Parameter with Extractable[Request, T] with Bindable[T, QueryBinding] =>
   }
 
-  trait MandatorySeq[T] extends io.fintrospect.parameters.Mandatory[Seq[T], Request]
-  with ExtractableParameter[Seq[T], Request]
-  with MandatoryRebind[Seq[T], Request, QueryBinding] {
-    self: Parameter with Extractable[Seq[T], Request] with Bindable[Seq[T], QueryBinding] =>
+  trait MandatorySeq[T] extends io.fintrospect.parameters.Mandatory[Request, Seq[T]]
+  with ExtractableParameter[Request, Seq[T]]
+  with MandatoryRebind[Request, Seq[T], QueryBinding] {
+    self: Parameter with Extractable[Request, Seq[T]] with Bindable[Seq[T], QueryBinding] =>
   }
 
-  trait Optional[T] extends io.fintrospect.parameters.Optional[T, Request]
-  with ExtractableParameter[T, Request]
+  trait Optional[T] extends io.fintrospect.parameters.Optional[Request, T]
+  with ExtractableParameter[Request, T]
   with OptionalBindable[T, QueryBinding]
-  with OptionalRebind[T, Request, QueryBinding] {
-    self: Parameter with Extractable[T, Request] with Bindable[T, QueryBinding] =>
+  with OptionalRebind[Request, T, QueryBinding] {
+    self: Parameter with Extractable[Request, T] with Bindable[T, QueryBinding] =>
   }
 
-  trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Seq[T], Request]
-  with ExtractableParameter[Seq[T], Request]
+  trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Request, Seq[T]]
+  with ExtractableParameter[Request, Seq[T]]
   with OptionalBindable[Seq[T], QueryBinding]
-  with OptionalRebind[Seq[T], Request, QueryBinding] {
-    self: Parameter with Extractable[Seq[T], Request] with Bindable[Seq[T], QueryBinding] =>
+  with OptionalRebind[Request, Seq[T], QueryBinding] {
+    self: Parameter with Extractable[Request, Seq[T]] with Bindable[Seq[T], QueryBinding] =>
   }
 
   val required = new Parameters[QueryParameter, Mandatory] with MultiParameters[MultiQueryParameter, MandatorySeq] {
