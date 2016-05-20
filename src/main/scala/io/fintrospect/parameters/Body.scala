@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Message
-import io.fintrospect.ContentType
+import io.fintrospect.{Extractable, ContentType}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 
 import scala.xml.Elem

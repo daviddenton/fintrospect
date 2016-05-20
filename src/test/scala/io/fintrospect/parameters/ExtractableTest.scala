@@ -3,6 +3,7 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
+import io.fintrospect.Extractable
 import io.fintrospect.parameters.InvalidParameter.Missing
 import org.scalatest._
 

@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Message
+import io.fintrospect.Extractable
 
 /**
   * Parameters which are bound to request/response headers

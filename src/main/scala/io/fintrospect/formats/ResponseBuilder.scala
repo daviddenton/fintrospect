@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Cookie, Response, Status}
 import com.twitter.io.{Buf, Charsets, Reader}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
-import io.fintrospect.parameters.Builder
+import io.fintrospect.util.Builder
 import org.jboss.netty.buffer.ChannelBuffer
 
 import scala.language.implicitConversions
