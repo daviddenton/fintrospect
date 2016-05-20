@@ -7,6 +7,6 @@ import com.twitter.finagle.http.{Method, Request, Response}
 /**
   * Some type aliases that are used throughout Fintrospect
   */
-object Types {
+object types {
   type ServiceBinding = PartialFunction[(Method, Path), Service[Request, Response]]
 }
