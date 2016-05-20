@@ -1,20 +1,18 @@
 package io.fintrospect.parameters
 
-import io.fintrospect.Extractable
-
 /**
-  * Represents the ability to retrieve a parameter value from an enclosing object (request/form etc..)
+  * Represents the ability to retrieve a value from an enclosing object (request/form etc..)
   */
 trait Retrieval[-From, T] {
 
   /**
-    * Extract the parameter from the target object. Throws on failure, but that shouldn't be a problem as the pre-validation
+    * Extract the value from the target object. Throws on failure, but that shouldn't be a problem as the pre-validation
     * stage for declared parameters and bodies handles the failure before user code is entered.
     */
   def <--(from: From): T
 
   /**
-    * Extract the parameter from the target object. Throws on failure, but that shouldn't be a problem as the pre-validation
+    * Extract the value from the target object. Throws on failure, but that shouldn't be a problem as the pre-validation
     * stage for declared parameters and bodies handles the failure before user code is entered.
     * User-friendly synonym for <--(), which is why the method is final.
     */

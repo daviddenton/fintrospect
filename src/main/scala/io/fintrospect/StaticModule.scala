@@ -8,7 +8,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.io.Buf.ByteArray.Owned
 import io.fintrospect.ContentType.lookup
-import io.fintrospect.Types.ServiceBinding
+import io.fintrospect.types.ServiceBinding
 import io.fintrospect.formats.ResponseBuilder.HttpResponse
 
 object StaticModule {
