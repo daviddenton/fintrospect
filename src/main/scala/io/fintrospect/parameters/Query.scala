@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
+import io.fintrospect.Extractable
 
 /**
   * Parameters which are bound to the query part of a URL

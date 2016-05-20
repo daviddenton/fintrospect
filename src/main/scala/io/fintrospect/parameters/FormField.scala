@@ -1,5 +1,7 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.Extractable
+
 trait FormField[T]
   extends BodyParameter
   with Bindable[T, FormFieldBinding] {

@@ -1,4 +1,4 @@
-package io.fintrospect.parameters
+package io.fintrospect.util
 
 trait Builder[T] {
   def build(): T

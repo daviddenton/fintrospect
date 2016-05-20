@@ -4,7 +4,7 @@ import java.net.URLDecoder.decode
 import java.net.URLEncoder.encode
 
 import com.twitter.finagle.http.Message
-import io.fintrospect.ContentTypes
+import io.fintrospect.{Extractable, ContentTypes}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 

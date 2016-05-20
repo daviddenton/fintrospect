@@ -1,5 +1,7 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.Extractable
+
 /**
   * Represents the ability to retrieve a parameter value from an enclosing object (request/form etc..)
   */
