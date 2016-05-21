@@ -56,7 +56,7 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
   override protected def serviceBinding: ServiceBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
-        val filter = identify(route).andThen(security.filter).andThen(validateParams(route)).andThen(moduleFilter)
+        val filter = identify(route).andThen(security.filter).andThen(route.validationFilter(moduleRenderer)).andThen(moduleFilter)
         currentBinding.orElse(route.toPf(filter, basePath))
     })
   }
@@ -100,13 +100,6 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
 
     {
       case (method, path) if path.startsWith(basePath) => totalPf.apply((method, path))
-    }
-  }
-
-  private def validateParams(serverRoute: ServerRoute[_, _]) = Filter.mk[Request, Response, Request, Response] {
-    (request, svc) => {
-      val missingOrFailed = serverRoute.missingOrFailedFrom(request)
-      if (missingOrFailed.isEmpty) svc(request) else Future.value(moduleRenderer.badRequest(missingOrFailed))
     }
   }
 
