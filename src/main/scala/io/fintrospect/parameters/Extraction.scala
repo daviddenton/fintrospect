@@ -12,7 +12,11 @@ sealed trait Extraction[+T] {
 }
 
 object Extraction {
-  def invert(extractions: Seq[Extraction[_]]): Extraction[Nothing] = {
+  /**
+    * Utility method for combining the results of many Extraction into a single Extraction, simply to get an overall
+    * extraction result in the case of failure.
+    */
+  def combine(extractions: Seq[Extraction[_]]): Extraction[Nothing] = {
     val missingOrFailed = extractions.flatMap(_.invalid)
     if (missingOrFailed.isEmpty) NotProvided else ExtractionFailed(missingOrFailed)
   }

@@ -55,36 +55,33 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
                                  moduleFilter: Filter[Request, Response, RQ, RS]) extends Module {
 
   private def validationFilter(route: ServerRoute[RQ, RS]) = Filter.mk[Request, Response, Request, Response] {
-    (request, svc) => {
+    (request, svc) =>
       route.routeSpec <--? request match {
         case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
         case _ => svc(request)
       }
-    }
   }
-  override protected def serviceBinding: ServiceBinding = {
+
+  override protected def serviceBinding: ServiceBinding =
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
         val filter = identify(route).andThen(security.filter).andThen(validationFilter(route)).andThen(moduleFilter)
         currentBinding.orElse(route.toPf(filter, basePath))
     })
-  }
 
   /**
     * Set the API security for this module. This is implemented though a Filter which is invoked before the
     * parameter validation takes place, and will return Unauthorized HTTP response codes when a request does
     * not pass authentication.
     */
-  def securedBy(newSecurity: Security): ModuleSpec[RQ, RS] = {
+  def securedBy(newSecurity: Security): ModuleSpec[RQ, RS] =
     new ModuleSpec[RQ, RS](basePath, moduleRenderer, descriptionRoutePath, routes, newSecurity, moduleFilter)
-  }
 
   /**
     * Override the path from the root of this module (incoming) where the default module description will live.
     */
-  def withDescriptionPath(newDefaultRoutePath: ModifyPath): ModuleSpec[RQ, RS] = {
+  def withDescriptionPath(newDefaultRoutePath: ModifyPath): ModuleSpec[RQ, RS] =
     new ModuleSpec[RQ, RS](basePath, moduleRenderer, newDefaultRoutePath, routes, security, moduleFilter)
-  }
 
   /**
     * Attach described Route(s) to the module. Request matching is attempted in the same order as in which this method is called.

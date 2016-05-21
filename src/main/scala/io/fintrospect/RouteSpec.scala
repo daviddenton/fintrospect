@@ -2,7 +2,7 @@ package io.fintrospect
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
-import io.fintrospect.parameters.{Body, Extractable, Extraction, HeaderParameter, Parameter, QueryParameter}
+import io.fintrospect.parameters.{Body, Extractable, Extraction, HeaderParameter, NotProvided, Parameter, QueryParameter}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 
 /**
@@ -14,9 +14,10 @@ case class RouteSpec private(summary: String,
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
                              requestParams: Seq[Parameter with Extractable[Request, _]],
-                             responses: Seq[ResponseSpec]) {
+                             responses: Seq[ResponseSpec],
+                             validation: RouteSpec => Extractable[Request, Nothing]) {
 
-  private[fintrospect] def <--?(request: Request) = Extraction.invert(requestParams.++(body).map(_.extract(request)))
+  private[fintrospect] def <--?(request: Request) = validation(this).<--?(request)
 
   /**
     * Register content types which the route will consume. This is informational only and is NOT currently enforced.
@@ -74,6 +75,51 @@ case class RouteSpec private(summary: String,
 }
 
 object RouteSpec {
-  def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
-    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil)
+
+  trait RequestValidation extends (RouteSpec => Extractable[Request, Nothing])
+
+  /**
+    * Defines the validation for the Route which could result in a BadRequest response from this route. By default, this
+    * is set to RequestValidation.all . It is overrideable in high performance scenarios, or where custom extraction logic
+    * is to be applied.
+    */
+  object RequestValidation {
+
+    /**
+      * Validates the presence and format of all parameters (mandatory and optional), and the request body.
+      */
+    val all = new RequestValidation {
+      def apply(spec: RouteSpec) = Extractable.mk {
+        (request: Request) => Extraction.combine(spec.requestParams.++(spec.body).map(_.extract(request)))
+      }
+    }
+
+    /**
+      * Validates the presence and format of all parameters (mandatory and optional) only.
+      */
+    val noBody = new RequestValidation {
+      def apply(spec: RouteSpec) = Extractable.mk {
+        (request: Request) => Extraction.combine(spec.requestParams.map(_.extract(request)))
+      }
+    }
+
+    /**
+      * Validates the presence and format of body only.
+      */
+    val noParameters = new RequestValidation {
+      def apply(spec: RouteSpec) = Extractable.mk {
+        (request: Request) => Extraction.combine(Seq().++(spec.body).map(_.extract(request)))
+      }
+    }
+
+    /**
+      * Do not perform any validation of the request parameters or the body.
+      */
+    val none = new RequestValidation {
+      def apply(spec: RouteSpec) = Extractable.mk { (request: Request) => NotProvided }
+    }
+  }
+
+  def apply(summary: String = "<unknown>", description: String = null, validation: RequestValidation = RequestValidation.all): RouteSpec =
+    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil, validation)
 }
