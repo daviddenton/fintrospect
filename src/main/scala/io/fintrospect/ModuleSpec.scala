@@ -7,9 +7,9 @@ import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 import io.fintrospect.ModuleSpec.ModifyPath
-import io.fintrospect.types.ServiceBinding
-import io.fintrospect.parameters.{InvalidParameter, NoSecurity, Security}
+import io.fintrospect.parameters.{ExtractionFailed, InvalidParameter, NoSecurity, Security}
 import io.fintrospect.renderers.ModuleRenderer
+import io.fintrospect.types.ServiceBinding
 
 import scala.PartialFunction.empty
 
@@ -53,10 +53,19 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
                                  routes: Seq[ServerRoute[RQ, RS]],
                                  security: Security,
                                  moduleFilter: Filter[Request, Response, RQ, RS]) extends Module {
+
+  private def validationFilter(route: ServerRoute[RQ, RS]) = Filter.mk[Request, Response, Request, Response] {
+    (request, svc) => {
+      route.routeSpec <--? request match {
+        case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
+        case _ => svc(request)
+      }
+    }
+  }
   override protected def serviceBinding: ServiceBinding = {
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
-        val filter = identify(route).andThen(security.filter).andThen(route.validationFilter(moduleRenderer)).andThen(moduleFilter)
+        val filter = identify(route).andThen(security.filter).andThen(validationFilter(route)).andThen(moduleFilter)
         currentBinding.orElse(route.toPf(filter, basePath))
     })
   }
