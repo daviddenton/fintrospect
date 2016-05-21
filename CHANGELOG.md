@@ -9,7 +9,8 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Drop support for Scala 2.10 (when finagle.http does).
 
 ## 12.18.0 (uncut)
-- Finalised extraction logic, including embedding of `Extractable`s
+- Facility to override body and parameter validation in `RouteSpec` - pass in a different `RequestValidation` instance.
+- Finalised extraction logic, including embedding of `Extractable`s.
 
 ## 12.17.0
 - More experimental extraction logic, including rename of `Validatable` -> `Extractable`

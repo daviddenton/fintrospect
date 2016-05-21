@@ -33,7 +33,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractable
   override def <--?(message: Message): Extraction[Form] =
     Try(FormBody.spec.deserialize(contentFrom(message))) match {
       case Success(form) =>
-        Extraction.invert(fields.map(_.extract(form))) match {
+        Extraction.combine(fields.map(_.extract(form))) match {
           case failed@ExtractionFailed(_) => failed
           case _ => Extracted(form)
         }
