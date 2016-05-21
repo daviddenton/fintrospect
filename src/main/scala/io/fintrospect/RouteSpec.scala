@@ -108,7 +108,7 @@ object RouteSpec {
       */
     val noParameters = new RequestValidation {
       def apply(spec: RouteSpec) = Extractable.mk {
-        (request: Request) => Extraction.combine(Seq().++(spec.body).map(_.extract(request)))
+        (request: Request) => Extraction.combine(spec.body.map(_.extract(request)).toSeq)
       }
     }
 
