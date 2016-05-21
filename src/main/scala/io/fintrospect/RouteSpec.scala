@@ -2,7 +2,7 @@ package io.fintrospect
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
-import io.fintrospect.parameters.{Body, Extractable, ExtractionFailed, HeaderParameter, NotProvided, Parameter, QueryParameter}
+import io.fintrospect.parameters.{Body, Extractable, Extraction, HeaderParameter, Parameter, QueryParameter}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 
 /**
@@ -14,12 +14,9 @@ case class RouteSpec private(summary: String,
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
                              requestParams: Seq[Parameter with Extractable[Request, _]],
-                             responses: Seq[ResponseSpec])  {
+                             responses: Seq[ResponseSpec]) {
 
-  private[fintrospect] def <--?(request: Request) = {
-    val missingOrFailed = requestParams.++(body).map(_.extract(request)).flatMap(_.invalid)
-    if (missingOrFailed.isEmpty) NotProvided else ExtractionFailed(missingOrFailed)
-  }
+  private[fintrospect] def <--?(request: Request) = Extraction.invert(requestParams.++(body).map(_.extract(request)))
 
   /**
     * Register content types which the route will consume. This is informational only and is NOT currently enforced.

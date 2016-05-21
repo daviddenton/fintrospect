@@ -32,10 +32,11 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractable
 
   override def <--?(message: Message): Extraction[Form] =
     Try(FormBody.spec.deserialize(contentFrom(message))) match {
-      case Success(form) => {
-        val missingOrInvalidFields = fields.map(_.extract(form)).flatMap(_.invalid)
-        if (missingOrInvalidFields.isEmpty) Extracted(form) else ExtractionFailed(missingOrInvalidFields)
-      }
+      case Success(form) =>
+        Extraction.invert(fields.map(_.extract(form))) match {
+          case failed@ExtractionFailed(_) => failed
+          case _ => Extracted(form)
+        }
       case Failure(e) => ExtractionFailed(fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
     }
 }

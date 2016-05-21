@@ -18,18 +18,18 @@ object RouteClient {
 
 /**
   * Representation of a pre-configured client HTTP call
-  * @param routeSpec the route specification
+  * @param spec the route specification
   * @param method the HTTP method
   * @param underlyingService the underlying service to make the request from
   * @param pathParams the path parameters to use
   */
 class RouteClient(method: Method,
-                  routeSpec: RouteSpec,
+                  spec: RouteSpec,
                   pathParams: Seq[PathParameter[_]],
                   underlyingService: Service[Request, Response]) {
 
   private val providedBindings = pathParams.filter(_.isFixed).map(p => new PathBinding(p, p.name))
-  private val allPossibleParams = pathParams ++ routeSpec.requestParams ++ routeSpec.body.toSeq.flatMap(_.iterator)
+  private val allPossibleParams = pathParams ++ spec.requestParams ++ spec.body.toSeq.flatMap(_.iterator)
   private val requiredParams = allPossibleParams.filter(_.required)
   private val service = RouteClient.identify(method, pathParams).andThen(underlyingService)
 
