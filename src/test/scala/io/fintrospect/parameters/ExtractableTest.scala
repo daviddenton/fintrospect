@@ -13,23 +13,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
 
   describe("Extractable") {
 
-    it("successfully extracts when all parameters present") {
-      val c = Extractable.mk {
-        request: Request => {
-
-          val a: Extraction[Example] = for {
-            name1 <- Query.optional.string("name1").extract(request)
-            name2 <- Query.optional.string("name2").extract(request)
-            name3 <- Query.required.int("name3").extract(request)
-          } yield Example(name1, name2, name3.get)
-          a
-        }
-      }
-
-      c <--? Request("/?name1=query1&name2=rwer&name3=12") shouldBe Extracted(Example(Some("query1"), Some("rwer"), 12))
-    }
-
-    it("reports error when not all parameters present") {
+    describe("non-embedded extraction") {
       val int = Query.required.int("name3")
       val c = Extractable.mk {
         request: Request => for {
@@ -39,21 +23,17 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
         } yield Example(name1, name2, name3.get)
       }
 
-      c <--? Request("/?name1=query1") shouldBe ExtractionFailed(Missing(int))
-    }
-
-    it("extracted when only optional parameters missing") {
-
-      val int = Query.required.int("name3")
-      val c = Extractable.mk {
-        request: Request => for {
-          name1 <- Query.optional.string("name1").extract(request)
-          name2 <- Query.optional.string("name2").extract(request)
-          name3 <- int.extract(request)
-        } yield Example(name1, name2, name3.get)
+      it("successfully extracts when all parameters present") {
+        c <--? Request("/?name1=query1&name2=rwer&name3=12") shouldBe Extracted(Example(Some("query1"), Some("rwer"), 12))
       }
 
-      c <--? Request("/?name3=123") shouldBe Extracted(Example(None, None, 123))
+      it("successfully extracts when only optional parameters missing") {
+        c <--? Request("/?name3=123") shouldBe Extracted(Example(None, None, 123))
+      }
+
+      it("reports error when not all parameters present") {
+        c <--? Request("/?name1=query1") shouldBe ExtractionFailed(Missing(int))
+      }
     }
 
     it("validation error between parameters") {
