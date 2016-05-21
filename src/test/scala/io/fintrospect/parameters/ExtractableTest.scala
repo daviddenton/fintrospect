@@ -20,7 +20,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
             name1 <- Query.optional.string("name1").extract(request)
             name2 <- Query.optional.string("name2").extract(request)
             name3 <- Query.required.int("name3").extract(request)
-          } yield Some(Example(name1, name2, name3.get))
+          } yield Example(name1, name2, name3.get)
           a
         }
       }
@@ -35,7 +35,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
           name3 <- int.extract(request)
-        } yield Some(Example(name1, name2, name3.get))
+        } yield Example(name1, name2, name3.get)
       }
 
       c <--? Request("/?name1=query1") shouldBe ExtractionFailed(Missing(int))
@@ -49,7 +49,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
           name3 <- int.extract(request)
-        } yield Some(Example(name1, name2, name3.get))
+        } yield Example(name1, name2, name3.get)
       }
 
       c <--? Request("/?name3=123") shouldBe Extracted(Example(None, None, 123))
@@ -69,7 +69,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
             startDate <- start <--? request
             middleDate <- middle <--?(request, "not after start", (i: LocalDate) => i.isAfter(startDate.get))
             endDate <- end <--?(request, "not after start", e => startDate.map(s => e.isAfter(s)).getOrElse(true))
-          } yield Some(Range(startDate.get, middleDate, endDate.get))
+          } yield Range(startDate.get, middleDate, endDate.get)
         }
       }
 

@@ -6,14 +6,14 @@ package io.fintrospect.parameters
 sealed trait Extraction[+T] {
   def flatMap[O](f: Option[T] => Extraction[O]): Extraction[O]
 
-  def map[O](f: Option[T] => Option[O]): Extraction[O]
+  def map[O](f: Option[T] => O): Extraction[O]
 
   val invalid: Seq[InvalidParameter]
 }
 
 object Extraction {
   /**
-    * Wraps in a successful extraction.
+    * Wraps in a successful extraction - this assumes the item was not mandatory.
     */
   def apply[T](t: Option[T]): Extraction[T] = t.map(Extracted(_)).getOrElse(NotProvided)
 }
@@ -26,7 +26,7 @@ case class Extracted[T](value: T) extends Extraction[T] {
 
   override val invalid = Nil
 
-  override def map[O](f: Option[T] => Option[O]) = Extraction(f(Some(value)))
+  override def map[O](f: Option[T] => O) = Extracted(f(Some(value)))
 }
 
 /**
@@ -37,7 +37,7 @@ object NotProvided extends Extraction[Nothing] {
 
   override val invalid = Nil
 
-  override def map[O](f: Option[Nothing] => Option[O]) = Extraction(f(None))
+  override def map[O](f: Option[Nothing] => O) = NotProvided
 }
 
 /**
@@ -46,7 +46,7 @@ object NotProvided extends Extraction[Nothing] {
 case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extraction[T] {
   def flatMap[O](f: Option[T] => Extraction[O]) = ExtractionFailed(invalid)
 
-  override def map[O](f: Option[T] => Option[O]) = ExtractionFailed(invalid)
+  override def map[O](f: Option[T] => O) = ExtractionFailed(invalid)
 }
 
 object ExtractionFailed {
