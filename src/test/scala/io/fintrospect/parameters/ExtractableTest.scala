@@ -9,6 +9,7 @@ import org.scalatest._
 class ExtractableTest extends FunSpec with ShouldMatchers {
 
   case class Example(a: Option[String], b: Option[String], c: Int)
+  case class WrappedExample(d: Option[Example], e: Int)
 
   describe("Extractable") {
 
@@ -75,6 +76,37 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
 
       c <--? Request("/?start=2002-01-01&end=2001-01-01") shouldBe ExtractionFailed(InvalidParameter(end, "not after start"))
     }
+
+    describe("can embed extractables") {
+      val innerInt = Query.required.int("innerInt")
+      val outerInt = Query.required.int("outerInt")
+      val inner = Extractable.mk {
+        request: Request => for {
+          name1 <- Query.optional.string("name1").extract(request)
+          name2 <- Query.optional.string("name2").extract(request)
+          name3 <- innerInt.extract(request)
+        } yield Example(name1, name2, name3.get)
+      }
+
+      val outer =  Extractable.mk {
+        request: Request => for {
+          inner <- inner <--? request
+          name4 <- outerInt <--? request
+        } yield WrappedExample(inner, name4.get)
+      }
+
+      it("success") {
+        outer <--? Request("/?innerInt=123&outerInt=1") shouldBe Extracted(WrappedExample(Some(Example(None, None, 123)), 1))
+      }
+
+      it("inner extract fails reports only inner error") {
+        outer <--? Request("/?outerInt=123") shouldBe ExtractionFailed(Missing(innerInt))
+      }
+      it("outer extract fails reports only outer error") {
+        outer <--? Request("/?innerInt=123") shouldBe ExtractionFailed(Missing(outerInt))
+      }
+    }
+
   }
 
 }
