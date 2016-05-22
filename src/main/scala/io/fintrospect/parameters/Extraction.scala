@@ -7,8 +7,6 @@ sealed trait Extraction[+T] {
   def flatMap[O](f: Option[T] => Extraction[O]): Extraction[O]
 
   def map[O](f: Option[T] => O): Extraction[O]
-
-  protected val invalid: Seq[InvalidParameter]
 }
 
 object Extraction {
@@ -17,7 +15,10 @@ object Extraction {
     * extraction result in the case of failure.
     */
   def combine(extractions: Seq[Extraction[_]]): Extraction[Nothing] = {
-    val missingOrFailed = extractions.flatMap(_.invalid)
+    val missingOrFailed = extractions.flatMap {
+      case ExtractionFailed(ip) => ip
+      case _ => Nil
+    }
     if (missingOrFailed.isEmpty) NotProvided else ExtractionFailed(missingOrFailed)
   }
 
@@ -33,8 +34,6 @@ object Extraction {
 case class Extracted[T](value: T) extends Extraction[T] {
   def flatMap[O](f: Option[T] => Extraction[O]) = f(Some(value))
 
-  protected override val invalid = Nil
-
   override def map[O](f: Option[T] => O) = Extracted(f(Some(value)))
 }
 
@@ -44,15 +43,13 @@ case class Extracted[T](value: T) extends Extraction[T] {
 object NotProvided extends Extraction[Nothing] {
   def flatMap[O](f: Option[Nothing] => Extraction[O]) = f(None)
 
-  protected override val invalid = Nil
-
   override def map[O](f: Option[Nothing] => O) = NotProvided
 }
 
 /**
   * Represents a object which could not be extracted due to it being invalid or missing when required
   */
-case class ExtractionFailed[T](protected val invalid: Seq[InvalidParameter]) extends Extraction[T] {
+case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extraction[T] {
   def flatMap[O](f: Option[T] => Extraction[O]) = ExtractionFailed(invalid)
 
   override def map[O](f: Option[T] => O) = ExtractionFailed(invalid)
