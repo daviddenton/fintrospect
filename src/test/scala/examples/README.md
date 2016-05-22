@@ -2,6 +2,7 @@ The Fintrospect example code hosted [here](https://github.com/daviddenton/fintro
 
 - <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/circe">```/circe```</a>- using the Circe library for auto-marshalling of case classes to JSON
 - <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/clients">```/clients```</a>- an example of using HTTP routes as a client and creating *really* easy fake remote servers for testing
+- <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/crossfieldvalidation">```/crossfieldvalidation```</a>- shows cross-field validation of inputs taken from the request 
 - <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/customformats">```/customformats```</a>- creating a custom message format with it's own Response Builder: HipsterXML
 - <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/customparameters">```/customparameters```</a>- creating a custom serialisation format for request parameters and bodies
 - <a target="_top" href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/examples/extended">```/extended```</a>- the library application. Example used on the Github project README
