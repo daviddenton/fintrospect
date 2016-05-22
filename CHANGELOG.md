@@ -8,7 +8,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
-## 12.18.0 (uncut)
+## 12.18.0
 - Facility to override body and parameter validation in `RouteSpec` - pass in a different `RequestValidation` instance
 - Finalised extraction logic, including embedding of `Extractable`s
 
