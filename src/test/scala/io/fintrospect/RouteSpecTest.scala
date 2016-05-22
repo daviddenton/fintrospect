@@ -19,19 +19,23 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
     val returnsMethodAndUri = Service.mk[Request, Response] { request =>
       Ok(request.method.toString() + "," + request.uri)
     }
-    val name = Path.string("name")
+    val query = Query.required.string("query")
+    val name = Path.string("pathName")
     val maxAge = Path.integer("maxAge")
     val gender = Path.string("gender")
     val clientWithNoParameters = RouteSpec().at(Get) bindToClient returnsMethodAndUri
 
-    val clientWithNameAndMaxAgeAndGender = RouteSpec().at(Get) / name / maxAge / gender bindToClient returnsMethodAndUri
+    val clientWithQueryNameAndMaxAgeAndGender = RouteSpec().taking(query).at(Get) / name / maxAge / gender bindToClient returnsMethodAndUri
 
     describe("invalid parameters are dealt with") {
-      it("missing parameters throw up") {
-        responseFor(clientWithNameAndMaxAgeAndGender()) shouldEqual(BadRequest, "Client: Missing required params passed: Set({name}, {maxAge}, {gender})")
+      it("missing request parameters throw up") {
+        responseFor(clientWithQueryNameAndMaxAgeAndGender(name --> "bob", maxAge --> 7, gender --> "male")) shouldEqual(BadRequest, "Client: Missing required params passed: Parameter(name=query,where=query,paramType=string)")
+      }
+      it("missing path parameters throw up") {
+        responseFor(clientWithQueryNameAndMaxAgeAndGender(query --> "bob", maxAge --> 7, gender --> "male")) shouldEqual(BadRequest, "Client: Missing required params passed: {pathName}")
       }
       it("unknown parameters returns bad request") {
-        responseFor(clientWithNoParameters(maxAge.of(7))) shouldEqual(BadRequest, "Client: Unknown params passed: Set({maxAge})")
+        responseFor(clientWithNoParameters(maxAge.of(7))) shouldEqual(BadRequest, "Client: Unknown params passed: {maxAge}")
       }
     }
 
@@ -40,7 +44,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
         responseFor(clientWithNoParameters()) shouldEqual(Ok, "GET,/")
       }
       it("when there are some") {
-        responseFor(clientWithNameAndMaxAgeAndGender(gender --> "male", maxAge --> 7, name.-->("bob"))) shouldEqual(Ok, "GET,/bob/7/male")
+        responseFor(clientWithQueryNameAndMaxAgeAndGender(query --> "queryValue", gender --> "male", maxAge --> 7, name.-->("bob"))) shouldEqual(Ok, "GET,/bob/7/male?query=queryValue")
       }
       it("ignores fixed") {
         val clientWithFixedSections = RouteSpec().at(Get) / "prefix" / maxAge / "suffix" bindToClient returnsMethodAndUri
