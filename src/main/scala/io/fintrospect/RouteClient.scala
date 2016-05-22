@@ -44,12 +44,12 @@ class RouteClient(method: Method,
     val userSuppliedParams = suppliedBindings.map(_.parameter).filter(_ != null)
 
     val missing = requiredParams.diff(userSuppliedParams)
-    val invalid = userSuppliedParams.diff(allPossibleParams)
+    val unknown = userSuppliedParams.diff(allPossibleParams)
 
     if (missing.nonEmpty) {
-      BadRequest("Client: Missing required params passed: " + missing.toSet)
-    } else if (invalid.nonEmpty) {
-      BadRequest("Client: Unknown params passed: " + invalid.toSet)
+      BadRequest("Client: Missing required params passed: " + missing.mkString(", "))
+    } else if (unknown.nonEmpty) {
+      BadRequest("Client: Unknown params passed: " + unknown.mkString(", "))
     } else {
       service(buildRequest(suppliedBindings))
     }
