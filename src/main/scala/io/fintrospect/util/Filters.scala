@@ -44,6 +44,9 @@ object Filters {
       }
     }
 
+    /**
+      * Add Accept header to the Request.
+      */
     def AddAccept[T](contentTypes: ContentType*) = Filter.mk[Request, T, Request, T] {
       (req, svc) => {
         contentTypes.foreach(c => req.headerMap.add(ACCEPT, c.value))
@@ -51,6 +54,9 @@ object Filters {
       }
     }
 
+    /**
+      * Add Host header to the Request. This is mandatory in HTTP 1.1
+      */
     def AddHost[T](authority: Authority) = Filter.mk[Request, T, Request, T] {
       (req, svc) => {
         req.headerMap(HOST) = authority.toString
@@ -58,6 +64,9 @@ object Filters {
       }
     }
 
+    /**
+      * Add Authorization header with base-64 encoded credentials to the Request
+      */
     def BasicAuthorization[T](credentials: Credentials) = Filter.mk[Request, T, Request, T] {
       (req, svc) => {
         val base64Credentials = Base64.getEncoder.encodeToString(s"${credentials.username}:${credentials.password}".getBytes(ISO_8859_1))
@@ -88,6 +97,9 @@ object Filters {
     */
   object Response {
 
+    /**
+      * Add Date header to the Response in RFC1123 format.
+      */
     def AddDate[T](clock: Clock = Clock.systemUTC()) = Filter.mk[T, Response, T, Response] {
       (req, svc) => {
         svc(req)
@@ -98,22 +110,26 @@ object Filters {
       }
     }
 
+    /**
+      * Report the latency on a particular route to a callback function, passing the "X-Fintrospect-Route-Name" header and response status bucket (e.g. 2xx)
+      * for identification. This is useful for logging metrics.
+      */
     def ReportingRouteLatency(clock: Clock)(recordFn: (String, Duration) => Unit) = Filter.mk[Request, Response, Request, Response] {
       (req, svc) => {
         val start = clock.instant()
-        for {
-          resp <- svc(req)
-        } yield {
-          val identifier = List(
-            req.headerMap.get(Headers.IDENTIFY_SVC_HEADER)
-              .map(_.replace('.', '_').replace(':', '.'))
-              .getOrElse(req.method.toString() + ".UNMAPPED")
-              .replace('/', '_'),
-            resp.status.code / 100 + "xx",
-            resp.status.code.toString).mkString(".")
 
-          recordFn(identifier, Duration.between(start, clock.instant()))
-          resp
+        svc(req).onSuccess {
+          resp => {
+            val identifier = List(
+              req.headerMap.get(Headers.IDENTIFY_SVC_HEADER)
+                .map(_.replace('.', '_').replace(':', '.'))
+                .getOrElse(req.method.toString() + ".UNMAPPED")
+                .replace('/', '_'),
+              resp.status.code / 100 + "xx",
+              resp.status.code.toString).mkString(".")
+
+            recordFn(identifier, Duration.between(start, clock.instant()))
+          }
         }
       }
     }
