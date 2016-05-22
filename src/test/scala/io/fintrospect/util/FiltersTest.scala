@@ -12,7 +12,7 @@ import com.twitter.util.Future
 import io.fintrospect.ContentTypes.{APPLICATION_XHTML_XML, APPLICATION_XML, WILDCARD}
 import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{NotProvided, Extracted, ExtractionFailed}
+import io.fintrospect.parameters.{Extractable, Extracted, ExtractionFailed, NotProvided, Query}
 import io.fintrospect.util.Filters.Request.{AddHost, BasicAuthorization, StrictAccept}
 import io.fintrospect.util.Filters.Response.{AddDate, CatchAll, ReportingRouteLatency}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
@@ -38,6 +38,13 @@ class FiltersTest extends FunSpec with ShouldMatchers {
       }
 
       it("when extract fails normally then return bad request") {
+
+        Extractable.mk {
+          r: Request => for {
+            a <- Query.optional.string("bob") <--? r
+          } yield None
+        }
+
         val filter = Filters.Request.ExtractingRequest[String] {
           req => ExtractionFailed(Seq())
         }
@@ -53,6 +60,35 @@ class FiltersTest extends FunSpec with ShouldMatchers {
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 
         response.status shouldBe BadRequest
+      }
+    }
+
+    describe("ExtractingResponse") {
+      it("when extracts response object successfully") {
+        val message = "hello"
+
+        val filter = Filters.Response.ExtractingResponse {
+          req => Extracted(message)
+        }
+
+        val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
+
+        response match {
+          case Extracted(s) => s shouldBe message
+          case _ => fail("did not pass")
+        }
+      }
+
+      it("when extraction fails with no object at all") {
+        val filter = Filters.Response.ExtractingResponse {
+          req => NotProvided
+        }
+        val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
+
+        response match {
+          case NotProvided =>
+          case _ => fail("did not pass")
+        }
       }
     }
 
