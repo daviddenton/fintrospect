@@ -9,7 +9,21 @@ import org.scalatest._
 class ExtractableTest extends FunSpec with ShouldMatchers {
 
   case class Example(a: Option[String], b: Option[String], c: Int)
+
   case class WrappedExample(d: Option[Example], e: Int)
+
+  describe("bug #19") {
+    it("does not short circuit if last parameter in a for comprehension is optional") {
+      val ex = Extractable.mk {
+        request: Request => for {
+          req <- Query.required.int("req") <--? request
+          opt <- Query.optional.int("optional") <--? request
+        } yield Some((req, opt))
+      }
+
+      ex <--? Request("/?req=123") shouldBe Extracted((Some(123), None))
+    }
+  }
 
   describe("Extractable") {
 
@@ -18,8 +32,8 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
       val c = Extractable.mk {
         request: Request => for {
           name1 <- Query.optional.string("name1").extract(request)
-          name2 <- Query.optional.string("name2").extract(request)
           name3 <- int.extract(request)
+          name2 <- Query.optional.string("name2").extract(request)
         } yield Some(Example(name1, name2, name3.get))
       }
 
@@ -63,12 +77,12 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
       val inner = Extractable.mk {
         request: Request => for {
           name1 <- Query.optional.string("name1").extract(request)
-          name2 <- Query.optional.string("name2").extract(request)
           name3 <- innerInt.extract(request)
+          name2 <- Query.optional.string("name2").extract(request)
         } yield Some(Example(name1, name2, name3.get))
       }
 
-      val outer =  Extractable.mk {
+      val outer = Extractable.mk {
         request: Request => for {
           inner <- inner <--? request
           name4 <- outerInt <--? request
