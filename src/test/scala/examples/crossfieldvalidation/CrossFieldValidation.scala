@@ -33,7 +33,12 @@ object CrossFieldValidation extends App {
     req: Request => for {
       gender <- Query.required.string("gender") <--? req
       exp <- Query.required.int("experience") <--? req
-    } yield Person(gender, exp.get)
+    } yield {
+      // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
+      // the mandatory fields would short-circuit the comprehension if they were missing. Also, returning None here
+      // will result in a NotProvided being returned from the Extractable
+      Some(Person(gender, exp.get))
+    }
   }
 
   // higher-level extractor: uses other extractors and validation rules
@@ -47,9 +52,7 @@ object CrossFieldValidation extends App {
         teacher <- person <--? req
         pupils <- Query.required.int("pupils") <--?(req, "Too many pupils", lessThanYearsExperience(teacher))
       } yield {
-        // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
-        // the mandatory fields would short-circuit the comprehension if they were missing
-        SchoolClass(pupils.get, teacher.get)
+        Some(SchoolClass(pupils.get, teacher.get))
       }
     }
   }
@@ -68,7 +71,8 @@ object CrossFieldValidation extends App {
   val svc = ModuleSpec(Root).withRoute(checkClassSize).toService
 
   // print succeeding and failing cases
-  println("Failing case: " + statusAndContentFrom(result(svc(Request("?gender=male&experience=9&pupils=10")))))
+  println("Missing parameters case: " + statusAndContentFrom(result(svc(Request("?gender=male&pupils=10")))))
+  println("Failing logic case: " + statusAndContentFrom(result(svc(Request("?gender=male&experience=9&pupils=10")))))
   println("Successful case: " + statusAndContentFrom(result(svc(Request("?gender=female&experience=16&pupils=15")))))
 
 }
