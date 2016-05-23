@@ -18,7 +18,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
         request: Request => for {
           req <- Query.required.int("req") <--? request
           opt <- Query.optional.int("optional") <--? request
-        } yield Some((req, opt))
+        } yield (req, opt)
       }
 
       ex <--? Request("/?req=123") shouldBe Extracted((Some(123), None))
@@ -34,7 +34,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
           name3 <- int.extract(request)
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
-        } yield Some(Example(name1, name2, name3.get))
+        } yield Example(name1, name2, name3.get)
       }
 
       it("successfully extracts when all parameters present") {
@@ -79,14 +79,14 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
           name3 <- innerInt.extract(request)
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
-        } yield Some(Example(name1, name2, name3.get))
+        } yield Example(name1, name2, name3.get)
       }
 
       val outer = Extractable.mk {
         request: Request => for {
           name4 <- outerInt <--? request
           inner <- inner <--? request
-        } yield Some(WrappedExample(inner, name4.get))
+        } yield WrappedExample(inner, name4.get)
       }
 
       it("success") {

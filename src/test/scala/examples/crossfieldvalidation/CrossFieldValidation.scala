@@ -37,7 +37,7 @@ object CrossFieldValidation extends App {
       // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
       // the mandatory fields would short-circuit the comprehension if they were missing. Also, returning None here
       // will result in a NotProvided being returned from the Extractable
-      Some(Person(gender, exp.get))
+      Person(gender, exp.get)
     }
   }
 
@@ -52,7 +52,7 @@ object CrossFieldValidation extends App {
         teacher <- person <--? req
         pupils <- Query.required.int("pupils") <--?(req, "Too many pupils", lessThanYearsExperience(teacher))
       } yield {
-        Some(SchoolClass(pupils.get, teacher.get))
+        SchoolClass(pupils.get, teacher.get)
       }
     }
   }
