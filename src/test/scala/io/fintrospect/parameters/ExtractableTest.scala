@@ -12,7 +12,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
 
   case class WrappedExample(d: Option[Example], e: Int)
 
-  ignore ("bug #19") {
+  describe ("bug #19") {
     it("does not short circuit if last parameter in a for comprehension is optional") {
       val ex = Extractable.mk {
         request: Request => for {
@@ -31,9 +31,9 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
       val int = Query.required.int("name3")
       val c = Extractable.mk {
         request: Request => for {
+          name3 <- int.extract(request)
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
-          name3 <- int.extract(request)
         } yield Some(Example(name1, name2, name3.get))
       }
 
@@ -76,16 +76,16 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
       val outerInt = Query.required.int("outerInt")
       val inner = Extractable.mk {
         request: Request => for {
+          name3 <- innerInt.extract(request)
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
-          name3 <- innerInt.extract(request)
         } yield Some(Example(name1, name2, name3.get))
       }
 
       val outer = Extractable.mk {
         request: Request => for {
-          inner <- inner <--? request
           name4 <- outerInt <--? request
+          inner <- inner <--? request
         } yield Some(WrappedExample(inner, name4.get))
       }
 
