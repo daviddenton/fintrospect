@@ -12,7 +12,18 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
 
   case class WrappedExample(d: Option[Example], e: Int)
 
-  describe ("bug #19") {
+  describe("Extractable") {
+    it("does not short circuit if all parameters in a for comprehension are optional") {
+      val ex = Extractable.mk {
+        request: Request => for {
+          req <- Query.optional.int("req") <--? request
+          opt <- Query.optional.int("optional") <--? request
+        } yield (req, opt)
+      }
+
+      ex <--? Request("/") shouldBe Extracted((None, None))
+    }
+
     it("does not short circuit if last parameter in a for comprehension is optional") {
       val ex = Extractable.mk {
         request: Request => for {
@@ -23,9 +34,6 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
 
       ex <--? Request("/?req=123") shouldBe Extracted((Some(123), None))
     }
-  }
-
-  describe("Extractable") {
 
     describe("non-embedded extraction") {
       val int = Query.required.int("name3")
