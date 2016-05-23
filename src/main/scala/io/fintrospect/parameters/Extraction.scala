@@ -46,7 +46,7 @@ object NotProvided extends Extraction[Nothing] {
 
   def flatMap[O](f: Option[Nothing] => Extraction[O]) = f(None)
 
-  override def map[O](f: Option[Nothing] => Option[O]) = NotProvided
+  override def map[O](f: Option[Nothing] => Option[O]) = Extraction(f(None))
 }
 
 /**
