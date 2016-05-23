@@ -29,20 +29,19 @@ object CrossFieldValidation extends App {
   type Predicate[T] = T => Boolean
 
   // lower level extractor: extracts a person from the request
-  val person = Extractable.mk {
+  val person: Extractable[Request, Person] = Extractable.mk {
     req: Request => for {
       gender <- Query.required.string("gender") <--? req
       exp <- Query.required.int("experience") <--? req
     } yield {
       // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
-      // the mandatory fields would short-circuit the comprehension if they were missing. Also, returning None here
-      // will result in a NotProvided being returned from the Extractable
+      // the mandatory fields would short-circuit the comprehension if they were missing.
       Person(gender, exp.get)
     }
   }
 
   // higher-level extractor: uses other extractors and validation rules
-  val acceptableClassSize = {
+  val acceptableClassSize: Extractable[Request, SchoolClass] = {
 
     // this is a cross-field validation rule, which is basically a predicate and a reason for failure
     def lessThanYearsExperience(teacher: Option[Person]): Predicate[Int] = number => teacher.exists(_.experience > number)
