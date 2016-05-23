@@ -41,6 +41,9 @@ case class Extracted[T](value: T) extends Extraction[T] {
   * Represents an optional object which was not provided - this is still a non-failing case
   */
 object NotProvided extends Extraction[Nothing] {
+
+  override def toString = "NotProvided"
+
   def flatMap[O](f: Option[Nothing] => Extraction[O]) = f(None)
 
   override def map[O](f: Option[Nothing] => Option[O]) = NotProvided
