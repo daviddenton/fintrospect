@@ -23,6 +23,8 @@ case class SchoolClass(pupils: Int, teacher: Person)
   *
   * In this example, we implement a checker for school class sizes.. the rule being that the number of pupils in a class
   * must be greater than their teacher's years of experience.
+  *
+  * NOTE: AT THE MOMENT, DUE TO BUG #19, THE LAST CLAUSE IN THE FOR COMPREHENSION MUST BE A REQUIRED PARAMETER!
   */
 object CrossFieldValidation extends App {
 
