@@ -46,7 +46,11 @@ object CrossFieldValidation extends App {
       req: Request => for {
         teacher <- person <--? req
         pupils <- Query.required.int("pupils") <--?(req, "Too many pupils", lessThanYearsExperience(teacher))
-      } yield SchoolClass(pupils.get, teacher.get)
+      } yield {
+        // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
+        // the mandatory fields would short-circuit the comprehension if they were missing
+        SchoolClass(pupils.get, teacher.get)
+      }
     }
   }
 

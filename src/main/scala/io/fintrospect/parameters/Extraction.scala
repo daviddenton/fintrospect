@@ -49,13 +49,13 @@ object NotProvided extends Extraction[Nothing] {
 /**
   * Represents a object which could not be extracted due to it being invalid or missing when required
   */
-case class ExtractionFailed[T](invalid: Seq[InvalidParameter]) extends Extraction[T] {
-  def flatMap[O](f: Option[T] => Extraction[O]) = ExtractionFailed(invalid)
+case class ExtractionFailed(invalid: Seq[InvalidParameter]) extends Extraction[Nothing] {
+  def flatMap[O](f: Option[Nothing] => Extraction[O]) = ExtractionFailed(invalid)
 
-  override def map[O](f: Option[T] => O) = ExtractionFailed(invalid)
+  override def map[O](f: Option[Nothing] => O) = ExtractionFailed(invalid)
 }
 
 object ExtractionFailed {
-  def apply[T](p: InvalidParameter): ExtractionFailed[T] = ExtractionFailed(Seq(p))
+  def apply(p: InvalidParameter): ExtractionFailed = ExtractionFailed(Seq(p))
 }
 
