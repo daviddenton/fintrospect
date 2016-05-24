@@ -7,6 +7,8 @@ sealed trait Extraction[+T] {
   def flatMap[O](f: Option[T] => Extraction[O]): Extraction[O]
 
   def map[O](f: Option[T] => O): Extraction[O]
+
+  def orDefault[O >: T](f: => O): Extraction[O]
 }
 
 object Extraction {
@@ -35,6 +37,8 @@ case class Extracted[T](value: T) extends Extraction[T] {
   def flatMap[O](f: Option[T] => Extraction[O]) = f(Some(value))
 
   override def map[O](f: Option[T] => O) = Extracted(f(Some(value)))
+
+  override def orDefault[O >: T](f: => O): Extraction[O] = this
 }
 
 /**
@@ -47,6 +51,8 @@ object NotProvided extends Extraction[Nothing] {
   def flatMap[O](f: Option[Nothing] => Extraction[O]) = f(None)
 
   override def map[O](f: Option[Nothing] => O) = Extracted(f(None))
+
+  override def orDefault[T](f: => T): Extraction[T] = Extracted(f)
 }
 
 /**
@@ -56,6 +62,8 @@ case class ExtractionFailed(invalid: Seq[InvalidParameter]) extends Extraction[N
   def flatMap[O](f: Option[Nothing] => Extraction[O]) = ExtractionFailed(invalid)
 
   override def map[O](f: Option[Nothing] => O) = ExtractionFailed(invalid)
+
+  override def orDefault[T](f: => T): Extraction[T] = this
 }
 
 object ExtractionFailed {

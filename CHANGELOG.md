@@ -9,7 +9,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Drop support for Scala 2.10 (when finagle.http does).
 
 ## 12.19.0
-- Made Extraction
+- Tidied up Extractables to finalise (again).
 
 ## 12.18.2
 - Bugfix: Extractables short-circuiting incorrectly when last parameter is optional (issue #19).
