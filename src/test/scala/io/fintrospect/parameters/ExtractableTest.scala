@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.InvalidParameter.Missing
+import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
 import org.scalatest._
 
 class ExtractableTest extends FunSpec with ShouldMatchers {
@@ -108,6 +108,21 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
         outer <--? Request("/?innerInt=123") shouldBe ExtractionFailed(Missing(outerInt))
       }
     }
+
+    describe("falling back to default value") {
+      it("Extracted") {
+        Extracted(true).orDefault(false) shouldBe Extracted(true)
+      }
+      it("NotProvided") {
+        NotProvided.orDefault(true) shouldBe Extracted(true)
+      }
+      it("ExtractionFailed") {
+        val param = Query.required.string("param")
+        ExtractionFailed(Invalid(param)).orDefault(true) shouldBe ExtractionFailed(Invalid(param))
+
+      }
+    }
+
 
   }
 
