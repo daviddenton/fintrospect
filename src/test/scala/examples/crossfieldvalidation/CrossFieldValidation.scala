@@ -56,7 +56,7 @@ object CrossFieldValidation extends App {
     }
   }
 
-  // HTTP route which applies the validation - returning the overall Extraction result
+  // HTTP route which applies the validation - returning the overall Extraction result in case of success
   val checkClassSize = RouteSpec().at(Get) bindTo Service.mk {
     req: Request => {
       acceptableClassSize <--? req match {
