@@ -1,7 +1,5 @@
 package examples.crossfieldvalidation
 
-import java.time.LocalDate
-
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
@@ -10,7 +8,6 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await.result
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
 import io.fintrospect.parameters.{Extractable, Extracted, ExtractionFailed, NotProvided, Query}
-import io.fintrospect.util.Filters
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.{ModuleSpec, RouteSpec}
 
@@ -27,32 +24,7 @@ case class SchoolClass(pupils: Int, teacher: Person)
   * In this example, we implement a checker for school class sizes.. the rule being that the number of pupils in a class
   * must be greater than their teacher's years of experience.
   */
-object CrossFieldValidation extends App {
-
-  case class DateRange(startDate: LocalDate, endDate: Option[LocalDate])
-
-  val range: Extractable[Request, DateRange] = Extractable.mk {
-    (request: Request) =>
-      for {
-        startDate <- Query.required.localDate("start") <--? request
-        endDate <- Query.optional.localDate("end") <--?(request, "end date invalid", _.isAfter(startDate.get))
-      } yield DateRange(startDate.get, endDate)
-  }
-
-  val route = RouteSpec().at(Get) bindTo Service.mk {
-    req: Request =>
-      range <--? req match {
-        case Extracted(dates) => Ok(dates.startDate + " ->" + dates.endDate)
-        case ExtractionFailed(sp) => BadRequest(sp.mkString(", "))
-        case NotProvided => BadRequest()
-      }
-  }
-
-  Filters.Request.ExtractableRequest(range).andThen(Service.mk {
-    dateRange: DateRange => ???
-  })
-
-  type Predicate[T] = T => Boolean
+object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
 
   // lower level extractor: extracts a person from the request
   val person: Extractable[Request, Person] = Extractable.mk {
