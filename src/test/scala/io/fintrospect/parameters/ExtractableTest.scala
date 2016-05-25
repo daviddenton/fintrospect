@@ -123,6 +123,21 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
       }
     }
 
+    describe("misc methods") {
+      val invalid = Invalid(Query.optional.string("bob"))
+      val missing = Missing(Query.optional.string("bob"))
+      it("flatten") {
+        Extraction.flatten(NotProvided) shouldBe NotProvided
+        Extraction.flatten(Extracted(None)) shouldBe NotProvided
+        Extraction.flatten(Extracted(Some(1))) shouldBe Extracted(1)
+        Extraction.flatten(ExtractionFailed(Seq(invalid))) shouldBe ExtractionFailed(Seq(invalid))
+      }
+      it("combine") {
+        Extraction.combine(Seq(NotProvided, NotProvided)) shouldBe NotProvided
+        Extraction.combine(Seq(NotProvided, Extracted(1))) shouldBe NotProvided
+        Extraction.combine(Seq(NotProvided, Extracted(1), ExtractionFailed(missing), ExtractionFailed(invalid))) shouldBe ExtractionFailed(Seq(missing, invalid))
+      }
+    }
 
   }
 
