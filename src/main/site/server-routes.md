@@ -76,4 +76,5 @@ response code when a request does not pass authentication.
 ModuleSpec(Root / "employee")
 .securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future.value(key == "extremelySecretThing")))
 ```
+
 <a class="next" href="http://fintrospect.io/client-routes" target="_top"><button type="button" class="btn btn-sm btn-default">next: client routes</button></a>
