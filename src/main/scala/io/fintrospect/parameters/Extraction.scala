@@ -28,6 +28,16 @@ object Extraction {
     * Wraps in a successful extraction - this assumes the item was not mandatory.
     */
   def apply[T](t: Option[T]): Extraction[T] = t.map(Extracted(_)).getOrElse(NotProvided)
+
+  /**
+    * For optional cases, you can use this to convert an Extraction(None) -> NotProvided
+    */
+  def flatten[T](extraction: Extraction[Option[T]]): Extraction[T] =
+    extraction match {
+      case Extracted(opt) => opt.map(Extracted(_)).getOrElse(NotProvided)
+      case NotProvided => NotProvided
+      case ExtractionFailed(ip) => ExtractionFailed(ip)
+    }
 }
 
 /**
