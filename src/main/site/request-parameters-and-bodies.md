@@ -1,7 +1,7 @@
 # request parameters & bodies
 Fintrospect broadly abstracts the various parts of an HTTP Request ```Path```, ```Header```, ```Query``` and ```Body``` behind a common 
 interface to which the main functions are:
-1. Retrieve a specified value from an incoming request in a type-safe way using ```<--()``` or ```from()```
+1. Retrieve a valid value from an incoming request in a type-safe way using ```<--()``` or ```from()```
 2. Bind a specified value into an outgoing request in a type-safe way using ```-->()``` or ```of()```
 
 Parameters are created in a uniform way using the objects ```Path```, ```Header```, ```Query```, ```FormField``` and ```Body```. 
@@ -41,8 +41,8 @@ val myName = name <-- myForm
 val iAmMarried = isMarried <-- myForm
 ```
 
-#### custom object serialisation
-These can be implemented by defining a ```ParameterSpec``` or ```BodySpec``` and passing an instance instead of calling the ```<param type>``` method 
+#### working with custom parameter types
+Custom parameter and body types can be implemented by defining a ```ParameterSpec``` or ```BodySpec``` and passing an instance instead of calling the ```<param type>``` method 
 in the form above. These Spec objects define:
 
 - name and description of the entity type being handled

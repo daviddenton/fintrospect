@@ -46,4 +46,4 @@ val domainSvc = Service.mk[EmailAddress, ReversedEmailAddress] {
 val httpSvc: Service[Request, Response] = Circe.Filters.AutoInOut(domainSvc)    
 ```
 
-<a class="next" href="http://fintrospect.io/templating-and-static-content" target="_top"><button type="button" class="btn btn-sm btn-default">next: templating and static content</button></a>
+<a class="next" href="http://fintrospect.io/cross-field-validation" target="_top"><button type="button" class="btn btn-sm btn-default">next: cross field validation</button></a>
