@@ -35,7 +35,7 @@ object CrossFieldValidation extends App {
     (request: Request) =>
       for {
         startDate <- Query.required.localDate("start") <--? request
-        endDate <- Query.required.localDate("end") <--?(request, "end date invalid", _.isAfter(startDate.get))
+        endDate <- Query.optional.localDate("end") <--?(request, "end date invalid", _.isAfter(startDate.get))
       } yield DateRange(startDate.get, endDate)
   }
 

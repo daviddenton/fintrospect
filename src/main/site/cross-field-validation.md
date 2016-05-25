@@ -13,7 +13,7 @@ val range: Extractable[Request, DateRange] = Extractable.mk {
   (request: Request) =>
       for {
         startDate <- Query.required.localDate("start") <--? request
-        endDate <- Query.required.localDate("end") <--?(request, "end date invalid", _.isAfter(startDate.get))
+        endDate <- Query.optional.localDate("end") <--?(request, "end date invalid", _.isAfter(startDate.get))
       } yield DateRange(startDate.get, endDate)
 }
 
@@ -26,6 +26,8 @@ val route = RouteSpec().at(Get) bindTo Service.mk {
       }
 }
 ```
+(Although we are calling `get()` on the Options in the above `yield` - normally a VBT (Very Bad Thing), in this case we are safe 
+to do so since any missing or invalid mandatory parameters short-circuit the comprehension.)
 
 `Extractable` is modular, so instances can be embedded inside each other in for comprehensions to build object graphs from the 
 incoming request.
