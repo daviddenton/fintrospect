@@ -27,6 +27,9 @@ val route = RouteSpec().at(Get) bindTo Service.mk {
 }
 ```
 
+`Extractable` is modular, so instances can be embedded inside each other in for comprehensions to build object graphs from the 
+incoming request.
+
 The above example can be further simplified by use of the built-in `Filters.Request.ExtractableRequest` filter to transform the input:
 ```
   Filters.Request.ExtractableRequest(range).andThen(Service.mk[DateRange, Response] {
