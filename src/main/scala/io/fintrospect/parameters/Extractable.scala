@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 /**
   * Mechanism to extract (or fail to extract) an entity value from a particular 'From' context
   */
-trait Extractable[-From, T] {
+trait Extractable[-From, +T] {
   /**
     * Attempt to manually deserialise from the message object.
     */
@@ -28,7 +28,7 @@ object Extractable {
 /**
   * Mechanism to extract (or fail to extract) a parameter from a particular 'From' context, adding
   */
-trait ExtractableParameter[-From, T] {
+trait ExtractableParameter[-From, +T] {
   self: Parameter with Extractable[From, T] =>
 
   /**
