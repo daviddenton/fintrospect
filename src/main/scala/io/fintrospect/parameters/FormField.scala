@@ -1,5 +1,7 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.parameters.types._
+
 trait FormField[T]
   extends BodyParameter
   with Bindable[T, FormFieldBinding] {
@@ -23,34 +25,19 @@ abstract class MultiFormField[T](spec: ParameterSpec[T])
 
 object FormField {
 
-  type Param[F, T, B <: Binding] = Parameter with Extractable[F, T] with Bindable[T, B]
-
-  trait Opt[T] extends io.fintrospect.parameters.Optional[Form, T]
-  with ExtractableParameter[Form, T]
-  with OptionalRebind[Form, T, FormFieldBinding]
-  with OptionalBindable[T, FormFieldBinding] {
+  trait Mandatory[T] extends Mand[Form, T, FormFieldBinding] {
     self: Param[Form, T, FormFieldBinding] =>
   }
 
-  trait Mand[T] extends io.fintrospect.parameters.Mandatory[Form, T]
-  with ExtractableParameter[Form, T]
-  with MandatoryRebind[Form, T, FormFieldBinding] {
-    self: Param[Form, T, FormFieldBinding] =>
-  }
-
-  trait Mandatory[T] extends Mand[T] {
-    self: Param[Form, T, FormFieldBinding] =>
-  }
-
-  trait MandatorySeq[T] extends Mand[Seq[T]] {
+  trait MandatorySeq[T] extends Mand[Form, Seq[T], FormFieldBinding] {
     self: Param[Form, Seq[T], FormFieldBinding] =>
   }
 
-  trait Optional[T] extends Opt[T] {
+  trait Optional[T] extends Opt[Form, T, FormFieldBinding] {
     self: Param[Form, T, FormFieldBinding] =>
   }
 
-  trait OptionalSeq[T] extends Opt[Seq[T]] {
+  trait OptionalSeq[T] extends Opt[Form, Seq[T], FormFieldBinding] {
     self: Param[Form, Seq[T], FormFieldBinding] =>
   }
 
