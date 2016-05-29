@@ -17,11 +17,11 @@ trait Parameter {
 
   override def toString = s"Parameter(name=$name,where=$where,paramType=${paramType.name})"
 
-  protected def extractFrom[T](deserialize: Seq[String] => T,
+  protected def extractFrom[T](deserialize: Seq[String] => Try[T],
                      fromInput: Option[Seq[String]]): Extraction[T] =
     fromInput.map {
       v =>
-        Try(deserialize(v)) match {
+        deserialize(v) match {
           case Success(d) => Extracted(d)
           case Failure(_) => ExtractionFailed(Invalid(this))
         }
@@ -45,7 +45,7 @@ abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], ea
 
   override def -->(value: T) = Seq(eab.newBinding(this, spec.serialize(value)))
 
-  def <--?(from: From) = extractFrom(xs => spec.deserialize(xs.head), eab.valuesFrom(this, from))
+  def <--?(from: From) = extractFrom(xs => Try(spec.deserialize(xs.head)), eab.valuesFrom(this, from))
 }
 
 abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, B]) {
@@ -58,5 +58,5 @@ abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab
 
   override def -->(value: Seq[T]) = value.map(v => eab.newBinding(this, spec.serialize(v)))
 
-  def <--?(from: From): Extraction[Seq[T]] = extractFrom(xs => xs.map(spec.deserialize), eab.valuesFrom(this, from))
+  def <--?(from: From): Extraction[Seq[T]] = extractFrom(xs => Try(xs.map(spec.deserialize)), eab.valuesFrom(this, from))
 }
