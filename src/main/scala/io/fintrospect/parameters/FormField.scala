@@ -23,35 +23,35 @@ abstract class MultiFormField[T](spec: ParameterSpec[T])
 
 object FormField {
 
-  type Param[T] = Parameter with Extractable[Form, T] with Bindable[T, FormFieldBinding]
+  type Param[F, T, B <: Binding] = Parameter with Extractable[F, T] with Bindable[T, B]
 
   trait Opt[T] extends io.fintrospect.parameters.Optional[Form, T]
   with ExtractableParameter[Form, T]
   with OptionalRebind[Form, T, FormFieldBinding]
   with OptionalBindable[T, FormFieldBinding] {
-    self: Param[T] =>
+    self: Param[Form, T, FormFieldBinding] =>
   }
 
   trait Mand[T] extends io.fintrospect.parameters.Mandatory[Form, T]
   with ExtractableParameter[Form, T]
   with MandatoryRebind[Form, T, FormFieldBinding] {
-    self: Param[T] =>
+    self: Param[Form, T, FormFieldBinding] =>
   }
 
   trait Mandatory[T] extends Mand[T] {
-    self: Param[T] =>
+    self: Param[Form, T, FormFieldBinding] =>
   }
 
   trait MandatorySeq[T] extends Mand[Seq[T]] {
-    self: Param[Seq[T]] =>
+    self: Param[Form, Seq[T], FormFieldBinding] =>
   }
 
   trait Optional[T] extends Opt[T] {
-    self: Param[T] =>
+    self: Param[Form, T, FormFieldBinding] =>
   }
 
   trait OptionalSeq[T] extends Opt[Seq[T]] {
-    self: Param[Seq[T]] =>
+    self: Param[Form, Seq[T], FormFieldBinding] =>
   }
 
   val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
