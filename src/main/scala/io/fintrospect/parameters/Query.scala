@@ -8,20 +8,20 @@ import io.fintrospect.parameters.types._
   */
 object Query {
 
-  trait Mandatory[T] extends Mand[Request, T, QueryBinding] {
-    self: Param[Request, T, QueryBinding] =>
+  trait Mandatory[T] extends MandatoryParameter[Request, T, QueryBinding] {
+    self: ExtParameter[Request, T, QueryBinding] =>
   }
 
-  trait MandatorySeq[T] extends Mand[Request, Seq[T], QueryBinding] {
-    self: Param[Request, Seq[T], QueryBinding] =>
+  trait MandatorySeq[T] extends MandatoryParameter[Request, Seq[T], QueryBinding] {
+    self: ExtParameter[Request, Seq[T], QueryBinding] =>
   }
 
-  trait Optional[T] extends Opt[Request, T, QueryBinding] {
-    self: Param[Request, T, QueryBinding] =>
+  trait Optional[T] extends OptionalParameter[Request, T, QueryBinding] {
+    self: ExtParameter[Request, T, QueryBinding] =>
   }
 
-  trait OptionalSeq[T] extends Opt[Request, Seq[T], QueryBinding] {
-    self: Param[Request, Seq[T], QueryBinding] =>
+  trait OptionalSeq[T] extends OptionalParameter[Request, Seq[T], QueryBinding] {
+    self: ExtParameter[Request, Seq[T], QueryBinding] =>
   }
 
 
