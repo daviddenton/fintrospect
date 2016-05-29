@@ -7,31 +7,37 @@ import com.twitter.finagle.http.Request
   */
 object Query {
 
-  trait Mandatory[T] extends io.fintrospect.parameters.Mandatory[Request, T]
+  type Param[F, T, B <: Binding] = Parameter with Extractable[F, T] with Bindable[T, B]
+
+  trait Opt[T] extends io.fintrospect.parameters.Optional[Request, T]
+  with ExtractableParameter[Request, T]
+  with OptionalRebind[Request, T, QueryBinding]
+  with OptionalBindable[T, QueryBinding] {
+    self: Param[Request, T, QueryBinding] =>
+  }
+
+  trait Mand[T] extends io.fintrospect.parameters.Mandatory[Request, T]
   with ExtractableParameter[Request, T]
   with MandatoryRebind[Request, T, QueryBinding] {
-    self: Parameter with Extractable[Request, T] with Bindable[T, QueryBinding] =>
+    self: Param[Request, T, QueryBinding] =>
   }
 
-  trait MandatorySeq[T] extends io.fintrospect.parameters.Mandatory[Request, Seq[T]]
-  with ExtractableParameter[Request, Seq[T]]
-  with MandatoryRebind[Request, Seq[T], QueryBinding] {
-    self: Parameter with Extractable[Request, Seq[T]] with Bindable[Seq[T], QueryBinding] =>
+  trait Mandatory[T] extends Mand[T] {
+    self: Param[Request, T, QueryBinding] =>
   }
 
-  trait Optional[T] extends io.fintrospect.parameters.Optional[Request, T]
-  with ExtractableParameter[Request, T]
-  with OptionalBindable[T, QueryBinding]
-  with OptionalRebind[Request, T, QueryBinding] {
-    self: Parameter with Extractable[Request, T] with Bindable[T, QueryBinding] =>
+  trait MandatorySeq[T] extends Mand[Seq[T]] {
+    self: Param[Request, Seq[T], QueryBinding] =>
   }
 
-  trait OptionalSeq[T] extends io.fintrospect.parameters.Optional[Request, Seq[T]]
-  with ExtractableParameter[Request, Seq[T]]
-  with OptionalBindable[Seq[T], QueryBinding]
-  with OptionalRebind[Request, Seq[T], QueryBinding] {
-    self: Parameter with Extractable[Request, Seq[T]] with Bindable[Seq[T], QueryBinding] =>
+  trait Optional[T] extends Opt[T] {
+    self: Param[Request, T, QueryBinding] =>
   }
+
+  trait OptionalSeq[T] extends Opt[Seq[T]] {
+    self: Param[Request, Seq[T], QueryBinding] =>
+  }
+
 
   val required = new Parameters[QueryParameter, Mandatory] with MultiParameters[MultiQueryParameter, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleQueryParameter(spec) with Mandatory[T]
