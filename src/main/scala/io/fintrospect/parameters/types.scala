@@ -2,18 +2,18 @@ package io.fintrospect.parameters
 
 object types {
 
-  type ExtParameter[F, T, B <: Binding] = Parameter with Extractable[F, T] with Bindable[T, B]
+  type ExtParameter[From, T, Bnd <: Binding] = Parameter with Extractable[From, T] with Bindable[T, Bnd]
 
-  trait OptionalParameter[F, T, B <: Binding] extends io.fintrospect.parameters.Optional[F, T]
-  with ExtractableParameter[F, T]
-  with OptionalRebind[F, T, B]
-  with OptionalBindable[T, B] {
-    self: ExtParameter[F, T, B] =>
+  trait OptionalParameter[From, T, Bnd <: Binding] extends io.fintrospect.parameters.Optional[From, T]
+  with ExtractableParameter[From, T]
+  with OptionalRebind[From, T, Bnd]
+  with OptionalBindable[T, Bnd] {
+    self: ExtParameter[From, T, Bnd] =>
   }
 
-  trait MandatoryParameter[F, T, B <: Binding] extends io.fintrospect.parameters.Mandatory[F, T]
-  with ExtractableParameter[F, T]
-  with MandatoryRebind[F, T, B] {
-    self: ExtParameter[F, T, B] =>
+  trait MandatoryParameter[From, T, Bnd <: Binding] extends io.fintrospect.parameters.Mandatory[From, T]
+  with ExtractableParameter[From, T]
+  with MandatoryRebind[From, T, Bnd] {
+    self: ExtParameter[From, T, Bnd] =>
   }
 }
