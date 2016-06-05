@@ -1,0 +1,5 @@
+# robots.txt for http://fintrospect.io
+
+User-agent: *
+Disallow: /*.pdf$
+Noindex: /*.pdf$
