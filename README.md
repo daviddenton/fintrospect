@@ -34,7 +34,7 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
 Fintrospect is intentionally dependency-lite by design - the library itself only has a single dependency. The other requirement is Finagle
 itself - the choice of version is up to the user (although it has built against the version shown). 
 
-To activate some optional features, additional dependencies may be required - please see <a target="_top" href="http://fintrospect.io/installation">here</a> for details.
+To activate some optional features, additional dependencies may be required - please see <a href="http://fintrospect.io/installation">here</a> for details.
 
 Add the following lines to ```build.sbt```:
 
@@ -45,7 +45,7 @@ libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.20.1"
 ```
 
 ## See the code
-See the examples in this repo, or clone the <a target="_top" href="http://github.com/daviddenton/fintrospect-example-app">full example application repo</a>.
+See the examples in this repo, or clone the <a href="http://github.com/daviddenton/fintrospect-example-app">full example application repo</a>.
 
 ## Learn it
 See the full user guide <a href="http://fintrospect.io/" target="_top">here</a>, or read on for the tldr; example. :)
