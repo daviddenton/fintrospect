@@ -8,8 +8,11 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
+## 12.20.1
+- Bugfix: Issue #20 Static Module now resolves to index.html for default paths
+
 ## 12.20.0
-- Convienience methods added to Extraction.
+- Convenience methods added to Extraction.
 
 ## 12.19.0
 - Tidied up Extractables to finalise (again).
