@@ -12,7 +12,7 @@ npm run makeSite
 rm -rf /tmp/site/*
 mv target/scala-2.11/api target/www/
 mv -f target/www/* /tmp/site
-cp -f src/main/site/static/* /tmp/co
+cp -R src/main/site/static/* /tmp/site
 cd /tmp/site
 git add *
 git commit -m "releasing $1 version of site"
