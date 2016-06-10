@@ -11,9 +11,7 @@ import io.fintrospect.{ServerRoute, ServerRoutes}
 /**
   * Simple, insecure HTTP server which can be used for tests
   */
-class TestHttpServer(port: Int, serverRoutes: ServerRoutes[Request, Response]) {
-
-  private val inMemoryHttp = new OverridableHttpService(serverRoutes)
+class TestHttpServer(port: Int, serverRoutes: ServerRoutes[Request, Response]) extends OverridableHttpService(serverRoutes){
 
   private var server: ListeningServer = null
 
@@ -21,17 +19,11 @@ class TestHttpServer(port: Int, serverRoutes: ServerRoutes[Request, Response]) {
     add(route)
   })
 
-  /**
-    * Override the status code returned by the server
-    */
-  def respondWith(status: Status) = inMemoryHttp.respondWith(status)
-
   def start(): Future[Unit] = {
-    inMemoryHttp.respondWith(Status.Ok)
+    respondWith(Status.Ok)
 
     server = Http.serve(s":$port",
-      new HttpFilter(Cors.UnsafePermissivePolicy)
-        .andThen(inMemoryHttp.service))
+      new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service))
     Future.Done
   }
 
