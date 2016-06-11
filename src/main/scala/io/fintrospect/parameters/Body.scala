@@ -7,7 +7,7 @@ import io.fintrospect.formats.json.{Argo, JsonFormat}
 import scala.xml.Elem
 
 abstract class Body[T](spec: BodySpec[T]) extends Iterable[BodyParameter] with Mandatory[Message, T]
-with Extractable[Message, T] {
+with Extractor[Message, T] {
   val contentType: ContentType = spec.contentType
 }
 
@@ -34,5 +34,5 @@ object Body {
   /**
     * HTML encoded form HTTP message body.
     */
-  def form(fields: FormField[_] with Retrieval[Form, _] with Extractable[Form, _]*): FormBody = new FormBody(fields)
+  def form(fields: FormField[_] with Retrieval[Form, _] with Extractor[Form, _]*): FormBody = new FormBody(fields)
 }

@@ -2,7 +2,7 @@ package io.fintrospect.parameters
 
 object types {
 
-  type ExtParameter[From, T, Bnd <: Binding] = Parameter with Extractable[From, T] with Bindable[T, Bnd]
+  type ExtParameter[From, T, Bnd <: Binding] = Parameter with Extractor[From, T] with Bindable[T, Bnd]
 
   trait OptionalParameter[From, T, Bnd <: Binding] extends io.fintrospect.parameters.Optional[From, T]
   with ExtractableParameter[From, T]

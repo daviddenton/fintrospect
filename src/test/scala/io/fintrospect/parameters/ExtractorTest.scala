@@ -6,7 +6,7 @@ import com.twitter.finagle.http.Request
 import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
 import org.scalatest._
 
-class ExtractableTest extends FunSpec with ShouldMatchers {
+class ExtractorTest extends FunSpec with ShouldMatchers {
 
   case class Example(a: Option[String], b: Option[String], c: Int)
 
@@ -14,7 +14,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
 
   describe("Extractable") {
     it("does not short circuit if all parameters in a for comprehension are optional") {
-      val ex = Extractable.mk {
+      val ex = Extractor.mk {
         request: Request => for {
           req <- Query.optional.int("req") <--? request
           opt <- Query.optional.int("optional") <--? request
@@ -25,7 +25,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
     }
 
     it("does not short circuit if last parameter in a for comprehension is optional") {
-      val ex = Extractable.mk {
+      val ex = Extractor.mk {
         request: Request => for {
           req <- Query.required.int("req") <--? request
           opt <- Query.optional.int("optional") <--? request
@@ -37,7 +37,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
 
     describe("non-embedded extraction") {
       val int = Query.required.int("name3")
-      val c = Extractable.mk {
+      val c = Extractor.mk {
         request: Request => for {
           name3 <- int.extract(request)
           name1 <- Query.optional.string("name1").extract(request)
@@ -66,7 +66,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
       val middle = Query.optional.localDate("middle")
       val end = Query.required.localDate("end")
 
-      val c = Extractable.mk {
+      val c = Extractor.mk {
         request: Request => {
           for {
             startDate <- start <--? request
@@ -82,7 +82,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
     describe("can embed extractables") {
       val innerInt = Query.required.int("innerInt")
       val outerInt = Query.required.int("outerInt")
-      val inner = Extractable.mk {
+      val inner = Extractor.mk {
         request: Request => for {
           name3 <- innerInt.extract(request)
           name1 <- Query.optional.string("name1").extract(request)
@@ -90,7 +90,7 @@ class ExtractableTest extends FunSpec with ShouldMatchers {
         } yield Example(name1, name2, name3.get)
       }
 
-      val outer = Extractable.mk {
+      val outer = Extractor.mk {
         request: Request => for {
           name4 <- outerInt <--? request
           inner <- inner <--? request

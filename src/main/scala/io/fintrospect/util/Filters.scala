@@ -14,7 +14,7 @@ import io.fintrospect.configuration.{Authority, Credentials}
 import io.fintrospect.formats.AbstractResponseBuilder
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{Extractable, Extracted, Extraction, ExtractionFailed, NotProvided}
+import io.fintrospect.parameters.{Extracted, Extraction, ExtractionFailed, Extractor, NotProvided}
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{ContentType, ContentTypes, Headers}
@@ -80,12 +80,12 @@ object Filters {
       */
     def ExtractingRequest[I](fn: Request => Extraction[I])
                                 (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
-    Filter[Request, Response, I, Response] = ExtractableRequest(Extractable.mk[Request, I](fn))(moduleRenderer)
+    Filter[Request, Response, I, Response] = ExtractableRequest(Extractor.mk[Request, I](fn))(moduleRenderer)
 
     /**
       * Extracts the input objects and feeds them into the underlying service.
       */
-    def ExtractableRequest[I](extractable: Extractable[Request, I])
+    def ExtractableRequest[I](extractable: Extractor[Request, I])
                                 (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
     Filter[Request, Response, I, Response] = Filter.mk[Request, Response, I, Response] {
       (req, svc) => {
@@ -155,12 +155,12 @@ object Filters {
       * Extracts an object form the Response output object and feeds them into the underlying service.
       */
     def ExtractingResponse[O](fn: Response => Extraction[O]): Filter[Request, Extraction[O], Request, Response] =
-      ExtractingResponse(Extractable.mk(fn))
+      ExtractingResponse(Extractor.mk(fn))
 
     /**
       * Extracts the output objects and feeds them into the underlying service.
       */
-    def ExtractingResponse[O](extractable: Extractable[Response, O]): Filter[Request, Extraction[O], Request, Response] =
+    def ExtractingResponse[O](extractable: Extractor[Response, O]): Filter[Request, Extraction[O], Request, Response] =
       Filter.mk[Request, Extraction[O], Request, Response] {
         (req, svc) => svc(req).map(extractable.<--?)
       }
