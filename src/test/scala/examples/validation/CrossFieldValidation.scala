@@ -1,4 +1,4 @@
-package examples.crossfieldvalidation
+package examples.validation
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
@@ -7,7 +7,7 @@ import com.twitter.finagle.http.Status.{BadRequest, Ok}
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await.result
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{Extractable, Extracted, ExtractionFailed, NotProvided, Query}
+import io.fintrospect.parameters.{Extracted, ExtractionFailed, Extractor, NotProvided, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.{ModuleSpec, RouteSpec}
 
@@ -27,7 +27,7 @@ case class SchoolClass(pupils: Int, teacher: Person)
 object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
 
   // lower level extractor: extracts a person from the request
-  val person: Extractable[Request, Person] = Extractable.mk {
+  val person: Extractor[Request, Person] = Extractor.mk {
     req: Request => for {
       gender <- Query.required.string("gender") <--? req
       exp <- Query.required.int("experience") <--? req
@@ -39,12 +39,12 @@ object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
   }
 
   // higher-level extractor: uses other extractors and validation rules
-  val acceptableClassSize: Extractable[Request, SchoolClass] = {
+  val acceptableClassSize: Extractor[Request, SchoolClass] = {
 
     // this is a cross-field validation rule, which is basically a predicate and a reason for failure
     def lessThanYearsExperience(teacher: Option[Person]): Predicate[Int] = number => teacher.exists(_.experience > number)
 
-    Extractable.mk {
+    Extractor.mk {
       req: Request => for {
         teacher <- person <--? req
         pupils <- Query.required.int("pupils") <--?(req, "Too many pupils", lessThanYearsExperience(teacher))

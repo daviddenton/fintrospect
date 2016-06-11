@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 /**
   * Mechanism to extract (or fail to extract) an entity value from a particular 'From' context
   */
-trait Extractable[-From, +T] {
+trait Extractor[-From, +T] {
   /**
     * Attempt to manually deserialise from the message object.
     */
@@ -16,11 +16,11 @@ trait Extractable[-From, +T] {
   final def extract(from: From): Extraction[T] = <--?(from)
 }
 
-object Extractable {
+object Extractor {
   /**
     * Create an extractable from a simple function. This is stylistic, similar to Service.mk and Filter.mk
     */
-  def mk[From, T](fn:From => Extraction[T]): Extractable[From, T] = new Extractable[From, T] {
+  def mk[From, T](fn:From => Extraction[T]): Extractor[From, T] = new Extractor[From, T] {
     override def <--?(from: From): Extraction[T] = fn(from)
   }
 }
@@ -29,7 +29,7 @@ object Extractable {
   * Mechanism to extract (or fail to extract) a parameter from a particular 'From' context, adding
   */
 trait ExtractableParameter[-From, +T] {
-  self: Parameter with Extractable[From, T] =>
+  self: Parameter with Extractor[From, T] =>
 
   /**
     * Attempt to manually deserialise from the message object, using a validation predicate and reason for failure.

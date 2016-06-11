@@ -19,7 +19,7 @@ trait Retrieval[-From, T] {
   final def from(from: From): T = <--(from)
 }
 
-trait Mandatory[-From, T] extends Retrieval[From, T] with Extractable[From, T] {
+trait Mandatory[-From, T] extends Retrieval[From, T] with Extractor[From, T] {
   val required = true
 
   override def <--(from: From): T = extract(from) match {
@@ -28,7 +28,7 @@ trait Mandatory[-From, T] extends Retrieval[From, T] with Extractable[From, T] {
   }
 }
 
-trait Optional[-From, T] extends Retrieval[From, Option[T]] with Extractable[From, T] {
+trait Optional[-From, T] extends Retrieval[From, Option[T]] with Extractor[From, T] {
   val required = false
 
   def <--(from: From): Option[T] = extract(from) match {

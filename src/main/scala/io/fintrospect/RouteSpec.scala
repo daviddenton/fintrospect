@@ -2,7 +2,7 @@ package io.fintrospect
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
-import io.fintrospect.parameters.{Body, Extractable, Extraction, HeaderParameter, NotProvided, Parameter, QueryParameter}
+import io.fintrospect.parameters.{Body, Extraction, Extractor, HeaderParameter, NotProvided, Parameter, QueryParameter}
 import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 
 /**
@@ -13,9 +13,9 @@ case class RouteSpec private(summary: String,
                              produces: Set[ContentType],
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
-                             requestParams: Seq[Parameter with Extractable[Request, _]],
+                             requestParams: Seq[Parameter with Extractor[Request, _]],
                              responses: Seq[ResponseSpec],
-                             validation: RouteSpec => Extractable[Request, Nothing]) {
+                             validation: RouteSpec => Extractor[Request, Nothing]) {
 
   private[fintrospect] def <--?(request: Request) = validation(this).<--?(request)
 
@@ -32,12 +32,12 @@ case class RouteSpec private(summary: String,
   /**
     * Register a header parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
     */
-  def taking(rp: HeaderParameter[_] with Extractable[Request, _]): RouteSpec = copy(requestParams = rp +: requestParams)
+  def taking(rp: HeaderParameter[_] with Extractor[Request, _]): RouteSpec = copy(requestParams = rp +: requestParams)
 
   /**
     * Register a query parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
     */
-  def taking(rp: QueryParameter[_] with Extractable[Request, _]): RouteSpec = copy(requestParams = rp +: requestParams)
+  def taking(rp: QueryParameter[_] with Extractor[Request, _]): RouteSpec = copy(requestParams = rp +: requestParams)
 
   /**
     * Register the expected content of the body.
@@ -76,7 +76,7 @@ case class RouteSpec private(summary: String,
 
 object RouteSpec {
 
-  trait RequestValidation extends (RouteSpec => Extractable[Request, Nothing])
+  trait RequestValidation extends (RouteSpec => Extractor[Request, Nothing])
 
   /**
     * Defines the validation for the Route which could result in a BadRequest response from this route. By default, this
@@ -89,7 +89,7 @@ object RouteSpec {
       * Validates the presence and format of all parameters (mandatory and optional), and the request body.
       */
     val all = new RequestValidation {
-      def apply(spec: RouteSpec) = Extractable.mk {
+      def apply(spec: RouteSpec) = Extractor.mk {
         (request: Request) => Extraction.combine(spec.requestParams.++(spec.body).map(_.extract(request)))
       }
     }
@@ -98,7 +98,7 @@ object RouteSpec {
       * Validates the presence and format of all parameters (mandatory and optional) only.
       */
     val noBody = new RequestValidation {
-      def apply(spec: RouteSpec) = Extractable.mk {
+      def apply(spec: RouteSpec) = Extractor.mk {
         (request: Request) => Extraction.combine(spec.requestParams.map(_.extract(request)))
       }
     }
@@ -107,7 +107,7 @@ object RouteSpec {
       * Validates the presence and format of body only.
       */
     val noParameters = new RequestValidation {
-      def apply(spec: RouteSpec) = Extractable.mk {
+      def apply(spec: RouteSpec) = Extractor.mk {
         (request: Request) => Extraction.combine(spec.body.map(_.extract(request)).toSeq)
       }
     }
@@ -116,7 +116,7 @@ object RouteSpec {
       * Do not perform any validation of the request parameters or the body.
       */
     val none = new RequestValidation {
-      def apply(spec: RouteSpec) = Extractable.mk { (request: Request) => NotProvided }
+      def apply(spec: RouteSpec) = Extractor.mk { (request: Request) => NotProvided }
     }
   }
 

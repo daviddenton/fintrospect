@@ -12,7 +12,7 @@ import com.twitter.util.Future
 import io.fintrospect.ContentTypes.{APPLICATION_XHTML_XML, APPLICATION_XML, WILDCARD}
 import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{Extractable, Extracted, ExtractionFailed, NotProvided, Query}
+import io.fintrospect.parameters.{Extracted, ExtractionFailed, Extractor, NotProvided, Query}
 import io.fintrospect.util.Filters.Request.{AddHost, BasicAuthorization, StrictAccept}
 import io.fintrospect.util.Filters.Response.{AddDate, CatchAll, ReportingRouteLatency}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
@@ -39,7 +39,7 @@ class FiltersTest extends FunSpec with ShouldMatchers {
 
       it("when extract fails normally then return bad request") {
 
-        Extractable.mk {
+        Extractor.mk {
           r: Request => for {
             a <- Query.optional.string("bob") <--? r
           } yield None
