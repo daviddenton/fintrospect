@@ -3,19 +3,6 @@ package io.fintrospect.parameters
 
 import scala.language.implicitConversions
 
-sealed trait Validation[+T]
-
-case class Validated[T](value: T) extends Validation[T]
-
-/**
-  * Represents a object which could not be extracted due to it being invalid or missing when required.
-  */
-case class ValidationFailed(errors: Seq[InvalidParameter]) extends Validation[Nothing]
-
-object ValidationFailed {
-  def apply(p: InvalidParameter): ValidationFailed = ValidationFailed(Seq(p))
-}
-
 class Validator[In <: Product] private(extractors: Product, value: => In) {
   private val errors = extractors
     .productIterator
@@ -26,6 +13,10 @@ class Validator[In <: Product] private(extractors: Product, value: => In) {
       case _ => Nil
     }
 
+  /**
+    * The terminating mechanism for a Validation construct. The PartialFunction is used to capture logic for dealing with
+    * the successfully extracted parameter instances (much like the "yield" call in the cross-validating case
+    */
   def apply[Result](pf: Function[In, Result]): Validation[Result] =
     if (errors.isEmpty) Validated(pf(value)) else ValidationFailed(errors)
 }
@@ -41,6 +32,10 @@ object Validator {
     case ExtractionFailed(_) => None
   }
 
+  /**
+    * Construct a Validator which can be used to enforce several non-crossing extraction rules.
+    * Uses magnet pattern (see implicit methods (tupleXToValidator()) to convert vararg instances to a Validator instance.
+    */
   def mk[In <: Product](validation: Validator[In]) = validation
 
   implicit def tuple2ToValidator[A, B](in: (Ex[A], Ex[B])):
