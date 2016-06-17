@@ -31,6 +31,28 @@ object Filters {
   object Request {
 
     /**
+      * Intercept the request before it is sent to the next service.
+      */
+    def Tap(fn: Request => Unit) = Filter.mk[Request, Response, Request, Response] {
+      (req, svc) => {
+        fn(req)
+        svc(req)
+      }
+    }
+
+    /**
+      * Print details of the request before it is sent to the next service. Useful for debugging.
+      */
+    val Print = Tap {
+      req: Request => {
+        println(s"***** REQUEST: ${req.uri} *****")
+        println("Headers: " + req.headerMap)
+        println("Params: " + req.params)
+        println(s"Content (${req.contentString.length}b):" + req.contentString)
+      }
+    }
+
+    /**
       * Respond with NotAcceptable unless: 1. No accept header, 2. Wildcard accept header, 3. Exact matching passed accept header
       */
     def StrictAccept(contentTypes: ContentType*) = Filter.mk[Request, Response, Request, Response] {
@@ -79,14 +101,14 @@ object Filters {
       * Extracts the input objects and feeds them into the underlying service.
       */
     def ExtractingRequest[I](fn: Request => Extraction[I])
-                                (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
+                            (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
     Filter[Request, Response, I, Response] = ExtractableRequest(Extractor.mk[Request, I](fn))(moduleRenderer)
 
     /**
       * Extracts the input objects and feeds them into the underlying service.
       */
     def ExtractableRequest[I](extractable: Extractor[Request, I])
-                                (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
+                             (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
     Filter[Request, Response, I, Response] = Filter.mk[Request, Response, I, Response] {
       (req, svc) => {
         extractable <--? req match {
@@ -104,14 +126,44 @@ object Filters {
   object Response {
 
     /**
+      * Intercept a successful response before it is returned.
+      */
+    def Tap(rFn: Response => Unit) = Filter.mk[Request, Response, Request, Response] {
+      (req, svc) => svc(req).onSuccess(rFn)
+    }
+
+    /**
+      * Intercept a failed response before it is returned.
+      */
+    def TapFailure(t: Throwable => Unit) = Filter.mk[Request, Response, Request, Response] {
+      (req, svc) => svc(req).onFailure(t)
+    }
+
+    /**
+      * Print details of the response before it is returned. Useful for debugging.
+      */
+    val Print = Tap {
+      response: Response => {
+        println(s"***** RESPONSE ${response.status.code} *****")
+        println("Headers: " + response.headerMap)
+        println(s"Content (${response.contentString.length}b):" + response.contentString)
+      }
+    }.andThen(TapFailure {
+      t: Throwable => {
+        println(s"***** RESPONSE FAILED *****")
+        t.printStackTrace()
+      }
+    })
+
+    /**
       * Add Date header to the Response in RFC1123 format.
       */
     def AddDate[T](clock: Clock = Clock.systemUTC()) = Filter.mk[T, Response, T, Response] {
       (req, svc) => {
         svc(req)
-          .map(rsp => {
-            rsp.headerMap(DATE) = RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
-            rsp
+          .map(Response => {
+            Response.headerMap(DATE) = RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
+            Response
           })
       }
     }
@@ -166,4 +218,8 @@ object Filters {
       }
   }
 
+  /**
+    * Print details of a request and it's response. Useful for debugging.
+    */
+  val PrintRequestAndResponse = Request.Print.andThen(Response.Print)
 }

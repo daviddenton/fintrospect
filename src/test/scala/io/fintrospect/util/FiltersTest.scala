@@ -8,7 +8,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{BadRequest, NotAcceptable, Ok}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
-import com.twitter.util.Future
+import com.twitter.util.{Await, Future}
 import io.fintrospect.ContentTypes.{APPLICATION_XHTML_XML, APPLICATION_XML, WILDCARD}
 import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
@@ -63,32 +63,18 @@ class FiltersTest extends FunSpec with ShouldMatchers {
       }
     }
 
-    describe("ExtractingResponse") {
-      it("when extracts response object successfully") {
-        val message = "hello"
+    describe("Tap") {
+      it("feeds the request into the defined function before sending it to service") {
+        val request = Request()
+        val response = Response()
 
-        val filter = Filters.Response.ExtractingResponse {
-          req => Extracted(message)
-        }
-
-        val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
-
-        response match {
-          case Extracted(s) => s shouldBe message
-          case _ => fail("did not pass")
-        }
-      }
-
-      it("when extraction fails with no object at all") {
-        val filter = Filters.Response.ExtractingResponse {
-          req => NotProvided
-        }
-        val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
-
-        response match {
-          case NotProvided =>
-          case _ => fail("did not pass")
-        }
+        var req: Option[Request] = None
+        val f = Filters.Request.Tap { r => req = Some(r) }
+          .andThen(Service.mk { r: Request =>
+            Future.value(response)
+          })
+        Await.result(f(request)) shouldBe response
+        req shouldBe Some(request)
       }
     }
 
@@ -137,6 +123,36 @@ class FiltersTest extends FunSpec with ShouldMatchers {
   }
 
   describe("Response") {
+
+    describe("ExtractingResponse") {
+      it("when extracts response object successfully") {
+        val message = "hello"
+
+        val filter = Filters.Response.ExtractingResponse {
+          req => Extracted(message)
+        }
+
+        val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
+
+        response match {
+          case Extracted(s) => s shouldBe message
+          case _ => fail("did not pass")
+        }
+      }
+
+      it("when extraction fails with no object at all") {
+        val filter = Filters.Response.ExtractingResponse {
+          req => NotProvided
+        }
+        val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
+
+        response match {
+          case NotProvided =>
+          case _ => fail("did not pass")
+        }
+      }
+    }
+
     describe("CatchAll") {
       it("converts uncaught exceptions into 500 responses") {
         val rsp = result(CatchAll()(Request(), Service.mk { req: Request => Future.exception(new RuntimeException("boo")) }))
@@ -177,5 +193,46 @@ class FiltersTest extends FunSpec with ShouldMatchers {
         called shouldBe("GET._path_dir_someFile_html.2xx.200", ofSeconds(1))
       }
     }
+
+    describe("Tap") {
+      it("feeds the response into the defined function after receiving it from the service") {
+        val request = Request()
+        val response = Response()
+
+        var resp: Option[Response] = None
+        val f = Filters.Response.Tap { r => resp = Some(r) }
+          .andThen(Service.mk { r: Request =>
+            Future.value(response)
+          })
+        Await.result(f(request)) shouldBe response
+        resp shouldBe Some(response)
+      }
+    }
+
+    describe("TapFailure") {
+      it("feeds the exception into the defined function after receiving it from the service") {
+        val request = Request()
+        val response = Response()
+
+        val e = new scala.RuntimeException()
+
+        var fed: Option[Throwable] = None
+        val f = Filters.Response.TapFailure { r => fed = Some(r) }
+          .andThen(Service.mk { r: Request =>
+            Future.exception(e)
+          })
+        intercept[RuntimeException](Await.result(f(request))) shouldBe e
+        fed shouldBe Some(e)
+      }
+    }
+
+
   }
+
+  describe("Misc") {
+    it("PrintRequestAndResponse") {
+      Await.result(Filters.PrintRequestAndResponse.andThen((_: Request) => Future.value(Response()))(Request()))
+    }
+  }
+
 }
