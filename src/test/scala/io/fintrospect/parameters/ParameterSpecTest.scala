@@ -253,10 +253,16 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  describe("ParameterSpecVal") {
-    it("can convert to a wrapped type") {
-      case class IClass(value: Int) extends ParameterSpecVal[Int]
-      ParameterSpec.int(paramName, "")(IClass).deserialize("123") shouldBe IClass(123)
+  describe("Extend to AnyVal") {
+
+    case class IClass(value: Int)
+
+    it("can map with just read") {
+      ParameterSpec.int(paramName, "").map(IClass).deserialize("123") shouldBe IClass(123)
+    }
+
+    it("can map with read and show") {
+      ParameterSpec.int(paramName, "").map[IClass](IClass, (i:IClass) => i.value + i.value).serialize(IClass(100)) shouldBe "200"
     }
   }
 }
