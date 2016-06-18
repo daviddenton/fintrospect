@@ -254,4 +254,53 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
       MyCustomType.spec.serialize(MyCustomType(123)) shouldEqual "123"
     }
   }
+
+  describe("Generating ParameterSpec instances from AnyVals marked up with ParameterSpecVal for") {
+    it("int") {
+      case class IClass(value: Int) extends ParameterSpecVal[Int]
+      ParameterSpec.specVal.int(IClass, paramName).deserialize("123") shouldEqual IClass(123)
+    }
+
+    it("integer") {
+      case class IClass(value: Integer) extends ParameterSpecVal[Integer]
+      ParameterSpec.specVal.integer(IClass, paramName).deserialize("123") shouldEqual IClass(123)
+    }
+
+    it("long") {
+      case class IClass(value: Long) extends ParameterSpecVal[Long]
+      ParameterSpec.specVal.long(IClass, paramName).deserialize("123") shouldEqual IClass(123)
+    }
+
+    it("bigDecimal") {
+      case class IClass(value: BigDecimal) extends ParameterSpecVal[BigDecimal]
+      ParameterSpec.specVal.bigDecimal(IClass, paramName).deserialize("1.1234") shouldEqual IClass(BigDecimal("1.1234"))
+    }
+
+    it("boolean") {
+      case class IClass(value: Boolean) extends ParameterSpecVal[Boolean]
+      ParameterSpec.specVal.boolean(IClass, paramName).deserialize("true") shouldEqual IClass(true)
+    }
+
+    it("string") {
+      case class IClass(value: String) extends ParameterSpecVal[String]
+      ParameterSpec.specVal.string(IClass, paramName).deserialize("123") shouldEqual IClass("123")
+    }
+
+    it("uuid") {
+      case class IClass(value: UUID) extends ParameterSpecVal[UUID]
+      ParameterSpec.specVal.uuid(IClass, paramName).deserialize("41fe035f-a948-4d67-a276-1ff79a0a7443") shouldEqual IClass(UUID.fromString("41fe035f-a948-4d67-a276-1ff79a0a7443"))
+    }
+    it("dateTime") {
+      case class IClass(value: LocalDateTime) extends ParameterSpecVal[LocalDateTime]
+      ParameterSpec.specVal.dateTime(IClass, paramName).deserialize("1970-01-01T00:00:00") shouldEqual IClass(LocalDateTime.of(1970, 1, 1, 0, 0, 0))
+    }
+    it("zonedDateTime") {
+      case class IClass(value: ZonedDateTime) extends ParameterSpecVal[ZonedDateTime]
+      ParameterSpec.specVal.zonedDateTime[IClass](IClass, paramName).deserialize("1970-01-01T00:00:00-01:00").value.toEpochSecond shouldEqual 3600
+    }
+    it("localDate") {
+      case class IClass(value: LocalDate) extends ParameterSpecVal[LocalDate]
+      ParameterSpec.specVal.localDate(IClass, paramName).deserialize("1970-01-01") shouldEqual IClass(LocalDate.of(1970, 1, 1))
+    }
+  }
 }
