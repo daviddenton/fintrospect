@@ -62,35 +62,39 @@ object ParameterSpec {
   def xml(name: String, description: String = null) = ParameterSpec[Elem](name, Option(description), StringParamType, XML.loadString, _.toString())
 
   object specVal {
+
+    private def wrap[T, O <: ParameterSpecVal[T]](fn: T => O, parameterSpec: ParameterSpec[T]) =
+      ParameterSpec[O](parameterSpec.name, parameterSpec.description, parameterSpec.paramType, s => fn(parameterSpec.deserialize(s)), b => parameterSpec.serialize(b.value))
+
     def bigDecimal[L <: ParameterSpecVal[BigDecimal]](fn: BigDecimal => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), StringParamType, s => fn(BigDecimal(s)), _.value.toString())
+      wrap(fn, ParameterSpec.bigDecimal(name, description))
 
     def boolean[L <: ParameterSpecVal[Boolean]](fn: Boolean => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), BooleanParamType, s => fn(s.toBoolean), _.value.toString())
+      wrap(fn, ParameterSpec.boolean(name, description))
 
     def int[L <: ParameterSpecVal[Int]](fn: Int => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), IntegerParamType, s => fn(s.toInt), _.value.toString())
+      wrap(fn, ParameterSpec.int(name, description))
 
     def integer[L <: ParameterSpecVal[Integer]](fn: Integer => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), IntegerParamType, s => fn(s.toInt), _.value.toString())
+      wrap(fn, ParameterSpec.integer(name, description))
 
     def long[L <: ParameterSpecVal[Long]](fn: Long => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), IntegerParamType, s => fn(s.toLong), _.value.toString())
+      wrap(fn, ParameterSpec.long(name, description))
 
     def localDate[L <: ParameterSpecVal[LocalDate]](fn: LocalDate => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), StringParamType, s => fn(LocalDate.parse(s)), s => ISO_LOCAL_DATE.format(s.value))
+      wrap(fn, ParameterSpec.localDate(name, description))
 
     def dateTime[L <: ParameterSpecVal[LocalDateTime]](fn: LocalDateTime => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), StringParamType, s => fn(LocalDateTime.parse(s)), s => ISO_LOCAL_DATE_TIME.format(s.value))
+      wrap(fn, ParameterSpec.dateTime(name, description))
 
     def zonedDateTime[L <: ParameterSpecVal[ZonedDateTime]](fn: ZonedDateTime => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), StringParamType, s => fn(ZonedDateTime.parse(s)), s => ISO_ZONED_DATE_TIME.format(s.value))
+      wrap(fn, ParameterSpec.zonedDateTime(name, description))
 
     def uuid[L <: ParameterSpecVal[UUID]](fn: UUID => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), StringParamType, s => fn(UUID.fromString(s)), _.value.toString)
+      wrap(fn, ParameterSpec.uuid(name, description))
 
     def string[L <: ParameterSpecVal[String]](fn: String => L, name: String, description: String = null): ParameterSpec[L] =
-      ParameterSpec[L](name, Option(description), StringParamType, fn, _.value.toString)
+      wrap(fn, ParameterSpec.string(name, description))
   }
 
 }
