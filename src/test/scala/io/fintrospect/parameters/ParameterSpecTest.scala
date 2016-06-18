@@ -253,7 +253,7 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  describe("Extend to AnyVal") {
+  describe("Map to another ParameterSpec") {
 
     case class IClass(value: Int)
 

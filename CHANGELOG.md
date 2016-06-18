@@ -8,8 +8,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
-## 12.21.0 (uncut)
+## 12.21.0
 - Added `Validator` to provide error collection.
+- Ability to map `ParameterSpec`s. This comes in useful when declaring ParameterSpecs of `AnyVal` wrapper classes. 
 - (Small) Break: repackage of filter classes `io.fintrospect.util` -> `io.fintrospect.filters`. Renames are: `Filters.Request` -> `RequestFilters`, `Filters.Response` -> `ResponseFilters`
 - (Small) Break: `Extractable` renamed to `Extractor`
 
