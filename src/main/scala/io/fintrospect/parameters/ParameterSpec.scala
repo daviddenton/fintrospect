@@ -23,12 +23,15 @@ case class ParameterSpec[T](name: String,
                             paramType: ParamType,
                             deserialize: String => T,
                             serialize: T => String = (s: T) => s.toString) {
+  /**
+    * Combined map and reverse-map operation
+    */
+  def map[O](in: T => O, out: O => T): ParameterSpec[O] = ParameterSpec[O](name, description, paramType, s => in(deserialize(s)), b => serialize(out(b)))
 
-  def map[O](in: T => O, out: O => T): ParameterSpec[O] =
-    ParameterSpec[O](name, description, paramType, s => in(deserialize(s)), b => serialize(out(b)))
-
-  def map[O](in: T => O) =
-    ParameterSpec[O](name, description, paramType, s => in(deserialize(s)))
+  /**
+    * Traditional map operation. Duh.
+    */
+  def map[O](in: T => O) = ParameterSpec[O](name, description, paramType, s => in(deserialize(s)))
 }
 
 /**
