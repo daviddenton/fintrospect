@@ -1,4 +1,4 @@
-package io.fintrospect.util
+package io.fintrospect.filters
 
 import java.security.MessageDigest
 import java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME

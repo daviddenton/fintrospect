@@ -8,8 +8,9 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_SVG_XML, APPLICATION_XML}
+import io.fintrospect.filters.RequestFilters
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.util.{StrictContentTypeNegotiation, Filters}
+import io.fintrospect.util.StrictContentTypeNegotiation
 import io.fintrospect.{ModuleSpec, RouteSpec}
 
 /**
@@ -39,7 +40,7 @@ object StrictMultiContentTypeRoute extends App {
 
   val jsonOnlyRoute = RouteSpec()
     .producing(APPLICATION_JSON)
-    .at(Get) / "json" bindTo Filters.Request.StrictAccept(APPLICATION_JSON).andThen(serveJson)
+    .at(Get) / "json" bindTo RequestFilters.StrictAccept(APPLICATION_JSON).andThen(serveJson)
 
   Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy)
     .andThen(ModuleSpec(Root, SimpleJson()).withRoute(route).toService))
