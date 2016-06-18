@@ -32,9 +32,9 @@ to do so since any missing or invalid mandatory parameters short-circuit the com
 `Extractable` is modular, so instances can be embedded inside each other in for comprehensions to build object graphs from the 
 incoming request.
 
-The above example can be further simplified by use of the built-in `Filters.Request.ExtractableRequest` filter to transform the input:
+The above example can be further simplified by use of the built-in `RequestFilters.ExtractableRequest` filter to transform the input:
 ```
-  Filters.Request.ExtractableRequest(range).andThen(Service.mk[DateRange, Response] {
+  RequestFilters.ExtractableRequest(range).andThen(Service.mk[DateRange, Response] {
     dateRange => ...
   })
 ```
