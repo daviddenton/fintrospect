@@ -10,6 +10,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## 12.21.0 (uncut)
 - Added `Validator` to provide error collection.
+- (Small) Break: repackage of filter classes `io.fintrospect.util` -> `io.fintrospect.filters`. Renames are: `Filters.Request` -> `RequestFilters`, `Filters.Response` -> `ResponseFilters`
 - (Small) Break: `Extractable` renamed to `Extractor`
 
 ## 12.20.1

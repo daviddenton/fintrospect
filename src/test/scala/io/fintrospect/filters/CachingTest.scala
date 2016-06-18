@@ -1,4 +1,4 @@
-package io.fintrospect.util
+package io.fintrospect.filters
 
 import java.time.Duration.ofSeconds
 import java.time.format.DateTimeFormatter._
@@ -8,9 +8,10 @@ import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
-import io.fintrospect.util.Caching.Response.FallbackCacheControl
-import io.fintrospect.util.Caching.{DefaultCacheTimings, MaxAgeTtl, StaleIfErrorTtl, StaleWhenRevalidateTtl}
+import io.fintrospect.filters.Caching.Response.FallbackCacheControl
+import io.fintrospect.filters.Caching.{DefaultCacheTimings, MaxAgeTtl, StaleIfErrorTtl, StaleWhenRevalidateTtl}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
+import io.fintrospect.util.TestClocks
 import io.fintrospect.util.TestClocks.fixed
 import org.scalatest.{FunSpec, ShouldMatchers}
 
