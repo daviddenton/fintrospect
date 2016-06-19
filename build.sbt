@@ -70,8 +70,7 @@ lazy val circe = project
   .settings(description := "Circe JSON library support for Fintrospect")
   .settings(baseSettings)
   .dependsOn(core)
-  .settings(libraryDependencies ++= Seq(
-    "io.circe" %% "circe-core" % "0.4.1",
+  .settings(libraryDependencies ++= Seq("io.circe" %% "circe-core" % "0.4.1",
     "io.circe" %% "circe-generic" % "0.4.1",
     "io.circe" %% "circe-parser" % "0.4.1")
   )
@@ -88,8 +87,7 @@ lazy val json4s = project
   .settings(description := "Json4S JSON library support for Fintrospect")
   .settings(baseSettings)
   .dependsOn(core)
-  .settings(libraryDependencies ++=
-    Seq("org.json4s" %% "json4s-native" % "3.3.0",
+  .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % "3.3.0",
       "org.json4s" %% "json4s-jackson" % "3.3.0"))
 
 lazy val play = project
@@ -119,8 +117,8 @@ lazy val mustache = project
   .settings(description := "Argonaut JSON library support for Fintrospect")
   .settings(baseSettings)
   .dependsOn(core)
-  .settings(libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % "0.9.1")
-  .settings(libraryDependencies += "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1")
+  .settings(libraryDependencies += Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
+    "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"))
 
 lazy val fintrospect = project.in(file("."))
   .settings(moduleName := "fintrospect")
@@ -130,16 +128,14 @@ lazy val fintrospect = project.in(file("."))
   .settings(libraryDependencies ++= Seq(
     "io.circe" %% "circe-core" % "0.4.1",
     "io.circe" %% "circe-generic" % "0.4.1",
-    "io.circe" %% "circe-parser" % "0.4.1")
-  )
-  .settings(libraryDependencies ++=
-    Seq("org.json4s" %% "json4s-native" % "3.3.0",
+    "io.circe" %% "circe-parser" % "0.4.1"))
+  .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % "3.3.0",
       "org.json4s" %% "json4s-jackson" % "3.3.0"))
   .settings(libraryDependencies += "io.spray" %% "spray-json" % "1.3.2")
   .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
   .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.3")
   .settings(libraryDependencies += "com.gilt" %% "handlebars-scala" % "2.0.1")
-  .settings(libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % "0.9.1")
-  .settings(libraryDependencies += "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1")
+  .settings(libraryDependencies += Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
+    "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"))
   .aggregate(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
   .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
