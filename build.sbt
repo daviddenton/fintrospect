@@ -59,9 +59,14 @@ lazy val core = project
   .settings(description := "Library that adds self-documentation to Finagle server endpoint services")
   .settings(baseSettings)
 
+lazy val circe = project
+  .settings(moduleName := "fintrospect-circe")
+  .settings(description := "Circe JSON library support for Fintrospect")
+  .settings(baseSettings)
+
 lazy val fintrospect = project.in(file("."))
   .settings(moduleName := "fintrospect")
   .settings(baseSettings)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6" % "provided")
-  .aggregate(core)
-  .dependsOn(core)
+  .aggregate(core, circe)
+  .dependsOn(core, circe)
