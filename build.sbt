@@ -14,7 +14,6 @@ lazy val baseSettings = Seq(
     "-language:implicitConversions",
     //    "-unchecked",
     //    "-Yno-adapted-args",
-    //    "-Ylog-classpath",
     //    "-Ywarn-dead-code",
     //    "-Ywarn-numeric-widen",
     //    "-Xfuture",
@@ -54,7 +53,7 @@ lazy val baseSettings = Seq(
 
 lazy val core = project
   .settings(moduleName := "fintrospect-core")
-  .settings(description := "Library that adds self-documentation to Finagle server endpoint services")
+  .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
   .settings(baseSettings)
 
 // JSON libraries
@@ -117,14 +116,14 @@ lazy val mustache = project
   .settings(description := "Argonaut JSON library support for Fintrospect")
   .settings(baseSettings)
   .dependsOn(core)
-  .settings(libraryDependencies += Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
+  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"))
 
 lazy val fintrospect = project.in(file("."))
   .settings(moduleName := "fintrospect")
   .settings(baseSettings)
   .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.0.4")
-  .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6")
+  .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6" % "provided")
   .settings(libraryDependencies ++= Seq(
     "io.circe" %% "circe-core" % "0.4.1",
     "io.circe" %% "circe-generic" % "0.4.1",
@@ -135,7 +134,7 @@ lazy val fintrospect = project.in(file("."))
   .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
   .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.3")
   .settings(libraryDependencies += "com.gilt" %% "handlebars-scala" % "2.0.1")
-  .settings(libraryDependencies += Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
+  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"))
   .aggregate(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
   .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
