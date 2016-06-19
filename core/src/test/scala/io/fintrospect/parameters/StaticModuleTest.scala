@@ -1,3 +1,5 @@
+package io.fintrospect.parameters
+
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.Status.{NotFound, Ok}
 import com.twitter.finagle.http.path.Root
