@@ -9,21 +9,21 @@ class AutoFilters[T](protected val responseBuilder: AbstractResponseBuilder[T]) 
 
   import responseBuilder.implicits._
 
-  protected type ToResponse[OUT] = (OUT) => ResponseBuilder[_]
-  protected type ToBody[BODY] = () => Body[BODY]
+  type ToResponse[OUT] = (OUT) => ResponseBuilder[_]
+  type ToBody[BODY] = () => Body[BODY]
 
   /**
     * Filter to provide auto-marshalling of input case class instances for HTTP POST scenarios
     */
   def AutoIn[IN, OUT](body: Body[IN]) = Filter.mk[Request, OUT, IN, OUT] { (req, svc) => svc(body <-- req) }
 
-  protected def _AutoOut[IN, OUT](fn: ToResponse[OUT]) =
+  def _AutoOut[IN, OUT](fn: ToResponse[OUT]) =
     Filter.mk[IN, Response, IN, OUT] { (req, svc) => svc(req).map(t => fn(t).build()) }
 
-  protected def _AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], body: Body[BODY], toResponse: ToResponse[OUT]) =
+  def _AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], body: Body[BODY], toResponse: ToResponse[OUT]) =
     AutoIn[BODY, Response](body).andThen(_AutoOptionalOut[BODY, OUT](toResponse)).andThen(svc)
 
-  protected def _AutoOptionalOut[IN, OUT](success: ToResponse[OUT]) =
+  def _AutoOptionalOut[IN, OUT](success: ToResponse[OUT]) =
     Filter.mk[IN, Response, IN, Option[OUT]] {
       (req, svc) => svc(req).map(optT => optT.map(t => success(t).build()).getOrElse(NotFound().build()))
     }
