@@ -1,34 +1,11 @@
-//val orgName = "io.github.daviddenton"
-//
-//val projectName = "fintrospect"
-//
-//organization := orgName
-//
-//name := projectName
-//
-//description := "Library that adds self-documentation to Finagle server endpoint services"
-//
-//pomExtra :=
-//  <url>http://fintrospect.io</url>
-//    <scm>
-//      <url>git@github.com:daviddenton/fintrospect.git</url>
-//      <connection>scm:git:git@github.com:daviddenton/fintrospect.git</connection>
-//      <developerConnection>scm:git:git@github.com:daviddenton/fintrospect.git</developerConnection>
-//    </scm>
-//    <developers>
-//      <developer>
-//        <name>David Denton</name>
-//        <email>dev@fintrospect.io</email>
-//        <organization>fintrospect</organization>
-//        <organizationUrl>http://fintrospect.io</organizationUrl>
-//      </developer>
-//    </developers>
-
-
 //Seq(bintraySettings: _*)
 
 lazy val baseSettings = Seq(
-//  licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+  organization := "io.fintrospect",
+  version := "0.0.1",
+  scalaVersion := "2.11.8",
+  crossScalaVersions := Seq("2.10.6", "2.11.8"),
+  licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions := Seq(
     "-deprecation",
     "-encoding", "UTF-8",
@@ -60,25 +37,31 @@ lazy val baseSettings = Seq(
     "com.twitter" %% "finagle-http" % "6.35.0" % "provided",
     "com.github.finagle" %% "finagle-oauth2" % "0.1.6" % "provided",
     "org.scalatest" %% "scalatest" % "2.2.4" % "test"
-  )
-
+  ),
+  pomExtra :=
+    <url>http://fintrospect.io</url>
+      <scm>
+        <url>git@github.com:daviddenton/fintrospect.git</url>
+        <connection>scm:git:git@github.com:daviddenton/fintrospect.git</connection>
+        <developerConnection>scm:git:git@github.com:daviddenton/fintrospect.git</developerConnection>
+      </scm>
+      <developers>
+        <developer>
+          <name>David Denton</name>
+          <email>dev@fintrospect.io</email>
+          <organization>fintrospect</organization>
+          <organizationUrl>http://fintrospect.io</organizationUrl>
+        </developer>
+      </developers>
 )
-
-lazy val buildSettings = Seq(
-  organization := "io.fintrospect",
-  version := "0.0.1",
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.10.6", "2.11.8")
-)
-
-lazy val allSettings = baseSettings ++ buildSettings
 
 lazy val core = project
   .settings(moduleName := "fintrospect-core")
-  .settings(allSettings)
+  .settings(description := "Library that adds self-documentation to Finagle server endpoint services")
+  .settings(baseSettings)
 
 lazy val fintrospect = project.in(file("."))
   .settings(moduleName := "fintrospect")
-  .settings(allSettings)
+  .settings(baseSettings)
   .aggregate(core)
   .dependsOn(core)
