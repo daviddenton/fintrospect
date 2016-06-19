@@ -5,7 +5,7 @@ import java.math.BigInteger
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
-import io.circe._
+import io.circe.{Decoder, Encoder, Json}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.AutoFilters
@@ -24,7 +24,7 @@ object Circe extends JsonLibrary[Json, Json] {
     */
   object Filters extends AutoFilters(Circe.ResponseBuilder) {
 
-    import responseBuilder.implicits._
+    import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits._
 
     private def toResponse[OUT](successStatus: Status, e: Encoder[OUT]) =
       (t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e))
