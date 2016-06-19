@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.{Message, Request, Response}
-import io.fintrospect.parameters.InvalidParameter.{Missing, Invalid}
+import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
 import org.scalatest._
 
 class HeaderTest extends FunSpec with ShouldMatchers {

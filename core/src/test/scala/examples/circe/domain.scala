@@ -1,6 +1,6 @@
 package examples.circe
 
-import io.fintrospect.parameters.{StringParamType, ParameterSpec}
+import io.fintrospect.parameters.{ParameterSpec, StringParamType}
 
 case class Email(to: EmailAddress, from: EmailAddress, subject: String, bytes: Int)
 
