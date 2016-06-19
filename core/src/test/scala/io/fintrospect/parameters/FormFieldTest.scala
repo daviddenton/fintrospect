@@ -2,8 +2,7 @@ package io.fintrospect.parameters
 
 import java.time.LocalDate
 
-import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.InvalidParameter.{Missing, Invalid}
+import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
 import org.scalatest._
 
 class FormFieldTest extends FunSpec with ShouldMatchers {

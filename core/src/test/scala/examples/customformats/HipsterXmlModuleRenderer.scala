@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import examples.customformats.HipsterXml.ResponseBuilder.Error
 import examples.customformats.HipsterXml.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.ServerRoute
-import io.fintrospect.parameters.{InvalidParameter, Parameter, Security}
+import io.fintrospect.parameters.{InvalidParameter, Security}
 import io.fintrospect.renderers.ModuleRenderer
 
 /**
