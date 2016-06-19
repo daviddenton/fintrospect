@@ -9,11 +9,12 @@ lazy val baseSettings = Seq(
   scalacOptions := Seq(
     "-deprecation",
     "-encoding", "UTF-8",
-    //    "-language:existentials",
-    //    "-language:higherKinds",
-    //    "-language:implicitConversions",
+    "-language:existentials",
+    "-language:higherKinds",
+    "-language:implicitConversions",
     //    "-unchecked",
     //    "-Yno-adapted-args",
+//    "-Ylog-classpath",
     //    "-Ywarn-dead-code",
     //    "-Ywarn-numeric-widen",
     //    "-Xfuture",
@@ -26,9 +27,6 @@ lazy val baseSettings = Seq(
     "com.github.spullara.mustache.java" % "compiler" % "0.9.1" % "provided",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1" % "provided",
     "com.google.code.gson" % "gson" % "2.5" % "provided",
-    "io.circe" %% "circe-core" % "0.4.1" % "provided",
-    "io.circe" %% "circe-generic" % "0.4.1" % "provided",
-    "io.circe" %% "circe-parser" % "0.4.1" % "provided",
     "io.spray" %% "spray-json" % "1.3.2" % "provided",
     "io.argonaut" %% "argonaut" % "6.0.4" % "provided",
     "com.typesafe.play" %% "play-json" % "2.4.3" % "provided",
@@ -63,10 +61,17 @@ lazy val circe = project
   .settings(moduleName := "fintrospect-circe")
   .settings(description := "Circe JSON library support for Fintrospect")
   .settings(baseSettings)
+  .dependsOn(core)
+  .settings(libraryDependencies +=  "io.circe" %% "circe-core" % "0.4.1" % "provided")
+  .settings(libraryDependencies +=  "io.circe" %% "circe-generic" % "0.4.1" % "provided")
+  .settings(libraryDependencies +=  "io.circe" %% "circe-parser" % "0.4.1" % "provided")
 
 lazy val fintrospect = project.in(file("."))
   .settings(moduleName := "fintrospect")
   .settings(baseSettings)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6" % "provided")
+  .settings(libraryDependencies +=  "io.circe" %% "circe-core" % "0.4.1" % "provided")
+  .settings(libraryDependencies +=  "io.circe" %% "circe-generic" % "0.4.1" % "provided")
+  .settings(libraryDependencies +=  "io.circe" %% "circe-parser" % "0.4.1" % "provided")
   .aggregate(core, circe)
   .dependsOn(core, circe)
