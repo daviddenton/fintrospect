@@ -42,21 +42,8 @@ lazy val baseSettings = Seq(
     //    "-Xfuture",
     //    "-Xlint"
     "-feature"
-  )
-)
-
-lazy val buildSettings = Seq(
-  organization := "io.fintrospect",
-  version := "0.0.1",
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.10.6", "2.11.8")
-)
-
-lazy val allSettings = baseSettings ++ buildSettings
-
-lazy val core = project
-  .settings(allSettings)
-  .settings(libraryDependencies ++= Seq(
+  ),
+  libraryDependencies := Seq(
     "net.sourceforge.argo" % "argo" % "3.12",
     "com.gilt" %% "handlebars-scala" % "2.0.1" % "provided",
     "com.github.spullara.mustache.java" % "compiler" % "0.9.1" % "provided",
@@ -74,4 +61,24 @@ lazy val core = project
     "com.github.finagle" %% "finagle-oauth2" % "0.1.6" % "provided",
     "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   )
-  )
+
+)
+
+lazy val buildSettings = Seq(
+  organization := "io.fintrospect",
+  version := "0.0.1",
+  scalaVersion := "2.11.8",
+  crossScalaVersions := Seq("2.10.6", "2.11.8")
+)
+
+lazy val allSettings = baseSettings ++ buildSettings
+
+lazy val core = project
+  .settings(moduleName := "fintrospect-core")
+  .settings(allSettings)
+
+lazy val fintrospect = project.in(file("."))
+  .settings(moduleName := "fintrospect")
+  .settings(allSettings)
+  .aggregate(core)
+  .dependsOn(core)
