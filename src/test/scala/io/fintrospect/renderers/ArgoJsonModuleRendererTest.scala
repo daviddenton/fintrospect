@@ -1,6 +1,5 @@
 package io.fintrospect.renderers
 
-import _root_.util.Echo
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Status}
@@ -9,6 +8,7 @@ import io.fintrospect.ContentTypes.{APPLICATION_ATOM_XML, APPLICATION_JSON, APPL
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat.{number, obj, parse}
 import io.fintrospect.parameters.{ApiKey, Body, FormField, Header, InvalidParameter, Path, Query}
+import io.fintrospect.util.Echo
 import io.fintrospect.util.HttpRequestResponseUtil.{contentFrom, statusAndContentFrom}
 import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
 import org.scalatest.{FunSpec, ShouldMatchers}

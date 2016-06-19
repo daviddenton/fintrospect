@@ -14,7 +14,7 @@ lazy val baseSettings = Seq(
     "-language:implicitConversions",
     //    "-unchecked",
     //    "-Yno-adapted-args",
-//    "-Ylog-classpath",
+    //    "-Ylog-classpath",
     //    "-Ywarn-dead-code",
     //    "-Ywarn-numeric-widen",
     //    "-Xfuture",
@@ -30,8 +30,6 @@ lazy val baseSettings = Seq(
     "io.spray" %% "spray-json" % "1.3.2" % "provided",
     "io.argonaut" %% "argonaut" % "6.0.4" % "provided",
     "com.typesafe.play" %% "play-json" % "2.4.3" % "provided",
-    "org.json4s" %% "json4s-native" % "3.3.0" % "provided",
-    "org.json4s" %% "json4s-jackson" % "3.3.0" % "provided",
     "com.twitter" %% "finagle-http" % "6.35.0" % "provided",
     "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   ),
@@ -62,16 +60,26 @@ lazy val circe = project
   .settings(description := "Circe JSON library support for Fintrospect")
   .settings(baseSettings)
   .dependsOn(core)
-  .settings(libraryDependencies +=  "io.circe" %% "circe-core" % "0.4.1" % "provided")
-  .settings(libraryDependencies +=  "io.circe" %% "circe-generic" % "0.4.1" % "provided")
-  .settings(libraryDependencies +=  "io.circe" %% "circe-parser" % "0.4.1" % "provided")
+  .settings(libraryDependencies += "io.circe" %% "circe-core" % "0.4.1" % "provided")
+  .settings(libraryDependencies += "io.circe" %% "circe-generic" % "0.4.1" % "provided")
+  .settings(libraryDependencies += "io.circe" %% "circe-parser" % "0.4.1" % "provided")
+
+lazy val json4s = project
+  .settings(moduleName := "fintrospect-json4s")
+  .settings(description := "Json4S JSON library support for Fintrospect")
+  .settings(baseSettings)
+  .dependsOn(core)
+  .settings(libraryDependencies += "org.json4s" %% "json4s-native" % "3.3.0" % "provided")
+  .settings(libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.3.0" % "provided")
 
 lazy val fintrospect = project.in(file("."))
   .settings(moduleName := "fintrospect")
   .settings(baseSettings)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6" % "provided")
-  .settings(libraryDependencies +=  "io.circe" %% "circe-core" % "0.4.1" % "provided")
-  .settings(libraryDependencies +=  "io.circe" %% "circe-generic" % "0.4.1" % "provided")
-  .settings(libraryDependencies +=  "io.circe" %% "circe-parser" % "0.4.1" % "provided")
-  .aggregate(core, circe)
-  .dependsOn(core, circe)
+  .settings(libraryDependencies += "io.circe" %% "circe-core" % "0.4.1" % "provided")
+  .settings(libraryDependencies += "io.circe" %% "circe-generic" % "0.4.1" % "provided")
+  .settings(libraryDependencies += "io.circe" %% "circe-parser" % "0.4.1" % "provided")
+  .settings(libraryDependencies += "org.json4s" %% "json4s-native" % "3.3.0" % "provided")
+  .settings(libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.3.0" % "provided")
+  .aggregate(core, circe, json4s)
+  .dependsOn(core, circe, json4s)

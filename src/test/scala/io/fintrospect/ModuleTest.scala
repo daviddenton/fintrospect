@@ -1,11 +1,11 @@
 package io.fintrospect
 
-import _root_.util.Echo
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.util.Await.result
+import io.fintrospect.util.Echo
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.scalatest.{FunSpec, ShouldMatchers}
 
