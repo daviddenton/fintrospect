@@ -109,14 +109,14 @@ lazy val spray = project
 lazy val handlebars = project
   .settings(allSettings)
   .settings(moduleName := "fintrospect-handlebars")
-  .settings(description := "Argonaut JSON library support for Fintrospect")
+  .settings(description := "Handlebars templating library support for Fintrospect")
   .dependsOn(core)
   .settings(libraryDependencies += "com.gilt" %% "handlebars-scala" % "2.0.1")
 
 lazy val mustache = project
   .settings(allSettings)
   .settings(moduleName := "fintrospect-mustache")
-  .settings(description := "Argonaut JSON library support for Fintrospect")
+  .settings(description := "Mustache templating library support for Fintrospect")
   .dependsOn(core)
   .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"))
