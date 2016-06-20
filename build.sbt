@@ -1,11 +1,10 @@
-//Seq(bintraySettings: _*)
-
 lazy val baseSettings = Seq(
+  name := "fintrospect-13",
   organization := "io.fintrospect",
-  version := "0.0.1",
+  version := "0.0.4",
   scalaVersion := "2.11.8",
   crossScalaVersions := Seq("2.10.6", "2.11.8"),
-  licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+  licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions := Seq(
     "-deprecation",
     "-encoding", "UTF-8",
@@ -48,26 +47,29 @@ lazy val baseSettings = Seq(
           <organization>fintrospect</organization>
           <organizationUrl>http://fintrospect.io</organizationUrl>
         </developer>
-      </developers>
+      </developers>,
+  bintrayOrganization := Some("fintrospect")
 )
 
+lazy val allSettings = baseSettings
+
 lazy val core = project
+  .settings(allSettings)
   .settings(moduleName := "fintrospect-core")
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
-  .settings(baseSettings)
 
 // JSON libraries
 lazy val argonaut = project
+  .settings(allSettings)
   .settings(moduleName := "fintrospect-argonaut")
   .settings(description := "Argonaut JSON library support for Fintrospect")
-  .settings(baseSettings)
   .dependsOn(core)
   .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.0.4")
 
 lazy val circe = project
+  .settings(allSettings)
   .settings(moduleName := "fintrospect-circe")
   .settings(description := "Circe JSON library support for Fintrospect")
-  .settings(baseSettings)
   .dependsOn(core)
   .settings(libraryDependencies ++= Seq("io.circe" %% "circe-core" % "0.4.1",
     "io.circe" %% "circe-generic" % "0.4.1",
@@ -75,53 +77,53 @@ lazy val circe = project
   )
 
 lazy val gson = project
+  .settings(allSettings)
   .settings(moduleName := "fintrospect-spray")
   .settings(description := "GSON JSON library support for Fintrospect")
-  .settings(baseSettings)
   .dependsOn(core)
   .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
 
 lazy val json4s = project
+  .settings(allSettings)
   .settings(moduleName := "fintrospect-json4s")
   .settings(description := "Json4S JSON library support for Fintrospect")
-  .settings(baseSettings)
   .dependsOn(core)
   .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % "3.3.0",
-      "org.json4s" %% "json4s-jackson" % "3.3.0"))
+    "org.json4s" %% "json4s-jackson" % "3.3.0"))
 
 lazy val play = project
+  .settings(allSettings)
   .settings(moduleName := "fintrospect-play")
   .settings(description := "Play JSON library support for Fintrospect")
-  .settings(baseSettings)
   .dependsOn(core)
   .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.3")
 
 lazy val spray = project
+  .settings(allSettings)
   .settings(moduleName := "fintrospect-spray")
   .settings(description := "Spray JSON library support for Fintrospect")
-  .settings(baseSettings)
   .dependsOn(core)
   .settings(libraryDependencies += "io.spray" %% "spray-json" % "1.3.2")
 
 // Templating libraries
 lazy val handlebars = project
-  .settings(moduleName := "fintrospect-argonaut")
+  .settings(allSettings)
+  .settings(moduleName := "fintrospect-handlebars")
   .settings(description := "Argonaut JSON library support for Fintrospect")
-  .settings(baseSettings)
   .dependsOn(core)
   .settings(libraryDependencies += "com.gilt" %% "handlebars-scala" % "2.0.1")
 
 lazy val mustache = project
-  .settings(moduleName := "fintrospect-argonaut")
+  .settings(allSettings)
+  .settings(moduleName := "fintrospect-mustache")
   .settings(description := "Argonaut JSON library support for Fintrospect")
-  .settings(baseSettings)
   .dependsOn(core)
   .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"))
 
 lazy val fintrospect = project.in(file("."))
-  .settings(moduleName := "fintrospect")
-  .settings(baseSettings)
+  .settings(allSettings)
+  .settings(moduleName := "fintrospect-main")
   .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.0.4")
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6" % "provided")
   .settings(libraryDependencies ++= Seq(
@@ -129,7 +131,7 @@ lazy val fintrospect = project.in(file("."))
     "io.circe" %% "circe-generic" % "0.4.1",
     "io.circe" %% "circe-parser" % "0.4.1"))
   .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % "3.3.0",
-      "org.json4s" %% "json4s-jackson" % "3.3.0"))
+    "org.json4s" %% "json4s-jackson" % "3.3.0"))
   .settings(libraryDependencies += "io.spray" %% "spray-json" % "1.3.2")
   .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
   .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.3")
