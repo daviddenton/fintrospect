@@ -1,7 +1,7 @@
 lazy val baseSettings = Seq(
   name := "fintrospect-13",
   organization := "io.fintrospect",
-  version := "0.0.5",
+  version := "0.0.6",
   scalaVersion := "2.11.8",
   crossScalaVersions := Seq("2.10.6", "2.11.8"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
@@ -78,7 +78,7 @@ lazy val circe = project
 
 lazy val gson = project
   .settings(allSettings)
-  .settings(moduleName := "fintrospect-spray")
+  .settings(moduleName := "fintrospect-gson")
   .settings(description := "GSON JSON library support for Fintrospect")
   .dependsOn(core)
   .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
@@ -124,6 +124,7 @@ lazy val mustache = project
 lazy val examples = project.in(file("."))
   .settings(allSettings)
   .settings(moduleName := "fintrospect-main")
+  .aggregate(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
+  .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6")
   .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
-  .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
