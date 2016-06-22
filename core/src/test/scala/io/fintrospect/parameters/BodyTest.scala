@@ -34,6 +34,19 @@ class BodyTest extends FunSpec with ShouldMatchers {
   }
 
   describe("form") {
+    it("handles empty fields") {
+      val string = FormField.required.string("aString")
+      val formBody = Body.form(string)
+      val inputForm = Form(string --> "")
+      val bindings = formBody --> inputForm
+      val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
+
+      contentFrom(request) shouldEqual "aString="
+      request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
+      val deserializedForm = formBody from request
+      deserializedForm shouldEqual inputForm
+    }
+
     it("should serialize and deserialize into the request") {
       val date = FormField.required.localDate("date")
       val formBody = Body.form(date)
