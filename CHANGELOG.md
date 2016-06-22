@@ -8,6 +8,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
+## 12.21.1
+- Bugfix: Issue #21 Form extraction fails on empty fields
+
 ## 12.21.0
 - Added `Validator` to provide error collection.
 - Ability to map `ParameterSpec`s. This comes in useful when declaring ParameterSpecs of `AnyVal` wrapper classes. 
