@@ -130,27 +130,3 @@ lazy val main = project.in(file("."))
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6")
   .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
 
-<<<<<<< HEAD
-=======
-licenses +=("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
-
-pomExtra :=
-  <url>http://fintrospect.io</url>
-    <scm>
-      <url>git@github.com:daviddenton/fintrospect.git</url>
-      <connection>scm:git:git@github.com:daviddenton/fintrospect.git</connection>
-      <developerConnection>scm:git:git@github.com:daviddenton/fintrospect.git</developerConnection>
-    </scm>
-    <developers>
-      <developer>
-        <name>David Denton</name>
-        <email>dev@fintrospect.io</email>
-        <organization>fintrospect</organization>
-        <organizationUrl>http://fintrospect.io</organizationUrl>
-      </developer>
-    </developers>
-
-credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
-
-Seq(bintraySettings: _*)
->>>>>>> master
