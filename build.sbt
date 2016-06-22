@@ -48,7 +48,8 @@ lazy val baseSettings = Seq(
           <organizationUrl>http://fintrospect.io</organizationUrl>
         </developer>
       </developers>,
-  bintrayOrganization := Some("fintrospect")
+  bintrayOrganization := Some("fintrospect"),
+  credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
 )
 
 lazy val allSettings = baseSettings
@@ -128,3 +129,4 @@ lazy val main = project.in(file("."))
   .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6")
   .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
+
