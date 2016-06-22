@@ -3,11 +3,7 @@ package io.fintrospect.parameters
 import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 import java.util.UUID
 
-import io.fintrospect.formats.json.Argo.JsonFormat.{obj, string}
-import io.fintrospect.formats.json.{Argo, Json4s, JsonFormat, Spray}
-import org.json4s.JsonAST.{JObject, JString}
 import org.scalatest._
-import spray.json.{JsObject, JsString}
 
 import scala.util.{Success, Try}
 
@@ -186,33 +182,6 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
       ParameterSpec.localDate(paramName, "").serialize(LocalDate.of(1970, 1, 1)) shouldEqual "1970-01-01"
     }
   }
-
-  private def describeJson[T](name: String, expected: T, jsonFormat: JsonFormat[T, _]): Unit = {
-    describe(name + " Json") {
-      it("retrieves a valid value") {
-        Try(ParameterSpec.json(paramName, "", jsonFormat).deserialize(jsonFormat.compact(expected))) shouldEqual Success(expected)
-      }
-
-      it("does not retrieve an invalid value") {
-        Try(ParameterSpec.json(paramName, "", jsonFormat).deserialize("notJson")).isFailure shouldEqual true
-      }
-
-      it("does not retrieve an null value") {
-        Try(ParameterSpec.json(paramName, "", jsonFormat).deserialize(null)).isFailure shouldEqual true
-      }
-
-      it("serializes correctly") {
-        ParameterSpec.json(paramName, "", jsonFormat).serialize(expected) shouldEqual """{"field":"value"}"""
-      }
-    }
-  }
-
-  describeJson("argo", obj("field" -> string("value")), Argo.JsonFormat)
-  describeJson("json4s native", JObject("field" -> JString("value")), Json4s.Native.JsonFormat)
-  describeJson("json4s jackson", JObject("field" -> JString("value")), Json4s.Jackson.JsonFormat)
-  describeJson("json4s native - double", JObject("field" -> JString("value")), Json4s.NativeDoubleMode.JsonFormat)
-  describeJson("json4s jackson - double", JObject("field" -> JString("value")), Json4s.JacksonDoubleMode.JsonFormat)
-  describeJson("spray", JsObject("field" -> JsString("value")), Spray.JsonFormat)
 
   describe("xml") {
     val expected = <field>value</field>

@@ -2,13 +2,16 @@ package io.fintrospect.formats.json
 
 import java.math.BigInteger
 
+import io.fintrospect.parameters.ParameterSpec
 import org.scalatest.{FunSpec, ShouldMatchers}
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 abstract class JsonFormatSpec[X, Y](val format: JsonFormat[X, Y]) extends FunSpec with ShouldMatchers {
 
   val expectedJson = """{"string":"hello","object":{"field1":"aString"},"int":1,"long":2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
+
+  val expected = format.obj("field" -> format.string("value"))
 
   describe(format.getClass.getSimpleName) {
     it("creates JSON objects as expected") {
@@ -28,6 +31,28 @@ abstract class JsonFormatSpec[X, Y](val format: JsonFormat[X, Y]) extends FunSpe
     describe("Parse blows up when invalid") {
       it("parse blows up when invalid") {
         Try(format.parse("<12312>")).isFailure shouldBe true
+      }
+    }
+
+    val paramName = "name"
+
+    describe("ParameterSpec json") {
+      describe(getClass.getName + " Json") {
+        it("retrieves a valid value") {
+          Try(ParameterSpec.json(paramName, "", format).deserialize(format.compact(expected))) shouldEqual Success(expected)
+        }
+
+        it("does not retrieve an invalid value") {
+          Try(ParameterSpec.json(paramName, "", format).deserialize("notJson")).isFailure shouldEqual true
+        }
+
+        it("does not retrieve an null value") {
+          Try(ParameterSpec.json(paramName, "", format).deserialize(null)).isFailure shouldEqual true
+        }
+
+        it("serializes correctly") {
+          ParameterSpec.json(paramName, "", format).serialize(expected) shouldEqual """{"field":"value"}"""
+        }
       }
     }
   }
