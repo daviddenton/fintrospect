@@ -1,9 +1,9 @@
 lazy val baseSettings = Seq(
   name := "fintrospect-13",
   organization := "io.fintrospect",
-  version := "0.0.6",
+  version := "0.0.8",
   scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.10.6", "2.11.8"),
+//  crossScalaVersions := Seq("2.10.6", "2.11.8"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions := Seq(
     "-deprecation",
@@ -121,7 +121,7 @@ lazy val mustache = project
   .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"))
 
-lazy val examples = project.in(file("."))
+lazy val main = project.in(file("."))
   .settings(allSettings)
   .settings(moduleName := "fintrospect-main")
   .aggregate(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
