@@ -57,9 +57,11 @@ class ResponseFiltersTest extends FunSpec with ShouldMatchers {
     }
 
     describe("Add date header") {
+      val clock = fixed()
+
       it("works") {
-        val response = result(AddDate(fixed)(Request(), Service.mk { req: Request => Future.value(Response()) }))
-        headerOf("Date")(response) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(fixed))
+        val response = result(AddDate(clock)(Request(), Service.mk { req: Request => Future.value(Response()) }))
+        headerOf("Date")(response) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
       }
     }
 
@@ -107,7 +109,6 @@ class ResponseFiltersTest extends FunSpec with ShouldMatchers {
     describe("TapFailure") {
       it("feeds the exception into the defined function after receiving it from the service") {
         val request = Request()
-        val response = Response()
 
         val e = new scala.RuntimeException()
 

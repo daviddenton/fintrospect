@@ -11,12 +11,12 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.filters.Caching.Response.FallbackCacheControl
 import io.fintrospect.filters.Caching.{DefaultCacheTimings, MaxAgeTtl, StaleIfErrorTtl, StaleWhenRevalidateTtl}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
-import io.fintrospect.util.TestClocks
 import io.fintrospect.util.TestClocks.fixed
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class CachingTest extends FunSpec with ShouldMatchers {
 
+  private val clock = fixed()
   private val maxAge = ofSeconds(10)
   private val timings = DefaultCacheTimings(MaxAgeTtl(maxAge), StaleIfErrorTtl(ofSeconds(2000)), StaleWhenRevalidateTtl(ofSeconds(3000)))
 
@@ -25,9 +25,9 @@ class CachingTest extends FunSpec with ShouldMatchers {
     describe("Adds If-Modified-Since") {
       it("works") {
         val maxAge = Duration.ofSeconds(1)
-        result(Caching.Request.AddIfModifiedSince(fixed, maxAge)(Request(),
+        result(Caching.Request.AddIfModifiedSince(clock, maxAge)(Request(),
           Service.mk { req => Future.value(req.headerMap.getAll("If-Modified-Since").mkString(",")) })
-        ) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(fixed).minus(maxAge))
+        ) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(fixed()).minus(maxAge))
       }
     }
   }
@@ -35,13 +35,13 @@ class CachingTest extends FunSpec with ShouldMatchers {
   describe("response") {
 
     describe("FallbackCacheControl") {
-      def getResponseWith(cacheTimings: DefaultCacheTimings, response: Response) = Await.result(FallbackCacheControl(TestClocks.fixed, cacheTimings)(Request(), Service.mk((r) => Future.value(response))))
+      def getResponseWith(cacheTimings: DefaultCacheTimings, response: Response) = Await.result(FallbackCacheControl(clock, cacheTimings)(Request(), Service.mk((r) => Future.value(response))))
 
       it("adds the headers if they are not set") {
         val responseWithNoHeaders = Response(Status.Ok)
         val response = getResponseWith(timings, responseWithNoHeaders)
         headerOf("Cache-Control")(response) should be("public, max-age=10, stale-while-revalidate=3000, stale-if-error=2000")
-        headerOf("Expires")(response) should be(RFC_1123_DATE_TIME.format(ZonedDateTime.now(TestClocks.fixed).plus(maxAge)))
+        headerOf("Expires")(response) should be(RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock).plus(maxAge)))
         headerOf("Vary")(response) should be("Accept-Encoding")
       }
 
