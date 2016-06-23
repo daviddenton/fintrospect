@@ -58,12 +58,6 @@ trait AbstractResponseBuilder[T] {
     def apply(error: Throwable): ResponseBuilder[T] = HttpResponse(status).withError(error)
   }
 
-  @deprecated("Use [X].ResponseBuilder.implicits.statusToResponseBuilderConfig instead", "12.10.0")
-  implicit def statusToResponseBuilderConfig(status: Status): ResponseBuilderConfig = new ResponseBuilderConfig(status)
-
-  @deprecated("Use [X].ResponseBuilder.implicits.responseBuilderToResponse instead", "12.10.0")
-  implicit def responseBuilderToResponse(builder: ResponseBuilder[T]): Response = builder.build()
-
   def HttpResponse(): ResponseBuilder[T]
 
   def HttpResponse(status: Status): ResponseBuilder[T] = HttpResponse().withCode(status)
