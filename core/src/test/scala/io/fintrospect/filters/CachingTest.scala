@@ -2,7 +2,7 @@ package io.fintrospect.filters
 
 import java.time.Duration.ofSeconds
 import java.time.format.DateTimeFormatter._
-import java.time.{Clock, Duration, Instant, ZoneId, ZonedDateTime}
+import java.time.{Duration, ZonedDateTime}
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
@@ -27,7 +27,7 @@ class CachingTest extends FunSpec with ShouldMatchers {
         val maxAge = Duration.ofSeconds(1)
         result(Caching.Request.AddIfModifiedSince(clock, maxAge)(Request(),
           Service.mk { req => Future.value(req.headerMap.getAll("If-Modified-Since").mkString(",")) })
-        ) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(fixed()).minus(maxAge))
+        ) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock).minus(maxAge))
       }
     }
   }
@@ -77,20 +77,19 @@ class CachingTest extends FunSpec with ShouldMatchers {
 
     describe("MaxAge") {
       it("does not cache non-GET requests") {
-        val r = responseWith(Caching.Response.MaxAge(Clock.fixed(Instant.now(), ZoneId.systemDefault()), Duration.ofHours(1)), Request(Method.Put, ""))
+        val r = responseWith(Caching.Response.MaxAge(clock, Duration.ofHours(1)), Request(Method.Put, ""))
         r.headerMap.isEmpty shouldBe true
       }
 
       it("does not add headers if predicate fails") {
         val r = responseWith(Caching.Response.MaxAge(
-          Clock.fixed(Instant.now(), ZoneId.systemDefault()), Duration.ofHours(1), _ => false), Request(Method.Put, ""))
+          clock, Duration.ofHours(1), _ => false), Request(Method.Put, ""))
         r.headerMap.isEmpty shouldBe true
       }
 
       it("adds correct headers to GET requests based on current time") {
-        val now = ZonedDateTime.now()
-        val r = responseWith(Caching.Response.MaxAge(Clock.fixed(now.toInstant, ZoneId.systemDefault()), Duration.ofHours(1)), Request(Method.Get, ""))
-        headerOf("Expires")(r) shouldBe now.plusHours(1).format(RFC_1123_DATE_TIME)
+        val r = responseWith(Caching.Response.MaxAge(clock, Duration.ofHours(1)), Request(Method.Get, ""))
+        headerOf("Expires")(r) shouldBe ZonedDateTime.now(clock).plusHours(1).format(RFC_1123_DATE_TIME)
         headerOf("Cache-Control")(r) shouldBe "public, max-age=3600"
       }
     }
