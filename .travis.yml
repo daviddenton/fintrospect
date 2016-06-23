@@ -3,8 +3,7 @@ scala:
     - 2.10.6
     - 2.11.8
 script:
-    - sbt clean coverage test
-    - sbt coveralls
+    - ./buildWithCoverage.sh
 jdk:
   - oraclejdk8
 after_success:
