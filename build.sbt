@@ -1,7 +1,6 @@
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
-  version := "0.0.11",
   scalaVersion := "2.11.8",
   //  crossScalaVersions := Seq("2.10.6", "2.11.8"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
