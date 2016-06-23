@@ -1,9 +1,9 @@
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
-  version := "0.0.10",
+  version := "0.0.11",
   scalaVersion := "2.11.8",
-//  crossScalaVersions := Seq("2.10.6", "2.11.8"),
+  //  crossScalaVersions := Seq("2.10.6", "2.11.8"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions := Seq(
     "-deprecation",
@@ -18,20 +18,6 @@ lazy val baseSettings = Seq(
     //    "-Xfuture",
     //    "-Xlint"
     "-feature"
-  ),
-  libraryDependencies := {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-        libraryDependencies.value ++ Seq(
-          "org.scala-lang.modules" %% "scala-xml" % "1.0.3",
-          "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3")
-      case _ => libraryDependencies.value
-    }
-  },
-  libraryDependencies ++= Seq(
-    "net.sourceforge.argo" % "argo" % "3.12",
-    "com.twitter" %% "finagle-http" % "6.35.0",
-    "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   ),
   pomExtra :=
     <url>http://fintrospect.io</url>
@@ -57,6 +43,20 @@ lazy val allSettings = baseSettings
 lazy val core = project
   .settings(allSettings)
   .settings(moduleName := "fintrospect-core")
+  .settings(libraryDependencies ++= Seq(
+    "net.sourceforge.argo" % "argo" % "3.12",
+    "com.twitter" %% "finagle-http" % "6.35.0",
+    "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+  ))
+  .settings(libraryDependencies ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+        libraryDependencies.value ++ Seq(
+          "org.scala-lang.modules" %% "scala-xml" % "1.0.3",
+          "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3")
+      case _ => Nil
+    }
+  })
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
 
 // JSON libraries
