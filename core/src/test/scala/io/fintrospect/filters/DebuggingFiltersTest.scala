@@ -8,7 +8,7 @@ class DebuggingFiltersTest extends FunSpec with ShouldMatchers {
 
   describe("Debugging") {
     it("PrintRequestAndResponse") {
-      Await.result(DebuggingFilters.PrintRequestAndResponse.andThen((_: Request) => Future.value(Response()))(Request()))
+      Await.result(DebuggingFilters.PrintRequestAndResponse.andThen((_: Request) => Future.value(Response()))(Request("/?bob=bill")))
     }
   }
 
