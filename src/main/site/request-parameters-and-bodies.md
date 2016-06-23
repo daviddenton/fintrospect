@@ -81,7 +81,7 @@ val body: Json = json <-- request
 ```
 
 Notice that in the above we specified an example of the JSON message. This is not mandatory, but allows the generation of 
-<a href="http://json-schema.org/" target="_top">JSON Schema</a> to be included in the auto-generated API documentation.
+<a href="http://json-schema.org/">JSON Schema</a> to be included in the auto-generated API documentation.
 
 Additionally, in the case of some JSON libraries that provide auto marshalling and demarshalling to case class instances, you can remove the JSON step altogether:
 ```
@@ -90,4 +90,4 @@ val email = Body(jsonFormat.bodySpec[Email](Option("an email address")), Email("
 val retrieved: Email = email <-- request
 ```
 
-<a class="next" href="http://fintrospect.io/defining-routes" target="_top"><button type="button" class="btn btn-sm btn-default">next: defining routes</button></a>
+<a class="next" href="http://fintrospect.io/defining-routes"><button type="button" class="btn btn-sm btn-default">next: defining routes</button></a>

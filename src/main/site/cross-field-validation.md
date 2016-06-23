@@ -39,4 +39,4 @@ The above example can be further simplified by use of the built-in `RequestFilte
   })
 ```
 
-<a class="next" href="http://fintrospect.io/templating-and-static-content" target="_top"><button type="button" class="btn btn-sm btn-default">next: templating and static content</button></a>
+<a class="next" href="http://fintrospect.io/templating-and-static-content"><button type="button" class="btn btn-sm btn-default">next: templating and static content</button></a>

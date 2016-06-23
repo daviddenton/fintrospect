@@ -1,15 +1,18 @@
 # installation
 
-Fintrospect is intentionally dependency-lite by design - the library itself only has a single dependency. The other requirement is Finagle
-itself - the choice of version is up to the user (although it has built against the version shown). 
+Fintrospect is intentionally dependency-lite by design - other than Finagle, the core library itself only has a single dependency.
 
 To activate some optional features, additional dependencies may be required - these are shown in the subsequent sections depending on the use-case.
 
 ### core
-Add the following lines to ```build.sbt```:
+
+Add the following lines to ```build.sbt``` - the lib also hosted in Maven Central, but we prefer Bintray):
+```scala
+resolvers += "JCenter" at "https://jcenter.bintray.com"
+libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "13.0.0"
+```
 
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
-libraryDependencies += "com.twitter" %% "finagle-http" % "6.35.0"
-libraryDependencies += "io.github.daviddenton" %% "fintrospect" % "12.21.0"
+libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "13.0.0"
 ```
