@@ -56,7 +56,7 @@ in a ModuleRenderer implementation when creating the ModuleSpec and when this is
 module context (this location is overridable) which serves this documentation.
 
 Bundled with Fintrospect are:
-- Swagger (1.1 and 2.0) JSON, including <a href="http://json-schema.org/" target="_top">JSON Schema</a> models
+- Swagger (1.1 and 2.0) JSON, including <a href="http://json-schema.org/">JSON Schema</a> models
 - A simple JSON format
 - Sitemap XML format
 
@@ -77,4 +77,4 @@ ModuleSpec(Root / "employee")
 .securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future.value(key == "extremelySecretThing")))
 ```
 
-<a class="next" href="http://fintrospect.io/client-routes" target="_top"><button type="button" class="btn btn-sm btn-default">next: client routes</button></a>
+<a class="next" href="http://fintrospect.io/client-routes"><button type="button" class="btn btn-sm btn-default">next: client routes</button></a>
