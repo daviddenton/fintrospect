@@ -2,6 +2,7 @@ package io.fintrospect.util
 
 import java.io.File
 import java.lang.management.ManagementFactory.getPlatformMXBeans
+import java.time.Clock
 import java.time.ZonedDateTime.now
 import java.time.format.DateTimeFormatter.ISO_DATE_TIME
 
@@ -18,9 +19,9 @@ import io.fintrospect.formats.ResponseBuilder.HttpResponse
   * installations. Since this is obviously an expensive operation (it creates a temp file on disc which is deleted
   * when the request completes) don't bind this service to a publicly available endpoint.
   */
-class HeapDump(processIdentifier: String = "") extends Service[Request, Response] {
+class HeapDump(processIdentifier: String = "", clock: Clock = Clock.systemUTC()) extends Service[Request, Response] {
   override def apply(request: Request): Future[Response] = {
-    val dumpFileName = s"heapdump-$processIdentifier-${now().format(ISO_DATE_TIME)}"
+    val dumpFileName = s"heapdump-$processIdentifier-${now(clock).format(ISO_DATE_TIME)}"
     val dumpFile = File.createTempFile(dumpFileName, ".hprof")
     dumpFile.delete()
 

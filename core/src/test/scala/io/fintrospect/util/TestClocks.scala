@@ -17,8 +17,8 @@ object TestClocks {
     override def withZone(zone: ZoneId): Clock = this
   }
 
-  val fixed = new Clock {
-    private val current = Instant.now()
+  def fixed(now: Instant = Instant.now()) = new Clock {
+    private val current = now
 
     override def getZone: ZoneId = systemDefault()
 
