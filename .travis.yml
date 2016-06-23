@@ -4,6 +4,7 @@ scala:
     - 2.11.8
 script:
     - ./buildWithCoverage.sh
+    - sbt coveralls
 jdk:
   - oraclejdk8
 after_success:
