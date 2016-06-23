@@ -8,6 +8,10 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Option to dynamically reload View templates.
 - Drop support for Scala 2.10 (when finagle.http does).
 
+## 13.0.0
+- Move to new Maven group name `io.fintrospect` and splitting of artifact into modules. See the installation guide for the new mechanism.
+- Removal of all previously deprecated items in: `ResponseBuilder`, `Filters` and`FintrospectModule`. See below for notes on replacement.
+
 ## 12.21.1
 - Bugfix: Issue #21 Form extraction fails on empty fields
 

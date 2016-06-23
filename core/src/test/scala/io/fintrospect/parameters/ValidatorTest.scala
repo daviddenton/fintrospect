@@ -36,15 +36,15 @@ class ValidatorTest extends FunSpec with ShouldMatchers {
     }
 
     it("can make a validator with tuple types") {
-      Validator.mk(NotProvided, NotProvided)
-      Validator.mk(NotProvided, NotProvided, NotProvided)
-      Validator.mk(NotProvided, NotProvided, NotProvided, NotProvided)
-      Validator.mk(NotProvided, NotProvided, NotProvided, NotProvided, NotProvided)
-      Validator.mk(NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided)
-      Validator.mk(NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided)
-      Validator.mk(NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided)
-      Validator.mk(NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided)
-      Validator.mk(NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided, NotProvided)
+      Validator.mk(Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
     }
   }
 }
