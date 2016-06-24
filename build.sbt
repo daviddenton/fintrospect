@@ -1,8 +1,8 @@
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
+  version := "13.0.0",
   scalaVersion := "2.11.8",
-  //  crossScalaVersions := Seq("2.10.6", "2.11.8"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions := Seq(
     "-deprecation",
@@ -41,19 +41,12 @@ lazy val core = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-core")
   .settings(libraryDependencies ++= Seq(
-    "net.sourceforge.argo" % "argo" % "3.12",
+    "net.sourceforge.argo" % "argo" % "3.19",
     "com.twitter" %% "finagle-http" % "6.35.0",
+    "org.scala-lang.modules" %% "scala-xml" % "1.0.3",
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3",
     "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   ))
-  .settings(libraryDependencies ++= {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-        libraryDependencies.value ++ Seq(
-          "org.scala-lang.modules" %% "scala-xml" % "1.0.3",
-          "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3")
-      case _ => Nil
-    }
-  })
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
 
 // JSON libraries
@@ -79,7 +72,7 @@ lazy val gson = project
   .settings(moduleName := "fintrospect-gson")
   .settings(description := "GSON JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
+  .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.7")
 
 lazy val json4s = project
   .settings(baseSettings)
@@ -116,8 +109,8 @@ lazy val mustache = project
   .settings(moduleName := "fintrospect-mustache")
   .settings(description := "Mustache templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.1",
-    "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.1"))
+  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.2",
+    "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.2"))
 
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
