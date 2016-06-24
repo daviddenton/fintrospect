@@ -13,8 +13,10 @@ Generates <a href="http://json-schema.org/">JSON Schema</a> for example object f
 Additionally, Fintrospect provides a number of mechanisms to leverage these routes:
 
 - Easily build type-safe HTTP responses with a set of custom builders for a wide variety of message formats:
-  - JSON: <a href="http://argo.sourceforge.net/">Argo</a>, <a href="http://argonaut.io/">Argonaut</a>, <a href="https://github.com/travisbrown/circe">Circe</a>, <a href="https://github.com/google/gson" 
- >GSON</a>, <a href="http://json4s.org/">Json4S</a>, <a href="https://github.com/google/gson">Play JSON</a>, <a href="https://github.com/google/gson">Spray JSON</a>
+  - JSON: <a href="http://argo.sourceforge.net/">Argo</a>, <a href="http://argonaut.io/">Argonaut</a>, 
+  <a href="https://github.com/travisbrown/circe">Circe</a>, <a href="https://github.com/google/gson">GSON</a>, 
+  <a href="http://json4s.org/">Json4S</a>, <a href="https://github.com/playframework">Play JSON</a>, 
+  <a href="https://github.com/spray/spray-json">Spray JSON</a>
   - Native implementations of XML, Plain Text, HTML, XHTML
 - Serve static files from the classpath
 - Template ```View``` support for building responses with <a href="http://mustache.github.io/">Mustache</a> or <a href="http://handlebarsjs.com">Handlebars</a>

@@ -11,8 +11,3 @@ Add the following lines to ```build.sbt``` - the lib also hosted in Maven Centra
 resolvers += "JCenter" at "https://jcenter.bintray.com"
 libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "13.0.0"
 ```
-
-```scala
-resolvers += "JCenter" at "https://jcenter.bintray.com"
-libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "13.0.0"
-```
