@@ -6,7 +6,27 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Option to dynamically reload View templates.
-- Drop support for Scala 2.10 (when finagle.http does).
+
+## 13.0.0
+- v13! Unlucky for some (but hopefully not for us!)
+- Dropped cross build to Scala 2.10. This is forced since `finagle-http` is dropping it.
+- Breaking: Removal of all previously deprecated items in: `ResponseBuilder`, `Filters` and`FintrospectModule`. See below for notes on replacement.
+- Breaking: With this release, we have repackaged Fintrospect into a core module `fintrospect-core` and a set of add-on modules (`fintrospect-circe`, `fintrospect-mustache` etc.). 
+The artifacts also now live in a new Maven group: `io.fintrospect`. The module dependencies have been internalised, so various modules have explicitly internalised their dependencies.
+Please read the <a href="http://fintrospect.io/installation">installation guide</a> for the new mechanism, but as a simple example, if previously your dependencies for fintrospect were:
+
+```scala
+libraryDependencies ++= Seq(
+"com.twitter" %% "finagle-http" % "6.35.0",
+"io.github.daviddenton" %% "fintrospect" % "12.21.0"
+"io.circe" %% "circe-generic" % "0.4.1")
+```
+... then you now rely on the `fintrospect-core` and `fintrospect-circe` modules. Your dependencies should now be:
+```scala
+libraryDependencies ++= Seq(
+"io.fintrospect" %% "fintrospect-core" % "13.0.0",
+"io.fintrospect" %% "fintrospect-circe" % "13.0.0")
+```
 
 ## 12.21.1
 - Bugfix: Issue #21 Form extraction fails on empty fields

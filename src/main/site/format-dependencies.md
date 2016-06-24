@@ -8,25 +8,25 @@
 <tr>
     <td><a href="http://argo.sourceforge.net/">Argo</a></td>
     <td>application/json</td>
-    <td>"net.sourceforge.argo" % "argo" % "3.12"</td>
+    <td>-</td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Argo">Argo</a></td>
 </tr>
 <tr>
     <td><a href="http://argonaut.io/">Argonaut</a></td>
     <td>application/json</td>
-    <td>"io.argonaut" %% "argonaut" % "6.0.4"</td>
+    <td>"io.fintrospect" %% "fintrospect-argonaut" % "13.0.0"</td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Argonaut">Argonaut</a></td>
 </tr>
 <tr>
     <td><a href="https://github.com/travisbrown/circe">Circe</a></td>
     <td>application/json</td>
-    <td>"io.circe" %% "circe-core" % "0.4.1"<br/>"io.circe" %% "circe-parser" % "0.4.1"<br/>"io.circe" %% "circe-generic" % "0.4.1" </td>
+    <td>"io.fintrospect" %% "fintrospect-circe" % "13.0.0"</td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Circe">Circe</a></td>
 </tr>
 <tr>
     <td><a href="https://github.com/google/gson">GSON</a></td>
     <td>application/json</td>
-    <td>"com.google.code.gson" % "gson" % "2.5"</td>
+    <td>"io.fintrospect" %% "fintrospect-gson" % "13.0.0"</td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Gson">Gson</a></td>
 </tr>
 <tr>
@@ -38,7 +38,7 @@
 <tr>
     <td><a href="http://json4s.org/">Json4S Native</a></td>
     <td>application/json</td>
-    <td>"org.json4s" %% "json4s-native" % "3.3.0"</td>
+    <td>"io.fintrospect" %% "fintrospect-json4s" % "13.0.0"</td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Json4s.Native">Json4s.Native</a>
     <br/>
     <a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Json4s.NativeDoubleMode">Json4s.NativeDoubleMode</a></td>
@@ -46,7 +46,7 @@
 <tr>
     <td><a href="http://json4s.org/">Json4S Jackson</a> </td>
     <td>application/json</td>
-    <td>"org.json4s" %% "json4s-jackson" % "3.3.0"</td>
+    <td>"io.fintrospect" %% "fintrospect-json4s" % "13.0.0"</td>
     <td>
     <a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Json4s.Jackson">Json4s.Jackson</a>
     <br/>
@@ -61,13 +61,13 @@
 <tr>
     <td><a href="https://www.playframework.com">Play</a></td>
     <td>application/json</td>
-    <td>"com.typesafe.play" %% "play-json" % "2.4.3"</td>
+    <td>"io.fintrospect" %% "fintrospect-play" % "13.0.0"</td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Play">Play</a></td>
 </tr>
 <tr>
     <td><a href="https://github.com/spray/spray-json">Spray</a></td>
     <td>application/json</td>
-    <td>"io.spray" %% "spray-json" % "1.3.2"</td>
+    <td>"io.fintrospect" %% "fintrospect-spray" % "13.0.0"</td>
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Spray">Spray</a></td>
 </tr>
 <tr>
