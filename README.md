@@ -33,7 +33,7 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
 - Utilities to help you unit-test endpoint services and write HTTP contract tests for remote dependencies 
 
 ## Get it
-Fintrospect is intentionally dependency-lite by design - other than Finagle, the core library itself only has a single dependency.
+Fintrospect is intentionally dependency-lite by design - other than Finagle, the core library itself only has a single non `org.scala` dependency.
 
 To activate some optional features, additional dependencies may be required - please see <a href="http://fintrospect.io/installation">here</a> for details.
 
