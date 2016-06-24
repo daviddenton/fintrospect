@@ -1,5 +1,5 @@
 #!/bin/bash
-echo Releasing and publishing v$1
+echo Publishing site for v$1
 set -e
 
 npm run cleanSite
