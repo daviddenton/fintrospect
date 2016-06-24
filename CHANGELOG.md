@@ -6,10 +6,10 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Option to dynamically reload View templates.
-- Drop support for Scala 2.10 (when finagle.http does).
 
 ## 13.0.0
 - v13! Unlucky for some (but hopefully not for us!)
+- Dropped cross build to Scala 2.10. This is forced since `finagle-http` is dropping it.
 - Breaking: Removal of all previously deprecated items in: `ResponseBuilder`, `Filters` and`FintrospectModule`. See below for notes on replacement.
 - Breaking: With this release, we have repackaged Fintrospect into a core module `fintrospect-core` and a set of add-on modules (`fintrospect-circe`, `fintrospect-mustache` etc.). 
 The artifacts also now live in a new Maven group: `io.fintrospect`. The module dependencies have been internalised, so various modules have explicitly internalised their dependencies.
