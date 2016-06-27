@@ -1,9 +1,13 @@
 package io.fintrospect.configuration
 
+import java.net.InetSocketAddress
+
 import scala.util.Try
 
 case class Authority(host: Host, port: Port) {
   override def toString: String = s"${host.value}:${port.value}"
+
+  def socketAddress: InetSocketAddress = new InetSocketAddress(host.value, port.value)
 }
 
 object Authority {
