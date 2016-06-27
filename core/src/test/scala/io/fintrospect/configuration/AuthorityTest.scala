@@ -1,10 +1,12 @@
 package io.fintrospect.configuration
 
+import java.net.InetSocketAddress
+
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class AuthorityTest extends FunSpec with ShouldMatchers {
 
-  describe("authority") {
+  describe("Authority") {
     it("renders ok") {
       Authority(Host.localhost, Port(9999)).toString shouldEqual "localhost:9999"
     }
@@ -19,6 +21,9 @@ class AuthorityTest extends FunSpec with ShouldMatchers {
     }
     it("too many parts") {
       Authority.unapply("localhost:123:123") shouldEqual None
+    }
+    it("socket address") {
+      Authority(Host.localhost, Port(9999)).socketAddress shouldEqual new InetSocketAddress("localhost", 9999)
     }
   }
 }
