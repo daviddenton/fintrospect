@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Option to dynamically reload View templates.
 
+## 13.1.0
+- Upgrade of some library dependency versions (`scala-xml` and `scala-parser-combinators`)
+
 ## 13.0.0
 - v13! Unlucky for some (but hopefully not for us!)
 - Dropped cross build to Scala 2.10. This is forced since `finagle-http` is dropping it.
