@@ -1,7 +1,7 @@
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
-  version := "13.0.0",
+  version := "13.1.0",
   scalaVersion := "2.11.8",
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions := Seq(
@@ -43,8 +43,8 @@ lazy val core = project
   .settings(libraryDependencies ++= Seq(
     "net.sourceforge.argo" % "argo" % "3.19",
     "com.twitter" %% "finagle-http" % "6.35.0",
-    "org.scala-lang.modules" %% "scala-xml" % "1.0.3",
-    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3",
+    "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   ))
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
