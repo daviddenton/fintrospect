@@ -2,36 +2,26 @@ package io.fintrospect.templating
 
 import java.io.{ByteArrayOutputStream, OutputStreamWriter}
 import java.nio.charset.StandardCharsets
-import java.util.concurrent.ConcurrentHashMap
 
-import com.github.mustachejava.{DefaultMustacheFactory, Mustache}
-import com.twitter.finagle.http.{Request, Response, Status}
+import com.github.mustachejava.Mustache
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.io.Buf
-import com.twitter.mustache.ScalaObjectHandler
 import com.twitter.util.Future
 import io.fintrospect.formats.AbstractResponseBuilder
-
-import scala.collection.JavaConverters._
+import io.fintrospect.templating.MustacheTemplateLoader.CachingClasspath
 
 /**
   * Used to convert View objects to Mustache View files. This template caching Filter can be added as a module filter
   * to be applied to all routes in that module.
   * @param responseBuilder The ResponseBuilder to use - this identifies the content type that will be used.
-  * @param baseTemplateDir base template directory to load resources from.
+  * @param templateLoader template loader to use. Defaults to a Caching Classpath loader reading from the root of the classpath
   */
-class RenderMustacheView(responseBuilder: AbstractResponseBuilder[_], baseTemplateDir: String = ".")
+class RenderMustacheView(responseBuilder: AbstractResponseBuilder[_], templateLoader: TemplateLoader[Mustache] = CachingClasspath("/"))
   extends Filter[Request, Response, Request, View] {
 
   import responseBuilder.implicits.statusToResponseBuilderConfig
-
-  private val classToMustache = new ConcurrentHashMap[Class[_], Mustache]().asScala
-
-  private val factory = new DefaultMustacheFactory(baseTemplateDir) {
-    setObjectHandler(new ScalaObjectHandler)
-  }
-
-  private def loadMustache(view: View) = classToMustache.getOrElseUpdate(view.getClass, factory.compile(view.template + ".mustache"))
 
   override def apply(request: Request, service: Service[Request, View]): Future[Response] =
     service(request)
@@ -40,12 +30,12 @@ class RenderMustacheView(responseBuilder: AbstractResponseBuilder[_], baseTempla
           val outputStream = new ByteArrayOutputStream(4096)
           val writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)
           try {
-            loadMustache(view).execute(writer, view)
+            templateLoader.forView(view).execute(writer, view)
           } finally {
             writer.close()
           }
 
-          Status.Ok(Buf.ByteArray.Owned(outputStream.toByteArray))
+          Ok(Buf.ByteArray.Owned(outputStream.toByteArray))
         }
       }
 }
