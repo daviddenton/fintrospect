@@ -11,7 +11,7 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.io.Source
 
-class MustacheTemplateLoaderTest extends FunSpec with ShouldMatchers {
+class MustacheTemplateLoadersTest extends FunSpec with ShouldMatchers {
 
   private val items = Seq(
     Item("item1", "£1", Seq(Feature("pretty"))),
@@ -21,13 +21,13 @@ class MustacheTemplateLoaderTest extends FunSpec with ShouldMatchers {
   describe("CachingClasspath") {
     it("renders a mustache template from a case class on the classpath") {
       val svc = Service.mk[Request, View]((r) => Future.value(OnClasspath(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.CachingClasspath()).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.CachingClasspath()).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "Name:item1Price:£1Feature:prettyName:item2Price:£3Feature:nasty"
     }
 
     it("renders a mustache template from a case class with overridden template") {
       val svc = Service.mk[Request, View]((r) => Future.value(AtRoot(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.CachingClasspath()).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.CachingClasspath()).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "AtRootName:item1Price:£1Feature:prettyAtRootName:item2Price:£3Feature:nasty"
     }
   }
@@ -35,13 +35,13 @@ class MustacheTemplateLoaderTest extends FunSpec with ShouldMatchers {
   describe("Caching") {
     it("renders a mustache template from a case class on the classpath") {
       val svc = Service.mk[Request, View]((r) => Future.value(OnClasspath(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.Caching("mustache/src/test/resources")).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.Caching("mustache/src/test/resources")).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "Name:item1Price:£1Feature:prettyName:item2Price:£3Feature:nasty"
     }
 
     it("renders a mustache template from a case class with overridden template") {
       val svc = Service.mk[Request, View]((r) => Future.value(AtRoot(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.Caching("mustache/src/test/resources")).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.Caching("mustache/src/test/resources")).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "AtRootName:item1Price:£1Feature:prettyAtRootName:item2Price:£3Feature:nasty"
     }
   }
@@ -51,13 +51,13 @@ class MustacheTemplateLoaderTest extends FunSpec with ShouldMatchers {
       val file = new File("bob.mustache")
       Source.fromString("foo")
       val svc = Service.mk[Request, View]((r) => Future.value(OnClasspath(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.HotReload("mustache/src/test/resources")).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.HotReload("mustache/src/test/resources")).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "Name:item1Price:£1Feature:prettyName:item2Price:£3Feature:nasty"
     }
 
     it("renders a mustache template from a case class with overridden template") {
       val svc = Service.mk[Request, View]((r) => Future.value(AtRoot(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.HotReload("mustache/src/test/resources")).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.HotReload("mustache/src/test/resources")).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "AtRootName:item1Price:£1Feature:prettyAtRootName:item2Price:£3Feature:nasty"
     }
   }

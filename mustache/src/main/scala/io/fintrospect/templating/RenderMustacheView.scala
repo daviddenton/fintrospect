@@ -10,7 +10,7 @@ import com.twitter.finagle.{Filter, Service}
 import com.twitter.io.Buf
 import com.twitter.util.Future
 import io.fintrospect.formats.AbstractResponseBuilder
-import io.fintrospect.templating.MustacheTemplateLoader.CachingClasspath
+import io.fintrospect.templating.MustacheTemplateLoaders.CachingClasspath
 
 /**
   * Used to convert View objects to Mustache View files. This template caching Filter can be added as a module filter

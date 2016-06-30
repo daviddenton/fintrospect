@@ -17,13 +17,13 @@ class RenderMustacheViewTest extends FunSpec with ShouldMatchers {
   describe("with caching") {
     it("renders a mustache template from a case class on the classpath") {
       val svc = Service.mk[Request, View]((r) => Future.value(OnClasspath(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.CachingClasspath()).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.CachingClasspath()).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "Name:item1Price:£1Feature:prettyName:item2Price:£3Feature:nasty"
     }
 
     it("renders a mustache template from a case class with overridden template") {
       val svc = Service.mk[Request, View]((r) => Future.value(AtRoot(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.CachingClasspath()).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.CachingClasspath()).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "AtRootName:item1Price:£1Feature:prettyAtRootName:item2Price:£3Feature:nasty"
     }
   }
@@ -33,13 +33,13 @@ class RenderMustacheViewTest extends FunSpec with ShouldMatchers {
 
     it("renders a mustache template from a case class on the classpath") {
       val svc = Service.mk[Request, View]((r) => Future.value(OnClasspath(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.HotReload(hotReloadDir)).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.HotReload(hotReloadDir)).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "Name:item1Price:£1Feature:prettyName:item2Price:£3Feature:nasty"
     }
 
     it("renders a mustache template from a case class with overridden template") {
       val svc = Service.mk[Request, View]((r) => Future.value(AtRoot(items)))
-      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoader.HotReload(hotReloadDir)).apply(Request(), svc)
+      val apply = new RenderMustacheView(Html.ResponseBuilder, MustacheTemplateLoaders.HotReload(hotReloadDir)).apply(Request(), svc)
       contentFrom(Await.result(apply)) shouldBe "AtRootName:item1Price:£1Feature:prettyAtRootName:item2Price:£3Feature:nasty"
     }
   }
