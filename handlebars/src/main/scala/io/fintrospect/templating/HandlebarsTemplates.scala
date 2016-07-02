@@ -37,7 +37,7 @@ object HandlebarsTemplates extends Templates {
       private def loadView[T <: View](view: T): Handlebars[Any] =
         classToTemplate.getOrElseUpdate(view.getClass, {
           val file = new File(baseDir, view.template + ".hbs")
-          if (file.exists()) throw new ViewNotFound(view)
+          if (!file.exists()) throw new ViewNotFound(view)
           Handlebars[Any](Source.fromFile(file).mkString)
         })
 
