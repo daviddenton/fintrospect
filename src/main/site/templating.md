@@ -9,11 +9,18 @@ case class ViewMessage(value: String) extends View
 
 def showMessage() = Service.mk[Request, View] { _ => Future.value(ViewMessage("some value to be displayed")) }
 
+val loader = if(devMode) MustacheTemplateLoaders.HotReload("src/main/resources") else MustacheTemplateLoaders.CachingClasspath(".")
+
 val webModule = ModuleSpec[Request, View](Root / "web",
     new SiteMapModuleRenderer(new URL("http://root.com")),
-    new RenderMustacheView(Html.ResponseBuilder))
+    new RenderMustacheView(Html.ResponseBuilder, loader))
     .withRoute(RouteSpec().at(Get) / "message" bindTo showMessage)
 ```
+
+Available implementations of the `TemplateLoader` are (see the relevant implementation of `TemplateLoaders`):
+- cached from the classpath
+- cached from the filesystem
+- hot-reloading from the filesystem
 
 Similarly to how the ```ResponseBuilder``` works, no 3rd-party dependencies are bundled with Fintrospect - simply import the extra SBT dependencies 
 as required:
