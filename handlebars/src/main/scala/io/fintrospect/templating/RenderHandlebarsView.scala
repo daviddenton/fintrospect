@@ -6,19 +6,18 @@ import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.formats.AbstractResponseBuilder
+import io.fintrospect.templating.HandlebarsTemplateLoaders.CachingClasspath
 
 /**
   * Used to convert View objects to Handlebars View files. This template caching Filter can be added as a module filter
   * to be applied to all routes in that module.
   * @param responseBuilder The ResponseBuilder to use - this identifies the content type that will be used.
   */
-class RenderHandlebarsView(responseBuilder: AbstractResponseBuilder[_])
+class RenderHandlebarsView(responseBuilder: AbstractResponseBuilder[_], templateLoader: TemplateLoader[Handlebars[Any]] = CachingClasspath("/"))
   extends Filter[Request, Response, Request, View] {
 
   import responseBuilder.implicits.statusToResponseBuilderConfig
 
-  private val loader = new CachingClasspathViews[Handlebars[Any]](s => Handlebars(s), ".hbs")
-
   override def apply(request: Request, service: Service[Request, View]) = service(request)
-    .flatMap { view => Ok(loader.loadView(view)(view)) }
+    .flatMap { view => Ok(templateLoader.forView(view)(view)) }
 }
