@@ -10,10 +10,21 @@ abstract class RenderTemplateEngineSpec[T](loaders: TemplateLoaders[T], subProje
 
   def renderViewFor(loader: TemplateLoader[T]): Filter[Request, Response, Request, View]
 
-  describe(subProjectName) {
+  describe(subProjectName + " templating") {
 
-    describe("with caching") {
+    describe("caching classpath") {
       val loader = loaders.CachingClasspath()
+      it("renders a template from a case class on the classpath") {
+        renderOnClasspath(loader)
+      }
+
+      it("renders a template from a case class with overridden template") {
+        renderAtRoot(loader)
+      }
+    }
+
+    describe("caching file-based") {
+      val loader = loaders.Caching(subProjectName + "/src/test/resources")
       it("renders a template from a case class on the classpath") {
         renderOnClasspath(loader)
       }
