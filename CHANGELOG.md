@@ -7,7 +7,8 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
 ## 13.2.0
-- Dynamic reloading of templates. See `TemplateLoaders` (`Mustache` and `Handlebars`), or `templating` example.
+- Dynamic reloading of templates. See implementations of `Templates` (Mustache and Handlebars), or `templating` example.
+- Breaking; Combined `RenderMustacheView` and `RenderHandlebarsView` into `RenderView`.
 
 ## 13.1.0
 - Upgrade of some library dependency versions (`scala-xml` and `scala-parser-combinators`)

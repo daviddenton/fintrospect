@@ -10,15 +10,16 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect.formats.PlainText
 import io.fintrospect.renderers.SiteMapModuleRenderer
-import io.fintrospect.templating.{MustacheTemplateLoaders, RenderMustacheView, View}
+import io.fintrospect.templating.{MustacheTemplates, RenderView, View}
 import io.fintrospect.{ModuleSpec, RouteSpec}
 
 object TemplatingApp extends App {
 
   val devMode = true
-  private val loader = if(devMode) MustacheTemplateLoaders.HotReload("src/main/resources") else MustacheTemplateLoaders.CachingClasspath(".")
+  val renderer = if (devMode) MustacheTemplates.HotReload("src/main/resources") else MustacheTemplates.CachingClasspath(".")
 
-  private val renderView = new RenderMustacheView(PlainText.ResponseBuilder, loader)
+  val renderView = new RenderView(PlainText.ResponseBuilder, renderer)
+
   val module = ModuleSpec[Request, View](Root, new SiteMapModuleRenderer(new URL("http://my.cool.app")), renderView)
     .withRoute(RouteSpec().at(Get) / "echo" bindTo Service.mk { rq: Request => MustacheView(rq.uri) })
 
