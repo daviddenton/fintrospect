@@ -5,7 +5,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 ## Backlog/upcoming
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
-- Option to dynamically reload View templates.
+
+## 13.2.0 (uncut)
+- Dynamic reloading of templates. See `TemplateLoaders` (`Mustache` and `Handlebars`), or `templating` example.
 
 ## 13.1.0
 - Upgrade of some library dependency versions (`scala-xml` and `scala-parser-combinators`)

@@ -9,7 +9,7 @@ trait TemplateLoaders[T] {
     * Loads and caches templates from the compiled classpath
     * @param baseClasspathPackage the root package to load from (defaults to
     */
-  def CachingClasspath(baseClasspathPackage: String): TemplateLoader[T]
+  def CachingClasspath(baseClasspathPackage: String = "."): TemplateLoader[T]
 
   /**
     * Load and caches templates from a file path
