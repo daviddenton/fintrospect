@@ -3,6 +3,7 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
+import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
 import org.scalatest._
 
 class FormFieldTest extends FunSpec with ShouldMatchers {
@@ -57,7 +58,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     }
 
     describe("multi-string with empty-is-ok validation turned off") {
-      val field = FormField.required.multi.string(paramName, canBeEmpty = false)
+      val field = FormField.required.multi.string(paramName, validation = EmptyIsInvalid)
 
       it("validates value from form field") {
         field.extract(Form(Map(paramName -> Set("123", "456")))) shouldEqual Extracted(Seq("123", "456"))
