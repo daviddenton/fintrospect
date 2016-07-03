@@ -38,6 +38,7 @@ case class ParameterSpec[T](name: String,
   * Predefined ParameterSpec instances for common types
   */
 object ParameterSpec {
+
   def localDate(name: String, description: String = null) = ParameterSpec[LocalDate](name, Option(description), StringParamType, LocalDate.parse(_), ISO_LOCAL_DATE.format(_))
 
   def zonedDateTime(name: String, description: String = null) = ParameterSpec[ZonedDateTime](name, Option(description), StringParamType, ZonedDateTime.parse(_), ISO_ZONED_DATE_TIME.format(_))
@@ -46,7 +47,10 @@ object ParameterSpec {
 
   def boolean(name: String, description: String = null) = ParameterSpec[Boolean](name, Option(description), BooleanParamType, _.toBoolean, _.toString)
 
-  def string(name: String, description: String = null) = ParameterSpec[String](name, Option(description), StringParamType, _.toString, _.toString)
+  def string(name: String, description: String = null, canBeEmpty: Boolean = true) = {
+    def validate(in: String): String = if (!canBeEmpty && in.isEmpty) throw new IllegalArgumentException(s"$name cannot be empty") else in.toString
+    ParameterSpec[String](name, Option(description), StringParamType, validate, _.toString)
+  }
 
   def uuid(name: String, description: String = null) = ParameterSpec[UUID](name, Option(description), StringParamType, UUID.fromString, _.toString)
 
