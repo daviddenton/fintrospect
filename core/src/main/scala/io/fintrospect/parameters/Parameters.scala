@@ -65,9 +65,10 @@ trait Parameters[P[_], R[_]] {
    * Create a String parameter which is not constrained
    * @param name the name of the parameter (for use in description endpoints)
    * @param description optional description of the parameter (for use in description endpoints)
+   * @param canBeEmpty if an empty string is a valid value
    * @return a parameter for retrieving a String value from the request
    */
-  def string(name: String, description: String = null): P[String] with R[String] = apply(ParameterSpec.string(name, description))
+  def string(name: String, description: String = null, canBeEmpty: Boolean = true): P[String] with R[String] = apply(ParameterSpec.string(name, description, canBeEmpty))
 
   /**
     * Create a UUID parameter

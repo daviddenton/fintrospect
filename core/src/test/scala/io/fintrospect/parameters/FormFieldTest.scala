@@ -55,6 +55,29 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
         outForm.get("field") shouldEqual Some(Seq("123", "456"))
       }
     }
+
+    describe("multi-string with empty-is-ok validation turned off") {
+      val field = FormField.required.multi.string(paramName, canBeEmpty = false)
+
+      it("validates value from form field") {
+        field.extract(Form(Map(paramName -> Set("123", "456")))) shouldEqual Extracted(Seq("123", "456"))
+        field <-- Form(Map(paramName -> Set("123", "456"))) shouldEqual Seq("123", "456")
+      }
+
+      it("fails to validate invalid value") {
+        field.extract(Form(Map(paramName -> Set("", "456")))) shouldEqual ExtractionFailed(Invalid(field))
+      }
+
+      it("does not validate non existent value") {
+        field.extract(new Form(Map())) shouldEqual ExtractionFailed(Missing(field))
+      }
+
+      it("can rebind valid value") {
+        val bindings = FormField.required.multi.int("field") <-> Form(Map("field" -> Set("123", "456")))
+        val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
+        outForm.get("field") shouldEqual Some(Seq("123", "456"))
+      }
+    }
   }
 
   describe("optional") {

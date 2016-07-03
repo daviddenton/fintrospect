@@ -6,6 +6,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
+## 13.3.0 (uncut)
+- Option for empty `string` validation to be rejected as `InvalidParameter` in `QueryParameters` et al.
+
 ## 13.2.1
 - Dynamic reloading of templates. See implementations of `Templates` (Mustache and Handlebars), or `templating` example.
 - Breaking; Combined `RenderMustacheView` and `RenderHandlebarsView` into `RenderView`.
