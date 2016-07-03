@@ -5,6 +5,7 @@ import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.util.UUID
 
 import io.fintrospect.formats.json.{Argo, JsonFormat}
+import io.fintrospect.parameters.StringValidation.EmptyIsValid
 
 import scala.xml.{Elem, XML}
 
@@ -47,9 +48,8 @@ object ParameterSpec {
 
   def boolean(name: String, description: String = null) = ParameterSpec[Boolean](name, Option(description), BooleanParamType, _.toBoolean, _.toString)
 
-  def string(name: String, description: String = null, canBeEmpty: Boolean = true) = {
-    def validate(in: String): String = if (!canBeEmpty && in.isEmpty) throw new IllegalArgumentException(s"$name cannot be empty") else in.toString
-    ParameterSpec[String](name, Option(description), StringParamType, validate, _.toString)
+  def string(name: String, description: String = null, validation: StringValidation = EmptyIsValid) = {
+    ParameterSpec[String](name, Option(description), StringParamType, validation, _.toString)
   }
 
   def uuid(name: String, description: String = null) = ParameterSpec[UUID](name, Option(description), StringParamType, UUID.fromString, _.toString)
