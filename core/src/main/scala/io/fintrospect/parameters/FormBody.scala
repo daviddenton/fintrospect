@@ -6,7 +6,6 @@ import java.net.URLEncoder.encode
 import com.twitter.finagle.http.Message
 import io.fintrospect.ContentTypes.APPLICATION_FORM_URLENCODED
 import io.fintrospect.parameters.AbstractFormBody.{decodeForm, decodeWebForm, encodeForm}
-import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}
@@ -35,7 +34,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[F
   with MandatoryRebind[Message, Form, Binding] {
 
   override def <--?(message: Message): Extraction[Form] =
-    Try(spec.deserialize(contentFrom(message))) match {
+    Try(spec.deserialize(message.contentString)) match {
       case Success(form) =>
         Extraction.combine(fields.map(_.extract(form))) match {
           case failed@ExtractionFailed(_) => failed
@@ -51,7 +50,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[F
 class WebFormBody(fields: Seq[FormField[_] with Retrieval[WebForm, _] with Extractor[WebForm, _]])
   extends AbstractFormBody[WebForm](fields, decodeWebForm, encodeForm) {
 
-  override def <--?(message: Message): Extraction[WebForm] = Try(spec.deserialize(contentFrom(message))) match {
+  override def <--?(message: Message): Extraction[WebForm] = Try(spec.deserialize(message.contentString)) match {
     case Success(form) => ???
     case Failure(e) => ExtractionFailed(fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
   }

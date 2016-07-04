@@ -5,7 +5,6 @@ import com.twitter.finagle.http.Method.Get
 import com.twitter.util.Future
 import io.fintrospect.RouteSpec
 import io.fintrospect.parameters.Path
-import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 
 
 object RemoteBooks {
@@ -17,5 +16,5 @@ class RemoteBooks {
 
   private val client = RemoteBooks.route.bindToClient(Http.newService("localhost:10000"))
 
-  def search(titlePart: String): Future[String] = client(RemoteBooks.titlePart --> titlePart).map(contentFrom(_))
+  def search(titlePart: String): Future[String] = client(RemoteBooks.titlePart --> titlePart).map(_.contentString)
 }

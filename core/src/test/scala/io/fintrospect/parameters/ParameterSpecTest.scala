@@ -105,7 +105,7 @@ class ParameterSpecTest extends FunSpec with ShouldMatchers {
   describe("string") {
     it("retrieves a valid value") {
       Try(ParameterSpec.string(paramName, "", EmptyIsInvalid).deserialize("123")) shouldEqual Success("123")
-      Try(ParameterSpec.string(paramName, "", EmptyIsInvalid).deserialize("")) shouldEqual Success("")
+      Try(ParameterSpec.string(paramName, "", EmptyIsValid).deserialize("")) shouldEqual Success("")
     }
 
     it("does not retrieve an invalid value") {

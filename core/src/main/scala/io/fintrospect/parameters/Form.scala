@@ -5,7 +5,7 @@ class WebForm(protected val fields: collection.Map[String, Set[String]], errors:
 /**
  * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
  */
-class Form(private val fields: collection.Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
+case class Form(private val fields: collection.Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
 
   /**
    * Convenience method to retrieve multiple fields from form

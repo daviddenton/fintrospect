@@ -3,7 +3,6 @@ package io.fintrospect
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 import io.fintrospect.parameters.{Body, Extraction, Extractor, HeaderParameter, NotProvided, Parameter, QueryParameter}
-import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 
 /**
   * Encapsulates the specification of an HTTP endpoint, for use by either a Finagle server or client.
@@ -58,7 +57,7 @@ case class RouteSpec private(summary: String,
     * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
     */
   def returning(response: Response): RouteSpec = {
-    returning(new ResponseSpec(response.status -> response.status.reason, Option(contentFrom(response))))
+    returning(new ResponseSpec(response.status -> response.status.reason, Option(response.contentString)))
   }
 
   /**

@@ -8,6 +8,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## 13.3.0 (uncut)
 - Option for empty `string` validation to be rejected as `InvalidParameter` in `QueryParameters` et al.
+- Breaking: removed unused `HttpRequestResponseUtil:contentFrom()` method. Simply use `request.contentString` instead
 
 ## 13.2.1
 - Dynamic reloading of templates. See implementations of `Templates` (Mustache and Handlebars), or `templating` example.

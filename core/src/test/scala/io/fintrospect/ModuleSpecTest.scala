@@ -13,7 +13,7 @@ import io.fintrospect.formats.json.Argo
 import io.fintrospect.parameters.{Body, BodySpec, FormField, Header, NoSecurity, Path}
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.HttpRequestResponseUtil
-import io.fintrospect.util.HttpRequestResponseUtil.{contentFrom, headersFrom, statusAndContentFrom}
+import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class ModuleSpecTest extends FunSpec with ShouldMatchers {
@@ -81,12 +81,12 @@ class ModuleSpecTest extends FunSpec with ShouldMatchers {
     describe("description route is added") {
       it("at default location at the root of the module") {
         val m = ModuleSpec(Root, SimpleJson())
-        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(Ok, contentFrom(SimpleJson().description(Root, NoSecurity, Nil)))
+        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
       }
 
       it("at custom location") {
         val m = ModuleSpec(Root, SimpleJson()).withDescriptionPath(_ / "bob")
-        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldEqual(Ok, contentFrom(SimpleJson().description(Root, NoSecurity, Nil)))
+        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldEqual(Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
 
         Await.result(m.toService(Request("/"))).status shouldEqual NotFound
       }
