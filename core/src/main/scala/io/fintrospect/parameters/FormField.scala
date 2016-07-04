@@ -12,7 +12,7 @@ trait FormField[T]
 private object FormFieldExtractAndRebind extends ParameterExtractAndBind[Form, FormFieldBinding] {
   def newBinding(parameter: Parameter, value: String) = new FormFieldBinding(parameter, value)
 
-  def valuesFrom(parameter: Parameter, form: Form): Option[Seq[String]] = form.get(parameter.name)
+  def valuesFrom(parameter: Parameter, form: Form): Option[Seq[String]] = form.get(parameter.name).map(_.toSeq)
 }
 
 abstract class SingleFormField[T](spec: ParameterSpec[T])

@@ -16,7 +16,7 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 class SiteMapModuleRendererTest extends FunSpec with ShouldMatchers {
 
   it("renders 400") {
-    new SiteMapModuleRenderer(new URL("http://fintrospect.io")).badRequest(Seq()).status shouldBe BadRequest
+    new SiteMapModuleRenderer(new URL("http://fintrospect.io")).badRequest(Nil).status shouldBe BadRequest
   }
 
   it("renders 404") {

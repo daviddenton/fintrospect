@@ -64,7 +64,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "responses" -> obj(responses),
       "supportedContentTypes" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "security" -> array(security match {
-        case NoSecurity => Seq()
+        case NoSecurity => Nil
         case ApiKey(param, _) => Seq(obj("api_key" -> array()))
       })
     )

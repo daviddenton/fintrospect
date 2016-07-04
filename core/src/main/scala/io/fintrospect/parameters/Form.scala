@@ -58,7 +58,7 @@ case class Form(private val fields: collection.Map[String, Set[String]]) extends
 
   def +(key: String, value: String) = Form(fields + (key -> (fields.getOrElse(key, Set()) + value)))
 
-  def get(name: String): Option[Seq[String]] = fields.get(name).map(_.toSeq)
+  def get(name: String): Option[Set[String]] = fields.get(name)
 
   override def iterator: Iterator[(String, Set[String])] = fields.iterator
 }
