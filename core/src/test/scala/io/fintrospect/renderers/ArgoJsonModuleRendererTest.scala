@@ -9,7 +9,7 @@ import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat.{number, obj, parse}
 import io.fintrospect.parameters.{ApiKey, Body, FormField, Header, InvalidParameter, Path, Query}
 import io.fintrospect.util.Echo
-import io.fintrospect.util.HttpRequestResponseUtil.{contentFrom, statusAndContentFrom}
+import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -50,7 +50,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers 
 
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
-      val actual = contentFrom(Await.result(module.toService(Request("/basepath"))))
+      val actual = Await.result(module.toService(Request("/basepath"))).contentString
       //                  println(actual)
       parse(actual) shouldEqual expected
     }

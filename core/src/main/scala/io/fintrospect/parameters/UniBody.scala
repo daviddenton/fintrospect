@@ -2,7 +2,6 @@ package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Message
 import io.fintrospect.parameters.InvalidParameter.Invalid
-import io.fintrospect.util.HttpRequestResponseUtil.contentFrom
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}
@@ -44,7 +43,7 @@ class UniBody[T](spec: BodySpec[T],
   override def iterator = Iterator(param)
 
   override def <--?(message: Message): Extraction[T] =
-    Try(spec.deserialize(contentFrom(message))) match {
+    Try(spec.deserialize(message.contentString)) match {
       case Success(v) => Extracted(v)
       case Failure(_) => ExtractionFailed(Invalid(param))
     }

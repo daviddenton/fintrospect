@@ -4,7 +4,7 @@ import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.Status.NotFound
 import io.fintrospect.formats.json.Argo.JsonFormat.parse
 import io.fintrospect.testing.TestingFintrospectRoute
-import io.fintrospect.util.HttpRequestResponseUtil.{contentFrom, statusAndContentFrom}
+import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 /*
@@ -16,7 +16,7 @@ class BookLookupTest extends FunSpec with ShouldMatchers with TestingFintrospect
 
   describe("Book Lookup") {
     it("can lookup an existing book") {
-      parse(contentFrom(responseFor(Request("/book/hp1")))) shouldEqual Book("hairy porker", "j.k oinking", 799).toJson
+      parse(responseFor(Request("/book/hp1")).contentString) shouldEqual Book("hairy porker", "j.k oinking", 799).toJson
     }
   }
 
