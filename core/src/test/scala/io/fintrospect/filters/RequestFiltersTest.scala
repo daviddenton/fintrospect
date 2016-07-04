@@ -40,7 +40,7 @@ class RequestFiltersTest extends FunSpec with ShouldMatchers {
         }
 
         val filter = RequestFilters.ExtractingRequest[String] {
-          req => ExtractionFailed(Seq())
+          req => ExtractionFailed(Nil)
         }
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 

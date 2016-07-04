@@ -96,7 +96,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
         val inRequest = Request()
         val bindings = Header.optional.int("field") <-> inRequest
         val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
-        outRequest.headerMap.getAll("field") shouldEqual Seq()
+        outRequest.headerMap.getAll("field") shouldEqual Nil
       }
     }
 
