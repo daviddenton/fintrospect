@@ -5,14 +5,15 @@ import java.net.URLEncoder.encode
 
 import com.twitter.finagle.http.Message
 import io.fintrospect.ContentTypes.APPLICATION_FORM_URLENCODED
-import io.fintrospect.parameters.AbstractFormBody.{decodeForm, decodeWebForm, encodeForm}
+import io.fintrospect.parameters.AbstractFormBody.{decodeForm, encodeForm}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}
 
-protected abstract class AbstractFormBody[T](fields: Seq[FormField[_]], deserialize: String => T, serialize: T => String)
-  extends Body[T](new BodySpec[T](None, APPLICATION_FORM_URLENCODED, deserialize, serialize))
-  with Bindable[T, Binding] {
+protected abstract class AbstractFormBody[T <: Form](fields: Seq[FormField[_]])
+  extends Body[Form](new BodySpec[Form](None, APPLICATION_FORM_URLENCODED, decodeForm, encodeForm))
+  with Bindable[T, Binding]
+  with Mandatory[Message, T] {
 
   override def iterator = fields.iterator
 
@@ -27,10 +28,12 @@ protected abstract class AbstractFormBody[T](fields: Seq[FormField[_]], deserial
 }
 
 /**
-  * Forms are modelled as a collection of fields.
+  * Forms are a collection of valid fields. Failure to extract a single field will result in the entire form failing.
+  * This form is used for non-web forms (where the posted form is merely an url-encoded set of form parameters) and
+  * will auto-reject requests with a BadRequest.
   */
 class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]])
-  extends AbstractFormBody[Form](fields, decodeForm, encodeForm)
+  extends AbstractFormBody[Form](fields)
   with MandatoryRebind[Message, Form, Binding] {
 
   override def <--?(message: Message): Extraction[Form] =
@@ -45,27 +48,27 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[F
 }
 
 /**
-  * Forms are effectively modelled as a collection of fields.
+  * Web-forms are a collection of valid and invalid fields.
+  * This form is used for web forms (where feedback is desirable and the user can be redirected back to the form page.
   */
 class WebFormBody(fields: Seq[FormField[_] with Retrieval[WebForm, _] with Extractor[WebForm, _]])
-  extends AbstractFormBody[WebForm](fields, decodeWebForm, encodeForm) {
+  extends AbstractFormBody[WebForm](fields) {
 
-  override def <--?(message: Message): Extraction[WebForm] = Try(spec.deserialize(message.contentString)) match {
-    case Success(form) => ???
-    case Failure(e) => ExtractionFailed(fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
-  }
+  override def <--?(message: Message): Extraction[WebForm] =
+    Try(spec.deserialize(message.contentString)) match {
+      case Success(form) => ???
+      case Failure(e) => ExtractionFailed(fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
+    }
 }
 
-object AbstractFormBody {
-  def encodeForm(form: Form): String = form.flatMap {
+protected object AbstractFormBody {
+  private def encodeForm(form: Form): String = form.flatMap {
     case (name, values) => values.map {
       case value => encode(name, "UTF-8") + "=" + encode(value, "UTF-8")
     }
   }.mkString("&")
 
-  def decodeWebForm(content: String) = new WebForm(decodeFields(content), Nil)
-
-  def decodeForm(content: String) = new Form(decodeFields(content))
+  private def decodeForm(content: String) = new Form(decodeFields(content))
 
   private def decodeFields(content: String): Map[String, Set[String]] = {
     content

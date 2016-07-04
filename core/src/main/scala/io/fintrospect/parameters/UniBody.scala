@@ -18,6 +18,7 @@ class UniBody[T](spec: BodySpec[T],
                  theExample: Option[T])
   extends Body(spec)
   with Bindable[T, RequestBinding]
+  with Mandatory[Message, T]
   with MandatoryRebind[Message, T, RequestBinding] {
 
   private val param = new BodyParameter with Bindable[T, RequestBinding] {
