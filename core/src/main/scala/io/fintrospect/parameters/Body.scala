@@ -6,7 +6,7 @@ import io.fintrospect.formats.json.{Argo, JsonFormat}
 
 import scala.xml.Elem
 
-abstract class Body[T](protected val spec: BodySpec[T]) extends Iterable[BodyParameter] with Mandatory[Message, T]
+abstract class Body[T](protected val spec: BodySpec[T]) extends Iterable[BodyParameter]
 with Extractor[Message, T] {
   val contentType: ContentType = spec.contentType
 }
