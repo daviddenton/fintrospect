@@ -51,12 +51,17 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[F
   * Web-forms are a collection of valid and invalid fields.
   * This form is used for web forms (where feedback is desirable and the user can be redirected back to the form page.
   */
-class WebFormBody(fields: Seq[FormField[_] with Retrieval[WebForm, _] with Extractor[WebForm, _]])
+class WebFormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]])
   extends AbstractFormBody[WebForm](fields) {
 
   override def <--?(message: Message): Extraction[WebForm] =
     Try(spec.deserialize(message.contentString)) match {
-      case Success(form) => ???
+      case Success(form) =>
+        Extracted(new WebForm(form.fields, fields.map(_.extract(form)).flatMap {
+          case Extracted(_) => Nil
+          case NotProvided => Nil
+          case ExtractionFailed(e) => e
+        }))
       case Failure(e) => ExtractionFailed(fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
     }
 }

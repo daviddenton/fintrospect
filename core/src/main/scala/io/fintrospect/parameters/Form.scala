@@ -1,11 +1,11 @@
 package io.fintrospect.parameters
 
-class WebForm(protected val fields: collection.Map[String, Set[String]], errors: Iterable[InvalidParameter]) extends Form(fields)
+class WebForm(fields: Map[String, Set[String]], val errors: Iterable[InvalidParameter]) extends Form(fields)
 
 /**
  * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
  */
-case class Form(private val fields: collection.Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
+case class Form(fields: Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
 
   /**
    * Convenience method to retrieve multiple fields from form
