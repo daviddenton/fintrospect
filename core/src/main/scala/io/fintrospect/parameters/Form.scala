@@ -1,9 +1,11 @@
 package io.fintrospect.parameters
 
+class WebForm(protected val fields: collection.Map[String, Set[String]], errors: Iterable[InvalidParameter]) extends Form(fields)
+
 /**
  * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
  */
-case class Form(private val fields: collection.Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
+class Form(private val fields: collection.Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
 
   /**
    * Convenience method to retrieve multiple fields from form
@@ -56,7 +58,7 @@ case class Form(private val fields: collection.Map[String, Set[String]]) extends
                             fieldF: Retrieval[Form, F]):
   (A, B, C, D, E, F) = (fieldA <-- this, fieldB <-- this, fieldC <-- this, fieldD <-- this, fieldE <-- this, fieldF <-- this)
 
-  def +(key: String, value: String) = Form(fields + (key -> (fields.getOrElse(key, Set()) + value)))
+  def +(key: String, value: String) = new Form(fields + (key -> (fields.getOrElse(key, Set()) + value)))
 
   def get(name: String): Option[Set[String]] = fields.get(name)
 
