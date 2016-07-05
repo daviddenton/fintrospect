@@ -41,5 +41,5 @@ object Body {
     * HTML encoded form HTTP message body which deserializes even if fields are missing/invalid. Use this
     * for browser-server communications where you want to give feedback to the user.
     */
-  def webForm(fields: FormField[_] with Retrieval[Form, _] with Extractor[Form, _]*): WebFormBody = new WebFormBody(fields)
+  def webForm(fields: FormField[_] with Retrieval[Form, _] with Extractor[Form, _]*): WebFormBody = new WebFormBody(Body.form(fields:_*))
 }
