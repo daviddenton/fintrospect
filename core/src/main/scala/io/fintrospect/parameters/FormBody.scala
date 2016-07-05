@@ -12,12 +12,12 @@ import scala.util.{Failure, Success, Try}
 
 protected abstract class AbstractFormBody[T <: Form](fields: Seq[FormField[_]])
   extends Body[Form](new BodySpec[Form](None, APPLICATION_FORM_URLENCODED, decodeForm, encodeForm))
-  with Bindable[T, Binding]
+  with Bindable[Form, Binding]
   with Mandatory[Message, T] {
 
   override def iterator = fields.iterator
 
-  def -->(value: T): Seq[Binding] =
+  def -->(value: Form): Seq[Binding] =
     Seq(new RequestBinding(null, t => {
       val content = spec.serialize(value)
       t.headerMap.add(Names.CONTENT_TYPE, spec.contentType.value)
@@ -48,8 +48,9 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[F
 }
 
 /**
-  * Web-forms are a collection of valid and invalid fields.
-  * This form is used for web forms (where feedback is desirable and the user can be redirected back to the form page.
+  * Web-forms are a specialised type of form which holds both a collection of valid fields and a set of invalid fields.
+  * This form is to be used for web forms (where feedback is desirable and the user can be redirected back to the form page).
+  * As such, extracting an invalid webform from a request will not fail unless the body encoding itself is invalid.
   */
 class WebFormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]])
   extends AbstractFormBody[WebForm](fields) {
@@ -57,11 +58,15 @@ class WebFormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extracto
   override def <--?(message: Message): Extraction[WebForm] =
     Try(spec.deserialize(message.contentString)) match {
       case Success(form) =>
-        Extracted(new WebForm(form.fields, fields.map(_.extract(form)).flatMap {
-          case Extracted(_) => Nil
-          case NotProvided => Nil
-          case ExtractionFailed(e) => e
-        }))
+        val webForm = fields.foldLeft(new WebForm(Map(), Nil)) {
+          (memo, field) =>
+            field <--? form match {
+              case Extracted(_) => new WebForm(memo.fields + (field.name -> form.get(field.name).getOrElse(Set())), memo.errors)
+              case NotProvided => memo
+              case ExtractionFailed(e) => new WebForm(memo.fields.filterNot(_._1 == field.name), memo.errors ++ e)
+            }
+        }
+        Extracted(webForm)
       case Failure(e) => ExtractionFailed(fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
     }
 }
