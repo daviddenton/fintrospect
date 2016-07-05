@@ -4,7 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
-import io.fintrospect.parameters.{Body, Form, FormField, Parameter, Validated, Validation, ValidationFailed, Validator, WebForm}
+import io.fintrospect.parameters.{ValidationFailed, Body, Form, FormField, Parameter, Validated, Validation, Validator, WebForm}
 import io.fintrospect.templating.View
 import io.fintrospect.templating.View.viewToFuture
 import io.fintrospect.{RouteSpec, ServerRoutes}
@@ -24,14 +24,11 @@ class ReportAge extends ServerRoutes[Request, View] {
   private val submit = Service.mk {
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
-      if (postedForm.isValid)
-        postedForm.validate(NameAndAgeForm.rules) {
-          case (theAge, theName) => DisplayUserAge(theName.get, theAge.get)
-        } match {
-          case Validated(nextView) => nextView
-          case ValidationFailed(errors) => NameAndAgeForm(NAMES, postedForm.withErrors(errors))
-        }
-      else NameAndAgeForm(NAMES, postedForm)
+
+      postedForm.validate(NameAndAgeForm.rules) match {
+        case Validated((theAge, theName)) => DisplayUserAge(theName.get, theAge.get)
+        case ValidationFailed(errors) => NameAndAgeForm(NAMES, postedForm.withErrors(errors))
+      }
     }
   }
 
