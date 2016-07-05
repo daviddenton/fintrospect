@@ -48,7 +48,7 @@ class FormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[F
 }
 
 /**
-  * Web-forms are a specialised type of form which holds both a collection of valid fields and a set of invalid fields.
+  * Web-forms are a specialised type of form which holds both a collection of received fields and a set of invalid fields.
   * This form is to be used for web forms (where feedback is desirable and the user can be redirected back to the form page).
   * As such, extracting an invalid webform from a request will not fail unless the body encoding itself is invalid.
   */
@@ -58,15 +58,12 @@ class WebFormBody(fields: Seq[FormField[_] with Retrieval[Form, _] with Extracto
   override def <--?(message: Message): Extraction[WebForm] =
     Try(spec.deserialize(message.contentString)) match {
       case Success(form) =>
-        val webForm = fields.foldLeft(new WebForm(Map(), Nil)) {
-          (memo, field) =>
-            field <--? form match {
-              case Extracted(_) => new WebForm(memo.fields + (field.name -> form.get(field.name).getOrElse(Set())), memo.errors)
-              case NotProvided => memo
-              case ExtractionFailed(e) => new WebForm(memo.fields.filterNot(_._1 == field.name), memo.errors ++ e)
-            }
-        }
-        Extracted(webForm)
+        Extracted(new WebForm(form.fields, fields.flatMap {
+          _ <--? form match {
+            case ExtractionFailed(e) => e
+            case _ => Nil
+          }
+        }))
       case Failure(e) => ExtractionFailed(fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
     }
 }
