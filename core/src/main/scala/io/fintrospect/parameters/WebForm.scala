@@ -6,7 +6,17 @@ package io.fintrospect.parameters
 case class WebForm(form: Form, errors: Seq[InvalidParameter]) {
 
   def withErrors(newErrors: Seq[InvalidParameter]) = copy(errors = errors ++ newErrors)
+
   def isValid = errors.isEmpty
 
-  def validate[T <: Product](fn: (Form => Validator[T])): Validator[T] = fn(form)
+  def validate[T <: Product](fn: (Form => Validator[T])): Validation[T] =
+    if (isValid)
+      fn(form) {
+        case t => Validated(t)
+      } match {
+        case Validated(t) => Validated(t.value)
+        case ValidationFailed(newErrors) => ValidationFailed(newErrors)
+      } else {
+      ValidationFailed(errors)
+    }
 }
