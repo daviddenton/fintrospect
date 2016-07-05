@@ -27,7 +27,7 @@ object AgeEntry {
   def apply(): AgeEntry = apply(WebForm.empty)
 
   def apply(webForm: WebForm): AgeEntry = new AgeEntry(
-    webForm.fields.mapValues(_.mkString(",")),
+    webForm.form.fields.mapValues(_.mkString(",")),
     Map(webForm.errors.map(ip => ip.param.name -> ip.reason).toSeq: _*)
   )
 }
@@ -42,8 +42,8 @@ class ReportAge extends ServerRoutes[Request, View] {
     rq: Request => {
       val submitted = AgeEntry.form <-- rq
       if (submitted.isValid) {
-        val name = AgeEntry.fields.name <-- submitted
-        val age = AgeEntry.fields.age <-- submitted
+        val name = AgeEntry.fields.name <-- submitted.form
+        val age = AgeEntry.fields.age <-- submitted.form
         AgeReport(name, age)
       } else {
         AgeEntry(submitted)
