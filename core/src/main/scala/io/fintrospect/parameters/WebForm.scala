@@ -6,7 +6,3 @@ package io.fintrospect.parameters
 case class WebForm(form: Form, errors: Iterable[InvalidParameter]) {
   def isValid = errors.isEmpty
 }
-
-object WebForm {
-  val empty = WebForm(Form(), Nil)
-}

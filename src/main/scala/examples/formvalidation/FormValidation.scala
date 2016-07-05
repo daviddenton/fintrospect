@@ -1,4 +1,4 @@
-package examples.web
+package examples.formvalidation
 
 import java.net.URL
 

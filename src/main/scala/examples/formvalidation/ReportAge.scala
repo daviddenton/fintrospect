@@ -1,10 +1,10 @@
-package examples.web
+package examples.formvalidation
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
-import io.fintrospect.parameters.{Body, FormField, WebForm}
+import io.fintrospect.parameters.{Form, Body, FormField, WebForm}
 import io.fintrospect.templating.View
 import io.fintrospect.templating.View.viewToFuture
 import io.fintrospect.{RouteSpec, ServerRoutes}
@@ -24,7 +24,7 @@ object AgeEntry {
     AgeEntry.fields.name -> "select something here",
     AgeEntry.fields.age -> "this should be a number")
 
-  def apply(): AgeEntry = apply(WebForm.empty)
+  def apply(): AgeEntry = apply(WebForm(Form(), Nil))
 
   def apply(webForm: WebForm): AgeEntry = new AgeEntry(
     webForm.form.fields.mapValues(_.mkString(",")),

@@ -5,6 +5,7 @@ The Fintrospect example code hosted [here](https://github.com/daviddenton/fintro
 - <a href="https://github.com/daviddenton/fintrospect/tree/master/src/main/scala/examples/customformats">```/customformats```</a>- creating a custom message format with it's own Response Builder: HipsterXML
 - <a href="https://github.com/daviddenton/fintrospect/tree/master/src/main/scala/examples/customparameters">```/customparameters```</a>- creating a custom serialisation format for request parameters and bodies
 - <a href="https://github.com/daviddenton/fintrospect/tree/master/src/main/scala/examples/extended">```/extended```</a>- the library application. Example used on the Github project README
+- <a href="https://github.com/daviddenton/fintrospect/tree/master/src/main/scala/examples/formvalidation">```/formvalidation```</a>- shows form validation, with feedback given to the user 
 - <a href="https://github.com/daviddenton/fintrospect/tree/master/src/main/scala/examples/oauth">```/oauth```</a>- shows the usage of plugging in an OAuth2 library to change the input request type
 - <a href="https://github.com/daviddenton/fintrospect/tree/master/src/main/scala/examples/strictcontenttypes">```/strictcontenttypes```</a>- shows how to serve multiple content types from a single route
 - <a href="https://github.com/daviddenton/fintrospect/tree/master/src/main/scala/examples/templating">```/templating```</a>- shows the usage of plugging in Mustache templating library to change the output response type
