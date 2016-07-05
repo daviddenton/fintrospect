@@ -45,13 +45,13 @@ object ResponseFilters {
 
   /**
     * Report the latency on a particular route to a callback function, passing the "X-Fintrospect-Route-Name" header and response status bucket (e.g. 2xx)
-    * for identification. This is useful for logging metrics.
+    * for identification. This is useful for logging metrics. Note that the passed function blocks the response from completing.
     */
   def ReportingRouteLatency(clock: Clock)(recordFn: (String, Duration) => Unit) = Filter.mk[Request, Response, Request, Response] {
     (req, svc) => {
       val start = clock.instant()
 
-      svc(req).onSuccess {
+      svc(req).map {
         resp => {
           val identifier = List(
             req.headerMap.get(Headers.IDENTIFY_SVC_HEADER)
@@ -62,6 +62,7 @@ object ResponseFilters {
             resp.status.code.toString).mkString(".")
 
           recordFn(identifier, Duration.between(start, clock.instant()))
+          resp
         }
       }
     }
