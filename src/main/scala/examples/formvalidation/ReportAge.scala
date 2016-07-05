@@ -4,7 +4,6 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
-import io.fintrospect.parameters.Validator.Opt
 import io.fintrospect.parameters.{Body, Form, FormField, Parameter, Validated, Validation, ValidationFailed, Validator, WebForm}
 import io.fintrospect.templating.View
 import io.fintrospect.templating.View.viewToFuture
@@ -26,19 +25,15 @@ class ReportAge extends ServerRoutes[Request, View] {
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
       if (postedForm.isValid)
-        doFieldValidationOn(postedForm) match {
+        postedForm.validate(NameAndAgeForm.rules) {
+          case (theAge, theName) => DisplayUserAge(theName.get, theAge.get)
+        } match {
           case Validated(nextView) => nextView
-          case ValidationFailed(errors) => NameAndAgeForm(NAMES, postedForm.copy(errors = errors))
+          case ValidationFailed(errors) => NameAndAgeForm(NAMES, postedForm.withErrors(errors))
         }
       else NameAndAgeForm(NAMES, postedForm)
     }
   }
-
-  // we can use a validator here to provide extra validation
-  private def doFieldValidationOn(submitted: WebForm): Validation[DisplayUserAge] =
-    NameAndAgeForm.validate(submitted) {
-      case (theAge, theName) => DisplayUserAge(theName.get, theAge.get)
-    }
 
   // provides form validation on POST to same route
   add(RouteSpec().body(NameAndAgeForm.form).at(Post) bindTo submit)
@@ -55,12 +50,11 @@ object NameAndAgeForm {
 
   val form = Body.webForm(fields.name, fields.age)
 
-  def validate(submitted: WebForm) = {
-    Validator.mk(
-      NameAndAgeForm.fields.age <--?(submitted.form, "Must be an adult", _ >= 18),
-      NameAndAgeForm.fields.name <--?(submitted.form, "Must start with Capital letter", _.charAt(0).isUpper)
-    )
-  }
+  // we can use a validator here to provide extra validation
+  def rules(form: Form) = Validator.mk(
+    NameAndAgeForm.fields.age <--?(form, "Must be an adult", _ >= 18),
+    NameAndAgeForm.fields.name <--?(form, "Must start with Capital letter", _.charAt(0).isUpper)
+  )
 
   private val FIELD_MESSAGES: Map[Parameter, String] = Map(
     NameAndAgeForm.fields.name -> "select the user name",
@@ -68,7 +62,7 @@ object NameAndAgeForm {
 
   def apply(names: Seq[String], webForm: WebForm = WebForm(Form(), Nil)): NameAndAgeForm = new NameAndAgeForm(names,
     webForm.form.fields.mapValues(_.mkString(",")),
-    Map(webForm.errors.map(ip => ip.param.name -> FIELD_MESSAGES(ip.param)).toSeq: _*)
+    Map(webForm.errors.map(ip => ip.param.name -> FIELD_MESSAGES(ip.param)): _*)
   )
 }
 
