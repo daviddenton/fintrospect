@@ -3,8 +3,9 @@ package examples.formvalidation
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
+import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
-import io.fintrospect.parameters.{ValidationFailed, Body, Form, FormField, Parameter, Validated, Validation, Validator, WebForm}
+import io.fintrospect.parameters.{Body, Form, FormField, InvalidParameter, Validated, ValidationFailed, Validator, WebForm}
 import io.fintrospect.templating.View
 import io.fintrospect.templating.View.viewToFuture
 import io.fintrospect.{RouteSpec, ServerRoutes}
@@ -53,14 +54,15 @@ object NameAndAgeForm {
     NameAndAgeForm.fields.name <--?(form, "Must start with Capital letter", _.charAt(0).isUpper)
   )
 
-  private val FIELD_MESSAGES: Map[Parameter, String] = Map(
-    NameAndAgeForm.fields.name -> "select the user name",
-    NameAndAgeForm.fields.age -> "this should be a number")
+  def apply(names: Seq[String], webForm: WebForm = WebForm(Form(), Nil)): NameAndAgeForm = {
+    val e = webForm.errors.map {
+      case Missing(NameAndAgeForm.fields.age) => NameAndAgeForm.fields.name.name -> "required"
+      case Missing(NameAndAgeForm.fields.name) => NameAndAgeForm.fields.name.name -> "select the user name"
+      case ip => ip.param.name -> ip.reason
+    }
 
-  def apply(names: Seq[String], webForm: WebForm = WebForm(Form(), Nil)): NameAndAgeForm = new NameAndAgeForm(names,
-    webForm.form.fields.mapValues(_.mkString(",")),
-    Map(webForm.errors.map(ip => ip.param.name -> FIELD_MESSAGES(ip.param)): _*)
-  )
+    new NameAndAgeForm(names, webForm.form.fields.mapValues(_.mkString(",")), Map(e: _*))
+  }
 }
 
 case class NameAndAgeForm(names: Seq[String], values: Map[String, String], errors: Map[String, String]) extends View
