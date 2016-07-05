@@ -71,7 +71,9 @@ class ResponseFiltersTest extends FunSpec with ShouldMatchers {
 
         val filter = ReportingRouteLatency(ticking) { (name: String, duration: Duration) => called = (name, duration) }
 
-        result(filter(Request(), Service.mk { req => Future.value(Response()) }))
+        val response = Response()
+
+        result(filter(Request(), Service.mk { req => Future.value(response) })) shouldBe response
 
         called shouldBe("GET.UNMAPPED.2xx.200", ofSeconds(1))
       }
@@ -82,10 +84,11 @@ class ResponseFiltersTest extends FunSpec with ShouldMatchers {
         val filter = ReportingRouteLatency(ticking) { (name: String, duration: Duration) => called = (name, duration) }
 
         val request = Request("/")
+        val response = Response()
 
         request.headerMap(Headers.IDENTIFY_SVC_HEADER) = "GET:/path/dir/someFile.html"
 
-        result(filter(request, Service.mk { req => Future.value(Response()) }))
+        result(filter(request, Service.mk { req => Future.value(response) })) shouldBe response
 
         called shouldBe("GET._path_dir_someFile_html.2xx.200", ofSeconds(1))
       }
