@@ -7,19 +7,21 @@
     <label>Name:</label>
     <select id="name" name="name">
         <option value="">- select -</option>
-        <option value="Bill">Bill</option>
-        <option value="Rita">Rita</option>
-        <option value="Sue">Sue</option>
+        {{#names}}
+            <option value="{{.}}">{{.}}</option>
+        {{/names}}
     </select>
+    <b style="color: red">{{errors.name}}</b>
     <br/>
     <label>Age in years:</label>
     <input type="text" id="age" name="age" value="{{values.age}}"/>
+    <b style="color: red">{{errors.age}}</b>
+    <br/>
     <button>submit</button>
 </form>
 
 </body>
 </html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
 <script>
     document.getElementById("name").value = "{{values.name}}";
 </script>
