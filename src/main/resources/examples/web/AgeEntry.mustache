@@ -1,0 +1,25 @@
+<html>
+<body>
+
+<p>Please enter the age of a candidate:</p>
+
+<form action="/" method="post">
+    <label>Name:</label>
+    <select id="name" name="name">
+        <option value="">- select -</option>
+        <option value="Bill">Bill</option>
+        <option value="Rita">Rita</option>
+        <option value="Sue">Sue</option>
+    </select>
+    <br/>
+    <label>Age in years:</label>
+    <input type="text" id="age" name="age" value="{{values.age}}"/>
+    <button>submit</button>
+</form>
+
+</body>
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+<script>
+    document.getElementById("name").value = "{{values.name}}";
+</script>

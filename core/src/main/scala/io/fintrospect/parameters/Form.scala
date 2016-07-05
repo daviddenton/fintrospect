@@ -1,7 +1,5 @@
 package io.fintrospect.parameters
 
-class WebForm(fields: Map[String, Set[String]], val errors: Iterable[InvalidParameter]) extends Form(fields)
-
 /**
  * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
  */
@@ -67,4 +65,12 @@ case class Form(fields: Map[String, Set[String]]) extends Iterable[(String, Set[
 
 object Form {
   def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form(Map.empty))((f, b) => b(f))
+}
+
+class WebForm(fields: Map[String, Set[String]], val errors: Iterable[InvalidParameter]) extends Form(fields) {
+  def isValid = errors.isEmpty
+}
+
+object WebForm {
+  val empty = new WebForm(Map(), Nil)
 }
