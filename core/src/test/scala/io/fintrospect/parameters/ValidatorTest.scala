@@ -12,18 +12,11 @@ class ValidatorTest extends FunSpec with ShouldMatchers {
       ) { case (first, second) => (first, second) } shouldBe Validated((Some(1), Some(2)))
     }
 
-    it("all Successful or NotProvided") {
+    it("all Successful - mix") {
       Validator.mk(
         Extracted(Some(1)),
         Extracted(None)
       ) { case (first, second) => (first, second) } shouldBe Validated((Some(1), None))
-    }
-
-    it("all NotProvided") {
-      Validator.mk(
-        Extracted(None),
-        Extracted(None)
-      ) { case (first, second) => (first, second) } shouldBe Validated((None, None))
     }
 
     it("collects Errors") {
