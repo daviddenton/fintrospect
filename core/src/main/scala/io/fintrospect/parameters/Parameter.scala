@@ -22,10 +22,10 @@ trait Parameter {
     fromInput.map {
       v =>
         deserialize(v) match {
-          case Success(d) => Extracted(d)
+          case Success(d) => Extracted(Some(d))
           case Failure(_) => ExtractionFailed(Invalid(this))
         }
-    }.getOrElse(if (required) ExtractionFailed(Missing(this)) else NotProvided)
+    }.getOrElse(if (required) ExtractionFailed(Missing(this)) else Extracted(None))
 }
 
 /**

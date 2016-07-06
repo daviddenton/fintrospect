@@ -17,7 +17,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
       val param = Query.required.localDate(paramName)
 
       it("retrieves value from field") {
-        param.extract(requestWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        param.extract(requestWithValueOf("2015-02-04")) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
         param <-- requestWithValueOf("2015-02-04") shouldEqual LocalDate.of(2015, 2, 4)
       }
 
@@ -41,7 +41,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("retrieves value from field") {
         val param = Query.required.multi.localDate(paramName)
-        param.extract(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        param.extract(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
         param <-- requestWithValueOf("2015-02-04", "2015-02-05") shouldEqual Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
@@ -69,7 +69,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("retrieves value from field") {
         val param = Query.optional.localDate(paramName)
-        param.extract(requestWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        param.extract(requestWithValueOf("2015-02-04")) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
         param <-- requestWithValueOf("2015-02-04") shouldEqual Option(LocalDate.of(2015, 2, 4))
       }
 
@@ -80,7 +80,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
 
       it("does not retrieve non existent value") {
         val param = Query.optional.xml(paramName)
-        param.extract(requestWithValueOf()) shouldEqual NotProvided
+        param.extract(requestWithValueOf()) shouldEqual Extracted(None)
         param <-- Request() shouldEqual None
       }
 
@@ -102,7 +102,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
       val param = Query.optional.multi.localDate(paramName)
 
       it("retrieves value from field") {
-        param.extract(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        param.extract(requestWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
         param <-- requestWithValueOf("2015-02-04", "2015-02-05") shouldEqual Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
       }
 
@@ -111,7 +111,7 @@ class QueryTest extends FunSpec with ShouldMatchers {
       }
 
       it("does not retrieve non existent value") {
-        param.extract(requestWithValueOf()) shouldEqual NotProvided
+        param.extract(requestWithValueOf()) shouldEqual Extracted(None)
         param <-- Request() shouldEqual None
       }
 

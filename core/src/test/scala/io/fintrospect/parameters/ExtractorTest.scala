@@ -18,10 +18,10 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
         request: Request => for {
           req <- Query.optional.int("req") <--? request
           opt <- Query.optional.int("optional") <--? request
-        } yield (req, opt)
+        } yield Some((req, opt))
       }
 
-      ex <--? Request("/") shouldBe Extracted((None, None))
+      ex <--? Request("/") shouldBe Extracted(Some((None, None)))
     }
 
     it("does not short circuit if last parameter in a for comprehension is optional") {
@@ -29,10 +29,10 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
         request: Request => for {
           req <- Query.required.int("req") <--? request
           opt <- Query.optional.int("optional") <--? request
-        } yield (req, opt)
+        } yield Some((req, opt))
       }
 
-      ex <--? Request("/?req=123") shouldBe Extracted((Some(123), None))
+      ex <--? Request("/?req=123") shouldBe Extracted(Some((Some(123), None)))
     }
 
     describe("non-embedded extraction") {
@@ -42,15 +42,15 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
           name3 <- int.extract(request)
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
-        } yield Example(name1, name2, name3.get)
+        } yield Some(Example(name1, name2, name3.get))
       }
 
       it("successfully extracts when all parameters present") {
-        c <--? Request("/?name1=query1&name2=rwer&name3=12") shouldBe Extracted(Example(Some("query1"), Some("rwer"), 12))
+        c <--? Request("/?name1=query1&name2=rwer&name3=12") shouldBe Extracted(Some(Example(Some("query1"), Some("rwer"), 12)))
       }
 
       it("successfully extracts when only optional parameters missing") {
-        c <--? Request("/?name3=123") shouldBe Extracted(Example(None, None, 123))
+        c <--? Request("/?name3=123") shouldBe Extracted(Some(Example(None, None, 123)))
       }
 
       it("reports error when not all parameters present") {
@@ -87,18 +87,18 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
           name3 <- innerInt.extract(request)
           name1 <- Query.optional.string("name1").extract(request)
           name2 <- Query.optional.string("name2").extract(request)
-        } yield Example(name1, name2, name3.get)
+        } yield Some(Example(name1, name2, name3.get))
       }
 
       val outer = Extractor.mk {
         request: Request => for {
           name4 <- outerInt <--? request
           inner <- inner <--? request
-        } yield WrappedExample(inner, name4.get)
+        } yield Some(WrappedExample(inner, name4.get))
       }
 
       it("success") {
-        outer <--? Request("/?innerInt=123&outerInt=1") shouldBe Extracted(WrappedExample(Some(Example(None, None, 123)), 1))
+        outer <--? Request("/?innerInt=123&outerInt=1") shouldBe Extracted(Some(WrappedExample(Some(Example(None, None, 123)), 1)))
       }
 
       it("inner extract fails reports only inner error") {
@@ -111,10 +111,10 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
 
     describe("falling back to default value") {
       it("Extracted") {
-        Extracted(true).orDefault(false) shouldBe Extracted(true)
+        Extracted(Some(true)).orDefault(false) shouldBe Extracted(Some(true))
       }
       it("NotProvided") {
-        NotProvided.orDefault(true) shouldBe Extracted(true)
+        Extracted(None).orDefault(true) shouldBe Extracted(Some(true))
       }
       it("ExtractionFailed") {
         val param = Query.required.string("param")
@@ -127,15 +127,14 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
       val invalid = Invalid(Query.optional.string("bob"))
       val missing = Missing(Query.optional.string("bob"))
       it("flatten") {
-        Extraction.flatten(NotProvided) shouldBe NotProvided
-        Extraction.flatten(Extracted(None)) shouldBe NotProvided
-        Extraction.flatten(Extracted(Some(1))) shouldBe Extracted(1)
+        Extraction.flatten(Extracted(None)) shouldBe Extracted(None)
+        Extraction.flatten(Extracted(Some(1))) shouldBe Extracted(Some(1))
         Extraction.flatten(ExtractionFailed(Seq(invalid))) shouldBe ExtractionFailed(Seq(invalid))
       }
       it("combine") {
-        Extraction.combine(Seq(NotProvided, NotProvided)) shouldBe NotProvided
-        Extraction.combine(Seq(NotProvided, Extracted(1))) shouldBe NotProvided
-        Extraction.combine(Seq(NotProvided, Extracted(1), ExtractionFailed(missing), ExtractionFailed(invalid))) shouldBe ExtractionFailed(Seq(missing, invalid))
+        Extraction.combine(Seq(Extracted(None), Extracted(None))) shouldBe Extracted(None)
+        Extraction.combine(Seq(Extracted(None), Extracted(Some(1)))) shouldBe Extracted(None)
+        Extraction.combine(Seq(Extracted(None), Extracted(Some(1)), ExtractionFailed(missing), ExtractionFailed(invalid))) shouldBe ExtractionFailed(Seq(missing, invalid))
       }
     }
 

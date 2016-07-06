@@ -10,7 +10,7 @@ import io.fintrospect.ContentTypes.{APPLICATION_XHTML_XML, APPLICATION_XML, WILD
 import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
 import io.fintrospect.filters.RequestFilters.{AddHost, BasicAuthorization, StrictAccept}
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{Extracted, ExtractionFailed, Extractor, NotProvided, Query}
+import io.fintrospect.parameters.{Extracted, ExtractionFailed, Extractor, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -23,7 +23,7 @@ class RequestFiltersTest extends FunSpec with ShouldMatchers {
         val message = "hello"
 
         val filter = RequestFilters.ExtractingRequest {
-          req => Extracted(message)
+          req => Extracted(Some(message))
         }
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 
@@ -49,7 +49,7 @@ class RequestFiltersTest extends FunSpec with ShouldMatchers {
 
       it("when extraction fails with no object at all then return bad request") {
         val filter = RequestFilters.ExtractingRequest[String] {
-          req => NotProvided
+          req => Extracted(None)
         }
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 

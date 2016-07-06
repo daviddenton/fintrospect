@@ -15,7 +15,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       val field = FormField.required.localDate(paramName)
 
       it("validates value from form field") {
-        field.extract(formWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+        field.extract(formWithValueOf("2015-02-04")) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
         field <-- formWithValueOf("2015-02-04") shouldEqual LocalDate.of(2015, 2, 4)
       }
 
@@ -38,7 +38,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       val field = FormField.required.multi.localDate(paramName)
 
       it("validates value from form field") {
-        field.extract(formWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        field.extract(formWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
         field <-- formWithValueOf("2015-02-04", "2015-02-05") shouldEqual Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
@@ -61,7 +61,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       val field = FormField.required.multi.string(paramName, validation = EmptyIsInvalid)
 
       it("validates value from form field") {
-        field.extract(new Form(Map(paramName -> Set("123", "456")))) shouldEqual Extracted(Seq("123", "456"))
+        field.extract(new Form(Map(paramName -> Set("123", "456")))) shouldEqual Extracted(Some(Seq("123", "456")))
         field <-- new Form(Map(paramName -> Set("123", "456"))) shouldEqual Seq("123", "456")
       }
 
@@ -85,7 +85,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     val field = FormField.optional.localDate(paramName)
 
     it("validates value from form field") {
-      field.extract(formWithValueOf("2015-02-04")) shouldEqual Extracted(LocalDate.of(2015, 2, 4))
+      field.extract(formWithValueOf("2015-02-04")) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
       field <-- formWithValueOf("2015-02-04") shouldEqual Option(LocalDate.of(2015, 2, 4))
     }
 
@@ -94,7 +94,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     }
 
     it("does not validate non existent value") {
-      field.extract(formWithValueOf()) shouldEqual NotProvided
+      field.extract(formWithValueOf()) shouldEqual Extracted(None)
       field <-- formWithValueOf() shouldEqual None
     }
 

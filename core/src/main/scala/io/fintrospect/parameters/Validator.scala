@@ -27,8 +27,7 @@ object Validator {
   type Opt[T] = Option[T]
 
   private def <--[T](e: Extraction[T]): Option[T] = e match {
-    case Extracted(v) => Some(v)
-    case NotProvided => None
+    case Extracted(v) => v
     case ExtractionFailed(_) => None
   }
 

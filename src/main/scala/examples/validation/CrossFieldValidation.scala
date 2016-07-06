@@ -7,7 +7,7 @@ import com.twitter.finagle.http.Status.{BadRequest, Ok}
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await.result
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{Extracted, ExtractionFailed, Extractor, NotProvided, Query}
+import io.fintrospect.parameters.{Extracted, ExtractionFailed, Extractor, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.{ModuleSpec, RouteSpec}
 
@@ -34,7 +34,7 @@ object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
     } yield {
       // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
       // the mandatory fields would short-circuit the comprehension if they were missing.
-      Person(gender, exp.get)
+      Some(Person(gender, exp.get))
     }
   }
 
@@ -49,7 +49,7 @@ object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
         teacher <- person <--? req
         pupils <- Query.required.int("pupils") <--?(req, "Too many pupils", lessThanYearsExperience(teacher))
       } yield {
-        SchoolClass(pupils.get, teacher.get)
+        Some(SchoolClass(pupils.get, teacher.get))
       }
     }
   }
@@ -58,9 +58,9 @@ object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
   val checkClassSize = RouteSpec().at(Get) bindTo Service.mk {
     req: Request => {
       acceptableClassSize <--? req match {
-        case Extracted(clazz) => Ok(clazz.toString)
+        case Extracted(Some(clazz)) => Ok(clazz.toString)
+        case Extracted(None) => BadRequest()
         case ExtractionFailed(sp) => BadRequest(sp.mkString(", "))
-        case NotProvided => BadRequest()
       }
     }
   }
