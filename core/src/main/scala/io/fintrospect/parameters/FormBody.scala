@@ -36,7 +36,7 @@ class FormBody(val fields: Seq[FormField[_] with Retrieval[Form, _] with Extract
       case Success(form) =>
         Extraction.combine(fields.map(_.extract(form))) match {
           case failed@ExtractionFailed(_) => failed
-          case _ => Extracted(form)
+          case _ => Extracted(Some(form))
         }
       case Failure(e) => ExtractionFailed(fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
     }

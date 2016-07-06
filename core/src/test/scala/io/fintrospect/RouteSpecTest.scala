@@ -9,7 +9,7 @@ import com.twitter.util.Future
 import io.fintrospect.RouteSpec.RequestValidation
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters.InvalidParameter.Missing
-import io.fintrospect.parameters.{Body, ExtractionFailed, Header, NotProvided, Path, Query}
+import io.fintrospect.parameters.{Extracted, Body, ExtractionFailed, Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
@@ -103,7 +103,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       it("succeeds when nothing missing") {
         val request = Request("?bob=bill")
         request.contentString = "{}"
-        spec <--? request shouldBe NotProvided
+        spec <--? request shouldBe Extracted(None)
       }
 
       it("fails on missing param") {
@@ -125,7 +125,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       val spec = RouteSpec(validation = RequestValidation.noBody).taking(param).body(body)
 
       it("succeeds on missing body") {
-        spec <--? Request("?bob=bill") shouldBe NotProvided
+        spec <--? Request("?bob=bill") shouldBe Extracted(None)
       }
 
       it("fails on missing param") {
@@ -139,7 +139,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       it("succeeds on missing params") {
         val request = Request("")
         request.contentString = "{}"
-        spec <--? request shouldBe NotProvided
+        spec <--? request shouldBe Extracted(None)
       }
 
       it("fails on missing body") {
@@ -155,7 +155,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
 
       it("succeeds on missing params and body") {
         val request = Request("")
-        spec <--? request shouldBe NotProvided
+        spec <--? request shouldBe Extracted(None)
       }
     }
 

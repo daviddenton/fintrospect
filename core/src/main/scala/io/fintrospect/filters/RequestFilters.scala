@@ -10,7 +10,7 @@ import com.twitter.util.Future
 import io.fintrospect.ContentType.fromAcceptHeaders
 import io.fintrospect.configuration.{Authority, Credentials}
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{Extracted, Extraction, ExtractionFailed, Extractor, NotProvided}
+import io.fintrospect.parameters.{Extracted, Extraction, ExtractionFailed, Extractor}
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{ContentType, ContentTypes}
@@ -91,8 +91,8 @@ object RequestFilters {
   Filter[Request, Response, I, Response] = Filter.mk[Request, Response, I, Response] {
     (req, svc) => {
       extractable <--? req match {
-        case Extracted(x) => svc(x)
-        case NotProvided => Future.value(moduleRenderer.badRequest(Nil))
+        case Extracted(Some(x)) => svc(x)
+        case Extracted(None) => Future.value(moduleRenderer.badRequest(Nil))
         case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
       }
     }

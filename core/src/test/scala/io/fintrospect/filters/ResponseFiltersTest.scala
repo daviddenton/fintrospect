@@ -10,7 +10,7 @@ import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.Headers
 import io.fintrospect.filters.ResponseFilters._
-import io.fintrospect.parameters.{Extracted, NotProvided}
+import io.fintrospect.parameters.Extracted
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.TestClocks._
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -24,25 +24,25 @@ class ResponseFiltersTest extends FunSpec with ShouldMatchers {
         val message = "hello"
 
         val filter = ResponseFilters.ExtractingResponse {
-          req => Extracted(message)
+          req => Extracted(Some(message))
         }
 
         val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
 
         response match {
-          case Extracted(s) => s shouldBe message
+          case Extracted(Some(s)) => s shouldBe message
           case _ => fail("did not pass")
         }
       }
 
       it("when extraction fails with no object at all") {
         val filter = ResponseFilters.ExtractingResponse {
-          req => NotProvided
+          req => Extracted(None)
         }
         val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
 
         response match {
-          case NotProvided =>
+          case Extracted(None) =>
           case _ => fail("did not pass")
         }
       }

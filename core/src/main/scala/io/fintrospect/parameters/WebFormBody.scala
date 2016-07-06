@@ -23,7 +23,7 @@ class WebFormBody(form: FormBody)
 
   override def <--?(message: Message): Extraction[WebForm] =
     Try(spec.deserialize(message.contentString)) match {
-      case Success(webForm) => Extracted(webForm)
+      case Success(webForm) => Extracted(Some(webForm))
       case Failure(e) => ExtractionFailed(form.fields.filter(_.required).map(InvalidParameter(_, "Could not parse")))
     }
 }
