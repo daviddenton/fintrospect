@@ -6,19 +6,18 @@ import scala.language.implicitConversions
 class Validator[In <: Product] private(extractors: Product, value: => In) {
   private val errors = extractors
     .productIterator
-    .filter(_.isInstanceOf[Extraction[_]])
-    .map(_.asInstanceOf[Extraction[_]]).toList
+    .toSeq
     .flatMap {
       case ExtractionFailed(q) => q
       case _ => Nil
     }
 
   /**
-    * The terminating mechanism for a Validation construct. The PartialFunction is used to capture logic for dealing with
+    * The terminating mechanism for a Validation construct. The Function is used to capture logic for dealing with
     * the successfully extracted parameter instances (much like the "yield" call in the cross-validating case
     */
-  def apply[Result](pf: Function[In, Result]): Validation[Result] =
-    if (errors.isEmpty) Validated(pf(value)) else ValidationFailed(errors)
+  def apply[Result](fn: Function[In, Result]): Validation[Result] =
+    if (errors.isEmpty) Validated(fn(value)) else ValidationFailed(errors)
 }
 
 object Validator {

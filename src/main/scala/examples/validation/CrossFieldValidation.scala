@@ -17,7 +17,7 @@ case class SchoolClass(pupils: Int, teacher: Person)
 
 /**
   * This example shows how to apply cross-field validation rules for the request using a for comprehensions
-  * and the "Extraction" construct. The comprehension returns  an Extracted, NotProvided, or ExractionFailed instance.
+  * and the "Extraction" construct. The comprehension returns an Extracted, or ExtractionFailed instance.
   * Note that the Extractables can be nested in other Extractables, which allows for re-use and compartmentalisation of
   * validation logic.
   *

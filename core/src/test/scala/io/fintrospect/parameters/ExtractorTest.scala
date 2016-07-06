@@ -112,8 +112,6 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
     describe("falling back to default value") {
       it("Extracted") {
         Extracted(Some(true)).orDefault(false) shouldBe Extracted(Some(true))
-      }
-      it("NotProvided") {
         Extracted(None).orDefault(true) shouldBe Extracted(Some(true))
       }
       it("ExtractionFailed") {
@@ -126,11 +124,7 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
     describe("misc methods") {
       val invalid = Invalid(Query.optional.string("bob"))
       val missing = Missing(Query.optional.string("bob"))
-      it("flatten") {
-        Extraction.flatten(Extracted(None)) shouldBe Extracted(None)
-        Extraction.flatten(Extracted(Some(1))) shouldBe Extracted(Some(1))
-        Extraction.flatten(ExtractionFailed(Seq(invalid))) shouldBe ExtractionFailed(Seq(invalid))
-      }
+
       it("combine") {
         Extraction.combine(Seq(Extracted(None), Extracted(None))) shouldBe Extracted(None)
         Extraction.combine(Seq(Extracted(None), Extracted(Some(1)))) shouldBe Extracted(None)

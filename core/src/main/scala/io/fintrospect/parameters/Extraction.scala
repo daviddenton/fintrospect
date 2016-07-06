@@ -28,11 +28,6 @@ object Extraction {
     * Wraps in a successful extraction - this assumes the item was not mandatory.
     */
   def apply[T](t: Option[T]): Extraction[T] = Extracted(t)
-
-  /**
-    * For optional cases, you can use this to convert an Extraction(None) -> NotProvided
-    */
-  def flatten[T](extraction: Extraction[T]): Extraction[T] = extraction
 }
 
 /**

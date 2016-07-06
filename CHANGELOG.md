@@ -6,6 +6,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
+## 13.4.0 (uncut)
+- Breaking: Removed `NotProvided` extraction option
+
 ## 13.3.0
 - Option for empty `string` validation to be rejected as `InvalidParameter` in `QueryParameters` et al.
 - Breaking: removed unused `HttpRequestResponseUtil:contentFrom()` method. Simply use `request.contentString` instead
