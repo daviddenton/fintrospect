@@ -34,7 +34,7 @@ object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
     } yield {
       // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
       // the mandatory fields would short-circuit the comprehension if they were missing.
-      Some(Person(gender, exp.get))
+      Person(gender, exp.get)
     }
   }
 
@@ -49,7 +49,7 @@ object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
         teacher <- person <--? req
         pupils <- Query.required.int("pupils") <--?(req, "Too many pupils", lessThanYearsExperience(teacher))
       } yield {
-        Some(SchoolClass(pupils.get, teacher.get))
+        SchoolClass(pupils.get, teacher.get)
       }
     }
   }

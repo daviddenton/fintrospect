@@ -6,7 +6,7 @@ package io.fintrospect.parameters
 sealed trait Extraction[+T] {
   def flatMap[O](f: Option[T] => Extraction[O]): Extraction[O]
 
-  def map[O](f: Option[T] => Option[O]): Extraction[O]
+  def map[O](f: Option[T] => O): Extraction[O]
 
   def orDefault[O >: T](f: => O): Extraction[O]
 }
@@ -41,7 +41,7 @@ object Extraction {
 case class Extracted[T](value: Option[T]) extends Extraction[T] {
   def flatMap[O](f: Option[T] => Extraction[O]) = f(value)
 
-  override def map[O](f: Option[T] => Option[O]) = Extracted(f(value))
+  override def map[O](f: Option[T] => O) = Extracted(Some(f(value)))
 
   override def orDefault[O >: T](f: => O): Extraction[O] = Extracted(value.orElse(Some(f)))
 }
@@ -52,7 +52,7 @@ case class Extracted[T](value: Option[T]) extends Extraction[T] {
 case class ExtractionFailed(invalid: Seq[InvalidParameter]) extends Extraction[Nothing] {
   def flatMap[O](f: Option[Nothing] => Extraction[O]) = ExtractionFailed(invalid)
 
-  override def map[O](f: Option[Nothing] => Option[O]) = ExtractionFailed(invalid)
+  override def map[O](f: Option[Nothing] => O) = ExtractionFailed(invalid)
 
   override def orDefault[T](f: => T): Extraction[T] = this
 }
