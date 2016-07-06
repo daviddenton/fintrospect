@@ -18,13 +18,10 @@ trait Parameter {
   override def toString = s"Parameter(name=$name,where=$where,paramType=${paramType.name})"
 
   protected def extractFrom[T](deserialize: Seq[String] => Try[T],
-                     fromInput: Option[Seq[String]]): Extraction[T] =
-    fromInput.map {
-      v =>
-        deserialize(v) match {
-          case Success(d) => Extracted(Some(d))
-          case Failure(_) => ExtractionFailed(Invalid(this))
-        }
+                               fromInput: Option[Seq[String]]): Extraction[T] =
+    fromInput.map(deserialize).map {
+      case Success(d) => Extracted(Some(d))
+      case Failure(_) => ExtractionFailed(Invalid(this))
     }.getOrElse(if (required) ExtractionFailed(Missing(this)) else Extracted(None))
 }
 
@@ -33,6 +30,7 @@ trait Parameter {
   */
 trait ParameterExtractAndBind[From, B <: Binding] {
   def newBinding(parameter: Parameter, value: String): B
+
   def valuesFrom(parameter: Parameter, from: From): Option[Seq[String]]
 }
 
