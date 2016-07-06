@@ -3,9 +3,9 @@ package examples.formvalidation
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
+import io.fintrospect.parameters.InvalidParameter.Missing
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
-import io.fintrospect.parameters.{Body, Form, FormField, InvalidParameter, Validated, ValidationFailed, Validator, WebForm}
+import io.fintrospect.parameters.{Body, Form, FormField, Validated, ValidationFailed, Validator, WebForm}
 import io.fintrospect.templating.View
 import io.fintrospect.templating.View.viewToFuture
 import io.fintrospect.{RouteSpec, ServerRoutes}

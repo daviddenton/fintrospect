@@ -9,7 +9,7 @@ import com.twitter.util.Future
 import io.fintrospect.RouteSpec.RequestValidation
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters.InvalidParameter.Missing
-import io.fintrospect.parameters.{Extracted, Body, ExtractionFailed, Header, Path, Query}
+import io.fintrospect.parameters.{Body, Extracted, ExtractionFailed, Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
