@@ -10,7 +10,7 @@ import org.scalatest.{FunSpec, ShouldMatchers}
 class JsonErrorResponseRendererTest extends FunSpec with ShouldMatchers {
 
   it("can build 400") {
-    val response = statusAndContentFrom(badRequest(Seq(ExtractionError[String](Query.required.string("bob").name, "missing"))))
+    val response = statusAndContentFrom(badRequest(Seq(ExtractionError(Query.required.string("bob").name, "missing"))))
     response._1 shouldBe Status.BadRequest
     parse(response._2).getStringValue("message") shouldBe "Missing/invalid parameters"
   }
