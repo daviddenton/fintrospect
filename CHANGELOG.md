@@ -8,6 +8,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## 13.4.0 (uncut)
 - Breaking: Removed `NotProvided` extraction option
+- Breaking: Renamed `InvalidParameter` to `ExtractionError`
 
 ## 13.3.0
 - Option for empty `string` validation to be rejected as `InvalidParameter` in `QueryParameters` et al.

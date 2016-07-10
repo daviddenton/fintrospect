@@ -52,7 +52,7 @@ class Swagger1dot1Json extends ModuleRenderer {
     Ok(obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api))))
   }
 
-  override def badRequest(badParameters: Seq[ExtractionError[String]]): Response = JsonErrorResponseRenderer.badRequest(badParameters)
+  override def badRequest(badParameters: Seq[ExtractionError]): Response = JsonErrorResponseRenderer.badRequest(badParameters)
 
   override def notFound(request: Request): Response = JsonErrorResponseRenderer.notFound()
 }

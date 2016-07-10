@@ -12,7 +12,7 @@ import io.fintrospect.parameters.{ExtractionError, ExtractionError$, Security}
 
 class SiteMapModuleRenderer(baseUrl: URL) extends ModuleRenderer {
 
-  override def badRequest(badParameters: Seq[ExtractionError[String]]): Response = BadRequest(badParameters.toString())
+  override def badRequest(badParameters: Seq[ExtractionError]): Response = BadRequest(badParameters.toString())
 
   override def notFound(request: Request): Response = NotFound()
 

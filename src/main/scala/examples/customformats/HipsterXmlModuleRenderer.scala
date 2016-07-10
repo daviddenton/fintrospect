@@ -14,7 +14,7 @@ import io.fintrospect.renderers.ModuleRenderer
  */
 object HipsterXmlModuleRenderer extends ModuleRenderer {
 
-  override def badRequest(badParameters: Seq[ExtractionError[String]]): Response = Error(Status.BadRequest, badParameters.toString())
+  override def badRequest(badParameters: Seq[ExtractionError]): Response = Error(Status.BadRequest, badParameters.toString())
 
   override def notFound(request: Request): Response = Error(Status.NotFound)
 

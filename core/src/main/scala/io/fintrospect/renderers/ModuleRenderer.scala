@@ -13,7 +13,7 @@ import io.fintrospect.parameters.{ExtractionError, ExtractionError$, Security}
 trait ModuleRenderer {
   def notFound(request: Request): Response = Response(NotFound)
 
-  def badRequest(badParameters: Seq[ExtractionError[String]]): Response
+  def badRequest(badParameters: Seq[ExtractionError]): Response
 
   def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response
 }

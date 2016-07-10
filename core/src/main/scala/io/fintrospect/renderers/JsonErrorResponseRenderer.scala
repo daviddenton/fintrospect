@@ -7,7 +7,7 @@ import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuild
 import io.fintrospect.parameters.{ExtractionError, ExtractionError$, Parameter}
 
 object JsonErrorResponseRenderer {
-  def badRequest(badParameters: Seq[ExtractionError[String]]): Response = {
+  def badRequest(badParameters: Seq[ExtractionError]): Response = {
     val messages = badParameters.map(p => obj(
       "name" -> string(p.name),
       "reason" -> string(p.reason)
