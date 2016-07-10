@@ -7,14 +7,14 @@ import io.fintrospect.ServerRoute
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat.{Field, obj}
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{InvalidParameter, Security}
+import io.fintrospect.parameters.{ExtractionError$, Security}
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 
 /**
  * Ultra-basic ModuleRenderer implementation that only supports the route paths and the main descriptions of each.
  */
 class SimpleJson extends ModuleRenderer {
-  override def badRequest(badParameters: Seq[InvalidParameter]): Response = JsonErrorResponseRenderer.badRequest(badParameters)
+  override def badRequest(badParameters: Seq[ExtractionError]): Response = JsonErrorResponseRenderer.badRequest(badParameters)
 
   override def notFound(request: Request): Response = JsonErrorResponseRenderer.notFound()
 

@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
+import io.fintrospect.parameters.ExtractionError.{Invalid, Missing}
 import org.scalatest._
 
 class ExtractorTest extends FunSpec with ShouldMatchers {
@@ -54,7 +54,7 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
       }
 
       it("reports error when not all parameters present") {
-        c <--? Request("/?name1=query1") shouldBe ExtractionFailed(Missing(int))
+        c <--? Request("/?name1=query1") shouldBe ExtractionFailed(Missing(int.name))
       }
     }
 
@@ -76,7 +76,7 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
         }
       }
 
-      c <--? Request("/?start=2002-01-01&end=2001-01-01") shouldBe ExtractionFailed(InvalidParameter(end, "not after start"))
+      c <--? Request("/?start=2002-01-01&end=2001-01-01") shouldBe ExtractionFailed(ExtractionError(end.name, "not after start"))
     }
 
     describe("can embed extractables") {
@@ -102,10 +102,10 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
       }
 
       it("inner extract fails reports only inner error") {
-        outer <--? Request("/?outerInt=123") shouldBe ExtractionFailed(Missing(innerInt))
+        outer <--? Request("/?outerInt=123") shouldBe ExtractionFailed(Missing(innerInt.name))
       }
       it("outer extract fails reports only outer error") {
-        outer <--? Request("/?innerInt=123") shouldBe ExtractionFailed(Missing(outerInt))
+        outer <--? Request("/?innerInt=123") shouldBe ExtractionFailed(Missing(outerInt.name))
       }
     }
 
@@ -116,14 +116,14 @@ class ExtractorTest extends FunSpec with ShouldMatchers {
       }
       it("ExtractionFailed") {
         val param = Query.required.string("param")
-        ExtractionFailed(Invalid(param)).orDefault(true) shouldBe ExtractionFailed(Invalid(param))
+        ExtractionFailed(Invalid(param.name)).orDefault(true) shouldBe ExtractionFailed(Invalid(param.name))
 
       }
     }
 
     describe("misc methods") {
-      val invalid = Invalid(Query.optional.string("bob"))
-      val missing = Missing(Query.optional.string("bob"))
+      val invalid = Invalid(Query.optional.string("bob").name)
+      val missing = Missing(Query.optional.string("bob").name)
 
       it("combine") {
         Extraction.combine(Seq(Extracted(None), Extracted(None))) shouldBe Extracted(None)

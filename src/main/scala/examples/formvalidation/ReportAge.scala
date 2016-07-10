@@ -3,7 +3,7 @@ package examples.formvalidation
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.InvalidParameter.Missing
+import io.fintrospect.parameters.ExtractionError.Missing
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
 import io.fintrospect.parameters.{Body, Form, FormField, Validated, ValidationFailed, Validator, WebForm}
 import io.fintrospect.templating.View
@@ -56,9 +56,9 @@ object NameAndAgeForm {
 
   def apply(names: Seq[String], webForm: WebForm = WebForm(Form(), Nil)): NameAndAgeForm = {
     val e = webForm.errors.map {
-      case Missing(NameAndAgeForm.fields.age) => NameAndAgeForm.fields.name.name -> "required"
-      case Missing(NameAndAgeForm.fields.name) => NameAndAgeForm.fields.name.name -> "select the user name"
-      case ip => ip.param.name -> ip.reason
+      case Missing(NameAndAgeForm.fields.age.name) => NameAndAgeForm.fields.name.name -> "required"
+      case Missing(NameAndAgeForm.fields.name.name) => NameAndAgeForm.fields.name.name -> "select the user name"
+      case ip => ip.name -> ip.reason
     }
 
     new NameAndAgeForm(names, webForm.form.fields.mapValues(_.mkString(",")), Map(e: _*))

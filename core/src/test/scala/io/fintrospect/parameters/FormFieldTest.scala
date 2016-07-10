@@ -2,7 +2,7 @@ package io.fintrospect.parameters
 
 import java.time.LocalDate
 
-import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
+import io.fintrospect.parameters.ExtractionError.{Invalid, Missing}
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
 import org.scalatest._
 
@@ -20,11 +20,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to validate invalid value") {
-        field.extract(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
+        field.extract(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field.name))
       }
 
       it("does not validate non existent value") {
-        field.extract(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
+        field.extract(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field.name))
       }
 
       it("can rebind valid value") {
@@ -43,11 +43,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to validate invalid value") {
-        field.extract(formWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(field))
+        field.extract(formWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(field.name))
       }
 
       it("does not validate non existent value") {
-        field.extract(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field))
+        field.extract(formWithValueOf()) shouldEqual ExtractionFailed(Missing(field.name))
       }
 
       it("can rebind valid value") {
@@ -66,11 +66,11 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to validate invalid value") {
-        field.extract(new Form(Map(paramName -> Set("", "456")))) shouldEqual ExtractionFailed(Invalid(field))
+        field.extract(new Form(Map(paramName -> Set("", "456")))) shouldEqual ExtractionFailed(Invalid(field.name))
       }
 
       it("does not validate non existent value") {
-        field.extract(new Form(Map())) shouldEqual ExtractionFailed(Missing(field))
+        field.extract(new Form(Map())) shouldEqual ExtractionFailed(Missing(field.name))
       }
 
       it("can rebind valid value") {
@@ -90,7 +90,7 @@ class FormFieldTest extends FunSpec with ShouldMatchers {
     }
 
     it("fails to validate invalid value") {
-      field.extract(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field))
+      field.extract(formWithValueOf("notValid")) shouldEqual ExtractionFailed(Invalid(field.name))
     }
 
     it("does not validate non existent value") {

@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
+import io.fintrospect.parameters.ExtractionError.{Invalid, Missing}
 
 import scala.util.{Failure, Success, Try}
 
@@ -15,14 +15,14 @@ trait Parameter {
   val where: String
   val paramType: ParamType
 
-  override def toString = s"Parameter(name=$name,where=$where,paramType=${paramType.name})"
+  override def toString = s"${if (required) "Mandatory" else "Optional"} parameter $name (${paramType.name}) in $where"
 
   protected def extractFrom[T](deserialize: Seq[String] => Try[T],
                                fromInput: Option[Seq[String]]): Extraction[T] =
     fromInput.map(deserialize).map {
       case Success(d) => Extracted(Some(d))
-      case Failure(_) => ExtractionFailed(Invalid(this))
-    }.getOrElse(if (required) ExtractionFailed(Missing(this)) else Extracted(None))
+      case Failure(_) => ExtractionFailed(Invalid(name))
+    }.getOrElse(if (required) ExtractionFailed(Missing(name)) else Extracted(None))
 }
 
 /**

@@ -8,7 +8,7 @@ import com.twitter.util.Await.result
 import com.twitter.util.Future
 import io.fintrospect.RouteSpec.RequestValidation
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
-import io.fintrospect.parameters.InvalidParameter.Missing
+import io.fintrospect.parameters.ExtractionError.Missing
 import io.fintrospect.parameters.{Body, Extracted, ExtractionFailed, Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -29,7 +29,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
 
     describe("invalid parameters are dealt with") {
       it("missing request parameters throw up") {
-        responseFor(clientWithQueryNameAndMaxAgeAndGender(name --> "bob", maxAge --> 7, gender --> "male")) shouldEqual(BadRequest, "Client: Missing required params passed: Parameter(name=query,where=query,paramType=string)")
+        responseFor(clientWithQueryNameAndMaxAgeAndGender(name --> "bob", maxAge --> 7, gender --> "male")) shouldEqual(BadRequest, "Client: Missing required params passed: Mandatory parameter query (string) in query")
       }
       it("missing path parameters throw up") {
         responseFor(clientWithQueryNameAndMaxAgeAndGender(query --> "bob", maxAge --> 7, gender --> "male")) shouldEqual(BadRequest, "Client: Missing required params passed: {pathName}")
@@ -109,13 +109,13 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       it("fails on missing param") {
         val request = Request("")
         request.contentString = "{}"
-        spec <--? request shouldBe ExtractionFailed(Missing(param))
+        spec <--? request shouldBe ExtractionFailed(Missing(param.name))
       }
 
       it("fails on missing body") {
         val request = Request("?bob=bill")
         spec <--? request match {
-          case ExtractionFailed(ps) => ps.head.param.name shouldBe "body"
+          case ExtractionFailed(ps) => ps.head.name shouldBe "body"
           case _ => fail("did not fail to extract")
         }
       }
@@ -129,7 +129,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails on missing param") {
-        spec <--? Request("") shouldBe ExtractionFailed(Missing(param))
+        spec <--? Request("") shouldBe ExtractionFailed(Missing(param.name))
       }
     }
 
@@ -144,7 +144,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
 
       it("fails on missing body") {
         spec <--? Request("") match {
-          case ExtractionFailed(ps) => ps.head.param.name shouldBe "body"
+          case ExtractionFailed(ps) => ps.head.name shouldBe "body"
           case _ => fail("did not fail to extract")
         }
       }
