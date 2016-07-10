@@ -28,7 +28,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
     }
 
     it("validation when missing") {
-      body.extract(Request()) shouldEqual ExtractionFailed(body.iterator.toSeq.map(InvalidParameter.Invalid))
+      body.extract(Request()) shouldEqual ExtractionFailed(body.iterator.toSeq.map(p => ExtractionError.Invalid(p.name)))
     }
   }
 
@@ -97,7 +97,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
       request.contentString shouldEqual "aString=asd"
       request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
-      deserializedForm shouldEqual WebForm(inputForm, Seq(InvalidParameter.Missing(anotherString)))
+      deserializedForm shouldEqual WebForm(inputForm, Seq(ExtractionError.Missing(anotherString.name)))
     }
   }
 

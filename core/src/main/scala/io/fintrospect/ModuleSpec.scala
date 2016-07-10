@@ -7,7 +7,7 @@ import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 import io.fintrospect.ModuleSpec.ModifyPath
-import io.fintrospect.parameters.{ExtractionFailed, InvalidParameter, NoSecurity, Security}
+import io.fintrospect.parameters.{ExtractionFailed, ExtractionError$, NoSecurity, Security}
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.types.ServiceBinding
 
@@ -22,7 +22,7 @@ object ModuleSpec {
   def apply(basePath: Path): ModuleSpec[Request, Response] = apply(basePath, new ModuleRenderer {
     override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = Response(NotFound)
 
-    override def badRequest(badParameters: Seq[InvalidParameter]): Response = Response(BadRequest)
+    override def badRequest(badParameters: Seq[ExtractionError]): Response = Response(BadRequest)
 
     override def notFound(request: Request): Response = Response(NotFound)
   })

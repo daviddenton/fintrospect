@@ -9,7 +9,7 @@ class ParameterTest extends FunSpec with ShouldMatchers {
 
   describe("Parameter") {
     it("toString is descriptive") {
-      Header.required.bigDecimal("paramName").toString shouldEqual "Parameter(name=paramName,where=header,paramType=number)"
+      Header.required.bigDecimal("paramName").toString shouldEqual "Mandatory parameter paramName (number) in header"
     }
 
     it("custom type") {

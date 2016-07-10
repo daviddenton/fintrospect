@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.{Message, Request, Response}
-import io.fintrospect.parameters.InvalidParameter.{Invalid, Missing}
+import io.fintrospect.parameters.ExtractionError.{Invalid, Missing}
 import org.scalatest._
 
 class HeaderTest extends FunSpec with ShouldMatchers {
@@ -21,11 +21,11 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param.name))
       }
 
       it("does not retrieve non existent value") {
-        param.extract(messageWithHeaderValueOf(None)) shouldEqual ExtractionFailed(Missing(param))
+        param.extract(messageWithHeaderValueOf(None)) shouldEqual ExtractionFailed(Missing(param.name))
       }
 
       it("can rebind valid value") {
@@ -47,12 +47,12 @@ class HeaderTest extends FunSpec with ShouldMatchers {
 
       it("fails to retrieve invalid value") {
         val param = Header.required.*.long(paramName)
-        param.extract(messageWithValueOf("qwe", "notValid")) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(messageWithValueOf("qwe", "notValid")) shouldEqual ExtractionFailed(Invalid(param.name))
       }
 
       it("does not retrieve non existent value") {
         val param = Header.required.*.zonedDateTime(paramName)
-        param.extract(messageWithValueOf()) shouldEqual ExtractionFailed(Missing(param))
+        param.extract(messageWithValueOf()) shouldEqual ExtractionFailed(Missing(param.name))
       }
 
       it("can rebind valid value") {
@@ -76,7 +76,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param.name))
       }
 
       it("does not retrieve non existent value") {
@@ -109,7 +109,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.extract(messageWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(messageWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(param.name))
       }
 
       it("does not retrieve non existent value") {

@@ -40,7 +40,7 @@ class FormTest extends FunSpec with ShouldMatchers {
     }
 
     it("handles empty form - required") {
-      formSpec.extract(Request()) shouldBe ExtractionFailed(Seq(field1, field2, field3, field4, field5, field6).map(InvalidParameter.Missing))
+      formSpec.extract(Request()) shouldBe ExtractionFailed(Seq(field1, field2, field3, field4, field5, field6).map(f => ExtractionError.Missing(f.name)))
     }
   }
 }
