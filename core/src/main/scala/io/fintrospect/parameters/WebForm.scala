@@ -3,9 +3,9 @@ package io.fintrospect.parameters
 /**
   * Basically a wrapper for a Form and a set of error fields in that form.
   */
-case class WebForm(form: Form, errors: Seq[ExtractionError]) {
+case class WebForm(form: Form, errors: Seq[ExtractionError[String]]) {
 
-  def withErrors(newErrors: Seq[ExtractionError]) = copy(errors = errors ++ newErrors)
+  def withErrors(newErrors: Seq[ExtractionError[String]]) = copy(errors = errors ++ newErrors)
 
   def isValid = errors.isEmpty
 

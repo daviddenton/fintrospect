@@ -44,7 +44,7 @@ case class Extracted[T](value: Option[T]) extends Extraction[T] {
 /**
   * Represents a object which could not be extracted due to it being invalid or missing when required
   */
-case class ExtractionFailed(invalid: Seq[ExtractionError]) extends Extraction[Nothing] {
+case class ExtractionFailed(invalid: Seq[ExtractionError[String]]) extends Extraction[Nothing] {
   def flatMap[O](f: Option[Nothing] => Extraction[O]) = ExtractionFailed(invalid)
 
   override def map[O](f: Option[Nothing] => O) = ExtractionFailed(invalid)
@@ -53,5 +53,5 @@ case class ExtractionFailed(invalid: Seq[ExtractionError]) extends Extraction[No
 }
 
 object ExtractionFailed {
-  def apply(p: ExtractionError): ExtractionFailed = ExtractionFailed(Seq(p))
+  def apply(p: ExtractionError[String]): ExtractionFailed = ExtractionFailed(Seq(p))
 }
