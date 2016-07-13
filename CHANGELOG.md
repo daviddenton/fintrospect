@@ -7,6 +7,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
 ## 13.4.0 (uncut)
+- Upgrade to Finagle `6.36.0`.
 - Breaking: Removed `NotProvided` extraction option
 - Breaking: Renamed `InvalidParameter` to `ExtractionError`
 

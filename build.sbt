@@ -42,10 +42,10 @@ lazy val core = project
   .settings(moduleName := "fintrospect-core")
   .settings(libraryDependencies ++= Seq(
     "net.sourceforge.argo" % "argo" % "3.19",
-    "com.twitter" %% "finagle-http" % "6.35.0",
+    "com.twitter" %% "finagle-http" % "6.36.0",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
-    "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+    "org.scalatest" %% "scalatest" % "2.2.6" % "test"
   ))
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
 
