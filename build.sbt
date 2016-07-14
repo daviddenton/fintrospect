@@ -118,5 +118,5 @@ lazy val examples = project.in(file("."))
   .aggregate(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
   .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6")
-  .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.5")
+  .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.7")
 
