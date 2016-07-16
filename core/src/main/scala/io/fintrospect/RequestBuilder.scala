@@ -1,4 +1,4 @@
-package io.fintrospect.parameters
+package io.fintrospect
 
 import com.twitter.finagle.http.{Method, Request}
 import io.fintrospect.util.Builder

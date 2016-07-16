@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
+import io.fintrospect.RequestBuilder
 
 /**
   * Represents the binding of a parameter to it's value in a particular context

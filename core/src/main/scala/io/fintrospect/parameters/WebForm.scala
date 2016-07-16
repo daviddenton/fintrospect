@@ -1,5 +1,7 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.util.{ExtractionError, Validated, Validation, ValidationFailed, Validator}
+
 /**
   * Basically a wrapper for a Form and a set of error fields in that form.
   */

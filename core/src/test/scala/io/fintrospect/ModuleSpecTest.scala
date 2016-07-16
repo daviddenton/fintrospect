@@ -10,7 +10,7 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.formats.ResponseBuilder.responseToFuture
 import io.fintrospect.formats.json.Argo
-import io.fintrospect.parameters.{Body, BodySpec, FormField, Header, NoSecurity, Path}
+import io.fintrospect.parameters.{Body, BodySpec, FormField, Header, Path}
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}

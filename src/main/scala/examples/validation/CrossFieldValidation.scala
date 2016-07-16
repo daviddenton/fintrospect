@@ -7,8 +7,9 @@ import com.twitter.finagle.http.Status.{BadRequest, Ok}
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await.result
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{Extracted, ExtractionFailed, Extractor, Query}
+import io.fintrospect.parameters.Query
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
+import io.fintrospect.util.{Extracted, ExtractionFailed, Extractor}
 import io.fintrospect.{ModuleSpec, RouteSpec}
 
 case class Person(gender: Option[String], experience: Int)

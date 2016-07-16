@@ -4,7 +4,8 @@ package examples.validation
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.{Query, Validator}
+import io.fintrospect.parameters.Query
+import io.fintrospect.util.Validator
 
 object CollectErrors extends App {
 

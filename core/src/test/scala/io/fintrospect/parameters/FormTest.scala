@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
+import io.fintrospect.util.{Extracted, ExtractionError, ExtractionFailed}
 import org.scalatest._
 
 class FormTest extends FunSpec with ShouldMatchers {

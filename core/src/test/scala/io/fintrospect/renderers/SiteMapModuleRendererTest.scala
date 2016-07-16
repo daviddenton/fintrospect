@@ -8,9 +8,8 @@ import com.twitter.finagle.http.Status.{BadRequest, NotFound, Ok}
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.util.Future
-import io.fintrospect.parameters.NoSecurity
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
-import io.fintrospect.{RouteSpec, ServerRoute}
+import io.fintrospect.{NoSecurity, RouteSpec, ServerRoute}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class SiteMapModuleRendererTest extends FunSpec with ShouldMatchers {

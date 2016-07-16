@@ -5,6 +5,7 @@ import java.net.URLEncoder.encode
 
 import com.twitter.finagle.http.Message
 import io.fintrospect.ContentTypes.APPLICATION_FORM_URLENCODED
+import io.fintrospect.util.{Extracted, Extraction, ExtractionError, ExtractionFailed, Extractor}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}

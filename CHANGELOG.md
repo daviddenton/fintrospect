@@ -7,9 +7,10 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
 ## 13.4.0 (uncut)
-- Upgrade to Finagle `6.36.0`.
-- Breaking: Removed `NotProvided` extraction option
+- Upgrade to Finagle `6.36.0`
+- Breaking: Removed `NotProvided` extraction option. Extraction now exposes an `Option` instead
 - Breaking: Renamed `InvalidParameter` to `ExtractionError`
+- Breaking: Repackage of some classes from `io.fintrospect.parameters` to `io.fintrospect` and `io.fintrospect.util`
 
 ## 13.3.0
 - Option for empty `string` validation to be rejected as `InvalidParameter` in `QueryParameters` et al.

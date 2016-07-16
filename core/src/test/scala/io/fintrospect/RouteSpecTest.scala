@@ -8,9 +8,10 @@ import com.twitter.util.Await.result
 import com.twitter.util.Future
 import io.fintrospect.RouteSpec.RequestValidation
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
-import io.fintrospect.parameters.ExtractionError.Missing
-import io.fintrospect.parameters.{Body, Extracted, ExtractionFailed, Header, Path, Query}
+import io.fintrospect.parameters.{Body, Header, Path, Query}
+import io.fintrospect.util.ExtractionError.Missing
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
+import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 class RouteSpecTest extends FunSpec with ShouldMatchers {

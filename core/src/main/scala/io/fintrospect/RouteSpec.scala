@@ -2,7 +2,8 @@ package io.fintrospect
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
-import io.fintrospect.parameters.{Body, Extracted, Extraction, Extractor, HeaderParameter, Parameter, QueryParameter}
+import io.fintrospect.parameters.{Body, HeaderParameter, Parameter, QueryParameter}
+import io.fintrospect.util.{Extracted, Extraction, Extractor}
 
 /**
   * Encapsulates the specification of an HTTP endpoint, for use by either a Finagle server or client.

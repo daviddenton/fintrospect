@@ -2,8 +2,9 @@ package io.fintrospect.parameters
 
 import java.time.LocalDate
 
-import io.fintrospect.parameters.ExtractionError.{Invalid, Missing}
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
+import io.fintrospect.util.ExtractionError.{Invalid, Missing}
+import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest._
 
 class FormFieldTest extends FunSpec with ShouldMatchers {

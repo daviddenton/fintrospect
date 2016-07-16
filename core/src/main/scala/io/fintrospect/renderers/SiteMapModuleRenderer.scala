@@ -6,9 +6,9 @@ import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Status.{BadRequest, NotFound, Ok}
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.ServerRoute
 import io.fintrospect.formats.Xml.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{ExtractionError, ExtractionError$, Security}
+import io.fintrospect.util.ExtractionError
+import io.fintrospect.{Security, ServerRoute}
 
 class SiteMapModuleRenderer(baseUrl: URL) extends ModuleRenderer {
 

@@ -10,7 +10,7 @@ import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.Headers
 import io.fintrospect.filters.ResponseFilters._
-import io.fintrospect.parameters.Extracted
+import io.fintrospect.util.Extracted
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.TestClocks._
 import org.scalatest.{FunSpec, ShouldMatchers}

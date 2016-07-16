@@ -7,10 +7,10 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.ContentTypes.{APPLICATION_ATOM_XML, APPLICATION_JSON, APPLICATION_SVG_XML}
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat.{number, obj, parse}
-import io.fintrospect.parameters.{ExtractionError, ApiKey, Body, FormField, Header, ExtractionError$, Path, Query}
-import io.fintrospect.util.Echo
+import io.fintrospect.parameters.{Body, FormField, Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
-import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
+import io.fintrospect.util.{Echo, ExtractionError}
+import io.fintrospect.{ApiKey, ModuleSpec, ResponseSpec, RouteSpec}
 import org.scalatest.{FunSpec, ShouldMatchers}
 
 import scala.io.Source

@@ -1,5 +1,6 @@
-package io.fintrospect.parameters
+package io.fintrospect.util
 
+import io.fintrospect.parameters.Query
 import org.scalatest._
 
 class ValidatorTest extends FunSpec with ShouldMatchers {

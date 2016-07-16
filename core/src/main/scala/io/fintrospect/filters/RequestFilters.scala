@@ -10,9 +10,9 @@ import com.twitter.util.Future
 import io.fintrospect.ContentType.fromAcceptHeaders
 import io.fintrospect.configuration.{Authority, Credentials}
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
-import io.fintrospect.parameters.{Extracted, Extraction, ExtractionFailed, Extractor}
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
+import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
 import io.fintrospect.{ContentType, ContentTypes}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{ACCEPT, AUTHORIZATION, HOST}
 
