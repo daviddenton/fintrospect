@@ -114,6 +114,7 @@ lazy val mustache = project
 
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
+  .settings(unidocSettings: _*)
   .settings(moduleName := "fintrospect-examples")
   .aggregate(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
   .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
