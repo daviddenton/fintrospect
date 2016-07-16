@@ -5,9 +5,9 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response, Status}
 import examples.customformats.HipsterXml.ResponseBuilder.Error
 import examples.customformats.HipsterXml.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
-import io.fintrospect.ServerRoute
-import io.fintrospect.parameters.{ExtractionError, ExtractionError$, Security}
 import io.fintrospect.renderers.ModuleRenderer
+import io.fintrospect.util.ExtractionError
+import io.fintrospect.{Security, ServerRoute}
 
 /**
  * Hyper-cool, next-gen, markup used by all true rockstar coderzzzz

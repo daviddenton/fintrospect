@@ -1,4 +1,4 @@
-package io.fintrospect.parameters
+package io.fintrospect.util
 
 /**
   * Result of an attempt to extract an object from a target

@@ -5,9 +5,10 @@ import java.time.LocalDate
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
-import io.fintrospect.ContentTypes
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat.{obj, pretty, string}
+import io.fintrospect.util.{Extracted, ExtractionError, ExtractionFailed}
+import io.fintrospect.{ContentTypes, RequestBuilder}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.scalatest.{FunSpec, ShouldMatchers}
 

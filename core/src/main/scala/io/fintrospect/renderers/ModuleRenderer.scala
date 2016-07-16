@@ -3,8 +3,8 @@ package io.fintrospect.renderers
 import com.twitter.finagle.http.Status.NotFound
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.ServerRoute
-import io.fintrospect.parameters.{ExtractionError, ExtractionError$, Security}
+import io.fintrospect.util.ExtractionError
+import io.fintrospect.{Security, ServerRoute}
 
 /**
  * This is used to render the various standard responses (bad request/the description route).

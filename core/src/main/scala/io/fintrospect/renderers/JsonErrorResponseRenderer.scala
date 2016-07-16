@@ -2,9 +2,9 @@ package io.fintrospect.renderers
 
 import com.twitter.finagle.http.Response
 import com.twitter.finagle.http.Status.{BadRequest, NotFound}
-import io.fintrospect.formats.json.Argo.JsonFormat.{array, boolean, obj, string}
+import io.fintrospect.formats.json.Argo.JsonFormat.{array, obj, string}
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{ExtractionError, ExtractionError$, Parameter}
+import io.fintrospect.util.ExtractionError
 
 object JsonErrorResponseRenderer {
   def badRequest(badParameters: Seq[ExtractionError]): Response = {

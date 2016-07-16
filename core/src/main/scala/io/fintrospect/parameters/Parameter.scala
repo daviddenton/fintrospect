@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
-import io.fintrospect.parameters.ExtractionError.{Invalid, Missing}
+import io.fintrospect.util.ExtractionError.{Invalid, Missing}
+import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
 
 import scala.util.{Failure, Success, Try}
 

@@ -2,6 +2,7 @@ package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Message
 import io.fintrospect.ContentTypes.APPLICATION_FORM_URLENCODED
+import io.fintrospect.util.{Extracted, Extraction, ExtractionError, ExtractionFailed}
 
 import scala.util.{Failure, Success, Try}
 

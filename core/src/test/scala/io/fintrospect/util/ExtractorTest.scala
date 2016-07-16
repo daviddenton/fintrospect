@@ -1,9 +1,10 @@
-package io.fintrospect.parameters
+package io.fintrospect.util
 
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.ExtractionError.{Invalid, Missing}
+import io.fintrospect.parameters.Query
+import io.fintrospect.util.ExtractionError.{Invalid, Missing}
 import org.scalatest._
 
 class ExtractorTest extends FunSpec with ShouldMatchers {

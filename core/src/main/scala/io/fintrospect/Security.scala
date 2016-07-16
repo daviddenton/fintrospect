@@ -1,10 +1,11 @@
-package io.fintrospect.parameters
+package io.fintrospect
 
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.Status.Unauthorized
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
-import io.fintrospect.parameters.ApiKey.ValidateKey
+import io.fintrospect.ApiKey.ValidateKey
+import io.fintrospect.parameters.{Mandatory, Parameter}
 
 import scala.util.{Failure, Success, Try}
 

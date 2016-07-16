@@ -1,4 +1,4 @@
-package io.fintrospect.parameters
+package io.fintrospect.util
 
 /**
   * Specialised ADT fot validation of parameters from a request

@@ -1,7 +1,8 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Message
-import io.fintrospect.parameters.ExtractionError.Invalid
+import io.fintrospect.util.ExtractionError.Invalid
+import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}

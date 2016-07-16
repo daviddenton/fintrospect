@@ -1,4 +1,6 @@
-package io.fintrospect.parameters
+package io.fintrospect.util
+
+import io.fintrospect.parameters.Parameter
 
 /**
   * Mechanism to extract (or fail to extract) an entity value from a particular 'From' context

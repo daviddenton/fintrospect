@@ -1,5 +1,7 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.util.{ExtractableParameter, Extractor}
+
 object types {
 
   type ExtParameter[From, T, Bnd <: Binding] = Parameter with Extractor[From, T] with Bindable[T, Bnd]

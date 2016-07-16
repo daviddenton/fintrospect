@@ -1,4 +1,4 @@
-package io.fintrospect.parameters
+package io.fintrospect.util
 
 sealed trait ExtractionError {
   val name: String

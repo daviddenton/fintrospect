@@ -1,5 +1,4 @@
-package io.fintrospect.parameters
-
+package io.fintrospect.util
 
 import scala.language.implicitConversions
 

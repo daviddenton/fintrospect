@@ -6,10 +6,11 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.formats.json.Argo.JsonFormat.{Field, array, boolean, nullNode, obj, parse, string}
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{ExtractionError, ApiKey, ExtractionError$, NoSecurity, Parameter, Security}
+import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
-import io.fintrospect.{ResponseSpec, ServerRoute}
+import io.fintrospect.util.ExtractionError
+import io.fintrospect.{ApiKey, NoSecurity, ResponseSpec, Security, ServerRoute}
 
 import scala.util.Try
 
@@ -51,10 +52,10 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       (p, exampleOption, render(p, exampleOption))
     })
 
-    val allParams = route.pathParams.flatMap(identity) ++ route.routeSpec.requestParams
+    val allParams = route.pathParams.flatten ++ route.routeSpec.requestParams
     val nonBodyParams = allParams.map(render(_, Option.empty))
 
-    val route2 = route.method.toString().toLowerCase -> obj(
+    val jsonRoute = route.method.toString().toLowerCase -> obj(
       "tags" -> array(string(basePath.toString)),
       "summary" -> string(route.routeSpec.summary),
       "description" -> route.routeSpec.description.map(string).getOrElse(nullNode()),
@@ -68,7 +69,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
         case ApiKey(param, _) => Seq(obj("api_key" -> array()))
       })
     )
-    FieldAndDefinitions(route2, responseDefinitions ++ bodyAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))
+    FieldAndDefinitions(jsonRoute, responseDefinitions ++ bodyAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))
   }
 
   private def render(responses: Seq[ResponseSpec]): FieldsAndDefinitions =

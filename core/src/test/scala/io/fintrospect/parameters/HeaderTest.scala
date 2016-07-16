@@ -4,7 +4,9 @@ import java.time.LocalDate
 
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.{Message, Request, Response}
-import io.fintrospect.parameters.ExtractionError.{Invalid, Missing}
+import io.fintrospect.RequestBuilder
+import io.fintrospect.util.ExtractionError.{Invalid, Missing}
+import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest._
 
 class HeaderTest extends FunSpec with ShouldMatchers {
