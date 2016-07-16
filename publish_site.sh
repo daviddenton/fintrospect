@@ -8,9 +8,9 @@ git clone git@github.com:fintrospect/fintrospect.github.io.git /tmp/site
 cd /tmp/site
 cd -
 npm run makeSite
-./sbt doc
+./sbt unidoc
 rm -rf /tmp/site/*
-mv target/scala-2.11/api target/www/
+mv target/scala-2.11/unidoc target/www/
 mv -f target/www/* /tmp/site
 cd /tmp/site
 git add *
