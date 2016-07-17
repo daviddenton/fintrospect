@@ -3,7 +3,6 @@ package examples.formvalidation
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
 import io.fintrospect.parameters.{Body, Form, FormField, ParameterSpec, WebForm}
 import io.fintrospect.templating.View
 import io.fintrospect.templating.View.viewToFuture
@@ -42,7 +41,7 @@ case class Name private(value: String)
 
 object Name {
   def validate(value: String) = {
-    assert(value.charAt(0).isUpper)
+    assert(value.length > 0 && value.charAt(0).isUpper)
     Name(value)
   }
 }
@@ -56,13 +55,12 @@ object Age {
   }
 }
 
-
 case class DisplayUserAge(name: Name, age: Age) extends View
 
 object NameAndAgeForm {
 
   object fields {
-    val name = FormField.required(ParameterSpec.string("name", validation = EmptyIsInvalid).map(Name.validate))
+    val name = FormField.required(ParameterSpec.string("name").map(Name.validate))
     val age = FormField.required(ParameterSpec.int("age").map(Age.validate))
   }
 

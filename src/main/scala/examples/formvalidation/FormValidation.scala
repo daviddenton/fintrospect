@@ -22,7 +22,7 @@ object FormValidation extends App {
 
   Http.serve(":8181", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(module.toService))
 
-  println("See the Sitemap description at: http://localhost:8181")
+  println("See the validating form at: http://localhost:8181")
 
   Thread.currentThread().join()
 }
