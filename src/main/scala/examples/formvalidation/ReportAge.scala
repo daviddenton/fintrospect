@@ -27,8 +27,8 @@ class ReportAge extends ServerRoutes[Request, View] {
       val postedForm = NameAndAgeForm.form <-- rq
 
       if (postedForm.isValid) DisplayUserAge(
-        postedForm.form <-- NameAndAgeForm.fields.name,
-        postedForm.form <-- NameAndAgeForm.fields.age)
+        postedForm <-- NameAndAgeForm.fields.name,
+        postedForm <-- NameAndAgeForm.fields.age)
       else NameAndAgeForm(NAMES, postedForm)
     }
   }
@@ -70,7 +70,7 @@ object NameAndAgeForm {
 
   def apply(names: Seq[String], webForm: WebForm = WebForm.empty): NameAndAgeForm = {
     new NameAndAgeForm(names,
-      webForm.form.fields.mapValues(_.mkString(",")),
+      webForm.fields.mapValues(_.mkString(",")),
       Map(webForm.errors.map(ip => ip.param.name -> ip.reason): _*)
     )
   }

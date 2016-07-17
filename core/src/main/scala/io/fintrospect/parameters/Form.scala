@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 /**
  * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
  */
-case class Form(fields: Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
+class Form(val fields: Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
 
   /**
    * Convenience method to retrieve multiple fields from form
