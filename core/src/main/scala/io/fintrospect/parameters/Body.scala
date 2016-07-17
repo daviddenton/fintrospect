@@ -43,7 +43,6 @@ object Body {
     * for browser-server communications where you want to give feedback to the user.
     */
   def webForm(fields: (FormField[_] with Retrieval[Form, _] with Extractor[Form, _], String)*): WebFormBody = {
-    val map: Seq[(String, String)]= fields.toSeq.map(a => a._1.name -> a._2)
-    new WebFormBody(Body.form(fields.map(_._1):_*), Map(map:_*))
+    new WebFormBody(Body.form(fields.map(_._1):_*), Map(fields:_*))
   }
 }

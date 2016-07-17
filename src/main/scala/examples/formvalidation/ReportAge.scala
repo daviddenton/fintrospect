@@ -73,7 +73,7 @@ object NameAndAgeForm {
   def apply(names: Seq[String], webForm: WebForm = WebForm(Form(), Nil)): NameAndAgeForm = {
     new NameAndAgeForm(names,
       webForm.form.fields.mapValues(_.mkString(",")),
-      Map(webForm.errors.map(ip => ip.name -> ip.reason): _*)
+      Map(webForm.errors.map(ip => ip.param.name -> ip.reason): _*)
     )
   }
 }

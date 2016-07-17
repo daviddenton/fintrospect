@@ -39,7 +39,7 @@ class FormBody(val fields: Seq[FormField[_] with Retrieval[Form, _] with Extract
           case failed@ExtractionFailed(_) => failed
           case _ => Extracted(Some(form))
         }
-      case Failure(e) => ExtractionFailed(fields.filter(_.required).map(s => ExtractionError(s.name, "Could not parse")))
+      case Failure(e) => ExtractionFailed(fields.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
     }
 }
 
