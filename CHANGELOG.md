@@ -8,6 +8,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## 13.4.0 (uncut)
 - Upgrade to Finagle `6.36.0`
+- Added `Body.webform()`, which allows errors to be collected for feedback to the user. See `formvalidation` example
 - Breaking: Removed `NotProvided` extraction option. Extraction now exposes an `Option` instead
 - Breaking: Renamed `InvalidParameter` to `ExtractionError`
 - Breaking: Repackage of some classes from `io.fintrospect.parameters` to `io.fintrospect` and `io.fintrospect.util`
