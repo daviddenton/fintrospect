@@ -1,9 +1,13 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.util.ExtractionError
+
 /**
  * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
  */
-class Form(val fields: Map[String, Set[String]]) extends Iterable[(String, Set[String])] {
+class Form(val fields: Map[String, Set[String]], val errors: Seq[ExtractionError] = Nil) extends Iterable[(String, Set[String])] {
+
+  def isValid = errors.isEmpty
 
   /**
    * Convenience method to retrieve multiple fields from form
@@ -56,7 +60,7 @@ class Form(val fields: Map[String, Set[String]]) extends Iterable[(String, Set[S
                             fieldF: Retrieval[Form, F]):
   (A, B, C, D, E, F) = (fieldA <-- this, fieldB <-- this, fieldC <-- this, fieldD <-- this, fieldE <-- this, fieldF <-- this)
 
-  def +(key: String, value: String) = new Form(fields + (key -> (fields.getOrElse(key, Set()) + value)))
+  def +(key: String, value: String) = new Form(fields + (key -> (fields.getOrElse(key, Set()) + value)), errors)
 
   def get(name: String): Option[Set[String]] = fields.get(name)
 
@@ -64,5 +68,5 @@ class Form(val fields: Map[String, Set[String]]) extends Iterable[(String, Set[S
 }
 
 object Form {
-  def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form(Map.empty))((f, b) => b(f))
+  def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form(Map.empty, Nil))((f, b) => b(f))
 }
