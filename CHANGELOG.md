@@ -6,8 +6,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
-## 13.4.0 (uncut)
+## 13.4.0
 - Upgrade to Finagle `6.36.0`
+- Fixed site API docs
 - Added `Body.webform()`, which allows errors to be collected for feedback to the user. See `formvalidation` example
 - Breaking: Removed `NotProvided` extraction option. Extraction now exposes an `Option` instead
 - Breaking: Renamed `InvalidParameter` to `ExtractionError`
