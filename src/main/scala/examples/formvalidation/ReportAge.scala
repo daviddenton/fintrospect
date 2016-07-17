@@ -4,12 +4,13 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
-import io.fintrospect.parameters.{Body, Form, FormField, WebForm}
+import io.fintrospect.parameters.{Body, Form, FormField, ParameterSpec, WebForm}
 import io.fintrospect.templating.View
 import io.fintrospect.templating.View.viewToFuture
-import io.fintrospect.util.ExtractionError.Missing
-import io.fintrospect.util.{Validated, ValidationFailed, Validator}
+import io.fintrospect.util.{Validated, ValidationFailed}
 import io.fintrospect.{RouteSpec, ServerRoutes}
+
+import scala.language.reflectiveCalls
 
 /**
   * This is a set of 2 routes which model:
@@ -26,10 +27,9 @@ class ReportAge extends ServerRoutes[Request, View] {
   private val submit = Service.mk {
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
-
-      postedForm.validate(NameAndAgeForm.rules) match {
-        case Validated((theAge, theName)) => DisplayUserAge(theName.get, theAge.get)
-        case ValidationFailed(errors) => NameAndAgeForm(NAMES, postedForm.withErrors(errors))
+      postedForm.validate() match {
+        case Validated(form) => DisplayUserAge.tupled(postedForm.form <-- (NameAndAgeForm.fields.name, NameAndAgeForm.fields.age))
+        case ValidationFailed(errors) => NameAndAgeForm(NAMES, postedForm)
       }
     }
   }
@@ -38,31 +38,43 @@ class ReportAge extends ServerRoutes[Request, View] {
   add(RouteSpec().body(NameAndAgeForm.form).at(Post) bindTo submit)
 }
 
-case class DisplayUserAge(name: String, age: Int) extends View
+case class Name private(value: String)
+
+object Name {
+  def validate(value: String) = {
+    assert(value.charAt(0).isUpper)
+    Name(value)
+  }
+}
+
+case class Age private(value: Int)
+
+object Age {
+  def validate(value: Int) = {
+    assert(value >= 18)
+    Age(value)
+  }
+}
+
+
+case class DisplayUserAge(name: Name, age: Age) extends View
 
 object NameAndAgeForm {
 
   object fields {
-    val name = FormField.required.string("name", validation = EmptyIsInvalid)
-    val age = FormField.required.integer("age")
+    val name = FormField.required(ParameterSpec.string("name", validation = EmptyIsInvalid).map(Name.validate))
+    val age = FormField.required(ParameterSpec.int("age").map(Age.validate))
   }
 
-  val form = Body.webForm(fields.name, fields.age)
-
-  // we can use a validator here to provide extra validation
-  def rules(form: Form) = Validator.mk(
-    NameAndAgeForm.fields.age <--?(form, "Must be an adult", _ >= 18),
-    NameAndAgeForm.fields.name <--?(form, "Must start with Capital letter", _.charAt(0).isUpper)
-  )
+  val form = Body.webForm(
+    fields.name -> "Names must start with capital letter",
+    fields.age -> "Must be an adult")
 
   def apply(names: Seq[String], webForm: WebForm = WebForm(Form(), Nil)): NameAndAgeForm = {
-    val e = webForm.errors.map {
-      case Missing(NameAndAgeForm.fields.age.name) => NameAndAgeForm.fields.name.name -> "required"
-      case Missing(NameAndAgeForm.fields.name.name) => NameAndAgeForm.fields.name.name -> "select the user name"
-      case ip => ip.name -> ip.reason
-    }
-
-    new NameAndAgeForm(names, webForm.form.fields.mapValues(_.mkString(",")), Map(e: _*))
+    new NameAndAgeForm(names,
+      webForm.form.fields.mapValues(_.mkString(",")),
+      Map(webForm.errors.map(ip => ip.name -> ip.reason): _*)
+    )
   }
 }
 
