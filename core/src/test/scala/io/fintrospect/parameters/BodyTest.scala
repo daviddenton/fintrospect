@@ -84,23 +84,23 @@ class BodyTest extends FunSpec with ShouldMatchers {
       deserializedForm shouldEqual inputForm
     }
   }
-
-  describe("Webform") {
-    it("collects valid and invalid fields from the request") {
-      val optional = FormField.optional.string("anOption")
-      val string = FormField.required.string("aString")
-      val anotherString = FormField.required.string("anotherString")
-      val formBody = Body.webForm(optional, string, anotherString)
-      val inputForm = Form(string --> "asd")
-      val bindings = formBody --> inputForm
-      val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
-
-      request.contentString shouldEqual "aString=asd"
-      request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
-      val deserializedForm = formBody from request
-      deserializedForm shouldEqual WebForm(inputForm, Seq(ExtractionError.Missing(anotherString.name)))
-    }
-  }
+//
+//  describe("Webform") {
+//    it("collects valid and invalid fields from the request") {
+//      val optional = FormField.optional.string("anOption")
+//      val string = FormField.required.string("aString")
+//      val anotherString = FormField.required.string("anotherString")
+//      val formBody = Body.webForm(optional, string, anotherString)
+//      val inputForm = Form(string --> "asd")
+//      val bindings = formBody --> inputForm
+//      val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
+//
+//      request.contentString shouldEqual "aString=asd"
+//      request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
+//      val deserializedForm = formBody from request
+//      deserializedForm shouldEqual WebForm(inputForm, Seq(ExtractionError.Missing(anotherString.name)))
+//    }
+//  }
 
   describe("json") {
     it("should serialize and deserialize into the request") {

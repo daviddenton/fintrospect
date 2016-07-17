@@ -12,11 +12,11 @@ import scala.util.{Failure, Success, Try}
   * This form is to be used for web forms (where feedback is desirable and the user can be redirected back to the form page).
   * As such, extracting an invalid webform from a request will not fail unless the body encoding itself is invalid.
   */
-class WebFormBody(form: FormBody)
+class WebFormBody(form: FormBody, messages: Map[String, String])
   extends Body[WebForm](
-    new BodySpec[WebForm](None, APPLICATION_FORM_URLENCODED, s => WebFormBody.decodeForm(form, FormBody.decodeForm(s)),
+    new BodySpec[WebForm](None, APPLICATION_FORM_URLENCODED, s => WebFormBody.decodeForm(form, messages, FormBody.decodeForm(s)),
       f => FormBody.encodeForm(f.form)))
-  with Mandatory[Message, WebForm] {
+    with Mandatory[Message, WebForm] {
 
   override def iterator = form.iterator
 
@@ -30,10 +30,10 @@ class WebFormBody(form: FormBody)
 }
 
 protected object WebFormBody {
-  def decodeForm(formBody: FormBody, rawForm: Form) =
+  def decodeForm(formBody: FormBody, messages: Map[String, String], rawForm: Form) =
     WebForm(rawForm, formBody.fields.flatMap {
       _ <--? rawForm match {
-        case ExtractionFailed(e) => e
+        case ExtractionFailed(e) => e.map(er => ExtractionError(er.name, messages.getOrElse(er.name, er.reason)))
         case _ => Nil
       }
     })
