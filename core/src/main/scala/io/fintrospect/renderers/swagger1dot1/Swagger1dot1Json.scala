@@ -28,7 +28,7 @@ class Swagger1dot1Json extends ModuleRenderer {
 
   private def render(route: ServerRoute[_, _]): Field = route.method.toString().toLowerCase -> {
     val allParams =
-      route.pathParams.flatMap(identity) ++
+      route.pathParams.flatten ++
       route.routeSpec.requestParams ++
       route.routeSpec.body.map(_.iterator).getOrElse(Nil)
 

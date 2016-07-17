@@ -47,6 +47,6 @@ class UniBody[T](spec: BodySpec[T],
   override def <--?(message: Message): Extraction[T] =
     Try(spec.deserialize(message.contentString)) match {
       case Success(v) => Extracted(Some(v))
-      case Failure(_) => ExtractionFailed(Invalid(param.name))
+      case Failure(_) => ExtractionFailed(Invalid(param))
     }
 }

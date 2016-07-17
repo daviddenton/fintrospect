@@ -1,22 +1,24 @@
 package io.fintrospect.util
 
+import io.fintrospect.parameters.Parameter
+
 sealed trait ExtractionError {
-  val name: String
+  val param: Parameter
   val reason: String
 
-  override def toString = s"$name:$reason"
+  override def toString = s"${param.name}:$reason"
 }
 
 object ExtractionError {
-  def apply(name: String, reason: String) = Custom(name, reason)
+  def apply(param: Parameter, reason: String) = Custom(param, reason)
 
-  case class Custom(name: String, reason: String) extends ExtractionError
+  case class Custom(param: Parameter, reason: String) extends ExtractionError
 
-  case class Missing(name: String) extends ExtractionError {
+  case class Missing(param: Parameter) extends ExtractionError {
     val reason = "Missing"
   }
 
-  case class Invalid(name: String) extends ExtractionError {
+  case class Invalid(param: Parameter) extends ExtractionError {
     val reason = "Invalid"
   }
 }

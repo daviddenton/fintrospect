@@ -21,8 +21,8 @@ class ValidatorTest extends FunSpec with ShouldMatchers {
     }
 
     it("collects Errors") {
-      val ip1 = ExtractionError(Query.required.string("first").name, "invalid1")
-      val ip2 = ExtractionError(Query.required.string("second").name, "invalid2")
+      val ip1 = ExtractionError(Query.required.string("first"), "invalid1")
+      val ip2 = ExtractionError(Query.required.string("second"), "invalid2")
       Validator.mk(
         ExtractionFailed(ip1),
         ExtractionFailed(ip2)

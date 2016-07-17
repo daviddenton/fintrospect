@@ -22,8 +22,8 @@ trait Parameter {
                                fromInput: Option[Seq[String]]): Extraction[T] =
     fromInput.map(deserialize).map {
       case Success(d) => Extracted(Some(d))
-      case Failure(_) => ExtractionFailed(Invalid(name))
-    }.getOrElse(if (required) ExtractionFailed(Missing(name)) else Extracted(None))
+      case Failure(_) => ExtractionFailed(Invalid(this))
+    }.getOrElse(if (required) ExtractionFailed(Missing(this)) else Extracted(None))
 }
 
 /**

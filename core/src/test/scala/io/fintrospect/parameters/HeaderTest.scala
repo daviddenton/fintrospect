@@ -23,11 +23,11 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param.name))
+        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
-        param.extract(messageWithHeaderValueOf(None)) shouldEqual ExtractionFailed(Missing(param.name))
+        param.extract(messageWithHeaderValueOf(None)) shouldEqual ExtractionFailed(Missing(param))
       }
 
       it("can rebind valid value") {
@@ -49,12 +49,12 @@ class HeaderTest extends FunSpec with ShouldMatchers {
 
       it("fails to retrieve invalid value") {
         val param = Header.required.*.long(paramName)
-        param.extract(messageWithValueOf("qwe", "notValid")) shouldEqual ExtractionFailed(Invalid(param.name))
+        param.extract(messageWithValueOf("qwe", "notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
         val param = Header.required.*.zonedDateTime(paramName)
-        param.extract(messageWithValueOf()) shouldEqual ExtractionFailed(Missing(param.name))
+        param.extract(messageWithValueOf()) shouldEqual ExtractionFailed(Missing(param))
       }
 
       it("can rebind valid value") {
@@ -78,7 +78,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param.name))
+        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
@@ -111,7 +111,7 @@ class HeaderTest extends FunSpec with ShouldMatchers {
       }
 
       it("fails to retrieve invalid value") {
-        param.extract(messageWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(param.name))
+        param.extract(messageWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {

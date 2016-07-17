@@ -37,7 +37,7 @@ trait ExtractableParameter[-From, +T] {
     * Attempt to manually deserialise from the message object, using a validation predicate and reason for failure.
     */
   def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[T] =
-    <--?(from).flatMap[T](v => if (v.map(predicate).getOrElse(true)) Extraction(v) else ExtractionFailed(ExtractionError(name, reason)))
+    <--?(from).flatMap[T](v => if (v.forall(predicate)) Extraction(v) else ExtractionFailed(ExtractionError(self, reason)))
 
   /**
     * Attempt to manually deserialise from the message object, using a validation predicate and reason for failure.

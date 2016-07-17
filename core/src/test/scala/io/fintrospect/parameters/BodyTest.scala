@@ -7,7 +7,8 @@ import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
 import io.fintrospect.formats.json.Argo
 import io.fintrospect.formats.json.Argo.JsonFormat.{obj, pretty, string}
-import io.fintrospect.util.{Extracted, ExtractionError, ExtractionFailed}
+import io.fintrospect.util.ExtractionError.Invalid
+import io.fintrospect.util.{Extracted, ExtractionFailed}
 import io.fintrospect.{ContentTypes, RequestBuilder}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.scalatest.{FunSpec, ShouldMatchers}
@@ -29,7 +30,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
     }
 
     it("validation when missing") {
-      body.extract(Request()) shouldEqual ExtractionFailed(body.iterator.toSeq.map(p => ExtractionError.Invalid(p.name)))
+      body.extract(Request()) shouldEqual ExtractionFailed(body.iterator.toSeq.map(p => Invalid(p)))
     }
   }
 
