@@ -35,12 +35,14 @@ object Body {
   /**
     * HTML encoded form HTTP message body which will fail to deserialize if a single field is missing/invalid. Use this
     * for server-server communications when you want the server to reject with a BadRequest.
+    * This method simply takes a set of form fields.
     */
   def form(fields: FormField[_] with Retrieval[Form, _] with Extractor[Form, _]*): FormBody = new FormBody(fields, new StrictFormCodec())
 
   /**
     * HTML encoded form HTTP message body which deserializes even if fields are missing/invalid. Use this
     * for browser-server communications where you want to give feedback to the user.
+    * This method takes a set of form fields, combined with their relevant error messages in case of validation failure.
     */
   def webForm(fields: (FormField[_] with Retrieval[Form, _] with Extractor[Form, _], String)*): FormBody = new FormBody(fields.map(_._1), new WebFormCodec(Map(fields:_*)))
 }

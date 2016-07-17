@@ -5,7 +5,7 @@ import io.fintrospect.util.ExtractionError
 /**
  * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
  */
-class Form(val fields: Map[String, Set[String]], val errors: Seq[ExtractionError] = Nil) extends Iterable[(String, Set[String])] {
+case class Form protected[parameters](fields: Map[String, Set[String]], errors: Seq[ExtractionError] = Nil) extends Iterable[(String, Set[String])] {
 
   def isValid = errors.isEmpty
 
@@ -60,7 +60,7 @@ class Form(val fields: Map[String, Set[String]], val errors: Seq[ExtractionError
                             fieldF: Retrieval[Form, F]):
   (A, B, C, D, E, F) = (fieldA <-- this, fieldB <-- this, fieldC <-- this, fieldD <-- this, fieldE <-- this, fieldF <-- this)
 
-  def +(key: String, value: String) = new Form(fields + (key -> (fields.getOrElse(key, Set()) + value)), errors)
+  def +(key: String, value: String) = Form(fields + (key -> (fields.getOrElse(key, Set()) + value)), errors)
 
   def get(name: String): Option[Set[String]] = fields.get(name)
 
