@@ -72,7 +72,7 @@ object Caching {
       */
     def MaxAge(clock: Clock, maxAge: Duration, predicate: Response => Boolean = _.statusCode < 400): Filter[Request, Response, Request, Response] = new CacheFilter(predicate) {
       override def headersFor(response: Response) = Map(
-        CACHE_CONTROL -> Seq("public", new MaxAgeTtl(maxAge).toHeaderValue).mkString(", "),
+        CACHE_CONTROL -> Seq("public", MaxAgeTtl(maxAge).toHeaderValue).mkString(", "),
         EXPIRES -> RFC_1123_DATE_TIME.format(now(response).plusSeconds(maxAge.getSeconds)))
 
       private def now(response: Response): ZonedDateTime = {
