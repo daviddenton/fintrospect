@@ -45,7 +45,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
       request.contentString shouldEqual "aString="
       request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
-      deserializedForm.fields shouldEqual inputForm.fields
+      deserializedForm shouldEqual inputForm
     }
 
     it("should serialize and deserialize into the request") {
@@ -58,7 +58,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
       request.contentString shouldEqual "date=1976-08-31"
       request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
-      deserializedForm.fields shouldEqual inputForm.fields
+      deserializedForm shouldEqual inputForm
     }
 
     it("should serialize strings correctly into the request") {
@@ -70,7 +70,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
 
       request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
-      deserializedForm.fields shouldEqual inputForm.fields
+      deserializedForm shouldEqual inputForm
     }
 
     it("can rebind valid value") {
@@ -82,12 +82,12 @@ class BodyTest extends FunSpec with ShouldMatchers {
       val rebindings = formBody <-> inRequest
       val outRequest = rebindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
       val deserializedForm = formBody from outRequest
-      deserializedForm.fields shouldEqual inputForm.fields
+      deserializedForm shouldEqual inputForm
     }
   }
 
   describe("Webform") {
-    it("collects valid and invalid fields from the request") {
+    it("collects valid and invalid fields from the request, and maps error fields to custom messages") {
       val optional = FormField.optional.string("anOption")
       val string = FormField.required.string("aString")
       val anotherString = FormField.required.string("anotherString")
@@ -99,8 +99,7 @@ class BodyTest extends FunSpec with ShouldMatchers {
       request.contentString shouldEqual "aString=asd"
       request.headerMap(Names.CONTENT_TYPE) shouldEqual ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
-      deserializedForm.fields shouldBe inputForm.fields
-      deserializedForm.errors shouldBe Seq(ExtractionError(anotherString, "Custom"))
+      deserializedForm shouldBe new Form(inputForm.fields, Seq(ExtractionError(anotherString, "Custom")))
     }
   }
 
