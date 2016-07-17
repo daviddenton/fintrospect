@@ -68,5 +68,9 @@ case class Form protected[parameters](fields: Map[String, Set[String]], errors: 
 }
 
 object Form {
+
+  /**
+    * Make a form to send to a downsteam system from a set of bindings
+    */
   def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form(Map.empty, Nil))((f, b) => b(f))
 }
