@@ -3,7 +3,7 @@ package examples.formvalidation
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.{Body, FormField, ParameterSpec, WebForm}
+import io.fintrospect.parameters.{Body, Form, FormField, ParameterSpec}
 import io.fintrospect.templating.View
 import io.fintrospect.templating.View.viewToFuture
 import io.fintrospect.{RouteSpec, ServerRoutes}
@@ -68,7 +68,7 @@ object NameAndAgeForm {
     fields.name -> "Names must start with capital letter",
     fields.age -> "Must be an adult")
 
-  def apply(names: Seq[String], webForm: WebForm = WebForm.empty): NameAndAgeForm = {
+  def apply(names: Seq[String], webForm: Form = Form()): NameAndAgeForm = {
     new NameAndAgeForm(names,
       webForm.fields.mapValues(_.mkString(",")),
       Map(webForm.errors.map(ip => ip.param.name -> ip.reason): _*)
