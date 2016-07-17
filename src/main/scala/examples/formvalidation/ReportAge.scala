@@ -20,7 +20,7 @@ class ReportAge extends ServerRoutes[Request, View] {
   private val NAMES = Seq("Bob", "Johnny", "Rita", "Sue")
 
   // displays the initial form to the user
-  add(RouteSpec().at(Get) bindTo Service.mk { rq: Request => NameAndAgeForm(NAMES) })
+  add(RouteSpec().at(Get) bindTo Service.mk { rq: Request => NameAndAgeForm(NAMES, Form()) })
 
   private val submit = Service.mk {
     rq: Request => {
@@ -68,7 +68,7 @@ object NameAndAgeForm {
     fields.name -> "Names must start with capital letter",
     fields.age -> "Must be an adult")
 
-  def apply(names: Seq[String], webForm: Form = Form()): NameAndAgeForm = {
+  def apply(names: Seq[String], webForm: Form): NameAndAgeForm = {
     new NameAndAgeForm(names,
       webForm.fields.mapValues(_.mkString(",")),
       Map(webForm.errors.map(ip => ip.param.name -> ip.reason): _*)
