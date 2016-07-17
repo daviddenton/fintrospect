@@ -13,7 +13,7 @@ import io.fintrospect.{ServerRoute, ServerRoutes}
   */
 class TestHttpServer(port: Int, serverRoutes: ServerRoutes[Request, Response]) extends OverridableHttpService(serverRoutes){
 
-  private var server: ListeningServer = null
+  private var server: ListeningServer = _
 
   def this(port: Int, route: ServerRoute[Request, Response]) = this(port, new ServerRoutes[Request, Response] {
     add(route)

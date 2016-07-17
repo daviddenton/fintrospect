@@ -5,7 +5,7 @@ import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.IncompletePath.clientFor
 import io.fintrospect.ModuleSpec.ModifyPath
-import io.fintrospect.parameters.{Path => Fp, PathParameter}
+import io.fintrospect.parameters.{PathParameter, Path => Fp}
 
 object IncompletePath {
   def apply(routeSpec: RouteSpec, method: Method): IncompletePath0 = new IncompletePath0(routeSpec, method, identity)
