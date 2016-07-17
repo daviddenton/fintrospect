@@ -3,10 +3,9 @@ package examples.formvalidation
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.{Body, Form, FormField, ParameterSpec, WebForm}
+import io.fintrospect.parameters.{Body, FormField, ParameterSpec, WebForm}
 import io.fintrospect.templating.View
 import io.fintrospect.templating.View.viewToFuture
-import io.fintrospect.util.{Validated, ValidationFailed}
 import io.fintrospect.{RouteSpec, ServerRoutes}
 
 import scala.language.reflectiveCalls
@@ -26,10 +25,11 @@ class ReportAge extends ServerRoutes[Request, View] {
   private val submit = Service.mk {
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
-      postedForm.validate() match {
-        case Validated(form) => DisplayUserAge.tupled(postedForm.form <-- (NameAndAgeForm.fields.name, NameAndAgeForm.fields.age))
-        case ValidationFailed(errors) => NameAndAgeForm(NAMES, postedForm)
-      }
+
+      if (postedForm.isValid) DisplayUserAge(
+        postedForm.form <-- NameAndAgeForm.fields.name,
+        postedForm.form <-- NameAndAgeForm.fields.age)
+      else NameAndAgeForm(NAMES, postedForm)
     }
   }
 
@@ -68,7 +68,7 @@ object NameAndAgeForm {
     fields.name -> "Names must start with capital letter",
     fields.age -> "Must be an adult")
 
-  def apply(names: Seq[String], webForm: WebForm = WebForm(Form(), Nil)): NameAndAgeForm = {
+  def apply(names: Seq[String], webForm: WebForm = WebForm.empty): NameAndAgeForm = {
     new NameAndAgeForm(names,
       webForm.form.fields.mapValues(_.mkString(",")),
       Map(webForm.errors.map(ip => ip.param.name -> ip.reason): _*)

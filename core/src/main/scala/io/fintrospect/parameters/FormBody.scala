@@ -47,9 +47,7 @@ class FormBody(val fields: Seq[FormField[_] with Retrieval[Form, _] with Extract
 
 protected object FormBody {
   def encodeForm(form: Form): String = form.flatMap {
-    case (name, values) => values.map {
-      case value => encode(name, "UTF-8") + "=" + encode(value, "UTF-8")
-    }
+    case (name, values) => values.map(value => encode(name, "UTF-8") + "=" + encode(value, "UTF-8"))
   }.mkString("&")
 
   def decodeForm(content: String) = new Form(decodeFields(content))

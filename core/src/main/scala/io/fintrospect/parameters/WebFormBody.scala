@@ -31,7 +31,7 @@ class WebFormBody(form: FormBody, messages: Map[Parameter, String])
 
 protected object WebFormBody {
   def decodeForm(formBody: FormBody, messages: Map[Parameter, String], rawForm: Form) =
-    WebForm(rawForm, formBody.fields.flatMap {
+    new WebForm(rawForm, formBody.fields.flatMap {
       _ <--? rawForm match {
         case ExtractionFailed(e) => e.map(er => ExtractionError(er.param, messages.getOrElse(er.param, er.reason)))
         case _ => Nil
