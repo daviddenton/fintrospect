@@ -26,9 +26,9 @@ trait FormCodec[T] {
     case (name, values) => values.map(value => URLEncoder.encode(name, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8"))
   }.mkString("&")
 
-  def decode(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]], s: String): T
+  def decode(fields: Seq[FormField[_] with Extractor[Form, _]], s: String): T
 
-  def extract(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]], f: T): Extraction[T]
+  def extract(fields: Seq[FormField[_] with Extractor[Form, _]], f: T): Extraction[T]
 }
 
 
@@ -39,7 +39,7 @@ trait FormCodec[T] {
   * As such, extracting an invalid webform from a request will not fail unless the body encoding itself is invalid.
   */
 class WebFormCodec(messages: Map[Parameter, String]) extends FormCodec[Form] {
-  override def decode(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]], s: String): Form = {
+  override def decode(fields: Seq[FormField[_] with Extractor[Form, _]], s: String): Form = {
     val rawForm = new Form(decodeFields(s), Nil)
     new Form(rawForm.fields, fields.flatMap {
       _ <--? rawForm match {
@@ -49,7 +49,7 @@ class WebFormCodec(messages: Map[Parameter, String]) extends FormCodec[Form] {
     })
   }
 
-  override def extract(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]], t: Form): Extraction[Form] = Extracted(Some(t))
+  override def extract(fields: Seq[FormField[_] with Extractor[Form, _]], t: Form): Extraction[Form] = Extracted(Some(t))
 }
 
 /**
@@ -58,9 +58,9 @@ class WebFormCodec(messages: Map[Parameter, String]) extends FormCodec[Form] {
   * will auto-reject requests with a BadRequest.
   */
 class StrictFormCodec() extends FormCodec[Form] {
-  override def decode(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]], s: String): Form = new Form(decodeFields(s), Nil)
+  override def decode(fields: Seq[FormField[_] with Extractor[Form, _]], s: String): Form = new Form(decodeFields(s), Nil)
 
-  override def extract(fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]], form: Form): Extraction[Form] = Extraction.combine(fields.map(_.extract(form))) match {
+  override def extract(fields: Seq[FormField[_] with Extractor[Form, _]], form: Form): Extraction[Form] = Extraction.combine(fields.map(_.extract(form))) match {
     case failed@ExtractionFailed(_) => failed
     case _ => Extracted(Some(form))
   }
