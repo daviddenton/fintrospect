@@ -26,9 +26,11 @@ class ReportAge extends ServerRoutes[Request, View] {
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
 
-      if (postedForm.isValid) DisplayUserAge(
-        postedForm <-- NameAndAgeForm.fields.name,
-        postedForm <-- NameAndAgeForm.fields.age)
+      if (postedForm.isValid)
+        DisplayUserAge(
+          postedForm <-- NameAndAgeForm.fields.name,
+          postedForm <-- NameAndAgeForm.fields.age
+        )
       else NameAndAgeForm(NAMES, postedForm)
     }
   }
@@ -37,36 +39,43 @@ class ReportAge extends ServerRoutes[Request, View] {
   add(RouteSpec().body(NameAndAgeForm.form).at(Post) bindTo submit)
 }
 
+// Form fields classes - these encapsulate the validation logic. We can use "asserts" to define the field
 case class Name private(value: String)
 
 object Name {
-  def validate(value: String) = {
+  private def validate(value: String) = {
     assert(value.length > 0 && value.charAt(0).isUpper)
     Name(value)
   }
+
+  val specAndMessage = ParameterSpec.string("name").map(Name.validate) -> "Names must start with capital letter"
 }
 
 case class Age private(value: Int)
 
 object Age {
-  def validate(value: Int) = {
+  private def validate(value: Int) = {
     assert(value >= 18)
     Age(value)
   }
+
+  val specAndMessage = ParameterSpec.int("age").map(Age.validate)  -> "Must be an adult"
 }
 
-case class DisplayUserAge(name: Name, age: Age) extends View
+
+// this is the "Form" view", defining maps of the current state of the form and errors for each named field
+case class NameAndAgeForm(names: Seq[String], values: Map[String, String], errors: Map[String, String]) extends View
 
 object NameAndAgeForm {
 
   object fields {
-    val name = FormField.required(ParameterSpec.string("name").map(Name.validate))
-    val age = FormField.required(ParameterSpec.int("age").map(Age.validate))
+    val name = FormField.required(Name.specAndMessage._1)
+    val age = FormField.required(Age.specAndMessage._1)
   }
 
   val form = Body.webForm(
-    fields.name -> "Names must start with capital letter",
-    fields.age -> "Must be an adult")
+    fields.name -> Name.specAndMessage._2,
+    fields.age -> Age.specAndMessage._2)
 
   def apply(names: Seq[String], webForm: Form): NameAndAgeForm = {
     new NameAndAgeForm(names,
@@ -76,4 +85,6 @@ object NameAndAgeForm {
   }
 }
 
-case class NameAndAgeForm(names: Seq[String], values: Map[String, String], errors: Map[String, String]) extends View
+// finally, this is the "success" view, which is displayed when the
+case class DisplayUserAge(name: Name, age: Age) extends View
+

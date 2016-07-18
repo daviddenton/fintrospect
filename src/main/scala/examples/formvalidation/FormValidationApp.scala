@@ -12,7 +12,11 @@ import io.fintrospect.formats.Html
 import io.fintrospect.renderers.SiteMapModuleRenderer
 import io.fintrospect.templating.{MustacheTemplates, RenderView, View}
 
-object FormValidation extends App {
+/**
+  * This example shows how to use Body.webform() and a templating engine to construct a validating form, with custom messages
+  * for each field.
+  */
+object FormValidationApp extends App {
 
   val renderView = new RenderView(Html.ResponseBuilder, MustacheTemplates.HotReload("src/main/resources"))
 
