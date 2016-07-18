@@ -9,7 +9,7 @@ import scala.util.{Failure, Success, Try}
 
 
 
-class FormBody(val fields: Seq[FormField[_] with Retrieval[Form, _] with Extractor[Form, _]], encodeDecode: FormCodec[Form])
+class FormBody(val fields: Seq[FormField[_] with Extractor[Form, _]], encodeDecode: FormCodec[Form])
   extends Body[Form](new BodySpec[Form](None, APPLICATION_FORM_URLENCODED, s => encodeDecode.decode(fields, s), f => encodeDecode.encode(f)))
     with Bindable[Form, Binding]
     with Mandatory[Message, Form]
