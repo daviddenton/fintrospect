@@ -94,8 +94,10 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
   def withRoutes(newRoutes: Iterable[ServerRoute[RQ, RS]]*): ModuleSpec[RQ, RS] = newRoutes.flatten.foldLeft(this)(_.withRoute(_))
 
   private def withDefault(otherRoutes: ServiceBinding): ServiceBinding = {
+    val description = moduleRenderer.description(basePath, security, routes)
+
     val descriptionRoute = new IncompletePath0(RouteSpec("Description route"), Get, descriptionRoutePath) bindTo {
-      Service.mk { r: Request => Future.value(moduleRenderer.description(basePath, security, routes)) }
+      Service.mk { r: Request => Future.value(description) }
     }
 
     val fallback: ServiceBinding = {
