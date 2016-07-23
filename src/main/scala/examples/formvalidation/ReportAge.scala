@@ -5,7 +5,7 @@ import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
 import io.fintrospect.parameters.{Body, Form, FormField, ParameterSpec}
 import io.fintrospect.templating.View
-import io.fintrospect.util.{Chain, LeftF, RightF}
+import io.fintrospect.util.{LeftF, RightF}
 import io.fintrospect.{RouteSpec, ServerRoutes}
 
 import scala.language.reflectiveCalls
@@ -32,7 +32,7 @@ class ReportAge(greetingDatabase: GreetingDatabase) extends ServerRoutes[Request
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
 
-      Chain(postedForm)
+      FutureEither(postedForm)
         .map {
           form => if (postedForm.isValid) RightF(postedForm) else LeftF("form has errors")
         }
