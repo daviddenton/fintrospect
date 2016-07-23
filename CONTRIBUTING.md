@@ -11,7 +11,7 @@ If there are any message format library or templating engine bindings that you'd
 them or provide a PR. 
 
 - JSON formats: simply provide an implementation of ```JsonLibrary``` by following the ```Argo``` example in the source, and update ```format-dependencies.md```
-- Templating engines: provide a ```Render<name>View```implementation by following the ```RenderMustacheView``` example in the source, and update ```templating-dependencies.md```
+- Templating engines: provide a ```Templates```implementation by following the ```MustacheTemplates``` example in the source, and update ```templating-dependencies.md```
 
 #### general guidelines
 - At the moment, PRs should be sent to the master branch - this might change in future so check back everytime!

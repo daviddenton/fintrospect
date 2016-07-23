@@ -13,7 +13,7 @@ val loader = if(devMode) MustacheTemplateLoaders.HotReload("src/main/resources")
 
 val webModule = ModuleSpec[Request, View](Root / "web",
     new SiteMapModuleRenderer(new URL("http://root.com")),
-    new RenderMustacheView(Html.ResponseBuilder, loader))
+    new RenderView(Html.ResponseBuilder, loader))
     .withRoute(RouteSpec().at(Get) / "message" bindTo showMessage)
 ```
 
