@@ -2,53 +2,37 @@ package io.fintrospect.util
 
 import com.twitter.util.Future
 
-sealed trait Check[+I] {
-  def map[O](f: I => O): Check[O]
+sealed trait EitherF[+R, +L] {
+  def map[O](f: R => O): EitherF[O, L]
 
-  def flatMap[O](f: I => Check[O]): Check[O]
+  def flatMap[O, EO >: L](f: R => EitherF[O, EO]): EitherF[O, EO]
 }
 
-case class Pass[I](value: I) extends Check[I] {
-  override def map[O](f: I => O): Check[O] = Pass(f(value))
+case class RightF[I](value: I) extends EitherF[I, Nothing] {
+  override def map[O](f: I => O): EitherF[O, Nothing] = RightF(f(value))
 
-  override def flatMap[O](f: I => Check[O]): Check[O] = f(value)
+  override def flatMap[O, EO >: Nothing](f: I => EitherF[O, EO]): EitherF[O, EO] = f(value)
 }
 
-case class Fail[E](error: E) extends Check[Nothing] {
-  override def map[O](f: Nothing => O): Check[Nothing] = this
+case class LeftF[E](error: E) extends EitherF[Nothing, E] {
+  override def map[O](f: Nothing => O): EitherF[Nothing, E] = this
 
-  override def flatMap[O](f: Nothing => Check[O]): Check[O] = this
+  override def flatMap[O, EO >: E](f: Nothing => EitherF[O, EO]): EitherF[O, EO] = LeftF(error)
 }
 
-case class Chain[A](f: Future[Check[A]]) {
-  def map[B](next: A => Check[B]): Chain[B] = new Chain(f.map(check => check.flatMap(next)))
+class Chain[A, E] private(f: Future[EitherF[A, E]]) {
+  def map[B](next: A => EitherF[B, E]): Chain[B, E] = new Chain(f.map(check => check.flatMap(next)))
 
-  def flatMap[B](next: A => Future[Check[B]]): Chain[B] =
-    Chain(f.flatMap {
-      case Pass(v) => next(v)
-      case Fail(v) => Future.value(Fail(v))
+  def flatMap[B](next: A => Future[EitherF[B, E]]): Chain[B, E] =
+    new Chain[B, E](f.flatMap {
+      case RightF(v) => next(v)
+      case LeftF(e) => Future.value(LeftF(e))
     })
 
-  def finish[B](fn: Check[A] => B) = f.map(fn)
-}
-
-trait ChainMagnet[A] extends (() => Chain[A])
-
-object ChainMagnet {
-  implicit def valueToMagnet[A](a: A): ChainMagnet[A] = new ChainMagnet[A] {
-    override def apply(): Chain[A] = new Chain[A](Future.value(Pass(a)))
-  }
-
-  implicit def checkToMagnet[A](a: Check[A]): ChainMagnet[A] = new ChainMagnet[A] {
-    override def apply(): Chain[A] = new Chain[A](Future.value(a))
-  }
-
-  implicit def futureToMagnet[A](fa: Future[A]): ChainMagnet[A] = new ChainMagnet[A] {
-    override def apply(): Chain[A] = new Chain[A](fa.map(Pass(_)))
-  }
+  def end[B](fn: EitherF[A, E] => B) = f.map(fn)
 }
 
 object Chain {
-  def apply[A](magnet: ChainMagnet[A]): Chain[A] = magnet()
+  def apply[A, E](a: A): Chain[A, E] = new Chain[A, E](Future.value(RightF(a)))
 }
 

@@ -22,7 +22,7 @@ object FormValidationApp extends App {
 
   val module = ModuleSpec[Request, View](Root, new SiteMapModuleRenderer(new URL("http://my.cool.app")), renderView)
     .withDescriptionPath(_ / "sitemap.xml")
-    .withRoutes(new ReportAge())
+    .withRoutes(new ReportAge(new GreetingDatabase))
 
   Http.serve(":8181", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(module.toService))
 
