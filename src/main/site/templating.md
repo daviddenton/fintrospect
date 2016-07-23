@@ -22,5 +22,5 @@ Available implementations of the `TemplateLoader` are (see the relevant implemen
 - cached from the filesystem
 - hot-reloading from the filesystem
 
-Similarly to how the ```ResponseBuilder``` works, no 3rd-party dependencies are bundled with Fintrospect - simply import the extra SBT dependencies 
+Similarly to how the ```ResponseBuilder``` codecs work, no 3rd-party dependencies are bundled with Fintrospect - simply import the extra SBT dependencies 
 as required:
