@@ -3,9 +3,10 @@ package examples.formvalidation
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
+import com.twitter.util.Future
 import io.fintrospect.parameters.{Body, Form, FormField, ParameterSpec}
 import io.fintrospect.templating.View
-import io.fintrospect.templating.View.viewToFuture
+import io.fintrospect.util.{Chain, Fail, Pass}
 import io.fintrospect.{RouteSpec, ServerRoutes}
 
 import scala.language.reflectiveCalls
@@ -17,21 +18,44 @@ import scala.language.reflectiveCalls
   */
 class ReportAge extends ServerRoutes[Request, View] {
 
+  object Downstream {
+    def checkAge(age: Age): Future[Boolean] = Future.value(true)
+
+    def checkName(name: Name): Future[Boolean] = Future.value(true)
+  }
+
   private val NAMES = Seq("Bob", "Johnny", "Rita", "Sue")
 
   // displays the initial form to the user
-  add(RouteSpec().at(Get) bindTo Service.mk { rq: Request => NameAndAgeForm(NAMES, Form()) })
+  add(RouteSpec().at(Get) bindTo Service.mk { rq: Request => NameAndAgeForm(NAMES, Form(), None) })
 
   private val submit = Service.mk {
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
 
-      if (postedForm.isValid)
-        DisplayUserAge(
-          postedForm <-- NameAndAgeForm.fields.name,
-          postedForm <-- NameAndAgeForm.fields.age
-        )
-      else NameAndAgeForm(NAMES, postedForm)
+      Chain(postedForm)
+        .map {
+          form => if (postedForm.isValid) Pass(postedForm) else Fail("form has errors")
+        }
+        .flatMap {
+          form => Downstream
+            .checkAge(NameAndAgeForm.fields.age <-- form)
+            .map(ageValid => if (ageValid) Pass(form) else Fail("Age is not valid"))
+        }
+        .flatMap {
+          form => Downstream
+            .checkName(NameAndAgeForm.fields.name <-- form)
+            .map(nameValid => if (nameValid) Pass(form) else Fail("Name is not valid"))
+        }
+        .finish {
+          case Pass(form) => DisplayUserAge(
+            postedForm <-- NameAndAgeForm.fields.name,
+            postedForm <-- NameAndAgeForm.fields.age
+          )
+          case Fail(error: String) => {
+            NameAndAgeForm(NAMES, postedForm, Option(error))
+          }
+        }
     }
   }
 
@@ -59,7 +83,7 @@ object Age {
     Age(value)
   }
 
-  val specAndMessage = ParameterSpec.int("age").map(Age.validate)  -> "Must be an adult"
+  val specAndMessage = ParameterSpec.int("age").map(Age.validate) -> "Must be an adult"
 }
 
 
@@ -77,7 +101,7 @@ object NameAndAgeForm {
     fields.name -> Name.specAndMessage._2,
     fields.age -> Age.specAndMessage._2)
 
-  def apply(names: Seq[String], webForm: Form): NameAndAgeForm = {
+  def apply(names: Seq[String], webForm: Form, otherError: Option[String]): NameAndAgeForm = {
     new NameAndAgeForm(names,
       webForm.fields.mapValues(_.mkString(",")),
       Map(webForm.errors.map(ip => ip.param.name -> ip.reason): _*)
