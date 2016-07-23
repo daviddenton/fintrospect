@@ -5,7 +5,7 @@ import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Request
 import io.fintrospect.parameters.{Body, Form, FormField, ParameterSpec}
 import io.fintrospect.templating.View
-import io.fintrospect.util.{LeftF, RightF}
+import io.fintrospect.util.EitherF.eitherF
 import io.fintrospect.{RouteSpec, ServerRoutes}
 
 import scala.language.reflectiveCalls
@@ -32,21 +32,21 @@ class ReportAge(greetingDatabase: GreetingDatabase) extends ServerRoutes[Request
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
 
-      FutureEither(postedForm)
+      eitherF(postedForm)
         .map {
-          form => if (postedForm.isValid) RightF(postedForm) else LeftF("form has errors")
+          form => if (postedForm.isValid) Right(postedForm) else Left("form has errors")
         }
         .flatMap {
           form => greetingDatabase
             .lookupGreeting(NameAndAgeForm.fields.age <-- form, NameAndAgeForm.fields.name <-- form)
-            .map(greeting => greeting.map(g => RightF((form, g))).getOrElse(LeftF("No idea how to greet you")))
+            .map(greeting => greeting.map(g => Right((form, g))).getOrElse(Left("No idea how to greet you")))
         }
         .end {
-          case RightF((form, greeting)) => DisplayUserAge(greeting,
+          case Right((form, greeting)) => DisplayUserAge(greeting,
             form <-- NameAndAgeForm.fields.name,
             form <-- NameAndAgeForm.fields.age
           )
-          case LeftF(error) => NameAndAgeForm(NAMES, postedForm, Option(error))
+          case Left(error) => NameAndAgeForm(NAMES, postedForm, Option(error))
         }
     }
   }
