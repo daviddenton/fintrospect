@@ -28,31 +28,30 @@ class ReportAge(greetingDatabase: GreetingDatabase) extends ServerRoutes[Request
   // displays the initial form to the user
   add(RouteSpec().at(Get) bindTo Service.mk { rq: Request => NameAndAgeForm(NAMES, Form(), None) })
 
-  private val submit = Service.mk {
+  private val submitAndValidate = Service.mk {
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
 
-      eitherF(postedForm)
-        .map {
-          form => if (postedForm.isValid) Right(postedForm) else Left("form has errors")
-        }
-        .flatMap {
-          form => greetingDatabase
-            .lookupGreeting(NameAndAgeForm.fields.age <-- form, NameAndAgeForm.fields.name <-- form)
-            .map(greeting => greeting.map(g => Right((form, g))).getOrElse(Left("No idea how to greet you")))
-        }
-        .end {
-          case Right((form, greeting)) => DisplayUserAge(greeting,
-            form <-- NameAndAgeForm.fields.name,
-            form <-- NameAndAgeForm.fields.age
-          )
-          case Left(error) => NameAndAgeForm(NAMES, postedForm, Option(error))
-        }
+      eitherF {
+        if (postedForm.isValid) Right(postedForm) else Left("form has errors")
+      }.map {
+        form => Right((NameAndAgeForm.fields.age <-- form, NameAndAgeForm.fields.name <-- form))
+      }.flatMap {
+        case (age, name) =>
+          greetingDatabase
+            .lookupGreeting(age, name)
+            .map(greeting => greeting
+              .map(g => Right((age, name, g)))
+              .getOrElse(Left("No idea how to greet you")))
+      }.end {
+        case Right((age, name, greeting)) => DisplayUserAge(greeting, name, age)
+        case Left(error) => NameAndAgeForm(NAMES, postedForm, Option(error))
+      }
     }
   }
 
   // provides form validation on POST to same route
-  add(RouteSpec().body(NameAndAgeForm.form).at(Post) bindTo submit)
+  add(RouteSpec().body(NameAndAgeForm.form).at(Post) bindTo submitAndValidate)
 }
 
 // Form fields classes - these encapsulate the validation logic. We can use "asserts" to define the field

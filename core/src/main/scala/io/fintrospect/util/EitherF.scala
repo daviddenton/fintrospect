@@ -24,5 +24,7 @@ class EitherF[L, R] private(f: Future[Either[L, R]]) {
 
 object EitherF {
   def eitherF[L, R](a: R): EitherF[L, R] = new EitherF[L, R](Future.value(Right(a)))
+  def eitherF[L, R](a: Future[R]): EitherF[L, R] = new EitherF[L, R](a.map(Right(_)))
+  def eitherF[L, R](next: => Either[L, R]): EitherF[L, R] = new EitherF[L, R](Future.value(next))
 }
 
