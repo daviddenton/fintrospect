@@ -20,11 +20,12 @@ case class LeftF[L](error: L) extends EitherF[L, Nothing] {
   override def flatMap[La >: L, O](f: Nothing => EitherF[La, O]): EitherF[La, O] = LeftF(error)
 }
 
-class Chain[L, R] private(f: Future[EitherF[L, R]]) {
-  def map[Ra](next: R => EitherF[L, Ra]): Chain[L, Ra] = new Chain(f.map(check => check.flatMap(next)))
 
-  def flatMap[Ra](next: R => Future[EitherF[L, Ra]]): Chain[L, Ra] =
-    new Chain[L, Ra](f.flatMap {
+class FutureEither[L, R] private(f: Future[EitherF[L, R]]) {
+  def map[Ra](next: R => EitherF[L, Ra]): FutureEither[L, Ra] = new FutureEither(f.map(check => check.flatMap(next)))
+
+  def flatMap[Ra](next: R => Future[EitherF[L, Ra]]): FutureEither[L, Ra] =
+    new FutureEither[L, Ra](f.flatMap {
       case RightF(v) => next(v)
       case LeftF(e) => Future.value(LeftF(e))
     })
@@ -32,7 +33,7 @@ class Chain[L, R] private(f: Future[EitherF[L, R]]) {
   def end[Ra](fn: EitherF[L, R] => Ra) = f.map(fn)
 }
 
-object Chain {
-  def apply[L, R](a: R): Chain[L, R] = new Chain[L, R](Future.value(RightF(a)))
+object FutureEither {
+  def apply[L, R](a: R): FutureEither[L, R] = new FutureEither[L, R](Future.value(RightF(a)))
 }
 
