@@ -17,10 +17,7 @@ import scala.util.{Failure, Success, Try}
 class UniBody[T](spec: BodySpec[T],
                  theParamType: ParamType,
                  theExample: Option[T])
-  extends Body(spec)
-  with Bindable[T, RequestBinding]
-  with Mandatory[Message, T]
-  with MandatoryRebind[Message, T, RequestBinding] {
+  extends Body(spec) {
 
   private val param = new BodyParameter with Bindable[T, RequestBinding] {
     override val required = true
