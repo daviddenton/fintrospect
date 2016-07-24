@@ -10,10 +10,7 @@ import scala.util.{Failure, Success, Try}
 
 
 class FormBody(val fields: Seq[FormField[_] with Extractor[Form, _]], encodeDecode: FormCodec[Form])
-  extends Body[Form](new BodySpec[Form](None, APPLICATION_FORM_URLENCODED, s => encodeDecode.decode(fields, s), f => encodeDecode.encode(f)))
-    with Bindable[Form, RequestBinding]
-    with Mandatory[Message, Form]
-    with MandatoryRebind[Message, Form, RequestBinding] {
+  extends Body(new BodySpec[Form](None, APPLICATION_FORM_URLENCODED, s => encodeDecode.decode(fields, s), f => encodeDecode.encode(f))) {
 
   override def iterator = fields.iterator
 

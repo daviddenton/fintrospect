@@ -8,7 +8,10 @@ import io.fintrospect.util.Extractor
 import scala.xml.Elem
 
 abstract class Body[T](protected val spec: BodySpec[T]) extends Iterable[BodyParameter]
-with Extractor[Message, T] {
+  with Bindable[T, RequestBinding]
+  with Mandatory[Message, T]
+  with MandatoryRebind[Message, T, RequestBinding]
+  with Extractor[Message, T] {
   val contentType: ContentType = spec.contentType
 }
 
@@ -44,5 +47,5 @@ object Body {
     * for browser-server communications where you want to give feedback to the user.
     * This method takes a set of form fields, combined with their relevant error messages in case of validation failure.
     */
-  def webForm(fields: (FormField[_] with Extractor[Form, _], String)*): FormBody = new FormBody(fields.map(_._1), new WebFormCodec(Map(fields:_*)))
+  def webForm(fields: (FormField[_] with Extractor[Form, _], String)*): FormBody = new FormBody(fields.map(_._1), new WebFormCodec(Map(fields: _*)))
 }
