@@ -11,20 +11,20 @@ import scala.util.{Failure, Success, Try}
 
 class FormBody(val fields: Seq[FormField[_] with Extractor[Form, _]], encodeDecode: FormCodec[Form])
   extends Body[Form](new BodySpec[Form](None, APPLICATION_FORM_URLENCODED, s => encodeDecode.decode(fields, s), f => encodeDecode.encode(f)))
-    with Bindable[Form, Binding]
+    with Bindable[Form, RequestBinding]
     with Mandatory[Message, Form]
-    with MandatoryRebind[Message, Form, Binding] {
+    with MandatoryRebind[Message, Form, RequestBinding] {
 
   override def iterator = fields.iterator
 
-  def -->(value: Form): Seq[Binding] =
+  def -->(value: Form): Seq[RequestBinding] =
     Seq(new RequestBinding(null, t => {
       val content = spec.serialize(value)
       t.headerMap.add(Names.CONTENT_TYPE, spec.contentType.value)
       t.headerMap.add(Names.CONTENT_LENGTH, content.length.toString)
       t.setContentString(content)
       t
-    })) ++ fields.map(f => new FormFieldBinding(f, ""))
+    }))
 
   override def <--?(message: Message): Extraction[Form] =
     Try(spec.deserialize(message.contentString)) match {
