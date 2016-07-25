@@ -4,7 +4,7 @@ package io.fintrospect.parameters
   * Used to transparently copy the value out of an incoming request (or form etc..) and into an outgoing one. Useful when chaining
   * requests together.
   */
-trait Rebindable[From, T, B <: Binding] {
+trait Rebindable[From, T, B <: Binding] extends Bindable[T, B] {
   def <->(from: From): Iterable[B]
 
   /**
@@ -14,11 +14,11 @@ trait Rebindable[From, T, B <: Binding] {
 }
 
 trait MandatoryRebind[From, T, B <: Binding] extends Rebindable[From, T, B] {
-  self: Retrieval[From, T] with Bindable[T, B] =>
+  self: Retrieval[From, T] =>
   override def <->(from: From): Iterable[B] = this --> (this <-- from)
 }
 
 trait OptionalRebind[From, T, B <: Binding] extends Rebindable[From, T, B] {
-  self: Retrieval[From, Option[T]] with Bindable[T, B] =>
+  self: Retrieval[From, Option[T]] =>
   override def <->(from: From): Iterable[B] = (this <-- from).map(this.-->).getOrElse(Nil)
 }
