@@ -6,7 +6,7 @@ import org.jboss.netty.handler.codec.http.QueryStringDecoder
 import scala.collection.JavaConverters._
 
 trait QueryParameter[T]
-  extends Parameter with Bindable[T, QueryBinding] {
+  extends Parameter {
   override val where = "query"
 }
 

@@ -3,8 +3,7 @@ package io.fintrospect.parameters
 import com.twitter.finagle.http.{Message, Request}
 
 trait HeaderParameter[T]
-  extends Parameter
-  with Bindable[T, RequestBinding] {
+  extends Parameter {
 
   val where = "header"
 }
