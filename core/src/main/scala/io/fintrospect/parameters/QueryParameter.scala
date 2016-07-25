@@ -10,15 +10,11 @@ trait QueryParameter[T]
   override val where = "query"
 }
 
-private object QueryExtractAndRebind extends ParameterExtractAndBind[Request, QueryBinding] {
+object QueryExtractAndRebind extends ParameterExtractAndBind[Request, QueryBinding] {
   def newBinding(parameter: Parameter, value: String) = new QueryBinding(parameter, value)
 
   def valuesFrom(parameter: Parameter, request: Request): Option[Seq[String]] =
     Option(new QueryStringDecoder(request.uri).getParameters.get(parameter.name)).map(_.asScala.toSeq)
-}
-
-abstract class SingleQueryParameter[T](spec: ParameterSpec[T])
-  extends SingleParameter(spec, QueryExtractAndRebind) with QueryParameter[T] {
 }
 
 abstract class MultiQueryParameter[T](spec: ParameterSpec[T])
