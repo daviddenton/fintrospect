@@ -6,9 +6,9 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
+import io.fintrospect.Module.ServiceBinding
 import io.fintrospect.ModuleSpec.ModifyPath
 import io.fintrospect.renderers.ModuleRenderer
-import io.fintrospect.types.ServiceBinding
 import io.fintrospect.util.{ExtractionError, ExtractionFailed}
 
 import scala.PartialFunction.empty
