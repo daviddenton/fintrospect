@@ -1,7 +1,5 @@
 package io.fintrospect.parameters
 
-import io.fintrospect.parameters.types._
-
 trait FormField[T]
   extends BodyParameter {
   override val example = None

@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 import io.fintrospect.util.ExtractionError.{Invalid, Missing}
-import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
+import io.fintrospect.util.{ExtractableParameter, Extracted, Extraction, ExtractionFailed}
 
 import scala.util.{Failure, Success, Try}
 
@@ -33,6 +33,20 @@ trait ParameterExtractAndBind[From, B <: Binding] {
   def newBinding(parameter: Parameter, value: String): B
 
   def valuesFrom(parameter: Parameter, from: From): Option[Seq[String]]
+}
+
+trait OptionalParameter[From, T, Bnd <: Binding] extends Optional[From, T]
+  with ExtractableParameter[From, T]
+  with Rebindable[From, T, Bnd] {
+  override def <->(from: From): Iterable[Bnd] = (this <-- from).map(this.-->).getOrElse(Nil)
+
+  def -->(value: Option[T]): Iterable[Bnd] = value.map(-->).getOrElse(Nil)
+}
+
+trait MandatoryParameter[From, T, Bnd <: Binding] extends Mandatory[From, T]
+  with ExtractableParameter[From, T]
+  with Rebindable[From, T, Bnd] {
+  override def <->(from: From): Iterable[Bnd] = this --> (this <-- from)
 }
 
 abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, B])

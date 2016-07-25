@@ -6,6 +6,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
+## 13.5.0 (uncut)
+- Massive refactor of `Parameter` types and traits. This should be transparent to end users.
+
 ## 13.4.0
 - Upgrade to Finagle `6.36.0`
 - Fixed site API docs
