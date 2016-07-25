@@ -8,21 +8,13 @@ import io.fintrospect.parameters.types._
   */
 object Header {
 
-  trait Mandatory[T] extends MandatoryParameter[Message, T, RequestBinding] {
-    self: ExtParameter[Message, T, RequestBinding] =>
-  }
+  trait Mandatory[T] extends MandatoryParameter[Message, T, RequestBinding]
 
-  trait MandatorySeq[T] extends MandatoryParameter[Message, Seq[T], RequestBinding] {
-    self: ExtParameter[Message, Seq[T], RequestBinding] =>
-  }
+  trait MandatorySeq[T] extends MandatoryParameter[Message, Seq[T], RequestBinding]
 
-  trait Optional[T] extends OptionalParameter[Message, T, RequestBinding] {
-    self: ExtParameter[Message, T, RequestBinding] =>
-  }
+  trait Optional[T] extends OptionalParameter[Message, T, RequestBinding]
 
-  trait OptionalSeq[T] extends OptionalParameter[Message, Seq[T], RequestBinding] {
-    self: ExtParameter[Message, Seq[T], RequestBinding] =>
-  }
+  trait OptionalSeq[T] extends OptionalParameter[Message, Seq[T], RequestBinding]
 
   val required = new Parameters[HeaderParameter, Mandatory] with MultiParameters[MultiHeaderParameter, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleHeaderParameter(spec) with Mandatory[T]
