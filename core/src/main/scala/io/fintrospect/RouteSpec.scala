@@ -2,7 +2,7 @@ package io.fintrospect
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
-import io.fintrospect.parameters.{Body, HeaderParameter, Parameter, QueryParameter}
+import io.fintrospect.parameters.{Body, HeaderParameter, Parameter, QueryParameter, Rebindable}
 import io.fintrospect.util.{Extracted, Extraction, Extractor}
 
 /**
@@ -13,7 +13,7 @@ case class RouteSpec private(summary: String,
                              produces: Set[ContentType],
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
-                             requestParams: Seq[Parameter with Extractor[Request, _]],
+                             requestParams: Seq[Parameter with Extractor[Request, _] with Rebindable[Request, _, _]],
                              responses: Seq[ResponseSpec],
                              validation: RouteSpec => Extractor[Request, Nothing]) {
 
