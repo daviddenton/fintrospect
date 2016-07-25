@@ -8,9 +8,10 @@ object types {
 
   trait OptionalParameter[From, T, Bnd <: Binding] extends io.fintrospect.parameters.Optional[From, T]
   with ExtractableParameter[From, T]
-  with OptionalRebind[From, T, Bnd]
-  with OptionalBindable[T, Bnd] {
+  with OptionalRebind[From, T, Bnd] {
     self: ExtParameter[From, T, Bnd] =>
+    def -->(value: Option[T]): Iterable[Bnd] = value.map(-->).getOrElse(Nil)
+
   }
 
   trait MandatoryParameter[From, T, Bnd <: Binding] extends io.fintrospect.parameters.Mandatory[From, T]
