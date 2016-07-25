@@ -4,7 +4,7 @@ package io.fintrospect.parameters
 /**
   * Allows binding of a value to an entity (eg. query/header/field...)
   */
-trait Bindable[T, B <: Binding] {
+trait Bindable[-T, +B <: Binding] {
 
   /**
     * Bind the value to this parameter
