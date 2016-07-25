@@ -40,6 +40,9 @@ trait OptionalParameter[From, T, Bnd <: Binding] extends Optional[From, T]
   with Rebindable[From, T, Bnd] {
   override def <->(from: From): Iterable[Bnd] = (this <-- from).map(this.-->).getOrElse(Nil)
 
+  /**
+    * This is an extra implementation of bindable to allow us to bind to Option[T] as well as [T]
+    */
   def -->(value: Option[T]): Iterable[Bnd] = value.map(-->).getOrElse(Nil)
 }
 
