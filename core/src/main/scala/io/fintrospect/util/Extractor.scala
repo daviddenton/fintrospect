@@ -28,7 +28,7 @@ object Extractor {
 }
 
 /**
-  * Mechanism to extract (or fail to extract) a parameter from a particular 'From' context, adding
+  * Mechanism to extract (or fail to extract) a parameter from a particular 'From' context
   */
 trait ExtractableParameter[-From, +T] extends Parameter with Extractor[From, T] {
 
