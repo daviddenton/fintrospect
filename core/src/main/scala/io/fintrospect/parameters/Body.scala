@@ -8,10 +8,8 @@ import io.fintrospect.util.Extractor
 import scala.xml.Elem
 
 abstract class Body[T](protected val spec: BodySpec[T]) extends Iterable[BodyParameter]
-  with Bindable[T, RequestBinding]
   with Mandatory[Message, T]
-  with MandatoryRebind[Message, T, RequestBinding]
-  with Extractor[Message, T] {
+  with MandatoryRebind[Message, T, RequestBinding] {
   val contentType: ContentType = spec.contentType
 }
 
