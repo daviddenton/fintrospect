@@ -5,7 +5,7 @@ import com.twitter.finagle.http.{Message, Request}
 trait HeaderParameter[T]
   extends Parameter {
 
-  val where = "header"
+  override val where = "header"
 }
 
 object HeaderExtractAndRebind extends ParameterExtractAndBind[Message, RequestBinding] {
