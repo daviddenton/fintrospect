@@ -30,14 +30,13 @@ object Extractor {
 /**
   * Mechanism to extract (or fail to extract) a parameter from a particular 'From' context, adding
   */
-trait ExtractableParameter[-From, +T] {
-  self: Parameter with Extractor[From, T] =>
+trait ExtractableParameter[-From, +T] extends Parameter with Extractor[From, T] {
 
   /**
     * Attempt to manually deserialise from the message object, using a validation predicate and reason for failure.
     */
   def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[T] =
-    <--?(from).flatMap[T](v => if (v.forall(predicate)) Extraction(v) else ExtractionFailed(ExtractionError(self, reason)))
+    <--?(from).flatMap[T](v => if (v.forall(predicate)) Extraction(v) else ExtractionFailed(ExtractionError(this, reason)))
 
   /**
     * Attempt to manually deserialise from the message object, using a validation predicate and reason for failure.
