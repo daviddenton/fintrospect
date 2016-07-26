@@ -3,7 +3,7 @@ package io.fintrospect
 import com.twitter.finagle.http.path.{->, /, Path}
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
-import io.fintrospect.IncompletePath.clientFor
+import io.fintrospect.IncompletePath.{clientFor, proxyFor}
 import io.fintrospect.ModuleSpec.ModifyPath
 import io.fintrospect.parameters.{PathParameter, Path => Fp}
 
@@ -15,6 +15,14 @@ object IncompletePath {
                                      pp: PathParameter[_]*): RouteClient = {
     new RouteClient(ip.method, ip.routeSpec, Fp.fixed(ip.pathFn(Path("")).toString) +: pp, service)
   }
+
+  private[fintrospect] def proxyFor[T](ip: IncompletePath, service: Service[Request, Response]): Service[Request, Response] =
+    Service.mk {
+      request: Request => {
+        val bindings = ip.routeSpec.body.map(b => b.rebind(request)).getOrElse(Nil) ++ ip.routeSpec.requestParams.flatMap(p => p.rebind(request))
+        service(bindings.foldLeft(RequestBuilder(ip.method, request.path.split("/"))) { (builder, binding) => binding(builder) }.build())
+      }
+    }
 }
 
 trait IncompletePath {
@@ -24,6 +32,8 @@ trait IncompletePath {
   val pathFn: ModifyPath
 
   def bindToClient(service: Service[Request, Response]): RouteClient
+
+  def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response]
 }
 
 class IncompletePath0(val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath) extends IncompletePath {
@@ -45,6 +55,8 @@ class IncompletePath0(val routeSpec: RouteSpec, val method: Method, val pathFn: 
     }
   }
 
+  def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo(proxyFor(this, service))
+
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service)
 }
 
@@ -61,6 +73,8 @@ class IncompletePath1[A](val routeSpec: RouteSpec, val method: Method, val pathF
   }
 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1)
+
+  override def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo(_ => proxyFor(this, service))
 }
 
 class IncompletePath2[A, B](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
@@ -77,6 +91,8 @@ class IncompletePath2[A, B](val routeSpec: RouteSpec, val method: Method, val pa
   }
 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2)
+
+  override def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo((_, _) => proxyFor(this, service))
 }
 
 class IncompletePath3[A, B, C](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
@@ -94,6 +110,8 @@ class IncompletePath3[A, B, C](val routeSpec: RouteSpec, val method: Method, val
   }
 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3)
+
+  override def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo((_, _, _) => proxyFor(this, service))
 }
 
 class IncompletePath4[A, B, C, D](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
@@ -113,6 +131,8 @@ class IncompletePath4[A, B, C, D](val routeSpec: RouteSpec, val method: Method, 
   }
 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4)
+
+  override def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo((_, _, _, _) => proxyFor(this, service))
 }
 
 class IncompletePath5[A, B, C, D, E](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
@@ -133,6 +153,8 @@ class IncompletePath5[A, B, C, D, E](val routeSpec: RouteSpec, val method: Metho
   }
 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4, pp5)
+
+  override def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo((_, _, _, _, _) => proxyFor(this, service))
 }
 
 class IncompletePath6[A, B, C, D, E, F](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
@@ -154,6 +176,8 @@ class IncompletePath6[A, B, C, D, E, F](val routeSpec: RouteSpec, val method: Me
   }
 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4, pp5, pp6)
+
+  override def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo((_, _, _, _, _, _) => proxyFor(this, service))
 }
 
 class IncompletePath7[A, B, C, D, E, F, G](val routeSpec: RouteSpec, val method: Method, val pathFn: ModifyPath,
@@ -172,4 +196,6 @@ class IncompletePath7[A, B, C, D, E, F, G](val routeSpec: RouteSpec, val method:
   }
 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service, pp1, pp2, pp3, pp4, pp5, pp6, pp7)
+
+  override def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo((_, _, _, _, _, _, _) => proxyFor(this, service))
 }

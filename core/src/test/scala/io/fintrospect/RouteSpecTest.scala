@@ -1,15 +1,17 @@
 package io.fintrospect
 
+import java.time.LocalDate
+
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Status.{BadRequest, Ok}
+import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
-import com.twitter.util.Future
+import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec.RequestValidation
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
-import io.fintrospect.parameters.Query.Mandatory
-import io.fintrospect.parameters.{Body, Header, Path, Query, QueryParameter}
+import io.fintrospect.parameters.{Body, Header, Path, Query}
 import io.fintrospect.util.ExtractionError.Missing
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
@@ -21,7 +23,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
     val returnsMethodAndUri = Service.mk[Request, Response] { request =>
       Ok(request.method.toString() + "," + request.uri)
     }
-    val query: QueryParameter[String] with Mandatory[String] = Query.required.string("query")
+    val query = Query.required.string("query")
     val name = Path.string("pathName")
     val maxAge = Path.integer("maxAge")
     val gender = Path.string("gender")
@@ -91,6 +93,33 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       it("identifies called route as a request header") {
         responseFor(client(intParam --> 55)) shouldEqual(Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
       }
+    }
+  }
+
+  describe("Http Route as a proxy") {
+    val request = Request("/call/male?query=bob")
+    request.contentString = <xml/>.toString()
+    request.headerMap("date") = "2000-01-01"
+
+    val query = Query.required.string("query")
+    val date = Header.optional.localDate("date")
+    val gender = Path.string("gender")
+    val body = Body.xml(None)
+
+
+    val expectedRequest = Service.mk[Request, Response] { received =>
+      if(query.from(received) == "bob" &&
+        date.from(received).contains(LocalDate.of(2000, 1, 1)) &&
+        request.uri == received.uri &&
+        body.from(received) == <xml/>
+      ) Ok() else BadRequest()
+    }
+
+    val route = RouteSpec().taking(query).taking(date).body(body).at(Get) / "call" / gender
+    val proxyService = ModuleSpec(Root).withRoute(route bindToProxy expectedRequest).toService
+
+    it("copies everything into downstream request") {
+      Await.result(proxyService(request)).status shouldBe Ok
     }
   }
 
