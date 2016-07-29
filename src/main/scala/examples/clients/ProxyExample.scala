@@ -7,7 +7,6 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import examples.clients.BrewdogApiContract.lookupBeers
 import io.fintrospect.configuration.{Credentials, Host, Port}
-import io.fintrospect.filters.DebuggingFilters
 import io.fintrospect.filters.RequestFilters.{AddHost, BasicAuthorization}
 import io.fintrospect.parameters.Query
 import io.fintrospect.{ProxyModule, RouteSpec}
@@ -16,7 +15,6 @@ object BrewdogApiHttp {
   def apply(): Service[Request, Response] = {
     AddHost(Host("punkapi.com").toAuthority(Port(443)))
       .andThen(BasicAuthorization(Credentials("22244d6b88574064bbbfe284f1631eaf", "")))
-      .andThen(DebuggingFilters.PrintRequestAndResponse)
       .andThen(Http.client.withTlsWithoutValidation.newService("punkapi.com:443"))
   }
 }
