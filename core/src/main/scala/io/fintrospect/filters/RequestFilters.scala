@@ -3,6 +3,7 @@ package io.fintrospect.filters
 import java.nio.charset.StandardCharsets.ISO_8859_1
 import java.util.Base64
 
+import com.google.common.net.HttpHeaders
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.Status.NotAcceptable
 import com.twitter.finagle.http.{Request, Response}
@@ -66,9 +67,19 @@ object RequestFilters {
   }
 
   /**
+    * Add User-Agent header to the Request.
+    */
+  def AddUserAgent[T](user: String) = Filter.mk[Request, T, Request, T] {
+    (req, svc) => {
+      req.headerMap(HttpHeaders.USER_AGENT) = user
+      svc(req)
+    }
+  }
+
+  /**
     * Add Authorization header with base-64 encoded credentials to the Request
     */
-  def BasicAuthorization[T](credentials: Credentials) = Filter.mk[Request, T, Request, T] {
+  def BasicAuthorization(credentials: Credentials) = Filter.mk[Request, Response, Request, Response] {
     (req, svc) => {
       val base64Credentials = Base64.getEncoder.encodeToString(s"${credentials.username}:${credentials.password}".getBytes(ISO_8859_1))
       req.headerMap(AUTHORIZATION) = "Basic " + base64Credentials.trim

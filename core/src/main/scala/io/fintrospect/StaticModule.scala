@@ -21,7 +21,7 @@ object StaticModule {
 
 class StaticModule private(basePath: Path, baseDir: String, moduleFilter: Filter[Request, Response, Request, Response]) extends Module {
 
-  override protected def serviceBinding: ServiceBinding = {
+  override protected[fintrospect] def serviceBinding: ServiceBinding = {
     case Get -> path if exists(path) =>
       moduleFilter.andThen(Service.mk[Request, Response] {
         val subPath = convertPath(path)
