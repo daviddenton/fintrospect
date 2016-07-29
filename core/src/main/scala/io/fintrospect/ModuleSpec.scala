@@ -62,7 +62,7 @@ class ModuleSpec[RQ, RS] private(basePath: Path,
       }
   }
 
-  override protected def serviceBinding: ServiceBinding =
+  override protected[fintrospect] def serviceBinding: ServiceBinding =
     withDefault(routes.foldLeft(empty[(Method, Path), Service[Request, Response]]) {
       (currentBinding, route) =>
         val filter = identify(route).andThen(security.filter).andThen(validationFilter(route)).andThen(moduleFilter)

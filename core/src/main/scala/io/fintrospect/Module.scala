@@ -54,5 +54,5 @@ trait Module {
     */
   def toService: Service[Request, Response] = Module.toService(serviceBinding)
 
-  protected def serviceBinding: ServiceBinding
+  protected[fintrospect] def serviceBinding: ServiceBinding
 }

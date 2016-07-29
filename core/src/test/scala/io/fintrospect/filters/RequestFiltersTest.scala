@@ -7,7 +7,7 @@ import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.ContentTypes
 import io.fintrospect.ContentTypes.{APPLICATION_XHTML_XML, APPLICATION_XML, WILDCARD}
-import io.fintrospect.configuration.{Authority, Credentials, Host, Port}
+import io.fintrospect.configuration.{Credentials, Host, Port}
 import io.fintrospect.filters.RequestFilters.{AddHost, BasicAuthorization, StrictAccept}
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
 import io.fintrospect.parameters.Query
@@ -99,14 +99,34 @@ class RequestFiltersTest extends FunSpec with ShouldMatchers {
 
     describe("AddHost") {
       it("adds authority host header") {
-        val authority = Authority(Host.localhost, Port(9865))
-        result(AddHost(authority)(Request(), Service.mk { req => Future.value(headerOf("Host")(req)) })) shouldBe authority.toString
+        result(AddHost(Host.localhost.toAuthority(Port(80)))(Request(), Service.mk { req => {
+          val r = Response()
+          r.contentString = headerOf("Host")(req)
+          Future.value(r)
+        }
+        })).contentString shouldBe "localhost:80"
+      }
+    }
+
+    describe("AddUserAgent") {
+      it("adds user agent header") {
+        result(RequestFilters.AddUserAgent("bob")(Request(), Service.mk {
+          req =>
+            val r = Response()
+            r.contentString = headerOf("User-Agent")(req)
+            Future.value(r)
+        })).contentString shouldBe "bob"
       }
     }
 
     describe("BasicAuthorization") {
       it("adds basic authorization header") {
-        result(BasicAuthorization(Credentials("hello", "kitty"))(Request(), Service.mk { req => Future.value(headerOf("Authorization")(req)) })) shouldBe "Basic aGVsbG86a2l0dHk="
+        result(BasicAuthorization(Credentials("hello", "kitty"))(Request(),  Service.mk {
+          req =>
+            val r = Response()
+            r.contentString = headerOf("Authorization")(req)
+            Future.value(r)
+        })).contentString shouldBe "Basic aGVsbG86a2l0dHk="
       }
     }
 
