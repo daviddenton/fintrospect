@@ -71,7 +71,7 @@ case class RouteSpec private(summary: String,
     */
   def returning(code: (Status, String), example: String): RouteSpec = copy(responses = new ResponseSpec(code, Option(example)) +: responses)
 
-  def at(method: Method) = IncompletePath(this, method)
+  def at(method: Method) = UnboundRoute(this, method)
 }
 
 object RouteSpec {
