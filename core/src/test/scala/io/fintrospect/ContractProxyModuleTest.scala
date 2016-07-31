@@ -19,7 +19,7 @@ object TestContract extends Contract {
 class ContractProxyModuleTest extends FunSpec with ShouldMatchers {
 
   describe("ContractProxyModule") {
-    it("Proxies to the underlying service") {
+    it("cretes service which proxies requests to the underlying service") {
       val svc = Service.mk { req: Request => Status.Ok(TestContract.Endpoint.query <-- req) }
       Await.result(ContractProxyModule("remote", svc, TestContract).toService(Request("/hello?query=value"))).contentString shouldBe "value"
     }
