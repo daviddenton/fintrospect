@@ -16,10 +16,10 @@ import scala.reflect.runtime.{currentMirror, universe}
 trait Contract
 
 /**
-  * A single Contract endpoint which provides an unbound route to bind something to.
+  * A single Contract endpoint which provides an UnboundRoute to bind something to.
   */
 trait ContractEndpoint {
-  val route: IncompletePath
+  val route: UnboundRoute
 }
 
 /**

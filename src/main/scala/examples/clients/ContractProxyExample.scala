@@ -45,7 +45,7 @@ object BrewdogApiContract extends Contract {
 /**
   * This example shows how to use a contract to provide a Swagger-documented Proxy API for a set of remote routes.
   */
-object ProxyExample extends App {
+object ContractProxyExample extends App {
 
   val proxyModule = ContractProxyModule("brewdog", BrewdogApiHttp(), BrewdogApiContract)
 

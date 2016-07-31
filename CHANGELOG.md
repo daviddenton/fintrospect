@@ -7,8 +7,11 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
 ## 13.5.0 (uncut)
-- Removal of Generics in `RequestFilters`. This should make code using these filters easier.
-- Massive refactor of `Parameter` types and traits. This should be transparent to end users.
+- Addition of `Contract` and `ContractProxyModule`. This (optional) formalisation of client contracts allows simple
+exposing of a client API contract via Swagger. See `ContractProxyExample`.
+- (Unlikely) Break: Renamed of `IncompletePath` to `UnboundRoute` for clarity. This should be transparent to end users.
+- Refactor of `Parameter` types and traits. This should be transparent to end users.
+- Removal of Generics in `RequestFilters`. Should make code using these filters easier - by just removing Generics.
 
 ## 13.4.0
 - Upgrade to Finagle `6.36.0`
