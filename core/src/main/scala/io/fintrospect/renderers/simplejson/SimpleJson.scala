@@ -11,10 +11,10 @@ import io.fintrospect.util.ExtractionError
 import io.fintrospect.{Security, ServerRoute}
 
 /**
- * Ultra-basic ModuleRenderer implementation that only supports the route paths and the main descriptions of each.
- */
+  * Ultra-basic ModuleRenderer implementation that only supports the route paths and the main descriptions of each.
+  */
 class SimpleJson extends ModuleRenderer {
-  override def badRequest(badParameters: Seq[ExtractionError]): Response = JsonErrorResponseRenderer.badRequest(badParameters)
+  override def badRequest(badParameters: Seq[ExtractionError]): Response = badRequest(badParameters)
 
   override def notFound(request: Request): Response = JsonErrorResponseRenderer.notFound()
 

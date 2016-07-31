@@ -8,7 +8,9 @@ import com.twitter.finagle.{Http, Service}
 import io.fintrospect.configuration.{Credentials, Host, Port}
 import io.fintrospect.filters.RequestFilters.{AddHost, BasicAuthorization}
 import io.fintrospect.parameters.Query
-import io.fintrospect.{ProxyModule, RouteSpec}
+import io.fintrospect.{Contract, ContractEndpoint, ContractProxyModule, RouteSpec}
+
+import scala.language.reflectiveCalls
 
 object BrewdogApiHttp {
   private val apiAuthority = Host("punkapi.com").toAuthority(Port(443))
@@ -20,23 +22,32 @@ object BrewdogApiHttp {
   }
 }
 
-object BrewdogApiContract {
-  private val brewedBefore = Query.optional.string("brewed_before", "e.g. 01-2010 (format is mm-yyyy)")
-  private val alcoholContent = Query.optional.int("abv_gt")
+object BrewdogApiContract extends Contract {
 
-  val lookupBeers = RouteSpec("lookup beers")
-      .taking(brewedBefore)
-      .taking(alcoholContent)
-    .at(Get) / "api" / "v1" / "beers"
+  object LookupBeers extends ContractEndpoint {
+    val brewedBefore = Query.optional.string("brewed_before", "e.g. 01-2010 (format is mm-yyyy)")
+    val alcoholContent = Query.optional.int("abv_gt", "Minimum alcohol %")
+
+    override val route =
+      RouteSpec("lookup beers")
+        .taking(brewedBefore)
+        .taking(alcoholContent)
+        .at(Get) / "api" / "v1" / "beers"
+  }
+
+  object RandomBeer extends ContractEndpoint {
+    override val route = RouteSpec("get a random beer recipe")
+      .at(Get) / "api" / "v1" / "beers" / "random"
+  }
+
 }
 
 /**
-  * This example shows how to generate Proxy API documentation for a set of remote routes.
+  * This example shows how to use a contract to provide a Swagger-documented Proxy API for a set of remote routes.
   */
 object ProxyExample extends App {
 
-  val proxyModule = ProxyModule("brewdog", BrewdogApiHttp())
-    .withRoute(BrewdogApiContract.lookupBeers)
+  val proxyModule = ContractProxyModule("brewdog", BrewdogApiHttp(), BrewdogApiContract)
 
   Http.serve(":9000", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(proxyModule.toService))
 
