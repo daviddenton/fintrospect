@@ -4,7 +4,7 @@ import java.io.OutputStream
 import java.nio.charset.Charset.defaultCharset
 
 import com.twitter.finagle.http.Status.{BadGateway, NotFound, Ok}
-import com.twitter.io.{Bufs, Reader}
+import com.twitter.io.{Buf, Bufs, Reader}
 import com.twitter.util.Await
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
@@ -87,10 +87,20 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
       statusAndContentFrom(bldr.Error(NotFound))._1 shouldEqual NotFound
     }
 
-    it("error with message - Buf") {
+    it("error with message - String") {
       statusAndContentFrom(bldr.Error(NotFound, customError)) shouldEqual(NotFound, expectedErrorContent)
       statusAndContentFrom(NotFound(customError)) shouldEqual(NotFound, expectedErrorContent)
     }
+
+    it("error with message - Buf") {
+      statusAndContentFrom(bldr.Error(NotFound, Buf.Utf8(expectedErrorContent))) shouldEqual(NotFound, expectedErrorContent)
+      statusAndContentFrom(NotFound(Buf.Utf8(expectedErrorContent))) shouldEqual(NotFound, expectedErrorContent)
+    }
+
+//    it("error with message - Reader") {
+//      statusAndContentFrom(bldr.Error(NotFound, Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldEqual(NotFound, expectedErrorContent)
+//      statusAndContentFrom(NotFound(Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldEqual(NotFound, expectedErrorContent)
+//    }
 
     it("error with message - ChannelBuffer") {
       statusAndContentFrom(bldr.Error(NotFound, copiedBuffer(message, defaultCharset()))) shouldEqual(NotFound, message)
