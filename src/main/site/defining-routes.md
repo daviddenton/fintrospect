@@ -1,8 +1,8 @@
 # defining routes
-A ```RouteSpec``` object defines the specification of the contract (in terms of the required parameters) and the API follows the immutable 
+A ```RouteSpec()``` call starts to defines the specification of the contract (in terms of the required parameters) and the API follows the immutable 
 builder pattern. Apart from the path-building elements (which terminate the builder), all of the "builder-y" calls here are optional, as 
 are the descriptive strings (used for the auto-documenting features). Here's the simplest possible REST-like example for getting all employees
-in a system:
+in a notional system:
 
 ```
 RouteSpec().at(Method.Get) / "employee"
@@ -38,6 +38,15 @@ RouteSpec("add user", "Insert a new employee, failing if it already exists")
 ```
 
 ### using routes
-Once the ```RouteSpec``` has been defined, it can be bound to either an HTTP <a href="server-routes">server endpoint</a> or to an <a href="client-routes">client</a>.
+As can be seen above, there are several stages to defining a route. Here is the complete construction lifecycle:
+1. Create a `RouteSpec` with a name and description
+2. Add details of `Parameter`, `Body`, and `Response`
+3. Finalise the `RouteSpec` with a call to `at(<Method>)`. This creates an `UnboundRoute`.
+4. Continue to add static or dynamic `Path` parameters to the URL structure (creating `UnboundRoute<n>` instances.
+
+Once the final ```UnboundRoute``` has been created (with all of it's `Path` parts declared), it represents an HTTP contract, which can 
+then be bound to:
+1. an HTTP <a href="server-routes">server</a> `Service` if you wish to serve that contract to other systems.
+2. an HTTP <a href="client-routes">client</a> `Service` if you wish to consume that contract from a remote system.
 
 <a class="next" href="http://fintrospect.io/server-routes"><button type="button" class="btn btn-sm btn-default">next: server routes</button></a>
