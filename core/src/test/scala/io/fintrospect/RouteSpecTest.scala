@@ -97,7 +97,7 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
   }
 
   describe("Http Route as a proxy") {
-    val request = Request("/call/male?query=bob")
+    val request = Request()
     request.contentString = <xml/>.toString()
     request.headerMap("date") = "2000-01-01"
 
@@ -106,20 +106,34 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
     val gender = Path.string("gender")
     val body = Body.xml(None)
 
-
     val expectedRequest = Service.mk[Request, Response] { received =>
-      if(query.from(received) == "bob" &&
+      if (query.from(received) == "bob" &&
         date.from(received).contains(LocalDate.of(2000, 1, 1)) &&
         request.uri == received.uri &&
         body.from(received) == <xml/>
-      ) Ok() else BadRequest()
+      ) Ok()
+      else BadRequest()
     }
 
-    val route = RouteSpec().taking(query).taking(date).body(body).at(Get) / "call" / gender
-    val proxyService = ModuleSpec(Root).withRoute(route bindToProxy expectedRequest).toService
+    val baseRoute = RouteSpec().taking(query).taking(date).body(body).at(Get)
+
+    def checkProxyRoute(urlParts: String, fn: (UnboundRoute0 => UnboundRoute)): Unit = {
+      request.uri = urlParts + "?query=bob"
+      val route = fn(RouteSpec().taking(query).taking(date).body(body).at(Get))
+
+      val proxyService = ModuleSpec(Root).withRoute(route bindToProxy expectedRequest).toService
+      Await.result(proxyService(request)).status shouldBe Ok
+    }
 
     it("copies everything into downstream request") {
-      Await.result(proxyService(request)).status shouldBe Ok
+      checkProxyRoute("/", identity)
+      checkProxyRoute("/male", _ / gender)
+      checkProxyRoute("/male/1", _ / gender / "1")
+      checkProxyRoute("/male/1/2", _ / gender / "1" / "2")
+      checkProxyRoute("/male/1/2/3", _ / gender / "1" / "2" / "3")
+      checkProxyRoute("/male/1/2/3/4", _ / gender / "1" / "2" / "3" / "4")
+      checkProxyRoute("/male/1/2/3/4/5", _ / gender / "1" / "2" / "3" / "4" / "5")
+      checkProxyRoute("/male/1/2/3/4/5/6", _ / gender / "1" / "2" / "3" / "4" / "5" / "6")
     }
   }
 
