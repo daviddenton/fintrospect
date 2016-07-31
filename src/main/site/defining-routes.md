@@ -40,9 +40,9 @@ RouteSpec("add user", "Insert a new employee, failing if it already exists")
 ### using routes
 As can be seen above, there are several stages to defining a route. Here is the complete construction lifecycle:
 1. Create a `RouteSpec` with a name and description
-2. Add details of `Parameter`, `Body`, and `Response`
+2. Add details of parameters, any body, media-types and possible responses
 3. Finalise the `RouteSpec` with a call to `at(<Method>)`. This creates an `UnboundRoute`.
-4. Continue to add static or dynamic `Path` parameters to the URL structure (creating `UnboundRoute<n>` instances.
+4. Continue to add static or dynamic `Path` parameters to the URL structure (creating `UnboundRoute<n>` instances).
 
 Once the final ```UnboundRoute``` has been created (with all of it's `Path` parts declared), it represents an HTTP contract, which can 
 then be bound to:
