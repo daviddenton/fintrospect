@@ -36,10 +36,10 @@ class EitherF[L, R] private(f: Future[Either[L, R]]) {
     })
 
   /**
-    * This is a replacement of the traditional "match {}" operation, which unwraps the contained value. Returning a value
-    * here will
+    * This is a replacement of the traditional "match {}" operation, which operates on the contained value
+    * in the wrapped Either and returns a Future.
     */
-  def matchF[Ra](fn: PartialFunction[Either[L, R], Ra]): Future[Ra] = f.map(fn)
+  def matchF[Ra](fn: PartialFunction[Either[L, R], Future[Ra]]): Future[Ra] = f.flatMap(fn)
 }
 
 object EitherF {
