@@ -31,6 +31,55 @@ class EitherFTest extends FunSpec with ShouldMatchers {
       }
     }
 
+
+    describe("mapF") {
+      describe("Init with Future value") {
+        it("Future value") {
+          val map = eitherF(Future.value("success")).mapF(Future.value)
+          Await.result(map.matchF { case a => Future.value(a.toString) }) shouldBe "Right(success)"
+        }
+        it("Future exception") {
+          val map = eitherF(Future.value("success")).mapF(_ => Future.exception(new RuntimeException("foo")))
+          intercept[RuntimeException](Await.result(map.matchF { case a => Future.value(a.toString) })).getMessage shouldBe "foo"
+        }
+      }
+
+      describe("Init with Future exception") {
+        it("Future value") {
+          val f = eitherF(Future.exception(new RuntimeException("foo")))
+          val map = f.mapF(Future.value)
+          intercept[RuntimeException](Await.result(map.matchF { case a => Future.value(a.toString) })).getMessage shouldBe "foo"
+        }
+        it("Future exception") {
+          val f = eitherF(Future.exception(new RuntimeException("foo")))
+          val map = f.mapF(_ => Future.exception(new RuntimeException("foo")))
+          intercept[RuntimeException](Await.result(map.matchF { case a => Future.value(a.toString) })).getMessage shouldBe "foo"
+        }
+      }
+
+      describe("Init with simple value") {
+        it("Future value") {
+          val map = eitherF("success").mapF(Future.value)
+          Await.result(map.matchF { case a => Future.value(a.toString) }) shouldBe "Right(success)"
+        }
+        it("Future exception") {
+          val map = eitherF("success").mapF(_ => Future.exception(new RuntimeException("foo")))
+          intercept[RuntimeException](Await.result(map.matchF { case a => Future.value(a.toString) })).getMessage shouldBe "foo"
+        }
+      }
+
+      describe("Init with either") {
+        it("Future value") {
+          val map = eitherF(Right("success")).mapF(Future.value)
+          Await.result(map.matchF { case a => Future.value(a.toString) }) shouldBe "Right(success)"
+        }
+        it("Future exception") {
+          val map = eitherF(Right("success")).mapF(_ => Future.exception(new RuntimeException("foo")))
+          intercept[RuntimeException](Await.result(map.matchF { case a => Future.value(a.toString) })).getMessage shouldBe "foo"
+        }
+      }
+    }
+
     describe("flatMap") {
       describe("Init with Future value") {
         it("Right") {
