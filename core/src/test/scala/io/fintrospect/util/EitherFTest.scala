@@ -9,97 +9,120 @@ class EitherFTest extends FunSpec with ShouldMatchers {
   describe("EitherF") {
 
     describe("map") {
+      it("Init with Future value") {
+        val map = eitherF(Future.value("success")).map(identity)
+        Await.result(map.matchF { case a => a.toString }) shouldBe "Right(success)"
+      }
+
+      it("Init with Future exception") {
+        val f = eitherF(Future.exception(new RuntimeException("foo")))
+        val map = f.map(identity)
+        intercept[RuntimeException](Await.result(map.matchF { case a => a.toString })).getMessage shouldBe "foo"
+      }
+
+      it("Init with simple value") {
+        val map = eitherF("success").map(identity)
+        Await.result(map.matchF { case a => a.toString }) shouldBe "Right(success)"
+      }
+
+      it("Init with either") {
+        val map = eitherF(Right("success")).flatMap(Right(_))
+        Await.result(map.matchF { case a => a.toString }) shouldBe "Right(success)"
+      }
+    }
+
+    describe("flatMap") {
       describe("Init with Future value") {
         it("Right") {
-          val map = eitherF(Future.value("success")).map(Right(_))
-          Await.result(map.end(_.toString)) shouldBe "Right(success)"
+          val map = eitherF(Future.value("success")).flatMap(Right(_))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Right(success)"
         }
         it("Left") {
-          val map = eitherF(Future.value("success")).map(Left(_))
-          Await.result(map.end(_.toString)) shouldBe "Left(success)"
+          val map = eitherF(Future.value("success")).flatMap(Left(_))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Left(success)"
         }
       }
 
       describe("Init with Future exception") {
         it("Right") {
           val f = eitherF(Future.exception(new RuntimeException("foo")))
-          val map = f.map(Right(_))
-          intercept[RuntimeException](Await.result(map.end(_.toString))).getMessage shouldBe "foo"
+          val map = f.flatMap(Right(_))
+          intercept[RuntimeException](Await.result(map.matchF { case a => a.toString })).getMessage shouldBe "foo"
         }
         it("Left") {
           val f = eitherF(Future.exception(new RuntimeException("foo")))
-          val map = f.map(Left(_))
-          intercept[RuntimeException](Await.result(map.end(_.toString))).getMessage shouldBe "foo"
+          val map = f.flatMap(Left(_))
+          intercept[RuntimeException](Await.result(map.matchF { case a => a.toString })).getMessage shouldBe "foo"
         }
       }
 
       describe("Init with simple value") {
         it("Right") {
-          val map = eitherF("success").map(Right(_))
-          Await.result(map.end(_.toString)) shouldBe "Right(success)"
+          val map = eitherF("success").flatMap(Right(_))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Right(success)"
         }
         it("Left") {
-          val map = eitherF(Future.value("success")).map(Left(_))
-          Await.result(map.end(_.toString)) shouldBe "Left(success)"
+          val map = eitherF("success").flatMap(Left(_))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Left(success)"
         }
       }
 
       describe("Init with either") {
         it("Right") {
-          val map = eitherF(Right("success")).map(Right(_))
-          Await.result(map.end(_.toString)) shouldBe "Right(success)"
+          val map = eitherF(Right("success")).flatMap(Right(_))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Right(success)"
         }
         it("Left") {
-          val map = eitherF(Right("success")).map(Left(_))
-          Await.result(map.end(_.toString)) shouldBe "Left(success)"
+          val map = eitherF(Right("success")).flatMap(Left(_))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Left(success)"
         }
       }
     }
 
-    describe("flatmap") {
+    describe("flatMapF") {
       describe("Init with Future value") {
         it("Right") {
-          val map = eitherF(Future.value("success")).flatMap(v => Future.value(Right(v)))
-          Await.result(map.end(_.toString)) shouldBe "Right(success)"
+          val map = eitherF(Future.value("success")).flatMapF(v => Future.value(Right(v)))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Right(success)"
         }
         it("Left") {
-          val map = eitherF(Future.value("success")).flatMap(v => Future.value(Left(v)))
-          Await.result(map.end(_.toString)) shouldBe "Left(success)"
+          val map = eitherF(Future.value("success")).flatMapF(v => Future.value(Left(v)))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Left(success)"
         }
       }
 
       describe("Init with Future exception") {
         it("Right") {
           val f = eitherF(Future.exception(new RuntimeException("foo")))
-          val map = f.flatMap(v => Future.value(Right(v)))
-          intercept[RuntimeException](Await.result(map.end(_.toString))).getMessage shouldBe "foo"
+          val map = f.flatMapF(v => Future.value(Right(v)))
+          intercept[RuntimeException](Await.result(map.matchF { case a => a.toString })).getMessage shouldBe "foo"
         }
         it("Left") {
           val f = eitherF(Future.exception(new RuntimeException("foo")))
-          val map = f.flatMap(v => Future.value(Left(v)))
-          intercept[RuntimeException](Await.result(map.end(_.toString))).getMessage shouldBe "foo"
+          val map = f.flatMapF(v => Future.value(Left(v)))
+          intercept[RuntimeException](Await.result(map.matchF { case a => a.toString })).getMessage shouldBe "foo"
         }
       }
 
       describe("Init with simple value") {
         it("Right") {
-          val map = eitherF("success").flatMap(v => Future.value(Right(v)))
-          Await.result(map.end(_.toString)) shouldBe "Right(success)"
+          val map = eitherF("success").flatMapF(v => Future.value(Right(v)))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Right(success)"
         }
         it("Left") {
-          val map = eitherF(Future.value("success")).flatMap(v => Future.value(Left(v)))
-          Await.result(map.end(_.toString)) shouldBe "Left(success)"
+          val map = eitherF(Future.value("success")).flatMapF(v => Future.value(Left(v)))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Left(success)"
         }
       }
 
       describe("Init with either") {
         it("Right") {
-          val map = eitherF(Right("success")).flatMap(v => Future.value(Right(v)))
-          Await.result(map.end(_.toString)) shouldBe "Right(success)"
+          val map = eitherF(Right("success")).flatMapF(v => Future.value(Right(v)))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Right(success)"
         }
         it("Left") {
-          val map = eitherF(Right("success")).flatMap(v => Future.value(Left(v)))
-          Await.result(map.end(_.toString)) shouldBe "Left(success)"
+          val map = eitherF(Right("success")).flatMapF(v => Future.value(Left(v)))
+          Await.result(map.matchF { case a => a.toString }) shouldBe "Left(success)"
         }
       }
     }

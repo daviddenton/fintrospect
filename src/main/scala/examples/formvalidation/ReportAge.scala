@@ -32,18 +32,20 @@ class ReportAge(greetingDatabase: GreetingDatabase) extends ServerRoutes[Request
     rq: Request => {
       val postedForm = NameAndAgeForm.form <-- rq
 
+      // the eitherF construct is a right-biased wrapper for an Either which also supports the
+      // Future-based operations that finagle uses.
       eitherF {
         if (postedForm.isValid) Right(postedForm) else Left("form has errors")
-      }.map {
-        form => Right((NameAndAgeForm.fields.age <-- form, NameAndAgeForm.fields.name <-- form))
       }.flatMap {
+        form => Right((NameAndAgeForm.fields.age <-- form, NameAndAgeForm.fields.name <-- form))
+      }.flatMapF {
         case (age, name) =>
           greetingDatabase
             .lookupGreeting(age, name)
             .map(greeting => greeting
               .map(g => Right((age, name, g)))
               .getOrElse(Left("No idea how to greet you")))
-      }.end {
+      } matchF {
         case Right((age, name, greeting)) => DisplayUserAge(greeting, name, age)
         case Left(error) => NameAndAgeForm(NAMES, postedForm, Option(error))
       }

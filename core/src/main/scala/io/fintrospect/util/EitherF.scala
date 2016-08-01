@@ -5,21 +5,41 @@ import com.twitter.util.Future
 import scala.util.Left
 
 /**
-  * Wrapper for Either which supports Futures as the wrapping type
+  * Wrapper for Either which terminates in a Future. The API here may look unusual, but is designed to mirror
+  * the types of traditional Either operations.
   */
 class EitherF[L, R] private(f: Future[Either[L, R]]) {
-  def map[Ra](next: R => Either[L, Ra]): EitherF[L, Ra] = new EitherF(f.map {
+
+  /**
+    * Traditional map()
+    */
+  def map[Ra](next: R => Ra): EitherF[L, Ra] = new EitherF(f.map {
+    case Right(v) => Right(next(v))
+    case Left(e) => Left(e)
+  })
+
+  /**
+    * FlatMap which returns a new wrapped Either
+    */
+  def flatMap[Ra](next: R => Either[L, Ra]): EitherF[L, Ra] = new EitherF(f.map {
     case Right(v) => next(v)
     case Left(e) => Left(e)
   })
 
-  def flatMap[Ra](next: R => Future[Either[L, Ra]]): EitherF[L, Ra] =
+  /**
+    * FlatMap which returns a new wrapped Either in an async context
+    */
+  def flatMapF[Ra](next: R => Future[Either[L, Ra]]): EitherF[L, Ra] =
     new EitherF[L, Ra](f.flatMap {
       case Right(v) => next(v)
       case Left(e) => Future.value(Left(e))
     })
 
-  def end[Ra](fn: Either[L, R] => Ra) = f.map(fn)
+  /**
+    * This is a replacement of the traditional "match {}" operation, which unwraps the contained value. Returning a value
+    * here will
+    */
+  def matchF[Ra](fn: PartialFunction[Either[L, R], Ra]): Future[Ra] = f.map(fn)
 }
 
 object EitherF {
