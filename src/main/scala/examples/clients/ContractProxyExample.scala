@@ -12,6 +12,18 @@ import io.fintrospect.{Contract, ContractEndpoint, ContractProxyModule, RouteSpe
 
 import scala.language.reflectiveCalls
 
+/**
+  * This example shows how to use a contract to provide a Swagger-documented Proxy API for a set of remote routes.
+  */
+object ContractProxyExample extends App {
+
+  val proxyModule = ContractProxyModule("brewdog", BrewdogApiHttp(), BrewdogApiContract)
+
+  Http.serve(":9000", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(proxyModule.toService))
+
+  Thread.currentThread().join()
+}
+
 object BrewdogApiHttp {
   private val apiAuthority = Host("punkapi.com").toAuthority(Port(443))
 
@@ -40,16 +52,4 @@ object BrewdogApiContract extends Contract {
       .at(Get) / "api" / "v1" / "beers" / "random"
   }
 
-}
-
-/**
-  * This example shows how to use a contract to provide a Swagger-documented Proxy API for a set of remote routes.
-  */
-object ContractProxyExample extends App {
-
-  val proxyModule = ContractProxyModule("brewdog", BrewdogApiHttp(), BrewdogApiContract)
-
-  Http.serve(":9000", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(proxyModule.toService))
-
-  Thread.currentThread().join()
 }
