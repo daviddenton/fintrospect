@@ -46,23 +46,27 @@ Custom parameter and body types can be implemented by defining a ```ParameterSpe
 in the form above. These Spec objects define:
 
 - name and description of the entity type being handled
-- the higher level ```ParamType``` of the on-the-wire representation. For custom formats, this is ```StringParamType```, although ```ObjectParamType```
+- for Parameters: the higher level ```ParamType``` of the on-the-wire representation. For custom formats, this is ```StringParamType```, although ```ObjectParamType```
 should be used for JSON appearing in an request body
+- for Bodies: the higher level ```ContentType```  of the on-the-wire representation. 
 - functions representing the serialization and deserialization from the String format that comes in on the request. Note that we are only concerned 
 with the happy case on-the-wire values. These throw exceptions if unsuccessful - these are caught by the request validation mechanism and turned into 
 a rejected ```BadRequest``` (400) response which is returned to the caller.
 
 An example for a simple domain case class Birthday:
 ```
-case class Birthday(value: LocalDate) {
-   override def toString = value.toString
-}
+case class Birthday(value: LocalDate)
 
 object Birthday {
     def from(s: String) = Birthday(LocalDate.parse(s))
 }
 
+// 
 val birthdayAsAQueryParam = Query.required(ParameterSpec[Birthday]("DOB", None, StringParamType, Birthday.from, _.toString))
+
+/* Or, more simply, we can use map() on an existing ParameterSpec - this will handle the */
+
+val birthdayAsAQueryParam = Query.required(ParameterSpec.localDate("DOB").map(Birthday(_), (b:Birthday) => b.value))
 
 val birthdayAsABody = Body(BodySpec[Birthday](Option("DOB"), ContentTypes.TEXT_PLAIN, Birthday.from, _.toString))
 ```
