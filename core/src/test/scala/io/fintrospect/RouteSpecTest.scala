@@ -11,7 +11,7 @@ import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec.RequestValidation
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
-import io.fintrospect.parameters.{Body, Header, Path, Query}
+import io.fintrospect.parameters.{Body, Form, FormField, Header, Path, Query}
 import io.fintrospect.util.ExtractionError.Missing
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
@@ -22,6 +22,9 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
   describe("Http Route as a client") {
     val returnsMethodAndUri = Service.mk[Request, Response] { request =>
       Ok(request.method.toString() + "," + request.uri)
+    }
+    val returnsBody = Service.mk[Request, Response] { request =>
+      Ok(request.contentString)
     }
     val query = Query.required.string("query")
     val name = Path.string("pathName")
@@ -53,6 +56,17 @@ class RouteSpecTest extends FunSpec with ShouldMatchers {
       it("ignores fixed") {
         val clientWithFixedSections = RouteSpec().at(Get) / "prefix" / maxAge / "suffix" bindToClient returnsMethodAndUri
         responseFor(clientWithFixedSections(maxAge --> 7)) shouldEqual(Ok, "GET,/prefix/7/suffix")
+      }
+    }
+
+    describe("populates the body into the request") {
+      it("form") {
+        val field = FormField.required.string("bob")
+        val form = Body.form(field)
+        val client = RouteSpec().body(form).at(Get) bindToClient returnsBody
+        val response = Await.result(client(form --> Form(field --> "value")))
+        response.status shouldBe Ok
+        response.contentString shouldBe "bob=value"
       }
     }
 

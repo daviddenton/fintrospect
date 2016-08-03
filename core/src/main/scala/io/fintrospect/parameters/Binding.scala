@@ -27,9 +27,7 @@ class RequestBinding(val parameter: Parameter, into: Request => Request) extends
   def apply(requestBuild: RequestBuilder) = requestBuild.copy(fn = requestBuild.fn.andThen(into))
 }
 
-class FormFieldBinding(val parameter: Parameter, value: String) extends Binding {
-  def apply(requestBuild: RequestBuilder) = requestBuild
-
+class FormFieldBinding(parameter: Parameter, value: String) extends RequestBinding(parameter, identity) {
   def apply(form: Form) = form +(parameter.name, value)
 }
 
