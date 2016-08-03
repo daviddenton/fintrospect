@@ -6,7 +6,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
-## 13.5.2 (Uncut)
+## 13.5.2 
 - Addition of `Contract` and `ContractProxyModule`. This (optional) formalisation of client contracts allows simple
 exposing of a client API contract via Swagger. See `ContractProxyExample`.
 - (Unlikely) Break: Renamed of `IncompletePath` to `UnboundRoute` for clarity. This should be transparent to end users.
