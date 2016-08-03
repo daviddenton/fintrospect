@@ -21,7 +21,7 @@ class FormBody(val fields: Seq[FormField[_] with Extractor[Form, _]], encodeDeco
       t.headerMap.add(Names.CONTENT_LENGTH, content.length.toString)
       t.setContentString(content)
       t
-    }))
+    })) ++ fields.map(f => new FormFieldBinding(f, ""))
 
   override def <--?(message: Message): Extraction[Form] =
     Try(spec.deserialize(message.contentString)) match {
