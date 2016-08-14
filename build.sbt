@@ -112,10 +112,16 @@ lazy val mustache = project
   .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.2",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.2"))
 
+lazy val swagger = project
+  .settings(baseSettings)
+  .settings(moduleName := "fintrospect-swagger-ui")
+  .settings(description := "Built-in Swagger UI")
+  .dependsOn(core % "compile->test")
+
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
   .settings(unidocSettings: _*)
   .settings(moduleName := "fintrospect-examples")
-  .aggregate(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
-  .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
+  .aggregate(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache, swagger)
+  .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache, swagger)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6")

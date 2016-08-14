@@ -19,7 +19,7 @@ object StaticModule {
   }
 }
 
-class StaticModule private(basePath: Path, baseDir: String, moduleFilter: Filter[Request, Response, Request, Response]) extends Module {
+class StaticModule private(val basePath: Path, baseDir: String, moduleFilter: Filter[Request, Response, Request, Response]) extends Module {
 
   override protected[fintrospect] def serviceBinding: ServiceBinding = {
     case Get -> path if exists(path) =>

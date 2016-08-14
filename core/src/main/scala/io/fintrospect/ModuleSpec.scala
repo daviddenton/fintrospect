@@ -47,9 +47,9 @@ object ModuleSpec {
 /**
   * Self-describing module builder (uses the immutable builder pattern).
   */
-class ModuleSpec[RQ, RS] private(basePath: Path,
-                                 moduleRenderer: ModuleRenderer,
-                                 descriptionRoutePath: ModifyPath,
+class ModuleSpec[RQ, RS] private(val basePath: Path,
+                                 val moduleRenderer: ModuleRenderer,
+                                 val descriptionRoutePath: ModifyPath,
                                  routes: Seq[ServerRoute[RQ, RS]],
                                  security: Security,
                                  moduleFilter: Filter[Request, Response, RQ, RS]) extends Module {

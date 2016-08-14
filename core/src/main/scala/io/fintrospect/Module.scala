@@ -44,6 +44,8 @@ object Module {
 
 trait Module {
 
+  val basePath: Path
+
   /**
     * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
     */
