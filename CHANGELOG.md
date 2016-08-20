@@ -6,6 +6,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 
+## 13.6.0
+- (Possible) Breaking: Refactored `StaticModule` to allow serving of directory-based assets. Introduced `Classpath` and `Directory` `ResourceLoaders` to allow for this change.
+
 ## 13.5.2 
 - Addition of `Contract` and `ContractProxyModule`. This (optional) formalisation of client contracts allows simple
 exposing of a client API contract via Swagger. See `ContractProxyExample`.

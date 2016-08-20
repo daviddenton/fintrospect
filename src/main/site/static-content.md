@@ -1,7 +1,9 @@
 # static content
-Static files can easily be served from the classpath by using an instance of ```StaticModule```:
+Static files can easily be served from the either the Classpath or a Directory by using an instance of ```StaticModule``` with an 
+appropriately injected ```ResourceLoader```:
 ```
-val publicModule = StaticModule(Root / "public", "classpathPathOfStaticContent")
+val cpModule = StaticModule(Root / "public", ResourceLoader.Classpath("package/path"))
+val dirModule = StaticModule(Root / "public", ResourceLoader.Directory("file/dir/path"))
 ```
 
 <a class="next" href="http://fintrospect.io/testing"><button type="button" class="btn btn-sm btn-default">next: testing</button></a>
