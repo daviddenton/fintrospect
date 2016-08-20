@@ -12,28 +12,32 @@ import io.fintrospect.Module.ServiceBinding
 import io.fintrospect.formats.ResponseBuilder.HttpResponse
 
 object StaticModule {
-  def apply(basePath: Path, baseDir: String = "/", moduleFilter: Filter[Request, Response, Request, Response] = Filter.identity) = {
-    val withStarting = if (baseDir.startsWith("/")) baseDir else "/" + baseDir
-    val withEnding = if (withStarting.endsWith("/")) withStarting else withStarting + "/"
-    new StaticModule(basePath, withEnding, moduleFilter)
+  /**
+    * Module to serve static resources. This defaults to using a Classpath ResourceLoader (to serve from the root of the classpath)
+    * @param basePath
+    * @param resourceLoader
+    * @param moduleFilter
+    * @return
+    */
+  def apply(basePath: Path, resourceLoader: ResourceLoader = ResourceLoader.Classpath("/"), moduleFilter: Filter[Request, Response, Request, Response] = Filter.identity) = {
+    new StaticModule(basePath, resourceLoader, moduleFilter)
   }
 }
 
-class StaticModule private(basePath: Path, baseDir: String, moduleFilter: Filter[Request, Response, Request, Response]) extends Module {
+class StaticModule private(basePath: Path, resourceLoader: ResourceLoader, moduleFilter: Filter[Request, Response, Request, Response]) extends Module {
 
   override protected[fintrospect] def serviceBinding: ServiceBinding = {
     case Get -> path if exists(path) =>
       moduleFilter.andThen(Service.mk[Request, Response] {
-        val subPath = convertPath(path)
-        request => HttpResponse(lookup(subPath)).withCode(Ok).withContent(Owned(toByteArray(getClass.getResource(subPath))))
+        request => HttpResponse(lookup(convertPath(path))).withCode(Ok).withContent(Owned(toByteArray(resourceLoader.load(convertPath(path)))))
       })
   }
 
-  private def exists(path: Path) = if (path.startsWith(basePath)) getClass.getResource(convertPath(path)) != null else false
+  private def exists(path: Path) = if (path.startsWith(basePath)) resourceLoader.load(convertPath(path)) != null else false
 
   private def convertPath(path: Path) = {
     val newPath = if (basePath == Root) path.toString else path.toString.replace(basePath.toString, "")
     val resolved = if (newPath == "") "/index.html" else newPath
-    baseDir + resolved.replaceFirst("/", "")
+    resolved.replaceFirst("/", "")
   }
 }
