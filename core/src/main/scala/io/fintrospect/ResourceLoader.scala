@@ -9,11 +9,12 @@ trait ResourceLoader {
 
 object ResourceLoader {
   /**
-    * Load static resources from the classpath path. Useful when you're just loading from a JAR.
-    * @param basePath
+    * Load static resources from the classpath path. Useful when you're just loading from a JAR. Note that due to security concerns
+    * this should be with a package which does NOT contain class files.
+    * @param basePackagePath
     */
-  def Classpath(basePath: String = "/") = new ResourceLoader {
-    val withStarting = if (basePath.startsWith("/")) basePath else "/" + basePath
+  def Classpath(basePackagePath: String = "/") = new ResourceLoader {
+    val withStarting = if (basePackagePath.startsWith("/")) basePackagePath else "/" + basePackagePath
     val finalBasePath = if (withStarting.endsWith("/")) withStarting else withStarting + "/"
 
     override def load(path: String): URL = getClass.getResource(finalBasePath + path)
@@ -27,7 +28,7 @@ object ResourceLoader {
     val finalBaseDir = if (baseDir.endsWith("/")) baseDir else baseDir + "/"
     override def load(path: String): URL = {
       val f = new File(finalBaseDir, path)
-      if(f.exists()) f.toURI.toURL else null
+      if(f.exists() && f.isFile) f.toURI.toURL else null
     }
   }
 }
