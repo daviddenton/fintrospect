@@ -37,6 +37,9 @@ class ResourceLoaderTest extends FunSpec with ShouldMatchers {
       it("URL is null") {
         loader.load("notafile") shouldBe null
       }
+      it("URL is a directory") {
+        loader.load("io") shouldBe null
+      }
     }
   }
 }
