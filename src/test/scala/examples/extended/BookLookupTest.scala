@@ -16,11 +16,11 @@ class BookLookupTest extends FunSpec with Matchers with TestingFintrospectRoute 
 
   describe("Book Lookup") {
     it("can lookup an existing book") {
-      parse(responseFor(Request("/book/hp1")).contentString) shouldEqual Book("hairy porker", "j.k oinking", 799).toJson
+      parse(responseFor(Request("/book/hp1")).contentString) shouldBe Book("hairy porker", "j.k oinking", 799).toJson
     }
   }
 
   it("non-existing book") {
-    statusAndContentFrom(responseFor(Request("/book/hp8")))._1 shouldEqual NotFound
+    statusAndContentFrom(responseFor(Request("/book/hp8")))._1 shouldBe NotFound
   }
 }

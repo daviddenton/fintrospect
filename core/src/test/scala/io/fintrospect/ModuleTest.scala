@@ -14,12 +14,12 @@ class ModuleTest extends FunSpec with Matchers {
   describe("Module") {
     it("when it matches it responds as expected") {
       val response = statusAndContentFrom(result(routingWhichMatches((Get, Path("/someUrl")))(Request("/someUrl?field=hello"))))
-      response._1 shouldEqual Status.Ok
+      response._1 shouldBe Status.Ok
       response._2 should include("/someUrl?field=hello")
     }
     it("no match responds with default 404") {
       val response = result(routingWhichMatches((Get, Path("/someUrl")))(Request("/notMyService")))
-      response.status shouldEqual Status.NotFound
+      response.status shouldBe Status.NotFound
     }
   }
 

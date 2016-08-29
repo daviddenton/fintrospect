@@ -67,35 +67,35 @@ class ModuleSpecTest extends FunSpec with Matchers {
 
       it("with all fixed segments") {
         val module = m.withRoute(d.at(Get) / "svc" / "1" / "2" / "3" / "4" / "5" / "6" bindTo Service.mk { r: Request => Response() })
-        Await.result(module.toService(Request("/svc/1/2/3/4/5/6"))).status shouldEqual Ok
+        Await.result(module.toService(Request("/svc/1/2/3/4/5/6"))).status shouldBe Ok
       }
 
       it("with trailing segments") {
         val module = m.withRoute(d.at(Get) / "svc" / Path.string("first") / "a" / "b" / "c" / "d" / "e" / "f"
           bindTo ((_1, _2, _3, _4, _5, _6, _7) => AService(Seq(_2, _3, _4, _5, _6, _7))))
 
-        Await.result(module.toService(Request("/svc/1/a/b/c/d/e/f"))).status shouldEqual Ok
+        Await.result(module.toService(Request("/svc/1/a/b/c/d/e/f"))).status shouldBe Ok
       }
     }
 
     describe("description route is added") {
       it("at default location at the root of the module") {
         val m = ModuleSpec(Root, SimpleJson())
-        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
+        statusAndContentFrom(result(m.toService(Request("/")))) shouldBe(Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
       }
 
       it("at custom location") {
         val m = ModuleSpec(Root, SimpleJson()).withDescriptionPath(_ / "bob")
-        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldEqual(Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
+        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldBe(Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
 
-        Await.result(m.toService(Request("/"))).status shouldEqual NotFound
+        Await.result(m.toService(Request("/"))).status shouldBe NotFound
       }
     }
 
     describe("when no module renderer is used") {
       it("at default location at the root of the module") {
         val m = ModuleSpec(Root)
-        statusAndContentFrom(result(m.toService(Request("/")))) shouldEqual(NotFound, "")
+        statusAndContentFrom(result(m.toService(Request("/")))) shouldBe(NotFound, "")
       }
     }
 
@@ -107,15 +107,15 @@ class ModuleSpecTest extends FunSpec with Matchers {
         }
         val totalService = Module.toService(Module.combine(module("rita"), module("bob"), module("sue")))
 
-        statusAndContentFrom(result(totalService(Request("/rita/echo")))) shouldEqual(Ok, "rita")
-        statusAndContentFrom(result(totalService(Request("/bob/echo")))) shouldEqual(Ok, "bob")
-        statusAndContentFrom(result(totalService(Request("/sue/echo")))) shouldEqual(Ok, "sue")
+        statusAndContentFrom(result(totalService(Request("/rita/echo")))) shouldBe(Ok, "rita")
+        statusAndContentFrom(result(totalService(Request("/bob/echo")))) shouldBe(Ok, "bob")
+        statusAndContentFrom(result(totalService(Request("/sue/echo")))) shouldBe(Ok, "sue")
       }
     }
 
     describe("when a route path cannot be found") {
       it("returns a 404") {
-        result(ModuleSpec(Root).toService(Request("/svc/noSuchRoute"))).status shouldEqual NotFound
+        result(ModuleSpec(Root).toService(Request("/svc/noSuchRoute"))).status shouldBe NotFound
       }
     }
 
@@ -129,10 +129,10 @@ class ModuleSpecTest extends FunSpec with Matchers {
         .withRoute(RouteSpec("").at(Get) / "svc" bindTo AService(Nil))
 
       it("applies to routes in module") {
-        result(module.toService(Request("/svc"))).headerMap("MYHEADER") shouldEqual "BOB"
+        result(module.toService(Request("/svc"))).headerMap("MYHEADER") shouldBe "BOB"
       }
       it("does not apply to  headers to all routes in module") {
-        result(module.toService(Request("/"))).headerMap.contains("MYHEADER") shouldEqual false
+        result(module.toService(Request("/"))).headerMap.contains("MYHEADER") shouldBe false
       }
     }
 
@@ -142,13 +142,13 @@ class ModuleSpecTest extends FunSpec with Matchers {
 
       it("it returns a 400 when the required param is missing") {
         val request = Request("/svc")
-        result(m.toService(request)).status shouldEqual Status.BadRequest
+        result(m.toService(request)).status shouldBe Status.BadRequest
       }
 
       it("it returns a 400 when the required param is not the correct type") {
         val request = Request("/svc")
         request.headerMap.add("aNumberHeader", "notANumber")
-        result(m.toService(request)).status shouldEqual Status.BadRequest
+        result(m.toService(request)).status shouldBe Status.BadRequest
       }
     }
 
@@ -158,13 +158,13 @@ class ModuleSpecTest extends FunSpec with Matchers {
 
       it("it returns a 400 when a required form field is missing") {
         val request = Request(Post, "/svc")
-        result(service(request)).status shouldEqual Status.BadRequest
+        result(service(request)).status shouldBe Status.BadRequest
       }
 
       it("it returns a 400 when the required form field is not the correct type") {
         val request = Request(Post, "/svc")
         request.setContentString("aNumber=notANumber")
-        result(service(request)).status shouldEqual Status.BadRequest
+        result(service(request)).status shouldBe Status.BadRequest
       }
     }
 
@@ -174,13 +174,13 @@ class ModuleSpecTest extends FunSpec with Matchers {
 
       it("it returns a 400 when the required body is missing") {
         val request = Request("/svc")
-        result(service(request)).status shouldEqual Status.BadRequest
+        result(service(request)).status shouldBe Status.BadRequest
       }
 
       it("it returns a 400 when the required body is not the correct type") {
         val request = Request("/svc")
         request.setContentString("notAJsonBlob")
-        result(service(request)).status shouldEqual Status.BadRequest
+        result(service(request)).status shouldBe Status.BadRequest
       }
     }
 
@@ -191,13 +191,13 @@ class ModuleSpecTest extends FunSpec with Matchers {
 
       it("it returns a 400 when the required body is missing") {
         val request = Request("/svc")
-        result(service(request)).status shouldEqual Status.BadRequest
+        result(service(request)).status shouldBe Status.BadRequest
       }
 
       it("it returns a 400 when the required body is not the correct type") {
         val request = Request("/svc")
         request.setContentString("notAnInt")
-        result(service(request)).status shouldEqual Status.BadRequest
+        result(service(request)).status shouldBe Status.BadRequest
       }
     }
 
@@ -207,13 +207,13 @@ class ModuleSpecTest extends FunSpec with Matchers {
 
       it("it returns a 200 when the optional param is missing") {
         val request = Request("/svc")
-        result(service(request)).status shouldEqual Ok
+        result(service(request)).status shouldBe Ok
       }
 
       it("it returns a 400 when the optional param is not the correct type") {
         val request = Request("/svc")
         request.headerMap.add("aNumberHeader", "notANumber")
-        result(service(request)).status shouldEqual Status.BadRequest
+        result(service(request)).status shouldBe Status.BadRequest
       }
     }
 
@@ -222,7 +222,7 @@ class ModuleSpecTest extends FunSpec with Matchers {
         def getHeaders(number: Int, aString: String) = Service.mk[Request, Response] { request => Ok(headersFrom(request).toString()) }
         val route = RouteSpec("").at(Get) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
         val m = ModuleSpec(Root).withRoute(route)
-        HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldEqual(Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
+        HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldBe(Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
       }
     }
 
@@ -230,8 +230,8 @@ class ModuleSpecTest extends FunSpec with Matchers {
 
   def assertOkResponse(module: ModuleSpec[_, _], segments: Seq[String]): Unit = {
     val result = Await.result(module.toService(Request("/svc/" + segments.mkString("/"))))
-    result.status shouldEqual Ok
-    result.contentString shouldEqual segments.mkString(",")
+    result.status shouldBe Ok
+    result.contentString shouldBe segments.mkString(",")
   }
 
 }

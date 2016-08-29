@@ -36,26 +36,26 @@ class RouteSpecTest extends FunSpec with Matchers {
 
     describe("invalid parameters are dealt with") {
       it("missing request parameters throw up") {
-        responseFor(clientWithQueryNameAndMaxAgeAndGender(name --> "bob", maxAge --> 7, gender --> "male")) shouldEqual(BadRequest, "Client: Missing required params passed: Mandatory parameter query (string) in query")
+        responseFor(clientWithQueryNameAndMaxAgeAndGender(name --> "bob", maxAge --> 7, gender --> "male")) shouldBe(BadRequest, "Client: Missing required params passed: Mandatory parameter query (string) in query")
       }
       it("missing path parameters throw up") {
-        responseFor(clientWithQueryNameAndMaxAgeAndGender(query --> "bob", maxAge --> 7, gender --> "male")) shouldEqual(BadRequest, "Client: Missing required params passed: {pathName}")
+        responseFor(clientWithQueryNameAndMaxAgeAndGender(query --> "bob", maxAge --> 7, gender --> "male")) shouldBe(BadRequest, "Client: Missing required params passed: {pathName}")
       }
       it("unknown parameters returns bad request") {
-        responseFor(clientWithNoParameters(maxAge.of(7))) shouldEqual(BadRequest, "Client: Unknown params passed: {maxAge}")
+        responseFor(clientWithNoParameters(maxAge.of(7))) shouldBe(BadRequest, "Client: Unknown params passed: {maxAge}")
       }
     }
 
     describe("converts the path parameters into the correct url") {
       it("when there are none") {
-        responseFor(clientWithNoParameters()) shouldEqual(Ok, "GET,/")
+        responseFor(clientWithNoParameters()) shouldBe(Ok, "GET,/")
       }
       it("when there are some") {
-        responseFor(clientWithQueryNameAndMaxAgeAndGender(query --> "queryValue", gender --> "male", maxAge --> 7, name.-->("bob"))) shouldEqual(Ok, "GET,/bob/7/male?query=queryValue")
+        responseFor(clientWithQueryNameAndMaxAgeAndGender(query --> "queryValue", gender --> "male", maxAge --> 7, name.-->("bob"))) shouldBe(Ok, "GET,/bob/7/male?query=queryValue")
       }
       it("ignores fixed") {
         val clientWithFixedSections = RouteSpec().at(Get) / "prefix" / maxAge / "suffix" bindToClient returnsMethodAndUri
-        responseFor(clientWithFixedSections(maxAge --> 7)) shouldEqual(Ok, "GET,/prefix/7/suffix")
+        responseFor(clientWithFixedSections(maxAge --> 7)) shouldBe(Ok, "GET,/prefix/7/suffix")
       }
     }
 
@@ -75,10 +75,10 @@ class RouteSpecTest extends FunSpec with Matchers {
       val clientWithNameQuery = RouteSpec().taking(nameQuery).at(Get) / "prefix" bindToClient returnsMethodAndUri
 
       it("when there are some") {
-        responseFor(clientWithNameQuery(nameQuery --> Option("bob"))) shouldEqual(Ok, "GET,/prefix?name=bob")
+        responseFor(clientWithNameQuery(nameQuery --> Option("bob"))) shouldBe(Ok, "GET,/prefix?name=bob")
       }
       it("optional query params are ignored if not there") {
-        responseFor(clientWithNameQuery()) shouldEqual(Ok, "GET,/prefix")
+        responseFor(clientWithNameQuery()) shouldBe(Ok, "GET,/prefix")
       }
     }
 
@@ -90,10 +90,10 @@ class RouteSpecTest extends FunSpec with Matchers {
       val clientWithNameHeader = RouteSpec().taking(nameHeader).at(Get) bindToClient returnsHeaders
 
       it("when there are some, includes them") {
-        responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldEqual(Ok, "Map(X-Fintrospect-Route-Name -> GET:, name -> bob)")
+        responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldBe(Ok, "Map(X-Fintrospect-Route-Name -> GET:, name -> bob)")
       }
       it("optional query params are ignored if not there") {
-        responseFor(clientWithNameHeader()) shouldEqual(Ok, "Map(X-Fintrospect-Route-Name -> GET:)")
+        responseFor(clientWithNameHeader()) shouldBe(Ok, "Map(X-Fintrospect-Route-Name -> GET:)")
       }
     }
 
@@ -105,7 +105,7 @@ class RouteSpecTest extends FunSpec with Matchers {
       val client = RouteSpec().at(Get) / "svc" / intParam / Path.fixed("fixed") bindToClient returnsHeaders
 
       it("identifies called route as a request header") {
-        responseFor(client(intParam --> 55)) shouldEqual(Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
+        responseFor(client(intParam --> 55)) shouldBe(Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
       }
     }
   }

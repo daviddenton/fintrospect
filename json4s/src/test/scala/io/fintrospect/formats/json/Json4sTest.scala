@@ -31,8 +31,8 @@ abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFo
         val svc = filters.AutoInOut(Service.mk { in: Json4sLetter => Future.value(in) }, Created)
 
         val response = result(svc(request))
-        response.status shouldEqual Created
-        decode[Json4sLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Created
+        decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
 
@@ -41,20 +41,20 @@ abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFo
         val svc = filters.AutoInOptionalOut(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(request))
-        response.status shouldEqual Ok
-        decode[Json4sLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Ok
+        decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
         val svc = filters.AutoInOptionalOut(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldEqual Status.NotFound
+        result(svc(request)).status shouldBe Status.NotFound
       }
     }
 
     describe("AutoIn") {
       it("takes the object from the request") {
         val svc = filters.AutoIn(jsonFormat.body[Json4sLetter]()).andThen(Service.mk { in: Json4sLetter => Future.value(in) })
-        result(svc(request)) shouldEqual aLetter
+        result(svc(request)) shouldBe aLetter
       }
     }
 
@@ -62,8 +62,8 @@ abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFo
       it("takes the object from the request") {
         val svc = filters.AutoOut[Json4sLetter, Json4sLetter](Created).andThen(Service.mk { in: Json4sLetter => Future.value(in) })
         val response = result(svc(aLetter))
-        response.status shouldEqual Created
-        decode[Json4sLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Created
+        decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
 
@@ -72,13 +72,13 @@ abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFo
         val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(aLetter))
-        response.status shouldEqual Created
-        decode[Json4sLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Created
+        decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
         val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(None) })
-        result(svc(aLetter)).status shouldEqual Status.NotFound
+        result(svc(aLetter)).status shouldBe Status.NotFound
       }
     }
   }
@@ -95,7 +95,7 @@ abstract class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends Jso
 
   describe(format.getClass.getSimpleName) {
     it("roundtrips to JSON and back") {
-      format.decode[Json4sLetter](format.encode(aLetter)) shouldEqual aLetter
+      format.decode[Json4sLetter](format.encode(aLetter)) shouldBe aLetter
     }
 
     it("invalid extracted JSON throws up") {

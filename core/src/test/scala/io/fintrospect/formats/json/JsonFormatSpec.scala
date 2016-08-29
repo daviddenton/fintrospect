@@ -25,7 +25,7 @@ abstract class JsonFormatSpec[X, Y](val format: JsonFormat[X, Y]) extends FunSpe
         'bool -> format.boolean(true),
         'null -> format.nullNode(),
         'array -> format.array(format.string("world"), format.boolean(true))
-      )) shouldEqual expectedJson
+      )) shouldBe expectedJson
     }
 
     describe("Parse blows up when invalid") {
@@ -39,19 +39,19 @@ abstract class JsonFormatSpec[X, Y](val format: JsonFormat[X, Y]) extends FunSpe
     describe("ParameterSpec json") {
       describe(getClass.getName + " Json") {
         it("retrieves a valid value") {
-          Try(ParameterSpec.json(paramName, "", format).deserialize(format.compact(expected))) shouldEqual Success(expected)
+          Try(ParameterSpec.json(paramName, "", format).deserialize(format.compact(expected))) shouldBe Success(expected)
         }
 
         it("does not retrieve an invalid value") {
-          Try(ParameterSpec.json(paramName, "", format).deserialize("notJson")).isFailure shouldEqual true
+          Try(ParameterSpec.json(paramName, "", format).deserialize("notJson")).isFailure shouldBe true
         }
 
         it("does not retrieve an null value") {
-          Try(ParameterSpec.json(paramName, "", format).deserialize(null)).isFailure shouldEqual true
+          Try(ParameterSpec.json(paramName, "", format).deserialize(null)).isFailure shouldBe true
         }
 
         it("serializes correctly") {
-          ParameterSpec.json(paramName, "", format).serialize(expected) shouldEqual """{"field":"value"}"""
+          ParameterSpec.json(paramName, "", format).serialize(expected) shouldBe """{"field":"value"}"""
         }
       }
     }
