@@ -11,11 +11,11 @@ import io.fintrospect.util.ExtractionError.Invalid
 import io.fintrospect.util.{Extracted, ExtractionError, ExtractionFailed}
 import io.fintrospect.{ContentTypes, RequestBuilder}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 import scala.xml.XML
 
-class BodyTest extends FunSpec with ShouldMatchers {
+class BodyTest extends FunSpec with Matchers {
 
   describe("body") {
 

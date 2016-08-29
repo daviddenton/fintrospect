@@ -2,9 +2,9 @@ package io.fintrospect.util
 
 import com.twitter.util.{Await, Future}
 import io.fintrospect.util.EitherF.eitherF
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class EitherFTest extends FunSpec with ShouldMatchers {
+class EitherFTest extends FunSpec with Matchers {
 
   describe("EitherF") {
 

@@ -4,9 +4,9 @@ import java.time.Instant
 
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class HeapDumpTest extends FunSpec with ShouldMatchers {
+class HeapDumpTest extends FunSpec with Matchers {
 
   describe("HeapDump") {
     it("creates the correct heapdump file") {

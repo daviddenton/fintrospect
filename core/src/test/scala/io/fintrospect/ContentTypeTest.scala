@@ -1,10 +1,10 @@
 package io.fintrospect
 
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 
 
-class ContentTypeTest extends FunSpec with ShouldMatchers {
+class ContentTypeTest extends FunSpec with Matchers {
 
   it("can guess common content types for a file") {
     ContentType.lookup("foo/bob.html") shouldBe ContentTypes.TEXT_HTML

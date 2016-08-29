@@ -10,7 +10,7 @@ import com.twitter.util.Future
 import io.fintrospect.formats.json.Argonaut.JsonFormat.{bodySpec, decode, encode, obj, parameterSpec, parse}
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 import scala.language.reflectiveCalls
 
@@ -26,7 +26,7 @@ object ArgonautLetter {
   implicit def Codec: CodecJson[ArgonautLetter]= casecodec3(ArgonautLetter.apply, ArgonautLetter.unapply)("to", "from", "message")
 }
 
-class ArgonautFiltersTest extends FunSpec with ShouldMatchers {
+class ArgonautFiltersTest extends FunSpec with Matchers {
 
   describe("Argonaut.Filters") {
     val aLetter = ArgonautLetter(ArgonautStreetAddress("my house"), ArgonautStreetAddress("your house"), "hi there")

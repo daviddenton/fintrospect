@@ -1,9 +1,9 @@
 package io.fintrospect.templating
 
 import com.twitter.io.Buf
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-abstract class TemplatesSpec[T](renderers: Templates, subProjectName: String) extends FunSpec with ShouldMatchers {
+abstract class TemplatesSpec[T](renderers: Templates, subProjectName: String) extends FunSpec with Matchers {
 
   describe(subProjectName + " templating") {
 

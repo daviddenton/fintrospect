@@ -10,7 +10,7 @@ import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest._
 
 
-class QueryTest extends FunSpec with ShouldMatchers {
+class QueryTest extends FunSpec with Matchers {
 
   private val paramName = "name"
 

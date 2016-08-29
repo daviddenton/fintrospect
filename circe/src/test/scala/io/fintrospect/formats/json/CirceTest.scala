@@ -8,7 +8,7 @@ import com.twitter.util.Future
 import io.fintrospect.formats.json.Circe.JsonFormat._
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 import scala.language.reflectiveCalls
 
@@ -18,7 +18,7 @@ case class CirceLetter(to: CirceStreetAddress, from: CirceStreetAddress, message
 
 class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
-class CirceFiltersTest extends FunSpec with ShouldMatchers {
+class CirceFiltersTest extends FunSpec with Matchers {
 
   import io.circe.generic.auto._
 

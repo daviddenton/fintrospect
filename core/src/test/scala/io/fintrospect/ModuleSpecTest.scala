@@ -14,9 +14,9 @@ import io.fintrospect.parameters.{Body, BodySpec, FormField, Header, Path}
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.HttpRequestResponseUtil
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class ModuleSpecTest extends FunSpec with ShouldMatchers {
+class ModuleSpecTest extends FunSpec with Matchers {
 
   case class AService(segments: Seq[String]) extends Service[Request, Response] {
     def apply(request: Request): Future[Response] = {

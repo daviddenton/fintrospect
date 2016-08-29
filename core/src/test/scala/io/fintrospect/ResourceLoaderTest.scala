@@ -1,10 +1,10 @@
 package io.fintrospect
 
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 import scala.io.Source
 
-class ResourceLoaderTest extends FunSpec with ShouldMatchers {
+class ResourceLoaderTest extends FunSpec with Matchers {
 
   describe("Classpath loader") {
     val loader = ResourceLoader.Classpath("/")

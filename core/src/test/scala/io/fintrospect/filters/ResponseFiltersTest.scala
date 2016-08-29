@@ -13,9 +13,9 @@ import io.fintrospect.filters.ResponseFilters._
 import io.fintrospect.util.Extracted
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.TestClocks._
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class ResponseFiltersTest extends FunSpec with ShouldMatchers {
+class ResponseFiltersTest extends FunSpec with Matchers {
 
   describe("Response") {
 

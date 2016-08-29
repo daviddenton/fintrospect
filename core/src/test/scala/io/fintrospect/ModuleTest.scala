@@ -7,9 +7,9 @@ import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.util.Await.result
 import io.fintrospect.util.Echo
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class ModuleTest extends FunSpec with ShouldMatchers {
+class ModuleTest extends FunSpec with Matchers {
 
   describe("Module") {
     it("when it matches it responds as expected") {

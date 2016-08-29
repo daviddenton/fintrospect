@@ -4,9 +4,9 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{Accepted, Conflict}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.{Await, Future}
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class OverridableHttpServiceTest extends FunSpec with ShouldMatchers {
+class OverridableHttpServiceTest extends FunSpec with Matchers {
 
   val originalStatus = Conflict
 

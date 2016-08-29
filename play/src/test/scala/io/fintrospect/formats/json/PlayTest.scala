@@ -8,7 +8,7 @@ import com.twitter.util.Future
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.json.Play.JsonFormat.{bodySpec, decode, encode, parameterSpec, parse}
 import io.fintrospect.parameters.{Body, Query}
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 import play.api.libs.json._
 
 import scala.language.reflectiveCalls
@@ -37,7 +37,7 @@ object PlayLetter {
   implicit val Reads = Json.reads[PlayLetter]
 }
 
-class PlayFiltersTest extends FunSpec with ShouldMatchers {
+class PlayFiltersTest extends FunSpec with Matchers {
 
   describe("Play.Filters") {
     val aLetter = PlayLetter(PlayStreetAddress("my house"), PlayStreetAddress("your house"), "hi there")

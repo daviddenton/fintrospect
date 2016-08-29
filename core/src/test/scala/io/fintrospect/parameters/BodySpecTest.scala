@@ -6,7 +6,7 @@ import org.scalatest._
 
 import scala.util.{Success, Try}
 
-class BodySpecTest extends FunSpec with ShouldMatchers {
+class BodySpecTest extends FunSpec with Matchers {
 
   val paramName = "name"
 

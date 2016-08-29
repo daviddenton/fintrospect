@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
 import io.fintrospect.parameters.Query
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 object TestContract extends Contract {
 
@@ -16,7 +16,7 @@ object TestContract extends Contract {
   }
 }
 
-class ContractProxyModuleTest extends FunSpec with ShouldMatchers {
+class ContractProxyModuleTest extends FunSpec with Matchers {
 
   describe("ContractProxyModule") {
     it("cretes service which proxies requests to the underlying service") {

@@ -1,11 +1,11 @@
 package io.fintrospect.renderers.util
 
 import io.fintrospect.formats.json.Argo.JsonFormat.{array, boolean, number, obj, parse, string}
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 import scala.io.Source.fromInputStream
 
-class JsonToJsonSchemaTest extends FunSpec with ShouldMatchers {
+class JsonToJsonSchemaTest extends FunSpec with Matchers {
 
   describe("JsonToJsonSchema") {
     it("renders all different types of json value as expected") {

@@ -8,9 +8,9 @@ import com.twitter.util.Future
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters.Query
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class SecurityTest extends FunSpec with ShouldMatchers {
+class SecurityTest extends FunSpec with Matchers {
 
   describe("ApiKey") {
     val paramName = "name"

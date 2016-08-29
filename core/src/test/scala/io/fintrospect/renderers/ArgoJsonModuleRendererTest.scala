@@ -11,11 +11,11 @@ import io.fintrospect.parameters.{Body, FormField, Header, Path, Query}
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.util.{Echo, ExtractionError}
 import io.fintrospect.{ApiKey, ModuleSpec, ResponseSpec, RouteSpec}
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 import scala.io.Source
 
-abstract class ArgoJsonModuleRendererTest() extends FunSpec with ShouldMatchers {
+abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
   def name: String = this.getClass.getSimpleName
 
   def renderer: ModuleRenderer

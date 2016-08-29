@@ -7,7 +7,7 @@ import io.fintrospect.parameters.Query
 import io.fintrospect.util.ExtractionError.{Invalid, Missing}
 import org.scalatest._
 
-class ExtractorTest extends FunSpec with ShouldMatchers {
+class ExtractorTest extends FunSpec with Matchers {
 
   case class Example(a: Option[String], b: Option[String], c: Int)
 

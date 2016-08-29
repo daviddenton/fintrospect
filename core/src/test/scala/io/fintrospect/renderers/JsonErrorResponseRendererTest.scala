@@ -6,9 +6,9 @@ import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.JsonErrorResponseRenderer.{badRequest, notFound}
 import io.fintrospect.util.ExtractionError
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class JsonErrorResponseRendererTest extends FunSpec with ShouldMatchers {
+class JsonErrorResponseRendererTest extends FunSpec with Matchers {
 
   it("can build 400") {
     val response = statusAndContentFrom(badRequest(Seq(ExtractionError(Query.required.string("bob"), "missing"))))

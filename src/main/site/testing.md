@@ -9,7 +9,7 @@ object EchoRoute {
   })
 }
 
-class EchoRouteTest extends FunSpec with ShouldMatchers with TestingFintrospectRoute {
+class EchoRouteTest extends FunSpec with Matchers with TestingFintrospectRoute {
 
   override val route = EchoRoute.route
 

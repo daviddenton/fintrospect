@@ -5,7 +5,7 @@ import io.fintrospect.util.ExtractionError.Missing
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest._
 
-class FormTest extends FunSpec with ShouldMatchers {
+class FormTest extends FunSpec with Matchers {
 
   private val field1 = FormField.required.string("field1")
   private val field2 = FormField.required.string("field2")

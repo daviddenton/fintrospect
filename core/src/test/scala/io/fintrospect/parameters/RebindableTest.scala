@@ -3,9 +3,9 @@ package io.fintrospect.parameters
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
 import io.fintrospect.RequestBuilder
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class RebindableTest extends FunSpec with ShouldMatchers {
+class RebindableTest extends FunSpec with Matchers {
 
   describe("Rebinding") {
     describe("Mandatory") {

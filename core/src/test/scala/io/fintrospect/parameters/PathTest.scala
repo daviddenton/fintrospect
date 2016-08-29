@@ -2,9 +2,9 @@ package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Method.Get
 import io.fintrospect.RequestBuilder
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class PathTest extends FunSpec with ShouldMatchers {
+class PathTest extends FunSpec with Matchers {
 
   describe("fixed path parameter") {
     it("unapplies when string matches") {

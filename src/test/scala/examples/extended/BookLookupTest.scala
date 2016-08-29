@@ -5,12 +5,12 @@ import com.twitter.finagle.http.Status.NotFound
 import io.fintrospect.formats.json.Argo.JsonFormat.parse
 import io.fintrospect.testing.TestingFintrospectRoute
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 /*
   an simple example of how to test a Fintrospect Route with the TestingFintrospectRoute trait
  */
-class BookLookupTest extends FunSpec with ShouldMatchers with TestingFintrospectRoute {
+class BookLookupTest extends FunSpec with Matchers with TestingFintrospectRoute {
 
   override val route = new BookLookup(new Books()).route
 
