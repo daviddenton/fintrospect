@@ -22,8 +22,8 @@ class XmlFiltersTest extends FunSpec with Matchers {
         val svc = Xml.Filters.AutoInOut(Service.mk { in: Elem => Future.value(in) }, Created)
 
         val response = result(svc(request))
-        response.status shouldEqual Created
-        XML.loadString(response.contentString) shouldEqual <xml></xml>
+        response.status shouldBe Created
+        XML.loadString(response.contentString) shouldBe <xml></xml>
       }
     }
 
@@ -32,20 +32,20 @@ class XmlFiltersTest extends FunSpec with Matchers {
         val svc = Xml.Filters.AutoInOptionalOut(Service.mk[Elem, Option[Elem]] { in => Future.value(Option(in)) })
 
         val response = result(svc(request))
-        response.status shouldEqual Ok
-        XML.loadString(response.contentString) shouldEqual <xml></xml>
+        response.status shouldBe Ok
+        XML.loadString(response.contentString) shouldBe <xml></xml>
       }
 
       it("returns NotFound when missing present") {
         val svc = Xml.Filters.AutoInOptionalOut(Service.mk[Elem, Option[Elem]] { in => Future.value(None) })
-        result(svc(request)).status shouldEqual Status.NotFound
+        result(svc(request)).status shouldBe Status.NotFound
       }
     }
 
     describe("AutoIn") {
       it("takes the object from the request") {
         val svc = Xml.Filters.AutoIn(Body.xml(None)).andThen(Service.mk { in: Elem => Future.value(in) })
-        result(svc(request)) shouldEqual <xml></xml>
+        result(svc(request)) shouldBe <xml></xml>
       }
     }
 
@@ -53,8 +53,8 @@ class XmlFiltersTest extends FunSpec with Matchers {
       it("takes the object from the request") {
         val svc = Xml.Filters.AutoOut[Elem](Created).andThen(Service.mk { in: Elem => Future.value(in) })
         val response = result(svc(<xml></xml>))
-        response.status shouldEqual Created
-        XML.loadString(response.contentString) shouldEqual <xml></xml>
+        response.status shouldBe Created
+        XML.loadString(response.contentString) shouldBe <xml></xml>
       }
     }
 
@@ -63,13 +63,13 @@ class XmlFiltersTest extends FunSpec with Matchers {
         val svc = Xml.Filters.AutoOptionalOut[Elem](Created).andThen(Service.mk[Elem, Option[Elem]] { in => Future.value(Option(in)) })
 
         val response = result(svc(<xml></xml>))
-        response.status shouldEqual Created
-        XML.loadString(response.contentString) shouldEqual <xml></xml>
+        response.status shouldBe Created
+        XML.loadString(response.contentString) shouldBe <xml></xml>
       }
 
       it("returns NotFound when missing present") {
         val svc = Xml.Filters.AutoOptionalOut[Elem](Created).andThen(Service.mk[Elem, Option[Elem]] { in => Future.value(None) })
-        result(svc(<xml></xml>)).status shouldEqual Status.NotFound
+        result(svc(<xml></xml>)).status shouldBe Status.NotFound
       }
     }
   }

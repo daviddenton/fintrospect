@@ -50,8 +50,8 @@ class PlayFiltersTest extends FunSpec with Matchers {
         val svc = Play.Filters.AutoInOut(Service.mk { in: PlayLetter => Future.value(in) }, Created)
 
         val response = result(svc(request))
-        response.status shouldEqual Created
-        decode[PlayLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Created
+        decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
 
@@ -60,20 +60,20 @@ class PlayFiltersTest extends FunSpec with Matchers {
         val svc = Play.Filters.AutoInOptionalOut(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(request))
-        response.status shouldEqual Status.Ok
-        decode[PlayLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Status.Ok
+        decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
         val svc = Play.Filters.AutoInOptionalOut(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldEqual Status.NotFound
+        result(svc(request)).status shouldBe Status.NotFound
       }
     }
 
     describe("AutoIn") {
       it("takes the object from the request") {
         val svc = Play.Filters.AutoIn(Play.JsonFormat.body[PlayLetter]()).andThen(Service.mk { in: PlayLetter => Future.value(in) })
-        result(svc(request)) shouldEqual aLetter
+        result(svc(request)) shouldBe aLetter
       }
     }
 
@@ -81,8 +81,8 @@ class PlayFiltersTest extends FunSpec with Matchers {
       it("takes the object from the request") {
         val svc = Play.Filters.AutoOut[PlayLetter, PlayLetter](Created).andThen(Service.mk { in: PlayLetter => Future.value(in) })
         val response = result(svc(aLetter))
-        response.status shouldEqual Created
-        decode[PlayLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Created
+        decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
 
@@ -91,13 +91,13 @@ class PlayFiltersTest extends FunSpec with Matchers {
         val svc = Play.Filters.AutoOptionalOut[PlayLetter, PlayLetter](Created).andThen(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(aLetter))
-        response.status shouldEqual Created
-        decode[PlayLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Created
+        decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
         val svc = Play.Filters.AutoOptionalOut[PlayLetter, PlayLetter](Created).andThen(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(None) })
-        result(svc(aLetter)).status shouldEqual Status.NotFound
+        result(svc(aLetter)).status shouldBe Status.NotFound
       }
     }
   }
@@ -111,7 +111,7 @@ class PlayJsonFormatTest extends JsonFormatSpec(Play.JsonFormat) {
 
     it("roundtrips to JSON and back") {
       val encoded = Play.JsonFormat.encode(aLetter)(PlayLetter.Writes)
-      Play.JsonFormat.decode[PlayLetter](encoded)(PlayLetter.Reads) shouldEqual aLetter
+      Play.JsonFormat.decode[PlayLetter](encoded)(PlayLetter.Reads) shouldBe aLetter
     }
 
     it("invalid extracted JSON throws up") {

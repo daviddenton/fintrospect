@@ -18,16 +18,16 @@ class HeaderTest extends FunSpec with Matchers {
       val param = Header.required.localDate(paramName)
 
       it("validate value from field") {
-        param.extract(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
-        param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldEqual LocalDate.of(2015, 2, 4)
+        param.extract(messageWithHeaderValueOf(Option("2015-02-04"))) shouldBe Extracted(Some(LocalDate.of(2015, 2, 4)))
+        param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldBe LocalDate.of(2015, 2, 4)
       }
 
       it("fails to retrieve invalid value") {
-        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldBe ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
-        param.extract(messageWithHeaderValueOf(None)) shouldEqual ExtractionFailed(Missing(param))
+        param.extract(messageWithHeaderValueOf(None)) shouldBe ExtractionFailed(Missing(param))
       }
 
       it("can rebind valid value") {
@@ -35,7 +35,7 @@ class HeaderTest extends FunSpec with Matchers {
         inRequest.headerMap.add("field", "123")
         val bindings = Header.required.int("field") <-> inRequest
         val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
-        outRequest.headerMap("field") shouldEqual "123"
+        outRequest.headerMap("field") shouldBe "123"
       }
     }
 
@@ -43,18 +43,18 @@ class HeaderTest extends FunSpec with Matchers {
 
       it("retrieves value from field") {
         val param = Header.required.multi.localDate(paramName)
-        param.extract(messageWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
-        param <-- messageWithValueOf("2015-02-04", "2015-02-05") shouldEqual Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
+        param.extract(messageWithValueOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
+        param <-- messageWithValueOf("2015-02-04", "2015-02-05") shouldBe Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
       it("fails to retrieve invalid value") {
         val param = Header.required.*.long(paramName)
-        param.extract(messageWithValueOf("qwe", "notValid")) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(messageWithValueOf("qwe", "notValid")) shouldBe ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
         val param = Header.required.*.zonedDateTime(paramName)
-        param.extract(messageWithValueOf()) shouldEqual ExtractionFailed(Missing(param))
+        param.extract(messageWithValueOf()) shouldBe ExtractionFailed(Missing(param))
       }
 
       it("can rebind valid value") {
@@ -62,7 +62,7 @@ class HeaderTest extends FunSpec with Matchers {
         inRequest.headerMap.add("field", "123").add("field", "456")
         val bindings = Header.required.*.int("field") <-> inRequest
         val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
-        outRequest.headerMap.getAll("field") shouldEqual Seq("123", "456")
+        outRequest.headerMap.getAll("field") shouldBe Seq("123", "456")
       }
     }
 
@@ -73,17 +73,17 @@ class HeaderTest extends FunSpec with Matchers {
       val param = Header.optional.localDate(paramName)
 
       it("validate value from field") {
-        param.extract(messageWithHeaderValueOf(Option("2015-02-04"))) shouldEqual Extracted(Some(LocalDate.of(2015, 2, 4)))
-        param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldEqual Option(LocalDate.of(2015, 2, 4))
+        param.extract(messageWithHeaderValueOf(Option("2015-02-04"))) shouldBe Extracted(Some(LocalDate.of(2015, 2, 4)))
+        param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldBe Option(LocalDate.of(2015, 2, 4))
       }
 
       it("fails to retrieve invalid value") {
-        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(messageWithHeaderValueOf(Option("notValid"))) shouldBe ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
-        param.extract(messageWithHeaderValueOf(None)) shouldEqual Extracted(None)
-        param <-- Request() shouldEqual None
+        param.extract(messageWithHeaderValueOf(None)) shouldBe Extracted(None)
+        param <-- Request() shouldBe None
       }
 
       it("can rebind valid value") {
@@ -91,14 +91,14 @@ class HeaderTest extends FunSpec with Matchers {
         inRequest.headerMap.add("field", "123")
         val bindings = Header.optional.int("field") <-> inRequest
         val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
-        outRequest.headerMap("field") shouldEqual "123"
+        outRequest.headerMap("field") shouldBe "123"
       }
 
       it("does not rebind missing value") {
         val inRequest = Request()
         val bindings = Header.optional.int("field") <-> inRequest
         val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
-        outRequest.headerMap.getAll("field") shouldEqual Nil
+        outRequest.headerMap.getAll("field") shouldBe Nil
       }
     }
 
@@ -106,17 +106,17 @@ class HeaderTest extends FunSpec with Matchers {
       val param = Header.optional.multi.localDate(paramName)
 
       it("retrieves value from field") {
-        param.extract(messageWithValueOf("2015-02-04", "2015-02-05")) shouldEqual Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
-        param <-- messageWithValueOf("2015-02-04", "2015-02-05") shouldEqual Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        param.extract(messageWithValueOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
+        param <-- messageWithValueOf("2015-02-04", "2015-02-05") shouldBe Option(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
       }
 
       it("fails to retrieve invalid value") {
-        param.extract(messageWithValueOf("2015-02-04", "notValid")) shouldEqual ExtractionFailed(Invalid(param))
+        param.extract(messageWithValueOf("2015-02-04", "notValid")) shouldBe ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {
-        param.extract(messageWithValueOf()) shouldEqual Extracted(None)
-        param <-- Request() shouldEqual None
+        param.extract(messageWithValueOf()) shouldBe Extracted(None)
+        param <-- Request() shouldBe None
       }
 
       it("can rebind valid value") {
@@ -124,14 +124,14 @@ class HeaderTest extends FunSpec with Matchers {
         inRequest.headerMap.add("field", "123").add("field", "456")
         val bindings = Header.optional.multi.int("field") rebind inRequest
         val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
-        outRequest.headerMap.getAll("field") shouldEqual Seq("123", "456")
+        outRequest.headerMap.getAll("field") shouldBe Seq("123", "456")
       }
 
       it("doesn't rebind missing value") {
         val inRequest = Request("?")
         val bindings = Header.optional.int("field") <-> inRequest
         val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
-        outRequest.headerMap.getAll("field") shouldEqual Nil
+        outRequest.headerMap.getAll("field") shouldBe Nil
       }
     }
   }

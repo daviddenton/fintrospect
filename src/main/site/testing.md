@@ -15,7 +15,7 @@ class EchoRouteTest extends FunSpec with Matchers with TestingFintrospectRoute {
 
   describe("Echo") {
     it("bounces back message") {
-      responseFor(Request("hello")).contentString shouldEqual "hello"
+      responseFor(Request("hello")).contentString shouldBe "hello"
     }
   }
 }

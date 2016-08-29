@@ -15,19 +15,19 @@ class BodySpecTest extends FunSpec with Matchers {
     val asJson = obj("name" -> string("value"))
 
     it("retrieves a valid value") {
-      Try(BodySpec.json().deserialize(expected)) shouldEqual Success(asJson)
+      Try(BodySpec.json().deserialize(expected)) shouldBe Success(asJson)
     }
 
     it("does not retrieve an invalid value") {
-      Try(BodySpec.json().deserialize("notJson")).isFailure shouldEqual true
+      Try(BodySpec.json().deserialize("notJson")).isFailure shouldBe true
     }
 
     it("does not retrieve an null value") {
-      Try(BodySpec.json().deserialize(null)).isFailure shouldEqual true
+      Try(BodySpec.json().deserialize(null)).isFailure shouldBe true
     }
 
     it("serializes correctly") {
-      BodySpec.json().serialize(asJson) shouldEqual expected
+      BodySpec.json().serialize(asJson) shouldBe expected
     }
   }
 
@@ -35,19 +35,19 @@ class BodySpecTest extends FunSpec with Matchers {
     val expected = <field>value</field>
 
     it("retrieves a valid value") {
-      Try(BodySpec.xml().deserialize(expected.toString())) shouldEqual Success(expected)
+      Try(BodySpec.xml().deserialize(expected.toString())) shouldBe Success(expected)
     }
 
     it("does not retrieve an invalid value") {
-      Try(BodySpec.xml().deserialize("notXml")).isFailure shouldEqual true
+      Try(BodySpec.xml().deserialize("notXml")).isFailure shouldBe true
     }
 
     it("does not retrieve an null value") {
-      Try(BodySpec.xml().deserialize(null)).isFailure shouldEqual true
+      Try(BodySpec.xml().deserialize(null)).isFailure shouldBe true
     }
 
     it("serializes correctly") {
-      BodySpec.xml().serialize(expected) shouldEqual """<field>value</field>"""
+      BodySpec.xml().serialize(expected) shouldBe """<field>value</field>"""
     }
   }
 
@@ -56,19 +56,19 @@ class BodySpecTest extends FunSpec with Matchers {
     val bodySpec = BodySpec[MyCustomType](None, ContentTypes.TEXT_PLAIN, s => MyCustomType(s.toInt), ct => ct.value.toString)
 
     it("retrieves a valid value") {
-      Try(bodySpec.deserialize("123")) shouldEqual Success(MyCustomType(123))
+      Try(bodySpec.deserialize("123")) shouldBe Success(MyCustomType(123))
     }
 
     it("does not retrieve an invalid value") {
-      Try(bodySpec.deserialize("notAnInt")).isFailure shouldEqual true
+      Try(bodySpec.deserialize("notAnInt")).isFailure shouldBe true
     }
 
     it("does not retrieve an null value") {
-      Try(bodySpec.deserialize(null)).isFailure shouldEqual true
+      Try(bodySpec.deserialize(null)).isFailure shouldBe true
     }
 
     it("serializes correctly") {
-      bodySpec.serialize(MyCustomType(123)) shouldEqual "123"
+      bodySpec.serialize(MyCustomType(123)) shouldBe "123"
     }
   }
 

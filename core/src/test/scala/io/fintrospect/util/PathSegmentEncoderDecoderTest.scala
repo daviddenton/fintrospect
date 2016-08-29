@@ -12,11 +12,11 @@ class PathSegmentEncoderDecoderTest extends FunSpec with Matchers {
     }
 
     it("does not url encode reserved characters") {
-      encode(":@-._~!$&'()*+,;=") shouldEqual ":@-._~!$&'()*+,;="
+      encode(":@-._~!$&'()*+,;=") shouldBe ":@-._~!$&'()*+,;="
     }
 
     it("handles spaces and forward slashes gracefully") {
-      encode("a path/+piece") shouldEqual "a%20path%2F+piece"
+      encode("a path/+piece") shouldBe "a%20path%2F+piece"
     }
   }
 }

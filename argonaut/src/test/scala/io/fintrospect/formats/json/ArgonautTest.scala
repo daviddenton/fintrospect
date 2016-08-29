@@ -39,8 +39,8 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
         val svc = Argonaut.Filters.AutoInOut(Service.mk { in: ArgonautLetter => Future.value(in) }, Created)
 
         val response = result(svc(request))
-        response.status shouldEqual Created
-        decode[ArgonautLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Created
+        decode[ArgonautLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
 
@@ -49,20 +49,20 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
         val svc = Argonaut.Filters.AutoInOptionalOut(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(request))
-        response.status shouldEqual Ok
-        decode[ArgonautLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Ok
+        decode[ArgonautLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
         val svc = Argonaut.Filters.AutoInOptionalOut(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldEqual Status.NotFound
+        result(svc(request)).status shouldBe Status.NotFound
       }
     }
 
     describe("AutoIn") {
       it("takes the object from the request") {
         val svc = Argonaut.Filters.AutoIn(Argonaut.JsonFormat.body[ArgonautLetter]()).andThen(Service.mk { in: ArgonautLetter => Future.value(in) })
-        result(svc(request)) shouldEqual aLetter
+        result(svc(request)) shouldBe aLetter
       }
     }
 
@@ -70,8 +70,8 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
       it("takes the object from the request") {
         val svc = Argonaut.Filters.AutoOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk { in: ArgonautLetter => Future.value(in) })
         val response = result(svc(aLetter))
-        response.status shouldEqual Created
-        decode[ArgonautLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Created
+        decode[ArgonautLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
 
@@ -80,13 +80,13 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
         val svc = Argonaut.Filters.AutoOptionalOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(aLetter))
-        response.status shouldEqual Created
-        decode[ArgonautLetter](parse(response.contentString)) shouldEqual aLetter
+        response.status shouldBe Created
+        decode[ArgonautLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
         val svc = Argonaut.Filters.AutoOptionalOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(None) })
-        result(svc(aLetter)).status shouldEqual Status.NotFound
+        result(svc(aLetter)).status shouldBe Status.NotFound
       }
     }
   }
@@ -100,7 +100,7 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut.JsonFormat) {
     val aLetter = ArgonautLetter(ArgonautStreetAddress("my house"), ArgonautStreetAddress("your house"), "hi there")
     it("roundtrips to JSON and back") {
       val encoded = encode(aLetter)(ArgonautLetter.Codec)
-      decode[ArgonautLetter](encoded)(ArgonautLetter.Codec) shouldEqual aLetter
+      decode[ArgonautLetter](encoded)(ArgonautLetter.Codec) shouldBe aLetter
     }
 
     it("invalid extracted JSON throws up") {

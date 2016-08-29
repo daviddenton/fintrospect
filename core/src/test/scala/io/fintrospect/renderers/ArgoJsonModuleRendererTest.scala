@@ -52,7 +52,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
 
       val actual = Await.result(module.toService(Request("/basepath"))).contentString
       //                  println(actual)
-      parse(actual) shouldEqual expected
+      parse(actual) shouldBe expected
     }
 
     it("can build 400") {

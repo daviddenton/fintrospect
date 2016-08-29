@@ -18,19 +18,19 @@ class FormTest extends FunSpec with Matchers {
 
   describe("construction") {
     it("from a set of bindings") {
-      Form(Seq(new FormFieldBinding(field1, "value"))).iterator.toSeq shouldEqual Seq(("field1", Set("value")))
+      Form(Seq(new FormFieldBinding(field1, "value"))).iterator.toSeq shouldBe Seq(("field1", Set("value")))
     }
   }
 
   describe("multiple parameter retrieval") {
     val formInstance = Form(field1 --> "value1", field2 --> "value2", field3 --> "value3", field4 --> "value4", field5 --> "value5", field6 --> "value6")
     it("1 binding") {
-      formInstance <-- field1 shouldEqual "value1"
-      formInstance <-- (field1, field2) shouldEqual ("value1", "value2")
-      formInstance <-- (field1, field2, field3) shouldEqual ("value1", "value2", "value3")
-      formInstance <-- (field1, field2, field3, field4) shouldEqual ("value1", "value2", "value3", "value4")
-      formInstance <-- (field1, field2, field3, field4, field5) shouldEqual ("value1", "value2", "value3", "value4", "value5")
-      formInstance <-- (field1, field2, field3, field4, field5, field6) shouldEqual ("value1", "value2", "value3", "value4", "value5", "value6")
+      formInstance <-- field1 shouldBe "value1"
+      formInstance <-- (field1, field2) shouldBe ("value1", "value2")
+      formInstance <-- (field1, field2, field3) shouldBe ("value1", "value2", "value3")
+      formInstance <-- (field1, field2, field3, field4) shouldBe ("value1", "value2", "value3", "value4")
+      formInstance <-- (field1, field2, field3, field4, field5) shouldBe ("value1", "value2", "value3", "value4", "value5")
+      formInstance <-- (field1, field2, field3, field4, field5, field6) shouldBe ("value1", "value2", "value3", "value4", "value5", "value6")
     }
   }
 
