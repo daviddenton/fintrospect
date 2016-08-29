@@ -5,6 +5,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 ## Backlog/upcoming
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
+- Add integrated self-hosted Swagger UI/ReDoc UI module
 
 ## 13.6.0
 - (Possible) Breaking: Refactored `StaticModule` to allow serving of directory-based assets. Introduced `Classpath` and `Directory` `ResourceLoaders` to allow for this change.
