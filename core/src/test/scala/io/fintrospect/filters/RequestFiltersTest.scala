@@ -13,9 +13,9 @@ import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
 import io.fintrospect.parameters.Query
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.{Extracted, ExtractionFailed, Extractor}
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class RequestFiltersTest extends FunSpec with ShouldMatchers {
+class RequestFiltersTest extends FunSpec with Matchers {
 
   describe("Request") {
 

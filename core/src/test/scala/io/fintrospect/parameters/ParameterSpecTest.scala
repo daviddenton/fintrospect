@@ -8,7 +8,7 @@ import org.scalatest._
 
 import scala.util.{Success, Try}
 
-class ParameterSpecTest extends FunSpec with ShouldMatchers {
+class ParameterSpecTest extends FunSpec with Matchers {
 
   val paramName = "name"
 

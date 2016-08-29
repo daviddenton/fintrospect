@@ -2,9 +2,9 @@ package io.fintrospect.configuration
 
 import java.net.InetSocketAddress
 
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class AuthorityTest extends FunSpec with ShouldMatchers {
+class AuthorityTest extends FunSpec with Matchers {
 
   describe("Authority") {
     it("renders ok") {

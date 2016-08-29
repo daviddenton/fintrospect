@@ -12,9 +12,9 @@ import io.fintrospect.filters.Caching.Response.FallbackCacheControl
 import io.fintrospect.filters.Caching.{DefaultCacheTimings, MaxAgeTtl, StaleIfErrorTtl, StaleWhenRevalidateTtl}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.TestClocks.fixed
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class CachingTest extends FunSpec with ShouldMatchers {
+class CachingTest extends FunSpec with Matchers {
 
   private val clock = fixed()
   private val maxAge = ofSeconds(10)

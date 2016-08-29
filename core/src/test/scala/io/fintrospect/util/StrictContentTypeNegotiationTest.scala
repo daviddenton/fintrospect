@@ -8,9 +8,9 @@ import com.twitter.util.Future
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes.{APPLICATION_ATOM_XML, APPLICATION_JSON, TEXT_HTML}
 import io.fintrospect.formats.ResponseBuilder
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class StrictContentTypeNegotiationTest extends FunSpec with ShouldMatchers {
+class StrictContentTypeNegotiationTest extends FunSpec with Matchers {
 
   describe("StrictContentTypeNegotiation") {
     it("on no match, return 406") {

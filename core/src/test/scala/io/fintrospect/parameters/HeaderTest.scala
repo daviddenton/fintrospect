@@ -9,7 +9,7 @@ import io.fintrospect.util.ExtractionError.{Invalid, Missing}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest._
 
-class HeaderTest extends FunSpec with ShouldMatchers {
+class HeaderTest extends FunSpec with Matchers {
 
   private val paramName = "name"
 

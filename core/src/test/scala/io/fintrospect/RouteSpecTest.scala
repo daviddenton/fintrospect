@@ -15,9 +15,9 @@ import io.fintrospect.parameters.{Body, Form, FormField, Header, Path, Query}
 import io.fintrospect.util.ExtractionError.Missing
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class RouteSpecTest extends FunSpec with ShouldMatchers {
+class RouteSpecTest extends FunSpec with Matchers {
 
   describe("Http Route as a client") {
     val returnsMethodAndUri = Service.mk[Request, Response] { request =>

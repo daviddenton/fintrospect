@@ -8,7 +8,7 @@ import com.twitter.util.Future
 import io.fintrospect.formats.json.Json4s.{Json4sFilters, Json4sFormat}
 import io.fintrospect.parameters.{Body, Query}
 import org.json4s.MappingException
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 import scala.language.reflectiveCalls
 
@@ -16,7 +16,7 @@ case class Json4sStreetAddress(address: String)
 
 case class Json4sLetter(to: Json4sStreetAddress, from: Json4sStreetAddress, message: String)
 
-abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFormat[_]) extends FunSpec with ShouldMatchers {
+abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFormat[_]) extends FunSpec with Matchers {
 
   import jsonFormat._
 

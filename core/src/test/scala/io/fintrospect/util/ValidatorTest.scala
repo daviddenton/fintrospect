@@ -3,7 +3,7 @@ package io.fintrospect.util
 import io.fintrospect.parameters.Query
 import org.scalatest._
 
-class ValidatorTest extends FunSpec with ShouldMatchers {
+class ValidatorTest extends FunSpec with Matchers {
 
   describe("validator") {
     it("all Successful") {

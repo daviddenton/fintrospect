@@ -8,9 +8,9 @@ import com.twitter.io.{Buf, Bufs, Reader}
 import com.twitter.util.Await
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) extends FunSpec with ShouldMatchers {
+abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) extends FunSpec with Matchers {
 
   import bldr.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 

@@ -8,9 +8,9 @@ import com.twitter.util.Future
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.parameters.Body
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class MultiBodyTypeTest extends FunSpec with ShouldMatchers {
+class MultiBodyTypeTest extends FunSpec with Matchers {
 
   val xmlBody = Body.xml(None)
   val xmlAccepting = MultiBodyType(xmlBody -> Service.mk { req: Request => Future.value(Response(Ok)) })

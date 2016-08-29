@@ -6,11 +6,11 @@ import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
 import io.fintrospect.parameters.Body
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 import scala.xml.{Elem, XML}
 
-class XmlFiltersTest extends FunSpec with ShouldMatchers {
+class XmlFiltersTest extends FunSpec with Matchers {
 
   describe("Xml.Filters") {
 

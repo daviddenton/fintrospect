@@ -3,11 +3,11 @@ package io.fintrospect.formats.json
 import java.math.BigInteger
 
 import io.fintrospect.parameters.ParameterSpec
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
 import scala.util.{Success, Try}
 
-abstract class JsonFormatSpec[X, Y](val format: JsonFormat[X, Y]) extends FunSpec with ShouldMatchers {
+abstract class JsonFormatSpec[X, Y](val format: JsonFormat[X, Y]) extends FunSpec with Matchers {
 
   val expectedJson = """{"string":"hello","object":{"field1":"aString"},"int":1,"long":2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
 

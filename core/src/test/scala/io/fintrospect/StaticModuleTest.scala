@@ -6,9 +6,9 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await
 import io.fintrospect.ResourceLoader.Classpath
-import org.scalatest.{FunSpec, ShouldMatchers}
+import org.scalatest.{FunSpec, Matchers}
 
-class StaticModuleTest extends FunSpec with ShouldMatchers {
+class StaticModuleTest extends FunSpec with Matchers {
 
   it("looks up contents of existing root file") {
     val module = StaticModule(Root / "svc")

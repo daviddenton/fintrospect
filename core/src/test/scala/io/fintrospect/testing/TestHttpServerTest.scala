@@ -6,10 +6,10 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec
-import org.scalatest.{BeforeAndAfterEach, FunSpec, ShouldMatchers}
+import org.scalatest.{BeforeAndAfterEach, FunSpec, Matchers}
 
 
-class TestHttpServerTest extends FunSpec with ShouldMatchers with BeforeAndAfterEach {
+class TestHttpServerTest extends FunSpec with Matchers with BeforeAndAfterEach {
   val originalStatus = Conflict
 
   private val server = new TestHttpServer(9888, RouteSpec().at(Get) bindTo Service.mk { r: Request => Future.value(Response(originalStatus)) })

@@ -41,11 +41,11 @@ lazy val core = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-core")
   .settings(libraryDependencies ++= Seq(
-    "net.sourceforge.argo" % "argo" % "3.19",
-    "com.twitter" %% "finagle-http" % "6.36.0",
+    "net.sourceforge.argo" % "argo" % "3.22",
+    "com.twitter" %% "finagle-http" % "6.37.0",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+    "org.scalatest" %% "scalatest" % "3.0.0" % "test"
   ))
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
 
@@ -87,7 +87,7 @@ lazy val play = project
   .settings(moduleName := "fintrospect-play")
   .settings(description := "Play JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.3")
+  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.6")
 
 lazy val spray = project
   .settings(baseSettings)
@@ -102,15 +102,15 @@ lazy val handlebars = project
   .settings(moduleName := "fintrospect-handlebars")
   .settings(description := "Handlebars templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.gilt" %% "handlebars-scala" % "2.0.1")
+  .settings(libraryDependencies += "com.gilt" %% "handlebars-scala" % "2.1.1")
 
 lazy val mustache = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-mustache")
   .settings(description := "Mustache templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.2",
-    "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.2"))
+  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.3",
+    "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.3"))
 
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
