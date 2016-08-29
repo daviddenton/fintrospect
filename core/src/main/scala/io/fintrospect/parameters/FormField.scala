@@ -18,13 +18,13 @@ abstract class MultiFormField[T](spec: ParameterSpec[T])
 
 object FormField {
 
-  trait Mandatory[T] extends MandatoryParameter[Form, T, FormFieldBinding]
+  type Mandatory[T] = MandatoryParameter[Form, T, FormFieldBinding]
 
-  trait MandatorySeq[T] extends MandatoryParameter[Form, Seq[T], FormFieldBinding]
+  type MandatorySeq[T] = MandatoryParameter[Form, Seq[T], FormFieldBinding]
 
-  trait Optional[T] extends OptionalParameter[Form, T, FormFieldBinding]
+  type Optional[T] = OptionalParameter[Form, T, FormFieldBinding]
 
-  trait OptionalSeq[T] extends OptionalParameter[Form, Seq[T], FormFieldBinding]
+  type OptionalSeq[T] = OptionalParameter[Form, Seq[T], FormFieldBinding]
 
   val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleParameter(spec, FormFieldExtractAndRebind) with FormField[T] with Mandatory[T]
