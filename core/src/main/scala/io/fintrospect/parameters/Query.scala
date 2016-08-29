@@ -7,13 +7,13 @@ import com.twitter.finagle.http.Request
   */
 object Query {
 
-  trait Mandatory[T] extends MandatoryParameter[Request, T, QueryBinding]
+  type Mandatory[T] = MandatoryParameter[Request, T, QueryBinding]
 
-  trait MandatorySeq[T] extends MandatoryParameter[Request, Seq[T], QueryBinding]
+  type MandatorySeq[T] = MandatoryParameter[Request, Seq[T], QueryBinding]
 
-  trait Optional[T] extends OptionalParameter[Request, T, QueryBinding]
+  type Optional[T] = OptionalParameter[Request, T, QueryBinding]
 
-  trait OptionalSeq[T] extends OptionalParameter[Request, Seq[T], QueryBinding]
+  type OptionalSeq[T] = OptionalParameter[Request, Seq[T], QueryBinding]
 
 
   val required = new Parameters[QueryParameter, Mandatory] with MultiParameters[MultiQueryParameter, MandatorySeq] {

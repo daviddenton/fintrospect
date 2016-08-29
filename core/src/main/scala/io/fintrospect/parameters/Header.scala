@@ -7,13 +7,13 @@ import com.twitter.finagle.http.Message
   */
 object Header {
 
-  trait Mandatory[T] extends MandatoryParameter[Message, T, RequestBinding]
+  type Mandatory[T] = MandatoryParameter[Message, T, RequestBinding]
 
-  trait MandatorySeq[T] extends MandatoryParameter[Message, Seq[T], RequestBinding]
+  type MandatorySeq[T] = MandatoryParameter[Message, Seq[T], RequestBinding]
 
-  trait Optional[T] extends OptionalParameter[Message, T, RequestBinding]
+  type Optional[T] = OptionalParameter[Message, T, RequestBinding]
 
-  trait OptionalSeq[T] extends OptionalParameter[Message, Seq[T], RequestBinding]
+  type OptionalSeq[T] = OptionalParameter[Message, Seq[T], RequestBinding]
 
   val required = new Parameters[HeaderParameter, Mandatory] with MultiParameters[MultiHeaderParameter, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleParameter(spec, HeaderExtractAndRebind) with HeaderParameter[T] with Mandatory[T]
