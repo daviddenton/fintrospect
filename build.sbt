@@ -62,9 +62,9 @@ lazy val circe = project
   .settings(moduleName := "fintrospect-circe")
   .settings(description := "Circe JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies ++= Seq("io.circe" %% "circe-core" % "0.4.1",
-    "io.circe" %% "circe-generic" % "0.4.1",
-    "io.circe" %% "circe-parser" % "0.4.1")
+  .settings(libraryDependencies ++= Seq("io.circe" %% "circe-core" % "0.5.1",
+    "io.circe" %% "circe-generic" % "0.5.1",
+    "io.circe" %% "circe-parser" % "0.5.1")
   )
 
 lazy val gson = project
