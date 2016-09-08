@@ -7,8 +7,8 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 13.7.0 (uncut)
-- Upgrade to various dependency versions, including Finagle `6.37.0`.
+## 13.7.0
+- Upgrade to various dependency versions, including Finagle `6.37.0` and Circe `0.5.1`.
 
 ## 13.6.0
 - (Possible) Breaking: Refactored `StaticModule` to allow serving of directory-based assets. Introduced `Classpath` and `Directory` `ResourceLoaders` to allow for this change.
