@@ -2,14 +2,14 @@
 Further to the process of retrieving them from the request, there exists the problem of validating that the passed parameters 
 are actually logically valid when passed together. For example, a date range is only valid when the start date is before the end date. 
 
-For this purpose, you can use an `Extractable` - a trait which provides a single method `<--?()` to return one of 3 
-states: `Extracted(value)`, `NotProvided` (for optional values which are not supplied), and `ExtractionFailed(parameter)` for missing or 
+For this purpose, you can use an `Extractor` - a trait which provides a single method `<--?()` to return one of 2 
+states: `Extracted(Option(value))` and `ExtractionFailed(parameter)` for missing or 
 invalid values. These constructs can be used inside a for comprehension to provide cross-field validation, and eventual creation of a target 
 object. Below is a service that implements this logic - note the use of a predicate and a failure reason which provides the logic for the check:
 ```
 case class DateRange(startDate: LocalDate, endDate: Option[LocalDate])
 
-val range: Extractable[Request, DateRange] = Extractable.mk {
+val range: Extractor[Request, DateRange] = Extractor.mk {
   (request: Request) =>
       for {
         startDate <- Query.required.localDate("start") <--? request
@@ -20,9 +20,8 @@ val range: Extractable[Request, DateRange] = Extractable.mk {
 val route = RouteSpec().at(Get) bindTo Service.mk {
   req: Request =>
       range <--? req match {
-        case Extracted(dates) => Ok(dates.startDate + " ->" + dates.endDate)
+        case Extracted(Some(dates)) => Ok(dates.startDate + " ->" + dates.endDate)
         case ExtractionFailed(sp) => BadRequest(sp.mkString(", "))
-        case NotProvided => BadRequest()
       }
 }
 ```
