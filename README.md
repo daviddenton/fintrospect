@@ -39,9 +39,8 @@ Fintrospect is intentionally dependency-lite by design - other than Finagle, the
 
 To activate some optional features, additional dependencies may be required - please see <a href="http://fintrospect.io/installation">here</a> for details.
 
-Add the following lines to ```build.sbt``` - the lib also hosted in Maven Central, but we prefer Bintray):
+Add the following lines to ```build.sbt``` - the lib is hosted in Maven Central and JCenter:
 ```scala
-resolvers += "JCenter" at "https://jcenter.bintray.com"
 libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "13.7.0"
 ```
 
