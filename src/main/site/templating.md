@@ -1,23 +1,23 @@
 # templating
-Templates are applied by using a custom ```Filter``` to convert ```View``` instances into standard Http Responses. Simply implement the 
+Templates are applied by using a custom ```RenderView``` filter to convert ```View``` instances into standard Http Responses. Simply implement the 
 ```View``` trait and then put a matching template file onto the classpath, and chain the output of the model-creating ```Service``` into 
-the ```Filter```. You can do this for entire modules by making the ```ModuleSpec``` itself generified on ```View``` and using the 
+the filter. You can do this for entire modules by making the ```ModuleSpec``` itself generified on ```View``` by using the 
 templating ```Filter``` as a Module-level filter:
 
 ```
 case class ViewMessage(value: String) extends View
 
-def showMessage() = Service.mk[Request, View] { _ => Future.value(ViewMessage("some value to be displayed")) }
+val showMessage = Service.mk[Request, View] { _ => Future.value(ViewMessage("some value to be displayed")) }
 
-val loader = if(devMode) MustacheTemplateLoaders.HotReload("src/main/resources") else MustacheTemplateLoaders.CachingClasspath(".")
+val renderer = if(devMode) MustacheTemplates.HotReload("src/main/resources") else MustacheTemplates.CachingClasspath(".")
 
-val webModule = ModuleSpec[Request, View](Root / "web",
+val webModule = ModuleSpec(Root / "web",
     new SiteMapModuleRenderer(new URL("http://root.com")),
-    new RenderView(Html.ResponseBuilder, loader))
+    new RenderView(Html.ResponseBuilder, renderer))
     .withRoute(RouteSpec().at(Get) / "message" bindTo showMessage)
 ```
 
-Available implementations of the `TemplateLoader` are (see the relevant implementation of `TemplateLoaders`):
+Available implementations of the `TemplateRenderer` are (see the relevant implementation of `Templates`):
 - cached from the classpath
 - cached from the filesystem
 - hot-reloading from the filesystem
