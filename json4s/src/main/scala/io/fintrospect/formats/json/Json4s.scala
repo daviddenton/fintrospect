@@ -135,9 +135,7 @@ object Json4s {
       */
     def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
                    (implicit mf: scala.reflect.Manifest[R]) =
-      BodySpec[R](description, APPLICATION_JSON,
-        s => decode[R](parse(s), formats)(mf),
-        (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
+      BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s), formats)(mf), (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
 
     /**
       * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples

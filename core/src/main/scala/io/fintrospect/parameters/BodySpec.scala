@@ -1,5 +1,7 @@
 package io.fintrospect.parameters
 
+import com.twitter.io.Buf
+import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_XML}
 import io.fintrospect.formats.json.{Argo, JsonFormat}
 import io.fintrospect.{ContentType, ContentTypes}
@@ -16,7 +18,7 @@ import scala.xml.{Elem, XML}
   * @param serialize   function to take the input type and serialize it to a string to be represented in the request
   * @tparam T the type of the parameter
   */
-case class BodySpec[T](description: Option[String], contentType: ContentType, deserialize: String => T, serialize: T => String = (s: T) => s.toString) {
+case class BodySpec[T](description: Option[String], contentType: ContentType, deserialize: Buf => T, serialize: T => Buf = (s: T) => Buf.Utf8(s.toString)) {
   /**
     * Combined map and reverse-map operation
     */
@@ -29,9 +31,9 @@ case class BodySpec[T](description: Option[String], contentType: ContentType, de
 }
 
 object BodySpec {
-  def string(description: Option[String] = None, contentType: ContentType = ContentTypes.TEXT_PLAIN): BodySpec[String] = BodySpec[String](description, contentType, identity, identity)
+  def string(description: Option[String] = None, contentType: ContentType = ContentTypes.TEXT_PLAIN): BodySpec[String] = BodySpec[String](description, contentType, b => new String(extract(b)))
 
-  def json[T](description: Option[String] = None, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): BodySpec[T] = BodySpec[T](description, APPLICATION_JSON, jsonFormat.parse, jsonFormat.compact)
+  def json[T](description: Option[String] = None, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): BodySpec[T] = BodySpec.string(description, APPLICATION_JSON).map(jsonFormat.parse, jsonFormat.compact)
 
-  def xml(description: Option[String] = None): BodySpec[Elem] = BodySpec[Elem](description, APPLICATION_XML, XML.loadString, _.toString())
+  def xml(description: Option[String] = None): BodySpec[Elem] = BodySpec.string(description, APPLICATION_XML).map(XML.loadString, _.toString())
 }

@@ -53,6 +53,12 @@
     <a data-toggle="tooltip" href="#" title="io.fintrospect.formats.json.Json4s.JacksonDoubleMode">Json4s.JacksonDoubleMode</a></td>
 </tr>
 <tr>
+    <td><a href="http://msgpack.org">MsgPack</a></td>
+    <td>application/msgpack</td>
+    <td>"io.fintrospect" %% "fintrospect-msgpack" % "13.7.0"</td>
+    <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.MsgPack">MsgPack</a></td>
+</tr>
+<tr>
     <td>Plain Text</td>
     <td>text/plain</td>
     <td>-</td>

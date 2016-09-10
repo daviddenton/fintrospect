@@ -185,7 +185,7 @@ class ModuleSpecTest extends FunSpec with Matchers {
     }
 
     describe("when a valid path does not contain required custom body") {
-      val body = Body[Int](BodySpec[Int](None, ContentTypes.TEXT_PLAIN, _.toInt, _.toString), example = 1)
+      val body = Body[Int](BodySpec.string(None, ContentTypes.TEXT_PLAIN).map(_.toInt, _.toString), example = 1)
       val d = RouteSpec("").body(body)
       val service = ModuleSpec(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 

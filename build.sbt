@@ -49,7 +49,10 @@ lazy val core = project
   ))
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
 
-// JSON libraries
+// messaging libraries
+val json4sVersion = "3.3.0"
+val circeVersion = "0.5.1"
+
 lazy val argonaut = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-argonaut")
@@ -57,14 +60,15 @@ lazy val argonaut = project
   .dependsOn(core % "compile->test")
   .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.0.4")
 
+
 lazy val circe = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-circe")
   .settings(description := "Circe JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies ++= Seq("io.circe" %% "circe-core" % "0.5.1",
-    "io.circe" %% "circe-generic" % "0.5.1",
-    "io.circe" %% "circe-parser" % "0.5.1")
+  .settings(libraryDependencies ++= Seq("io.circe" %% "circe-core" % circeVersion,
+    "io.circe" %% "circe-generic" % circeVersion,
+    "io.circe" %% "circe-parser" % circeVersion)
   )
 
 lazy val gson = project
@@ -79,8 +83,8 @@ lazy val json4s = project
   .settings(moduleName := "fintrospect-json4s")
   .settings(description := "Json4S JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % "3.3.0",
-    "org.json4s" %% "json4s-jackson" % "3.3.0"))
+  .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % json4sVersion,
+    "org.json4s" %% "json4s-jackson" % json4sVersion))
 
 lazy val play = project
   .settings(baseSettings)
@@ -95,6 +99,14 @@ lazy val spray = project
   .settings(description := "Spray JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
   .settings(libraryDependencies += "io.spray" %% "spray-json" % "1.3.2")
+
+lazy val msgpack = project
+  .settings(baseSettings)
+  .settings(moduleName := "fintrospect-msgpack")
+  .settings(description := "MsgPack library support for Fintrospect")
+  .dependsOn(core % "compile->test")
+  .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % json4sVersion,
+    "org.velvia" %% "msgpack4s" % "0.5.2"))
 
 // Templating libraries
 lazy val handlebars = project
@@ -116,6 +128,6 @@ lazy val examples = project.in(file("."))
   .settings(baseSettings)
   .settings(unidocSettings: _*)
   .settings(moduleName := "fintrospect-examples")
-  .aggregate(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
-  .dependsOn(core, argonaut, circe, gson, json4s, play, spray, handlebars, mustache)
+  .aggregate(core, argonaut, circe, gson, json4s, play, spray, msgpack, handlebars, mustache)
+  .dependsOn(core, argonaut, circe, gson, json4s, play, spray, msgpack, handlebars, mustache)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6")

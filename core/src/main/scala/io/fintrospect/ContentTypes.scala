@@ -36,6 +36,7 @@ object ContentTypes {
   val APPLICATION_SVG_XML = ContentType("application/svg+xml")
   val APPLICATION_XHTML_XML = ContentType("application/xhtml+xml")
   val APPLICATION_XML = ContentType("application/xml")
+  val APPLICATION_X_MSGPACK = ContentType("application/x-msgpack")
   val TEXT_HTML = ContentType("text/html")
   val TEXT_PLAIN = ContentType("text/plain")
   val TEXT_XML = ContentType("text/xml")

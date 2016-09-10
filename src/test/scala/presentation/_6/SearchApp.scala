@@ -7,8 +7,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import io.fintrospect.ContentTypes.APPLICATION_JSON
-import io.fintrospect.formats.json.Argo.JsonFormat.{array, compact, parse}
+import io.fintrospect.formats.json.Argo.JsonFormat.array
 import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.{Body, BodySpec, Query, StringParamType}
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
@@ -35,7 +34,7 @@ class SearchRoute(books: RemoteBooks) {
 }
 
 class BookAvailable(books: RemoteBooks) {
-  private val bodySpec = BodySpec[Book](Option("a book"), APPLICATION_JSON, s => Book.fromJson(parse(s)), b => compact(b.toJson))
+  private val bodySpec = BodySpec.json(Option("a book")).map(Book.fromJson, (b: Book) => b.toJson)
   private val body = Body(bodySpec, Book("1984"), StringParamType)
 
   def availability() =  Service.mk[Request, Response] {
