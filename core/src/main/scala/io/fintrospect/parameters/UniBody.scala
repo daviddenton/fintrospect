@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Message
+import com.twitter.io.Buf.ByteArray.Shared
 import io.fintrospect.util.ExtractionError.Invalid
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
@@ -30,11 +31,11 @@ class UniBody[T](spec: BodySpec[T],
       val content = spec.serialize(value)
       t.headerMap.add(Names.CONTENT_TYPE, spec.contentType.value)
       t.headerMap.add(Names.CONTENT_LENGTH, content.length.toString)
-      t.setContentString(content)
+      t.content = content
       t
     }))
 
-    override val example = theExample.map(spec.serialize)
+    override val example = theExample.map(spec.serialize).map(b => new String(Shared.extract(b)))
   }
 
   override def -->(value: T) = param.of(value)
@@ -42,7 +43,7 @@ class UniBody[T](spec: BodySpec[T],
   override def iterator = Iterator(param)
 
   override def <--?(message: Message): Extraction[T] =
-    Try(spec.deserialize(message.contentString)) match {
+    Try(spec.deserialize(message.content)) match {
       case Success(v) => Extracted(Some(v))
       case Failure(_) => ExtractionFailed(Invalid(param))
     }

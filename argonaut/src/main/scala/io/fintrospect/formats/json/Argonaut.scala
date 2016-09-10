@@ -119,7 +119,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
       */
     def bodySpec[R](description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-      BodySpec[R](description, APPLICATION_JSON, s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
+      BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
 
     /**
       * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples

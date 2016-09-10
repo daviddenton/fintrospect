@@ -119,8 +119,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
       */
+
     def bodySpec[R](description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
-      BodySpec[R](description, APPLICATION_JSON, s => decode[R](parse(s))(reads), (u: R) => compact(encode(u)(writes)))
+      BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s))(reads), (u: R) => compact(encode(u)(writes)))
 
     /**
       * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
