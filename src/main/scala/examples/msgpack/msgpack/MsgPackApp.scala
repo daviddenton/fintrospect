@@ -31,7 +31,7 @@ object MsgPackApp extends App {
       r => Ok(MsgPackMsg(Letter(StreetAddress("2 Bob St"), StreetAddress("20 Rita St"), "hi fools!")))
     }
 
-  // receives an address and then responds with a letter
+  // using AutoFilters, receives an address and then responds with a letter
   val replyToLetter = RouteSpec("send your address and we'll send you back a letter!")
     .consuming(APPLICATION_X_MSGPACK)
     .producing(APPLICATION_X_MSGPACK)
