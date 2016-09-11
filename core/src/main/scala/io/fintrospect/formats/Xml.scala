@@ -3,6 +3,7 @@ package io.fintrospect.formats
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
+import com.twitter.io.Buf
 import io.fintrospect.ContentTypes
 import io.fintrospect.parameters.Body
 
@@ -64,7 +65,7 @@ object Xml {
 
     private def formatError(throwable: Throwable): Elem = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 
-    override def HttpResponse() = new ResponseBuilder[Elem](format, formatErrorMessage, formatError, ContentTypes.APPLICATION_XML)
+    override def HttpResponse() = new ResponseBuilder[Elem](i => Buf.Utf8(format(i)), formatErrorMessage, formatError, ContentTypes.APPLICATION_XML)
   }
 
 }

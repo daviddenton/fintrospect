@@ -3,7 +3,6 @@ package io.fintrospect.formats
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
-import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentTypes
 import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
@@ -22,7 +21,7 @@ object MsgPack {
 
     import MsgPack.ResponseBuilder.implicits._
 
-    private val body = Body(BodySpec(None, ContentTypes.APPLICATION_X_MSGPACK, s => new MsgPackMsg(extract(s)), (m: MsgPackMsg) => Buf.ByteArray(m.bytes: _*)), null, StringParamType)
+    private val body = Body(BodySpec(None, ContentTypes.APPLICATION_X_MSGPACK, s => new MsgPackMsg(extract(s)), (m: MsgPackMsg) => m.toBuf), null, StringParamType)
 
     private def toResponse(successStatus: Status = Ok) = (out: MsgPackMsg) => successStatus(out)
 
@@ -61,13 +60,11 @@ object MsgPack {
 
     private case class Error(message: String)
 
-    private def format(node: MsgPackMsg): String = new String(node.bytes)
-
     private def formatErrorMessage(errorMessage: String): MsgPackMsg = MsgPackMsg(Error(errorMessage))
 
     private def formatError(throwable: Throwable): MsgPackMsg = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 
-    override def HttpResponse() = new ResponseBuilder[MsgPackMsg](format, formatErrorMessage, formatError, APPLICATION_X_MSGPACK)
+    override def HttpResponse() = new ResponseBuilder[MsgPackMsg](_.toBuf, formatErrorMessage, formatError, APPLICATION_X_MSGPACK)
   }
 
 }

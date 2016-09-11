@@ -3,6 +3,7 @@ package io.fintrospect.formats
 import java.io.OutputStream
 
 import com.twitter.finagle.http.{Cookie, Response, Status}
+import com.twitter.io.Buf.Utf8
 import com.twitter.io.{Buf, Charsets, Reader}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
@@ -19,9 +20,10 @@ import scala.language.implicitConversions
   * @param contentType the content type to return in all responses
   * @tparam T The custom format object type
   */
-class ResponseBuilder[T](toFormat: T => String, errorFormat: String => T,
+class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
                          exceptionFormat: Throwable => T,
                          contentType: ContentType) extends Builder[Response] {
+
   private var response = Response()
 
   def withError(e: Throwable) = withContent(exceptionFormat(e))
@@ -87,7 +89,7 @@ object ResponseBuilder {
 
   private case class HIDDEN(value: String)
 
-  def HttpResponse(contentType: ContentType): ResponseBuilder[_] = new ResponseBuilder[HIDDEN](_.value, HIDDEN, e => HIDDEN(e.getMessage), contentType)
+  def HttpResponse(contentType: ContentType): ResponseBuilder[_] = new ResponseBuilder[HIDDEN](s => Utf8(s.value), HIDDEN, e => HIDDEN(e.getMessage), contentType)
 
   implicit def responseBuilderToFuture(builder: ResponseBuilder[_]): Future[Response] = builder.toFuture
 

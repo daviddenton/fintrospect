@@ -1,5 +1,6 @@
 package io.fintrospect.formats.json
 
+import com.twitter.io.Buf
 import io.fintrospect.ContentTypes
 import io.fintrospect.formats.{AbstractResponseBuilder, ResponseBuilder}
 
@@ -28,7 +29,7 @@ trait JsonLibrary[R, N] {
 
     private def formatError(throwable: Throwable): R = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 
-    override def HttpResponse() = new ResponseBuilder[R](formatJson, formatErrorMessage, formatError, ContentTypes.APPLICATION_JSON)
+    override def HttpResponse() = new ResponseBuilder[R](i => Buf.Utf8(formatJson(i)), formatErrorMessage, formatError, ContentTypes.APPLICATION_JSON)
   }
 
 }
