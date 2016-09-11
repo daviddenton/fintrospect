@@ -18,6 +18,7 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
   <a href="http://json4s.org/">Json4S</a>, <a href="https://github.com/playframework">Play JSON</a>, 
   <a href="https://github.com/spray/spray-json">Spray JSON</a>
   - Native implementations of XML, Plain Text, HTML, XHTML
+  - <a href="http://msgpack.org">MsgPack</a> binary format
 - Serve static content from the classpath or a directory
 - Template ```View``` support (with Hot-Reloading) for building responses with <a href="http://mustache.github.io/">Mustache</a> or <a href="http://handlebarsjs.com">Handlebars</a>
 - Anonymising headers for dynamic-path based endpoints, removing all dynamic path elements. This allows, for example, calls to particular endpoints to be grouped for metric purposes. e.g. 
