@@ -44,7 +44,7 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
 
     describe("AutoIn") {
       it("takes the object from the request") {
-        val svc = MsgPack.Filters.AutoIn(MsgPack.body[MsgPackLetter]()).andThen(Service.mk { in: MsgPackLetter => Future.value(in) })
+        val svc = MsgPack.Filters.AutoIn(MsgPack.Format.body[MsgPackLetter]()).andThen(Service.mk { in: MsgPackLetter => Future.value(in) })
         result(svc(request)) shouldBe aLetter
       }
     }
