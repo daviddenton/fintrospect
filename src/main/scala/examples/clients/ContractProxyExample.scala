@@ -5,6 +5,7 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
+import com.twitter.util.Await
 import io.fintrospect.configuration.{Credentials, Host, Port}
 import io.fintrospect.filters.RequestFilters.{AddHost, BasicAuthorization}
 import io.fintrospect.parameters.Query
@@ -19,9 +20,9 @@ object ContractProxyExample extends App {
 
   val proxyModule = ContractProxyModule("brewdog", BrewdogApiHttp(), BrewdogApiContract)
 
-  Http.serve(":9000", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(proxyModule.toService))
-
-  Thread.currentThread().join()
+  Await.ready(
+    Http.serve(":9000", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(proxyModule.toService))
+  )
 }
 
 object BrewdogApiHttp {

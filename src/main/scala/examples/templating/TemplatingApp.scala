@@ -8,6 +8,7 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
+import com.twitter.util.Await
 import io.fintrospect.formats.PlainText
 import io.fintrospect.renderers.SiteMapModuleRenderer
 import io.fintrospect.templating.{MustacheTemplates, RenderView}
@@ -23,9 +24,9 @@ object TemplatingApp extends App {
   val module = ModuleSpec(Root, new SiteMapModuleRenderer(new URL("http://my.cool.app")), renderView)
     .withRoute(RouteSpec().at(Get) / "echo" bindTo Service.mk { rq: Request => MustacheView(rq.uri) })
 
-  Http.serve(":8181", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(module.toService))
-
   println("See the Sitemap description at: http://localhost:8181")
 
-  Thread.currentThread().join()
+  Await.ready(
+    Http.serve(":8181", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(module.toService))
+  )
 }

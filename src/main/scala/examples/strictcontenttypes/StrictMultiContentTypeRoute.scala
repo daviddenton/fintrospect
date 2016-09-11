@@ -7,6 +7,7 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
+import com.twitter.util.Await
 import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_SVG_XML, APPLICATION_XML}
 import io.fintrospect.filters.RequestFilters
 import io.fintrospect.renderers.simplejson.SimpleJson
@@ -42,11 +43,10 @@ object StrictMultiContentTypeRoute extends App {
     .producing(APPLICATION_JSON)
     .at(Get) / "json" bindTo RequestFilters.StrictAccept(APPLICATION_JSON).andThen(serveJson)
 
-  Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy)
-    .andThen(ModuleSpec(Root, SimpleJson()).withRoute(route).toService))
-
   println("See the service description at: http://localhost:8080 . The route at /multi should match wildcard Accept headers set in a browser.")
 
-  Thread.currentThread().join()
-
+  Await.ready(
+    Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy)
+    .andThen(ModuleSpec(Root, SimpleJson()).withRoute(route).toService))
+  )
 }

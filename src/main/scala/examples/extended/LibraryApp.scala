@@ -4,6 +4,7 @@ import com.twitter.finagle.Http
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
+import com.twitter.util.Await
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import io.fintrospect.{Module, ModuleSpec}
@@ -38,10 +39,10 @@ object LibraryApp extends App {
   val statusModule = ModuleSpec(Root / "internal", SimpleJson())
     .withRoute(new Ping().route)
 
-  Http.serve(":8080", globalCorsFilter.andThen(Module.toService(libraryModule combine statusModule)))
-
   println("See the service description at: http://localhost:8080/library")
 
-  Thread.currentThread().join()
+  Await.ready(
+    Http.serve(":8080", globalCorsFilter.andThen(Module.toService(libraryModule combine statusModule)))
+  )
 }
 
