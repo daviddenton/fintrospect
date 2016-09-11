@@ -7,6 +7,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.oauth2.OAuthErrorInJson
 import com.twitter.finagle.{Http, OAuth2Filter, OAuth2Request, Service}
+import com.twitter.util.Await
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{ModuleSpec, RouteSpec}
@@ -26,9 +27,9 @@ object OAuth2App extends App {
 
   private val service = module.toService
 
-  Http.serve(":8181", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service))
-
   println("See the service description (passing access_token of \"token\") at: http://localhost:8181/auth")
 
-  Thread.currentThread().join()
+  Await.ready(
+    Http.serve(":8181", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service))
+  )
 }
