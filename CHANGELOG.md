@@ -7,7 +7,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 13.8.0 (uncut)
+## 13.8.0
 - Added MsgPack library support. Import new module `fintrospect-msgpack` to activate this support.
 
 ## 13.7.0
