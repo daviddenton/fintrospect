@@ -12,9 +12,6 @@ class AutoFilters[T](protected val responseBuilder: AbstractResponseBuilder[T]) 
   type ToResponse[OUT] = (OUT) => ResponseBuilder[_]
   type ToBody[BODY] = () => Body[BODY]
 
-  /**
-    * Filter to provide auto-marshalling of input case class instances for HTTP POST scenarios
-    */
   def AutoIn[IN, OUT](body: Body[IN] with Mandatory[Request, IN]) = Filter.mk[Request, OUT, IN, OUT] { (req, svc) => svc(body <-- req) }
 
   def _AutoOut[IN, OUT](fn: ToResponse[OUT]) =
