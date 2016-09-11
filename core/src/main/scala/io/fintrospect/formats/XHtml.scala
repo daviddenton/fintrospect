@@ -1,5 +1,6 @@
 package io.fintrospect.formats
 
+import com.twitter.io.Buf
 import io.fintrospect.ContentTypes
 
 import scala.xml.Elem
@@ -17,7 +18,7 @@ object XHtml {
 
     private def formatError(throwable: Throwable): Elem = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 
-    override def HttpResponse() = new ResponseBuilder[Elem](format, formatErrorMessage, formatError, ContentTypes.APPLICATION_XHTML_XML)
+    override def HttpResponse() = new ResponseBuilder[Elem](i => Buf.Utf8(format(i)), formatErrorMessage, formatError, ContentTypes.APPLICATION_XHTML_XML)
   }
 
 }
