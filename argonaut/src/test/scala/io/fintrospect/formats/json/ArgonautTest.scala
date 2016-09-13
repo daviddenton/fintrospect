@@ -6,8 +6,9 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
-import com.twitter.util.Future
+import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.json.Argonaut.JsonFormat.{bodySpec, decode, encode, obj, parameterSpec, parse}
+import io.fintrospect.formats.json.Argonaut.ResponseBuilder.implicits._
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
 import org.scalatest.{FunSpec, Matchers}
@@ -17,13 +18,13 @@ import scala.language.reflectiveCalls
 case class ArgonautStreetAddress(address: String)
 
 object ArgonautStreetAddress {
-  implicit def Codec: CodecJson[ArgonautStreetAddress]= casecodec1(ArgonautStreetAddress.apply, ArgonautStreetAddress.unapply)("address")
+  implicit def Codec: CodecJson[ArgonautStreetAddress] = casecodec1(ArgonautStreetAddress.apply, ArgonautStreetAddress.unapply)("address")
 }
 
 case class ArgonautLetter(to: ArgonautStreetAddress, from: ArgonautStreetAddress, message: String)
 
 object ArgonautLetter {
-  implicit def Codec: CodecJson[ArgonautLetter]= casecodec3(ArgonautLetter.apply, ArgonautLetter.unapply)("to", "from", "message")
+  implicit def Codec: CodecJson[ArgonautLetter] = casecodec3(ArgonautLetter.apply, ArgonautLetter.unapply)("to", "from", "message")
 }
 
 class ArgonautFiltersTest extends FunSpec with Matchers {
@@ -60,9 +61,15 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
     }
 
     describe("AutoIn") {
+      val svc = Argonaut.Filters.AutoIn(Argonaut.JsonFormat.body[ArgonautLetter]()).andThen(Service.mk { in: ArgonautLetter => Status.Ok(Argonaut.JsonFormat.encode(in)) })
       it("takes the object from the request") {
-        val svc = Argonaut.Filters.AutoIn(Argonaut.JsonFormat.body[ArgonautLetter]()).andThen(Service.mk { in: ArgonautLetter => Future.value(in) })
-        result(svc(request)) shouldBe aLetter
+        Argonaut.JsonFormat.decode[ArgonautLetter](Argonaut.JsonFormat.parse(result(svc(request)).contentString)) shouldBe aLetter
+      }
+
+      it("rejects illegal content with a BadRequest") {
+        val request = Request()
+        request.contentString = "not xml"
+        Await.result(svc(request)).status shouldBe Status.BadRequest
       }
     }
 

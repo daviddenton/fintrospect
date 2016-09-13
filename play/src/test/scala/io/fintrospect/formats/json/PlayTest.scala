@@ -1,12 +1,13 @@
 package io.fintrospect.formats.json
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.Created
+import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
-import com.twitter.util.Future
+import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.json.Play.JsonFormat.{bodySpec, decode, encode, parameterSpec, parse}
+import io.fintrospect.formats.json.Play.ResponseBuilder.implicits._
 import io.fintrospect.parameters.{Body, Query}
 import org.scalatest.{FunSpec, Matchers}
 import play.api.libs.json._
@@ -71,9 +72,16 @@ class PlayFiltersTest extends FunSpec with Matchers {
     }
 
     describe("AutoIn") {
+      val svc = Play.Filters.AutoIn(Play.JsonFormat.body[PlayLetter]()).andThen(Service.mk { in: PlayLetter => Ok(Play.JsonFormat.encode(in)) })
+
       it("takes the object from the request") {
-        val svc = Play.Filters.AutoIn(Play.JsonFormat.body[PlayLetter]()).andThen(Service.mk { in: PlayLetter => Future.value(in) })
-        result(svc(request)) shouldBe aLetter
+        Play.JsonFormat.body[PlayLetter]() <-- result(svc(request)) shouldBe aLetter
+      }
+
+      it("rejects illegal content with a BadRequest") {
+        val request = Request()
+        request.contentString = "not xml"
+        Await.result(svc(request)).status shouldBe Status.BadRequest
       }
     }
 
