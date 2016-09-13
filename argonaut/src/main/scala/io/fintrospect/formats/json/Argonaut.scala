@@ -24,7 +24,9 @@ object Argonaut extends JsonLibrary[Json, Json] {
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends AutoFilters(Argonaut.ResponseBuilder) {
+  object Filters extends AutoFilters[Json] {
+
+    override protected val responseBuilder = Argonaut.ResponseBuilder
 
     private def toResponse[OUT](successStatus: Status, e: EncodeJson[OUT]) =
       (t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e))
