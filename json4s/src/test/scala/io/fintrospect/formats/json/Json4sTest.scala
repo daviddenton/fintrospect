@@ -4,7 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
-import com.twitter.util.Future
+import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.json.Json4s.{Json4sFilters, Json4sFormat}
 import io.fintrospect.parameters.{Body, Query}
 import org.json4s.MappingException
@@ -12,12 +12,14 @@ import org.scalatest.{FunSpec, Matchers}
 
 import scala.language.reflectiveCalls
 
+
 case class Json4sStreetAddress(address: String)
 
 case class Json4sLetter(to: Json4sStreetAddress, from: Json4sStreetAddress, message: String)
 
 abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFormat[_]) extends FunSpec with Matchers {
 
+  import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder.implicits._
   import jsonFormat._
 
   describe("filters") {
@@ -52,9 +54,15 @@ abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFo
     }
 
     describe("AutoIn") {
+      val svc = filters.AutoIn(jsonFormat.body[Json4sLetter]()).andThen(Service.mk { in: Json4sLetter => Status.Ok(Json4s.Native.JsonFormat.encode(in)) })
       it("takes the object from the request") {
-        val svc = filters.AutoIn(jsonFormat.body[Json4sLetter]()).andThen(Service.mk { in: Json4sLetter => Future.value(in) })
-        result(svc(request)) shouldBe aLetter
+        jsonFormat.decode[Json4sLetter](jsonFormat.parse(result(svc(request)).contentString)) shouldBe aLetter
+      }
+
+      it("rejects illegal content with a BadRequest") {
+        val request = Request()
+        request.contentString = "not xml"
+        Await.result(svc(request)).status shouldBe Status.BadRequest
       }
     }
 

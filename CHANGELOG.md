@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 13.8.1
+- Bugfix: Issue #23 On invalid request, AutoFilters blow up instead of producing BadRequest response
+
 ## 13.8.0
 - Added MsgPack library support. Import new module `fintrospect-msgpack` to activate this support.
 

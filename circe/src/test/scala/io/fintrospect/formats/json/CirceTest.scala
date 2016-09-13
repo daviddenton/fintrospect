@@ -4,13 +4,15 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
-import com.twitter.util.Future
+import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.json.Circe.JsonFormat._
+import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits._
 import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
 import org.scalatest.{FunSpec, Matchers}
 
 import scala.language.reflectiveCalls
+
 
 case class CirceStreetAddress(address: String)
 
@@ -54,9 +56,15 @@ class CirceFiltersTest extends FunSpec with Matchers {
     }
 
     describe("AutoIn") {
+      val svc = Circe.Filters.AutoIn(Circe.JsonFormat.body[CirceLetter]()).andThen(Service.mk { in: CirceLetter => Status.Ok(Circe.JsonFormat.encode(in)) })
       it("takes the object from the request") {
-        val svc = Circe.Filters.AutoIn(Circe.JsonFormat.body[CirceLetter]()).andThen(Service.mk { in: CirceLetter => Future.value(in) })
-        result(svc(request)) shouldBe aLetter
+        decode[CirceLetter](parse(result(svc(request)).contentString)) shouldBe aLetter
+      }
+
+      it("rejects illegal content with a BadRequest") {
+        val request = Request()
+        request.contentString = "not xml"
+        Await.result(svc(request)).status shouldBe Status.BadRequest
       }
     }
 

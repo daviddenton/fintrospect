@@ -6,6 +6,7 @@ import com.twitter.finagle.http.{Request, Status}
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import com.twitter.util.Await.result
 import com.twitter.util.Future
+import io.fintrospect.formats.MsgPack.ResponseBuilder.implicits._
 import org.scalatest.{FunSpec, Matchers}
 
 import scala.language.reflectiveCalls
@@ -43,10 +44,17 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
     }
 
     describe("AutoIn") {
+      val svc = MsgPack.Filters.AutoIn(MsgPack.Format.body[MsgPackLetter]()).andThen(Service.mk { in: MsgPackLetter => Status.Ok(MsgPackMsg(in)) })
       it("takes the object from the request") {
-        val svc = MsgPack.Filters.AutoIn(MsgPack.Format.body[MsgPackLetter]()).andThen(Service.mk { in: MsgPackLetter => Future.value(in) })
-        result(svc(request)) shouldBe aLetter
+        MsgPack.Format.decode[MsgPackLetter](result(svc(request)).content) shouldBe aLetter
       }
+
+      it("rejects illegal content with a BadRequest") {
+        val request = Request()
+        request.contentString = "not msgpack"
+        result(svc(request)).status shouldBe Status.BadRequest
+      }
+
     }
 
     describe("AutoOut") {
