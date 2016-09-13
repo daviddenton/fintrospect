@@ -5,7 +5,9 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.parameters.{Body, Mandatory}
 
-class AutoFilters[T](protected val responseBuilder: AbstractResponseBuilder[T]) {
+trait AutoFilters[T] {
+
+  protected val responseBuilder: AbstractResponseBuilder[T]
 
   import responseBuilder.implicits._
 

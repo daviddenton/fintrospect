@@ -21,8 +21,10 @@ object Json4s {
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  class Json4sFilters[T](json4sFormat: Json4sFormat[T], jsonLibrary: JsonLibrary[JValue, JValue])
-    extends AutoFilters(jsonLibrary.ResponseBuilder) {
+  class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary: JsonLibrary[JValue, JValue])
+    extends AutoFilters[JValue] {
+
+    override protected val responseBuilder = jsonLibrary.ResponseBuilder
 
     import jsonLibrary.ResponseBuilder.implicits._
 

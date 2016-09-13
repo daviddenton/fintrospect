@@ -21,7 +21,9 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends AutoFilters(Play.ResponseBuilder) {
+  object Filters extends AutoFilters[JsValue] {
+
+    override protected val responseBuilder = Play.ResponseBuilder
 
     import responseBuilder.implicits._
 

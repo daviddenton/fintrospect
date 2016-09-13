@@ -18,7 +18,9 @@ object Xml {
     * Auto-marshalling filters which can be used to create Services which take and return Elem objects
     * instead of HTTP responses
     */
-  object Filters extends AutoFilters[Elem](Xml.ResponseBuilder) {
+  object Filters extends AutoFilters[Elem] {
+
+    override protected val responseBuilder = Xml.ResponseBuilder
 
     import Xml.ResponseBuilder.implicits._
 
@@ -32,7 +34,7 @@ object Xml {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOut(svc: Service[Elem, Elem], successStatus: Status = Ok): Service[Request, Response] =
-      AutoIn(body).andThen(AutoOut[Elem](successStatus)).andThen(svc)
+    AutoIn(body).andThen(AutoOut[Elem](successStatus)).andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output Elem instances for HTTP POST scenarios

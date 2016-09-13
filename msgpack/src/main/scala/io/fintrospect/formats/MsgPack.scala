@@ -19,7 +19,9 @@ object MsgPack {
     * Auto-marshalling filters which can be used to create Services which take and return MsgPackMsg objects
     * instead of HTTP responses
     */
-  object Filters extends AutoFilters[MsgPackMsg](MsgPack.ResponseBuilder) {
+  object Filters extends AutoFilters[MsgPackMsg] {
+
+    override protected val responseBuilder = MsgPack.ResponseBuilder
 
     import MsgPack.ResponseBuilder.implicits._
 

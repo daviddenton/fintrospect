@@ -22,7 +22,9 @@ object Circe extends JsonLibrary[Json, Json] {
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends AutoFilters(Circe.ResponseBuilder) {
+  object Filters extends AutoFilters[Json] {
+
+    override protected val responseBuilder = Circe.ResponseBuilder
 
     import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits._
 
