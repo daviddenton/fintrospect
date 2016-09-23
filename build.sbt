@@ -37,21 +37,21 @@ lazy val baseSettings = Seq(
   credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
 )
 
+val finagleVersion = "6.38.0"
+val json4sVersion = "3.3.0"
+val circeVersion = "0.5.2"
+
 lazy val core = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-core")
   .settings(libraryDependencies ++= Seq(
     "net.sourceforge.argo" % "argo" % "3.22",
-    "com.twitter" %% "finagle-http" % "6.37.0",
+    "com.twitter" %% "finagle-http" % finagleVersion,
     "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scalatest" %% "scalatest" % "3.0.0" % "test"
   ))
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
-
-// messaging libraries
-val json4sVersion = "3.3.0"
-val circeVersion = "0.5.1"
 
 lazy val argonaut = project
   .settings(baseSettings)

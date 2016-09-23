@@ -5,7 +5,7 @@ import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
-import io.fintrospect.formats.json.Json4s.{Json4sFilters, Json4sFormat}
+import io.fintrospect.formats.json.Json4sJacksonDoubleMode.ResponseBuilder.implicits._
 import io.fintrospect.parameters.{Body, Query}
 import org.json4s.MappingException
 import org.scalatest.{FunSpec, Matchers}
@@ -19,7 +19,6 @@ case class Json4sLetter(to: Json4sStreetAddress, from: Json4sStreetAddress, mess
 
 abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFormat[_]) extends FunSpec with Matchers {
 
-  import io.fintrospect.formats.json.Json4s.Native.ResponseBuilder.implicits._
   import jsonFormat._
 
   describe("filters") {
@@ -54,7 +53,7 @@ abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFo
     }
 
     describe("AutoIn") {
-      val svc = filters.AutoIn(jsonFormat.body[Json4sLetter]()).andThen(Service.mk { in: Json4sLetter => Status.Ok(Json4s.Native.JsonFormat.encode(in)) })
+      val svc = filters.AutoIn(jsonFormat.body[Json4sLetter]()).andThen(Service.mk { in: Json4sLetter => Status.Ok(Json4s.JsonFormat.encode(in)) })
       it("takes the object from the request") {
         jsonFormat.decode[Json4sLetter](jsonFormat.parse(result(svc(request)).contentString)) shouldBe aLetter
       }
@@ -92,10 +91,10 @@ abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFo
   }
 }
 
-class Json4sNativeFiltersTest extends Json4sFiltersSpec(Json4s.Native.Filters, Json4s.Native.JsonFormat)
-class Json4sJacksonFiltersTest extends Json4sFiltersSpec(Json4s.Jackson.Filters, Json4s.Jackson.JsonFormat)
-class Json4sNativeDoubleModeFiltersTest extends Json4sFiltersSpec(Json4s.NativeDoubleMode.Filters, Json4s.NativeDoubleMode.JsonFormat)
-class Json4sJacksonDoubleModeFiltersTest extends Json4sFiltersSpec(Json4s.JacksonDoubleMode.Filters, Json4s.JacksonDoubleMode.JsonFormat)
+class Json4sNativeFiltersTest extends Json4sFiltersSpec(Json4s.Filters, Json4s.JsonFormat)
+class Json4sJacksonFiltersTest extends Json4sFiltersSpec(Json4sJackson.Filters, Json4sJackson.JsonFormat)
+class Json4sNativeDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sDoubleMode.Filters, Json4sDoubleMode.JsonFormat)
+class Json4sJacksonDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sJacksonDoubleMode.Filters, Json4sJacksonDoubleMode.JsonFormat)
 
 abstract class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends JsonFormatSpec(format) {
 
@@ -112,73 +111,73 @@ abstract class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends Jso
   }
 }
 
-class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Native.JsonFormat) {
+class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.JsonFormat) {
   it("body spec decodes content") {
-    (Body(Json4s.Native.JsonFormat.bodySpec[Json4sLetter]()) <-- Json4s.Native.ResponseBuilder.OK(Json4s.Native.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
+    (Body(Json4s.JsonFormat.bodySpec[Json4sLetter]()) <-- Json4s.ResponseBuilder.OK(Json4s.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
 
   it("param spec decodes content") {
-    val param = Query.required(Json4s.Native.JsonFormat.parameterSpec[Json4sLetter]("name"))
-    (param <-- Request("?name=" + Json4s.Native.JsonFormat.compact(Json4s.Native.JsonFormat.encode(aLetter)))) shouldBe aLetter
+    val param = Query.required(Json4s.JsonFormat.parameterSpec[Json4sLetter]("name"))
+    (param <-- Request("?name=" + Json4s.JsonFormat.compact(Json4s.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
 
   it("response spec has correct code") {
-    Json4s.Native.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+    Json4s.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
   }
 }
 
-class Json4sNativeJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s.Native)
+class Json4sNativeJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s)
 
-class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.NativeDoubleMode.JsonFormat) {
+class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sDoubleMode.JsonFormat) {
   it("body spec decodes content") {
-    (Body(Json4s.NativeDoubleMode.JsonFormat.bodySpec[Json4sLetter]()) <-- Json4s.NativeDoubleMode.ResponseBuilder.OK(Json4s.NativeDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
+    (Body(Json4sDoubleMode.JsonFormat.bodySpec[Json4sLetter]()) <-- Json4sDoubleMode.ResponseBuilder.OK(Json4sDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
 
   it("param spec decodes content") {
-    val param = Query.required(Json4s.NativeDoubleMode.JsonFormat.parameterSpec[Json4sLetter]("name"))
-    (param <-- Request("?name=" + Json4s.NativeDoubleMode.JsonFormat.compact(Json4s.NativeDoubleMode.JsonFormat.encode(aLetter)))) shouldBe aLetter
+    val param = Query.required(Json4sDoubleMode.JsonFormat.parameterSpec[Json4sLetter]("name"))
+    (param <-- Request("?name=" + Json4sDoubleMode.JsonFormat.compact(Json4sDoubleMode.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
 
   it("response spec has correct code") {
-    Json4s.NativeDoubleMode.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+    Json4sDoubleMode.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
   }
 }
 
-class Json4sNativeDoubleJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s.NativeDoubleMode)
+class Json4sNativeDoubleJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4sDoubleMode)
 
-class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Jackson.JsonFormat) {
+class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJackson.JsonFormat) {
   it("body spec decodes content") {
-    (Body(Json4s.Jackson.JsonFormat.bodySpec[Json4sLetter]()) <-- Json4s.NativeDoubleMode.ResponseBuilder.OK(Json4s.Jackson.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
+    (Body(Json4sJackson.JsonFormat.bodySpec[Json4sLetter]()) <-- Json4sDoubleMode.ResponseBuilder.OK(Json4sJackson.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
 
   it("param spec decodes content") {
-    val param = Query.required(Json4s.Jackson.JsonFormat.parameterSpec[Json4sLetter]("name"))
-    (param <-- Request("?name=" + Json4s.Jackson.JsonFormat.compact(Json4s.Jackson.JsonFormat.encode(aLetter)))) shouldBe aLetter
+    val param = Query.required(Json4sJackson.JsonFormat.parameterSpec[Json4sLetter]("name"))
+    (param <-- Request("?name=" + Json4sJackson.JsonFormat.compact(Json4sJackson.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
 
   it("response spec has correct code") {
-    Json4s.Jackson.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
-  }
-
-}
-
-class Json4sJacksonJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s.Jackson)
-
-class Json4sJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.JacksonDoubleMode.JsonFormat) {
-  it("body spec decodes content") {
-    (Body(Json4s.JacksonDoubleMode.JsonFormat.bodySpec[Json4sLetter]()) <-- Json4s.JacksonDoubleMode.ResponseBuilder.OK(Json4s.JacksonDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
-  }
-
-  it("param spec decodes content") {
-    val param = Query.required(Json4s.JacksonDoubleMode.JsonFormat.parameterSpec[Json4sLetter]("name"))
-    (param <-- Request("?name=" + Json4s.JacksonDoubleMode.JsonFormat.compact(Json4s.JacksonDoubleMode.JsonFormat.encode(aLetter)))) shouldBe aLetter
-  }
-
-  it("response spec has correct code") {
-    Json4s.JacksonDoubleMode.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+    Json4sJackson.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
   }
 
 }
 
-class Json4sJacksonDoubleJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s.JacksonDoubleMode)
+class Json4sJacksonJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4sJackson)
+
+class Json4sJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJacksonDoubleMode.JsonFormat) {
+  it("body spec decodes content") {
+    (Body(Json4sJacksonDoubleMode.JsonFormat.bodySpec[Json4sLetter]()) <-- Json4sJacksonDoubleMode.ResponseBuilder.OK(Json4sJacksonDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
+  }
+
+  it("param spec decodes content") {
+    val param = Query.required(Json4sJacksonDoubleMode.JsonFormat.parameterSpec[Json4sLetter]("name"))
+    (param <-- Request("?name=" + Json4sJacksonDoubleMode.JsonFormat.compact(Json4sJacksonDoubleMode.JsonFormat.encode(aLetter)))) shouldBe aLetter
+  }
+
+  it("response spec has correct code") {
+    Json4sJacksonDoubleMode.JsonFormat.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+  }
+
+}
+
+class Json4sJacksonDoubleJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4sJacksonDoubleMode)
 
