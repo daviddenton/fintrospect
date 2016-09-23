@@ -1,4 +1,4 @@
-package io.fintrospect.formats.json
+package io.fintrospect.formats
 
 import java.math.BigInteger
 
@@ -8,8 +8,7 @@ import com.twitter.finagle.{Filter, Service}
 import io.circe.{Decoder, Encoder, Json}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
-import io.fintrospect.formats.AutoFilters
-import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
+import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 
 /**
@@ -25,8 +24,7 @@ object Circe extends JsonLibrary[Json, Json] {
   object Filters extends AutoFilters[Json] {
 
     override protected val responseBuilder = Circe.ResponseBuilder
-
-    import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits._
+    import responseBuilder.implicits._
 
     private def toResponse[OUT](successStatus: Status, e: Encoder[OUT]) =
       (t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e))

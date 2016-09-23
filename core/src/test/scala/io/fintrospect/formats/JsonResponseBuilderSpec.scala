@@ -1,6 +1,4 @@
-package io.fintrospect.formats.json
-
-import io.fintrospect.formats.AbstractResponseBuilderSpec
+package io.fintrospect.formats
 
 abstract class JsonResponseBuilderSpec[X, Y](jsonLibrary: JsonLibrary[X, Y]) extends AbstractResponseBuilderSpec[X](jsonLibrary.ResponseBuilder) {
   override val expectedContent = message

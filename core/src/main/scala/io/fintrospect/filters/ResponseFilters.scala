@@ -6,8 +6,7 @@ import java.time.{Clock, Duration, ZonedDateTime}
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.Headers
-import io.fintrospect.formats.AbstractResponseBuilder
-import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.{AbstractResponseBuilder, Argo}
 import io.fintrospect.util.{Extraction, Extractor}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.DATE
 

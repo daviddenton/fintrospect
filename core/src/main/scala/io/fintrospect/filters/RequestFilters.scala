@@ -10,7 +10,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.fintrospect.ContentType.fromAcceptHeaders
 import io.fintrospect.configuration.{Authority, Credentials}
-import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
+import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}

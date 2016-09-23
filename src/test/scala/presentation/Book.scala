@@ -1,7 +1,7 @@
 package presentation
 
 import argo.jdom.JsonNode
-import io.fintrospect.formats.json.Argo.JsonFormat.{number, obj, string}
+import io.fintrospect.formats.Argo.JsonFormat.{number, obj, string}
 
 case class Book(title: String) {
   def toJson = obj(

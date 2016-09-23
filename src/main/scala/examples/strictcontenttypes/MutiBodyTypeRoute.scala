@@ -22,7 +22,7 @@ object MutiBodyTypeRoute extends App {
   private val json = Body.json[JsonRootNode](Option("json body"))
 
   private val echoJson = Service.mk { (rq: Request) =>
-    import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
+    import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
     Ok(json <-- rq)
   }
 

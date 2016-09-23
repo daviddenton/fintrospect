@@ -22,8 +22,8 @@ import io.fintrospect.{ModuleSpec, RouteSpec}
   */
 object StrictMultiContentTypeRoute extends App {
 
-  private val serveJson = Service.mk { (rq: Request) => import io.fintrospect.formats.json.Argo.JsonFormat._
- import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
+  private val serveJson = Service.mk { (rq: Request) => import io.fintrospect.formats.Argo.JsonFormat._
+ import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
     Ok(obj("field" -> string("value")))
   }
 

@@ -1,4 +1,4 @@
-package io.fintrospect.formats.json
+package io.fintrospect.formats
 
 import java.math.BigInteger
 
@@ -9,8 +9,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
-import io.fintrospect.formats.AutoFilters
-import io.fintrospect.formats.json.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
+import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 
 /**

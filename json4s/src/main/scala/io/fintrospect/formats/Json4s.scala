@@ -1,4 +1,4 @@
-package io.fintrospect.formats.json
+package io.fintrospect.formats
 
 import java.math.BigInteger
 
@@ -7,7 +7,6 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
-import io.fintrospect.formats.AutoFilters
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import org.json4s.Extraction.decompose
 import org.json4s.{Formats, JValue, JsonMethods, NoTypeHints, Serialization}
@@ -90,8 +89,7 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
   extends AutoFilters[JValue] {
 
   override protected val responseBuilder = jsonLibrary.ResponseBuilder
-
-  import jsonLibrary.ResponseBuilder.implicits._
+  import responseBuilder.implicits._
 
   private val a = json4sFormat.serialization.formats(NoTypeHints)
 

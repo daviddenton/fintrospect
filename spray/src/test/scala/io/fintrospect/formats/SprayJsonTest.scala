@@ -1,4 +1,4 @@
-package io.fintrospect.formats.json
+package io.fintrospect.formats
 
 class SprayJsonResponseBuilderTest extends JsonResponseBuilderSpec(Spray)
 

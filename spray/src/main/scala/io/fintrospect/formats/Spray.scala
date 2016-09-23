@@ -1,9 +1,9 @@
-package io.fintrospect.formats.json
+package io.fintrospect.formats
 
 import java.math.BigInteger
 
 import spray.json.DefaultJsonProtocol._
-import spray.json._
+import spray.json.{JsObject, _}
 
 /**
  * Spray JSON support (application/json content type)

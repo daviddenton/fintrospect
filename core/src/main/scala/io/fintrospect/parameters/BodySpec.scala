@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_XML}
-import io.fintrospect.formats.json.{Argo, JsonFormat}
+import io.fintrospect.formats.{Argo, JsonFormat}
 import io.fintrospect.{ContentType, ContentTypes}
 
 import scala.xml.{Elem, XML}

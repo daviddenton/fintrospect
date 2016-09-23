@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.util.UUID
 
-import io.fintrospect.formats.json.{Argo, JsonFormat}
+import io.fintrospect.formats.{Argo, JsonFormat}
 import io.fintrospect.parameters.StringValidation.EmptyIsValid
 
 import scala.language.higherKinds

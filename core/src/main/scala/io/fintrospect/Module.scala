@@ -5,8 +5,7 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.util.Future
 import io.fintrospect.Module.ServiceBinding
-import io.fintrospect.formats.AbstractResponseBuilder
-import io.fintrospect.formats.json.Argo
+import io.fintrospect.formats.{AbstractResponseBuilder, Argo}
 import io.fintrospect.renderers.JsonErrorResponseRenderer
 
 object Module {
