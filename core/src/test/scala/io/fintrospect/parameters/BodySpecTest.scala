@@ -3,7 +3,7 @@ package io.fintrospect.parameters
 import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentTypes
-import io.fintrospect.formats.json.Argo.JsonFormat.{obj, string}
+import io.fintrospect.formats.Argo.JsonFormat.{obj, string}
 import org.scalatest._
 
 import scala.util.{Success, Try}

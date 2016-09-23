@@ -3,7 +3,7 @@ package io.fintrospect.util
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.NotAcceptable
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
+import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
 import io.fintrospect.{ContentType, ContentTypes}
 
 /**

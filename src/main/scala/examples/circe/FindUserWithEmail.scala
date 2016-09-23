@@ -7,7 +7,7 @@ import com.twitter.finagle.http.Status.{NotFound, Ok}
 import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.json.Circe.Filters.AutoOptionalOut
+import io.fintrospect.formats.Circe.Filters.AutoOptionalOut
 import io.fintrospect.parameters.Path
 
 /**

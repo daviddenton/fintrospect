@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter.{ISO_LOCAL_DATE, ISO_LOCAL_DATE_TIME, 
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.util.UUID
 
-import io.fintrospect.formats.json.{Argo, JsonFormat}
+import io.fintrospect.formats.{Argo, JsonFormat}
 import io.fintrospect.parameters.StringValidation.EmptyIsValid
 
 import scala.xml.{Elem, XML}

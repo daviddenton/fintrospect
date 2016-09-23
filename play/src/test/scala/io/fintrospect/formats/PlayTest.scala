@@ -1,13 +1,13 @@
-package io.fintrospect.formats.json
+package io.fintrospect.formats
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
-import io.fintrospect.formats.json.JsonFormat.InvalidJsonForDecoding
-import io.fintrospect.formats.json.Play.JsonFormat.{bodySpec, decode, encode, parameterSpec, parse}
-import io.fintrospect.formats.json.Play.ResponseBuilder.implicits._
+import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
+import io.fintrospect.formats.Play.JsonFormat.{bodySpec, decode, encode, parameterSpec, parse}
+import io.fintrospect.formats.Play.ResponseBuilder.implicits._
 import io.fintrospect.parameters.{Body, Query}
 import org.scalatest.{FunSpec, Matchers}
 import play.api.libs.json._

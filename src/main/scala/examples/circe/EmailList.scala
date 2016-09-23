@@ -7,8 +7,8 @@ import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.json.Circe.JsonFormat.{encode, responseSpec}
-import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits.statusToResponseBuilderConfig
+import io.fintrospect.formats.Circe.JsonFormat.{encode, responseSpec}
+import io.fintrospect.formats.Circe.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters.Path
 
 /**

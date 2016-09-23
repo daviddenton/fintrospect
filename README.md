@@ -62,8 +62,8 @@ example response object, which will be broken down to provide the JSON model for
 
 ```scala
 // implicit conversion from Status -> ResponseBuilder pulled in here
-import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits._
-import io.fintrospect.formats.json.Argo.JsonFormat.array
+import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
+import io.fintrospect.formats.Argo.JsonFormat.array
 
 class BookSearch(books: Books) {
   private val maxPages = Query.optional.int("maxPages", "max number of pages in book")

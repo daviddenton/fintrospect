@@ -7,8 +7,8 @@ import com.twitter.finagle.http.Status.Ok
 import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.json.Circe
-import io.fintrospect.formats.json.Circe.JsonFormat.responseSpec
+import io.fintrospect.formats.Circe
+import io.fintrospect.formats.Circe.JsonFormat.responseSpec
 
 /**
   * This endpoint uses the "Circe.Filters.AutoOut" Filter to automatically create a HTTP 200 response from some returned case class content.

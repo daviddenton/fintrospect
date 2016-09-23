@@ -2,7 +2,7 @@ package examples.extended
 
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.Status.NotFound
-import io.fintrospect.formats.json.Argo.JsonFormat.parse
+import io.fintrospect.formats.Argo.JsonFormat.parse
 import io.fintrospect.testing.TestingFintrospectRoute
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.scalatest.{FunSpec, Matchers}

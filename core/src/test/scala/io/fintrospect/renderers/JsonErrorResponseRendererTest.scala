@@ -1,7 +1,7 @@
 package io.fintrospect.renderers
 
 import com.twitter.finagle.http.Status
-import io.fintrospect.formats.json.Argo.JsonFormat.parse
+import io.fintrospect.formats.Argo.JsonFormat.parse
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.JsonErrorResponseRenderer.{badRequest, notFound}
 import io.fintrospect.util.ExtractionError

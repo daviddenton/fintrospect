@@ -2,7 +2,7 @@ package io.fintrospect
 
 import com.twitter.finagle.http.Status
 import com.twitter.io.Buf.ByteArray.Shared.extract
-import io.fintrospect.formats.json.{Argo, JsonFormat}
+import io.fintrospect.formats.{Argo, JsonFormat}
 import io.fintrospect.parameters.BodySpec
 
 import scala.util.Try

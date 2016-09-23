@@ -15,13 +15,13 @@ val responseViaImplicits: Future[Response] = Status.Ok(<xml>lashings and lashing
 ### controlled mode
 Some of the JSON libraries (`Circe`, `Argonaut`, `Json4S`, `Play`) supported by Fintrospect support auto-marshalling of Scala Case 
 class instances directly to JSON without any custom conversion code needing to be written. This is supported by `encode()` and `decode()` 
-methods present on the relevant Fintrospect `JsonFormat` format instance (e.g. `io.fintrospect.formats.json.Circe.JsonFormat`). Generally, 
+methods present on the relevant Fintrospect `JsonFormat` format instance (e.g. `io.fintrospect.formats.Circe.JsonFormat`). Generally, 
  these are very simple to use:
 ```
 case class EmailAddress(address: String)
 
 import io.circe.generic.auto._
-import io.fintrospect.formats.json.Circe.ResponseBuilder.implicits._
+import io.fintrospect.formats.Circe.ResponseBuilder.implicits._
 
 Status.Ok(Circe.JsonFormat.encode(EmailAddress("dev@fintrospect.io")
 ```

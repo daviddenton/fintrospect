@@ -3,7 +3,7 @@ package examples.extended
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Status.{Conflict, Created}
 import com.twitter.finagle.http.{Method, Request, Response}
-import io.fintrospect.formats.json.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
+import io.fintrospect.formats.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.{Body, Path}
 import io.fintrospect.{ResponseSpec, RouteSpec}
 

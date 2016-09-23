@@ -1,8 +1,7 @@
-package io.fintrospect.formats.json
+package io.fintrospect.formats
 
 import com.twitter.io.Buf
 import io.fintrospect.ContentTypes
-import io.fintrospect.formats.{AbstractResponseBuilder, ResponseBuilder}
 
 
 
