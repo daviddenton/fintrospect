@@ -1,10 +1,11 @@
 package io.fintrospect.formats
 
 import java.io.OutputStream
+import java.nio.charset.StandardCharsets.UTF_8
 
 import com.twitter.finagle.http.{Cookie, Response, Status}
 import com.twitter.io.Buf.Utf8
-import com.twitter.io.{Buf, Charsets, Reader}
+import com.twitter.io.{Buf, Reader}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
 import io.fintrospect.util.Builder
@@ -55,7 +56,7 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
   }
 
   def withContent(channelBuffer: ChannelBuffer): ResponseBuilder[T] = {
-    response.setContentString(channelBuffer.toString(Charsets.Utf8))
+    response.setContentString(channelBuffer.toString(UTF_8))
     this
   }
 
