@@ -7,13 +7,16 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 13.9.0 (uncut)
+## 13.9.1
+- Bugfix: Issue #24. Remove transitive dependency on `sl4j-simple` in `fintrospect-handlebars` to avoid SL4J warnings.
+
+## 13.9.0
 - Breaking: Repackage of JSON message format libraries. `io.fintrospect.formats.json.<LibraryName>` are now just `io.fintrospect.formats` instead. To fix, simply find/replace the package names in your source.
 - Breaking: Split `Json4s.Native` and `Json4s.Jackson` into their own top-level message objects. The mapping is `Json4s.Native` -> `Json4s`/`Json4sDoubleMode` and `Json4s.Jackson` -> `Json4sJackson`/`Json4sJacksonDoubleMode`, so simply find/replace references in your source.
 - Upgrade to various dependency versions, including Finagle `6.38.0` and Circe `0.5.2`.
 
 ## 13.8.1
-- Bugfix: Issue #23 On invalid request, AutoFilters blow up instead of producing BadRequest response
+- Bugfix: Issue #23. On invalid request, AutoFilters blow up instead of producing BadRequest response
 
 ## 13.8.0
 - Added MsgPack library support. Import new module `fintrospect-msgpack` to activate this support.
