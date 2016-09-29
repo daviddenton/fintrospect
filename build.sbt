@@ -1,7 +1,7 @@
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
-  version := "13.9.0",
+  version := "13.9.1",
   scalaVersion := "2.11.8",
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions := Seq(
@@ -114,7 +114,7 @@ lazy val handlebars = project
   .settings(moduleName := "fintrospect-handlebars")
   .settings(description := "Handlebars templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.gilt" %% "handlebars-scala" % "2.1.1")
+  .settings(libraryDependencies += "com.gilt" %% "handlebars-scala" % "2.1.1" exclude("org.slf4j", "slf4j-simple") )
 
 lazy val mustache = project
   .settings(baseSettings)
