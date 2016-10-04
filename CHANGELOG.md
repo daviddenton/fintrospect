@@ -7,6 +7,10 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 13.10.0 (uncut)
+- (Small) Breaking: Added support `StrictContentTypeNegotiation` for routes with multiple content types. See `StrictMultiContentTypeRoute` example. To migrate, simply replace
+`StrictContentTypeNegotiation(mappings)` with `StrictContentTypeNegotiation.of(mappings)`
+
 ## 13.9.1
 - Bugfix: Issue #24. Remove transitive dependency on `sl4j-simple` in `fintrospect-handlebars` to avoid SL4J warnings.
 
