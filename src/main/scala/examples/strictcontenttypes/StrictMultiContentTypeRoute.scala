@@ -42,7 +42,7 @@ object StrictMultiContentTypeRoute extends App {
 
   val route = RouteSpec()
     .producing(APPLICATION_XML, APPLICATION_JSON)
-    .at(Get) / "multi" / Path.string("name") bindTo StrictContentTypeNegotiation.of(APPLICATION_XML -> serveXml, APPLICATION_JSON -> serveJson)
+    .at(Get) / "multi" / Path.string("name") bindTo StrictContentTypeNegotiation(APPLICATION_XML -> serveXml, APPLICATION_JSON -> serveJson)
 
   val jsonOnlyRoute = RouteSpec()
     .producing(APPLICATION_JSON)
