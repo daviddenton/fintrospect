@@ -8,7 +8,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
 ## 13.10.0 (uncut)
-- (Small) Breaking: Added support `StrictContentTypeNegotiation` for routes with multiple content types. See `StrictMultiContentTypeRoute` example. To migrate, simply replace
+- (Small) Breaking: Added support `StrictContentTypeNegotiation` for routes serving multiple content types. See `StrictMultiContentTypeRoute` example. To migrate, simply replace
 `StrictContentTypeNegotiation(mappings)` with `StrictContentTypeNegotiation.of(mappings)`
 
 ## 13.9.1
