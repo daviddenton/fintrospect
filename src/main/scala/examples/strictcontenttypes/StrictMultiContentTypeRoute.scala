@@ -24,8 +24,9 @@ import io.fintrospect.{ModuleSpec, RouteSpec}
   */
 object StrictMultiContentTypeRoute extends App {
 
-  private def serveJson(name: String) = Service.mk { (rq: Request) => import io.fintrospect.formats.Argo.JsonFormat._
- import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
+  private def serveJson(name: String) = Service.mk { (rq: Request) =>
+    import io.fintrospect.formats.Argo.JsonFormat._
+    import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
     Ok(obj("field" -> string(name)))
   }
 
