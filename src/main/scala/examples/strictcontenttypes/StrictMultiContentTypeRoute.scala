@@ -33,7 +33,9 @@ object StrictMultiContentTypeRoute extends App {
     import io.fintrospect.formats.Xml.ResponseBuilder.implicits._
     (rq: Request) =>
       Ok(<root>
-        <field>{name}</field>
+        <field>
+          {name}
+        </field>
       </root>)
   }
 
