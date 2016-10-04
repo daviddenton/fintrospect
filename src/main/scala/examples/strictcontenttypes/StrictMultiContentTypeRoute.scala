@@ -8,11 +8,13 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await
-import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_SVG_XML, APPLICATION_XML}
+import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_XML}
 import io.fintrospect.filters.RequestFilters
+import io.fintrospect.parameters.Path
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.StrictContentTypeNegotiation
 import io.fintrospect.{ModuleSpec, RouteSpec}
+
 
 /**
   * Shows how to add routes which can serve multiple content types using strict content-type negotiation.
@@ -22,31 +24,31 @@ import io.fintrospect.{ModuleSpec, RouteSpec}
   */
 object StrictMultiContentTypeRoute extends App {
 
-  private val serveJson = Service.mk { (rq: Request) => import io.fintrospect.formats.Argo.JsonFormat._
+  private def serveJson(name: String) = Service.mk { (rq: Request) => import io.fintrospect.formats.Argo.JsonFormat._
  import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
-    Ok(obj("field" -> string("value")))
+    Ok(obj("field" -> string(name)))
   }
 
-  private val serveXml = Service.mk {
+  private def serveXml(name: String) = Service.mk {
     import io.fintrospect.formats.Xml.ResponseBuilder.implicits._
     (rq: Request) =>
       Ok(<root>
-        <field>value</field>
+        <field>{name}</field>
       </root>)
   }
 
   val route = RouteSpec()
     .producing(APPLICATION_XML, APPLICATION_JSON)
-    .at(Get) / "multi" bindTo StrictContentTypeNegotiation(APPLICATION_SVG_XML -> serveXml, APPLICATION_JSON -> serveJson)
+    .at(Get) / "multi" / Path.string("name") bindTo StrictContentTypeNegotiation.of(APPLICATION_XML -> serveXml, APPLICATION_JSON -> serveJson)
 
   val jsonOnlyRoute = RouteSpec()
     .producing(APPLICATION_JSON)
-    .at(Get) / "json" bindTo RequestFilters.StrictAccept(APPLICATION_JSON).andThen(serveJson)
+    .at(Get) / "json" / Path.string("name") bindTo ((s) => RequestFilters.StrictAccept(APPLICATION_JSON).andThen(serveJson(s)))
 
   println("See the service description at: http://localhost:8080 . The route at /multi should match wildcard Accept headers set in a browser.")
 
   Await.ready(
     Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy)
-    .andThen(ModuleSpec(Root, SimpleJson()).withRoute(route).toService))
+      .andThen(ModuleSpec(Root, SimpleJson()).withRoute(route).toService))
   )
 }
