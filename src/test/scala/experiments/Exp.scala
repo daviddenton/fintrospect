@@ -3,27 +3,45 @@ package experiments
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.path.{->, /, Path}
 import com.twitter.finagle.http.{Method, Request, Response}
+import com.twitter.util.Future
 
-trait Builder[T] {
+trait BuilderWithParams[RqParams <: Product, T <: Request => RqParams] {
 }
 
-class Builder0[Base](base: Base) extends Builder[Base] {
-  def /[A](a: Gen[A]) = new Builder1(base, a)
+class BuilderWithParams0[Base <: Product](extract: Request => Base) extends BuilderWithParams[Base, Request => Base] {
+  def /[A](a: Gen[A]): BuilderWithParams1[Base, A] = new BuilderWithParams1(extract, a)
+
+  def bindTo(fn: Base => Future[Response]) = new SR {
+    override def toPf(basePath: Path) = {
+      case actualMethod -> path => Service.mk[Request, Response] {
+        (req: Request) => fn(extract(req))
+      }
+    }
+  }
 }
 
-class Builder1[Base, A](base: Base, a: Gen[A]) extends Builder[Base] {
-  def /[B](b: Gen[B]) = new Builder2(base, a, b)
+class BuilderWithParams1[Base <: Product, A](extract: Request => Base, ga: Gen[A]) extends BuilderWithParams[Base, Request => Base] {
+  def /[B](b: Gen[B]) = new BuilderWithParams2(extract, ga, b)
+
+  def bindTo(fn: (A, Base) => Future[Response]) = new SR {
+    override def toPf(basePath: Path) = {
+      case actualMethod -> path / ga(s1) => Service.mk[Request, Response] {
+        (req: Request) => fn(s1, extract(req))
+      }
+    }
+  }
 }
 
 trait SR {
   def toPf(basePath: Path): PartialFunction[(Method, Path), Service[Request, Response]]
 }
 
-
-class Builder2[Base, A, B](base: Base, val ga: Gen[A], val gb: Gen[B]) extends Builder[Base] {
-  def bindTo(fn: (A, B) => Service[Request, Response]) = new SR {
+class BuilderWithParams2[Base <: Product, A, B](extract: Request => Base, val ga: Gen[A], val gb: Gen[B]) extends BuilderWithParams[Base, Request => Base] {
+  def bindTo(fn: (A, B, Base) => Future[Response]) = new SR {
     override def toPf(basePath: Path) = {
-      case actualMethod -> path / ga(s1) / gb(s2) => fn(s1, s2)
+      case actualMethod -> path / ga(s1) / gb(s2) => Service.mk[Request, Response] {
+        (req: Request) => fn(s1, s2, extract(req))
+      }
     }
   }
 }
@@ -37,7 +55,11 @@ trait Contract {
 }
 
 case class Gen[T](t: T) {
+
+  def from(req: Request): T = ???
+
   def get: T = t
+
   def unapply(str: String): Option[T] = ???
 }
 
@@ -66,13 +88,20 @@ class Contract2[A, B](a: Gen[A], b: Gen[B]) extends Contract {
 
   val gens = Seq(a, b)
 
-  def aaa(req: Request) = (a: A, b: B) => Service.mk[Request, Response] { req => ??? }
+  private def aaa(req: Request): (A, B) = (a.from(req), b.from(req))
 
-  def at(): Builder0[Request => T] = new Builder0(aaa)
+  def at(): BuilderWithParams0[(A, B)] = new BuilderWithParams0(aaa)
 }
 
 
 object Test extends App {
   private val builder = new Contract0().taking(Gen("string")).taking(Gen(123)).at() / Gen('a') / Gen(true)
+
+  def svc(c: Char, b: Boolean, params: (String, Int)) = Future[Response] {
+    val (str, int) = params
+    ???
+  }
+
+  builder.bindTo(svc)
 
 }
