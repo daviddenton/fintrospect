@@ -18,7 +18,7 @@ trait BuilderWithParams[RqParams, T <: Request => RqParams] {
 }
 
 class BuilderWithParams0[Base](method: Method, filter: Filt, extract: Request => Base) extends BuilderWithParams[Base, Request => Base] {
-  def /[A](a: PathParam[A]): BuilderWithParams1[Base, A] = new BuilderWithParams1(method, filter, extract, a)
+  def /[NEXT](next: PathParam[NEXT]): BuilderWithParams1[Base, NEXT] = new BuilderWithParams1(method, filter, extract, next)
 
   def bindTo(fn: Base => Future[Response]) = new SR {
     override def toPf(basePath: Path) = {
@@ -29,12 +29,12 @@ class BuilderWithParams0[Base](method: Method, filter: Filt, extract: Request =>
   }
 }
 
-class BuilderWithParams1[Base, A](method: Method, filter: Filt, extract: Request => Base, ga: PathParameter[A]) extends BuilderWithParams[Base, Request => Base] {
-  def /[B](b: PathParam[B]) = new BuilderWithParams2(method, filter, extract, ga, b)
+class BuilderWithParams1[Base, PP0](method: Method, filter: Filt, extract: Request => Base, pp0: PathParameter[PP0]) extends BuilderWithParams[Base, Request => Base] {
+  def /[NEXT](next: PathParam[NEXT]) = new BuilderWithParams2(method, filter, extract, pp0, next)
 
-  def bindTo(fn: (A, Base) => Future[Response]) = new SR {
+  def bindTo(fn: (PP0, Base) => Future[Response]) = new SR {
     override def toPf(basePath: Path) = {
-      case actualMethod -> path / ga(s1) => Service.mk[Request, Response] {
+      case actualMethod -> path / pp0(s1) => Service.mk[Request, Response] {
         (req: Request) => fn(s1, extract(req))
       }
     }
@@ -45,10 +45,10 @@ trait SR {
   def toPf(basePath: Path): PartialFunction[(Method, Path), Service[Request, Response]]
 }
 
-class BuilderWithParams2[Base, A, B](method: Method, filter: Filt, extract: Request => Base, val ga: PathParameter[A], val gb: PathParameter[B]) extends BuilderWithParams[Base, Request => Base] {
-  def bindTo(fn: (A, B, Base) => Future[Response]) = new SR {
+class BuilderWithParams2[Base, PP0, PP1](method: Method, filter: Filt, extract: Request => Base, pp0: PathParameter[PP0], pp1: PathParameter[PP1]) extends BuilderWithParams[Base, Request => Base] {
+  def bindTo(fn: (PP0, PP1, Base) => Future[Response]) = new SR {
     override def toPf(basePath: Path) = {
-      case actualMethod -> path / ga(s1) / gb(s2) => Service.mk[Request, Response] {
+      case actualMethod -> path / pp0(s1) / pp1(s2) => Service.mk[Request, Response] {
         (req: Request) => fn(s1, s2, extract(req))
       }
     }
@@ -56,45 +56,35 @@ class BuilderWithParams2[Base, A, B](method: Method, filter: Filt, extract: Requ
 }
 
 trait Contract {
-  self: Product =>
-  type T
-
   def params: Seq[RqParam[_]]
-
 }
 
 case class Contract0(private val filter: Option[Filt] = None) extends Contract {
-  type T = () => Service[Request, Response]
-
   val params = Nil
 
-  def taking[A](a: RqParam[A]): Contract1[A] = Contract1(filter, a)
+  def taking[NEXT](next: RqParam[NEXT]): Contract1[NEXT] = Contract1(filter, next)
 
   def withFilter(filter: Filt) = copy(filter = Option(filter))
 
   def at(method: Method) = new BuilderWithParams0(method, filter.getOrElse(Filter.identity), identity)
 }
 
-case class Contract1[A](private val filter: Option[Filt], private val a: RqParam[A]) extends Contract {
-  type T = (A) => Service[Request, Response]
+case class Contract1[RP0](private val filter: Option[Filt], private val rp0: RqParam[RP0]) extends Contract {
+  val params = Seq[RqParam[_]](rp0)
 
-  val params = Seq[RqParam[_]](a)
-
-  def taking[B](b: RqParam[B]) = Contract2(filter, a, b)
+  def taking[NEXT](next: RqParam[NEXT]) = Contract2(filter, rp0, next)
 
   def withFilter(filter: Filt) = copy(filter = Option(filter))
 
-  def at(method: Method) = new BuilderWithParams0(method, filter.getOrElse(Filter.identity), req => (a.from(req), req))
+  def at(method: Method) = new BuilderWithParams0(method, filter.getOrElse(Filter.identity), req => (rp0.from(req), req))
 }
 
-case class Contract2[A, B](private val filter: Option[Filt], private val a: RqParam[A], private val b: RqParam[B]) extends Contract {
-  type T = (A, B) => Service[Request, Response]
-
-  val params = Seq[RqParam[_]](a, b)
+case class Contract2[RP0, RP1](private val filter: Option[Filt], private val rp0: RqParam[RP0], private val rp1: RqParam[RP1]) extends Contract {
+  val params = Seq[RqParam[_]](rp0, rp1)
 
   def withFilter(filter: Filt) = copy(filter = Option(filter))
 
-  def at(method: Method) = new BuilderWithParams0(method, filter.getOrElse(Filter.identity), req => (a.from(req), b.from(req), req))
+  def at(method: Method) = new BuilderWithParams0(method, filter.getOrElse(Filter.identity), req => (rp0.from(req), rp1.from(req), req))
 }
 
 
