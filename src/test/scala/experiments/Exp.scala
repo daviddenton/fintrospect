@@ -33,7 +33,7 @@ case class PathBuilder0[Base](method: Method, contents: ContractContents, extrac
 
   def bindTo(fn: Base => Future[Response]) = new SR(method, identity) {
     override def toPf(basePath: Path) = {
-      case actualMethod -> path => contents.useFilter.andThen(Service.mk[Request, Response] {
+      case actualMethod -> path if matches(actualMethod, basePath, path) => contents.useFilter.andThen(Service.mk[Request, Response] {
         (req: Request) => fn(extract(req))
       })
     }
@@ -48,7 +48,7 @@ case class PathBuilder1[Base, PP0](method: Method, contents: ContractContents, e
 
   def bindTo(fn: (PP0, Base) => Future[Response]) = new SR(method, identity) {
     override def toPf(basePath: Path) = {
-      case actualMethod -> path / pp0(s1) => Service.mk[Request, Response] {
+      case actualMethod -> path / pp0(s1) if matches(actualMethod, basePath, path) => Service.mk[Request, Response] {
         (req: Request) => fn(s1, extract(req))
       }
     }
@@ -58,7 +58,7 @@ case class PathBuilder1[Base, PP0](method: Method, contents: ContractContents, e
 case class PathBuilder2[Base, PP0, PP1](method: Method, contents: ContractContents, extract: Request => Base, pp0: PathParameter[PP0], pp1: PathParameter[PP1]) extends PathBuilder[Base, Request => Base] {
   def bindTo(fn: (PP0, PP1, Base) => Future[Response]) = new SR(method, identity) {
     override def toPf(basePath: Path) = {
-      case actualMethod -> path / pp0(s1) / pp1(s2) => Service.mk[Request, Response] {
+      case actualMethod -> path / pp0(s1) / pp1(s2) if matches(actualMethod, basePath, path) => Service.mk[Request, Response] {
         (req: Request) => fn(s1, s2, extract(req))
       }
     }
@@ -86,51 +86,53 @@ case class ContractContents(
 }
 
 abstract class Contract(rps: RqParam[_]*) {
+  type This <: Contract
+  val contents: ContractContents
+
+  def update(contents: ContractContents): This
+
   val params: Seq[RqParam[_]] = rps
+
+  def consuming(contentTypes: ContentType*) = update(contents.consuming(contentTypes))
+
+  def producing(contentTypes: ContentType*) = update(contents.producing(contentTypes))
+
+  def withFilter(filter: Filt) = update(contents.withFilter(filter))
 }
 
-case class Contract0(private val contents: ContractContents = ContractContents())
+case class Contract0(contents: ContractContents = ContractContents())
   extends Contract() {
+  type This = Contract0
 
   def taking[NEXT](next: RqParam[NEXT]): Contract1[NEXT] = Contract1(contents, next)
 
-  def withFilter(filter: Filt) = copy(contents.withFilter(filter))
-
-  def consuming(contentTypes: ContentType*) = copy(contents.consuming(contentTypes))
-
-  def producing(contentTypes: ContentType*) = copy(contents.producing(contentTypes))
-
   def body[BODY](next: Body[BODY]) = Contract1(contents.body(next), next)
 
-  def at(method: Method) = new PathBuilder0(method, contents, identity)
+  def at(method: Method) = PathBuilder0(method, contents, identity)
+
+  override def update(contents: ContractContents) = this.copy(contents = contents)
 }
 
-case class Contract1[RP0](private val contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0])
+case class Contract1[RP0](contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0])
   extends Contract(rp0) {
+  type This = Contract1[RP0]
+
+  override def update(contents: ContractContents) = this.copy(contents = contents)
 
   def taking[NEXT](next: RqParam[NEXT]) = Contract2(contents, rp0, next)
 
-  def withFilter(filter: Filt) = copy(contents.withFilter(filter))
-
-  def consuming(contentTypes: ContentType*) = copy(contents.consuming(contentTypes))
-
-  def producing(contentTypes: ContentType*) = copy(contents.producing(contentTypes))
-
   def body[BODY](next: Body[BODY]) = Contract2(contents.body(next), rp0, next)
 
-  def at(method: Method) = new PathBuilder0(method, contents, req => (rp0.from(req), req))
+  def at(method: Method) = PathBuilder0(method, contents, req => (rp0.from(req), req))
 }
 
-case class Contract2[RP0, RP1](private val contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0], private val rp1: RqParam[RP1])
+case class Contract2[RP0, RP1](contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0], private val rp1: RqParam[RP1])
   extends Contract(rp0, rp1) {
+  type This = Contract2[RP0, RP1]
 
-  def withFilter(filter: Filt) = copy(contents.withFilter(filter))
+  override def update(contents: ContractContents) = this.copy(contents = contents)
 
-  def consuming(contentTypes: ContentType*) = copy(contents.consuming(contentTypes))
-
-  def producing(contentTypes: ContentType*) = copy(contents.producing(contentTypes))
-
-  def at(method: Method) = new PathBuilder0(method, contents, req => (rp0.from(req), rp1.from(req), req))
+  def at(method: Method) = PathBuilder0(method, contents, req => (rp0.from(req), rp1.from(req), req))
 }
 
 
