@@ -9,7 +9,7 @@ import io.fintrospect.parameters.{Body, Query, Path => FPath}
 import scala.xml.Elem
 
 object ExpApp extends App {
-  private val onePathOneParam = Contract0().taking(Query.required.string("a")).at(Get) / FPath.string("a")
+  private val onePathOneParam = Contract().taking(Query.required.string("a")).at(Get) / FPath.string("a")
 
   def svc0(c: String, params: (String, Request)) = Future[Response] {
     ???
@@ -17,7 +17,7 @@ object ExpApp extends App {
 
   onePathOneParam.bindTo(svc0)
 
-  private val pathAndParams = Contract0()
+  private val pathAndParams = Contract()
     .taking(Query.required.string("a"))
     .body(Body.xml(Option("xmlBody")))
     .at(Get) / FPath.string("a") / FPath.boolean("a")
@@ -29,7 +29,7 @@ object ExpApp extends App {
 
   pathAndParams.bindTo(svc)
 
-  private val pathOnly = Contract0().at(Get) / FPath.string("a") / FPath.boolean("a")
+  private val pathOnly = Contract().at(Get) / FPath.string("a") / FPath.boolean("a")
 
   def svc2(c: String, b: Boolean, req: Request) = Future[Response] {
     ???
@@ -37,7 +37,7 @@ object ExpApp extends App {
 
   pathOnly.bindTo(svc2)
 
-  private val paramsOnly = Contract0()
+  private val paramsOnly = Contract()
     .withFilter(Filter.identity)
     .taking(Query.required.string("a")).taking(Query.required.int("a")).at(Get)
 
@@ -48,7 +48,7 @@ object ExpApp extends App {
 
   paramsOnly.bindTo(svc3)
 
-  private val nothing = Contract0().at(Get)
+  private val nothing = Contract().at(Get)
 
   def svc4(req: Request) = Future[Response] {
     ???
