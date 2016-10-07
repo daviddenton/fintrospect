@@ -22,7 +22,7 @@ case class RouteSpec private(summary: String,
   /**
     * Register content types which the route will consume. This is informational only and is NOT currently enforced.
     */
-  def consuming(contentTypes: ContentType*): RouteSpec = copy(consumes = produces ++ contentTypes)
+  def consuming(contentTypes: ContentType*): RouteSpec = copy(consumes = consumes ++ contentTypes)
 
   /**
     * Register content types which thus route will produce. This is informational only and NOT currently enforced.
