@@ -57,9 +57,7 @@ case class RouteSpec private(summary: String,
   /**
     * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
     */
-  def returning(response: Response): RouteSpec = {
-    returning(new ResponseSpec(response.status -> response.status.reason, Option(response.contentString)))
-  }
+  def returning(response: Response): RouteSpec = returning(new ResponseSpec(response.status -> response.status.reason, Option(response.contentString)))
 
   /**
     * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
