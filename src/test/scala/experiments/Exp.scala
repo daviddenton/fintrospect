@@ -87,11 +87,16 @@ case class ContractContents(
 
 abstract class Contract(rps: RqParam[_]*) {
   type This <: Contract
+  type Next[T] <: Contract
   val contents: ContractContents
 
   def update(contents: ContractContents): This
 
+  def next[NEXT](contents: ContractContents, next: RqParam[NEXT]): Next[NEXT]
+
   val params: Seq[RqParam[_]] = rps
+
+  def taking[NEXT](nxt: RqParam[NEXT]) = next(contents, nxt)
 
   def consuming(contentTypes: ContentType*) = update(contents.consuming(contentTypes))
 
@@ -103,23 +108,25 @@ abstract class Contract(rps: RqParam[_]*) {
 case class Contract0(contents: ContractContents = ContractContents())
   extends Contract() {
   type This = Contract0
+  type Next[T] = Contract1[T]
 
-  def taking[NEXT](next: RqParam[NEXT]): Contract1[NEXT] = Contract1(contents, next)
+  override def update(contents: ContractContents) = this.copy(contents = contents)
+
+  override def next[NEXT](contents: ContractContents, nxt: RqParam[NEXT]): Contract1[NEXT] = Contract1(contents, nxt)
 
   def body[BODY](next: Body[BODY]) = Contract1(contents.body(next), next)
 
   def at(method: Method) = PathBuilder0(method, contents, identity)
-
-  override def update(contents: ContractContents) = this.copy(contents = contents)
 }
 
 case class Contract1[RP0](contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0])
   extends Contract(rp0) {
   type This = Contract1[RP0]
+  type Next[T] = Contract2[RP0, T]
 
   override def update(contents: ContractContents) = this.copy(contents = contents)
 
-  def taking[NEXT](next: RqParam[NEXT]) = Contract2(contents, rp0, next)
+  override def next[NEXT](contents: ContractContents, nxt: RqParam[NEXT]): Contract2[RP0, NEXT] = Contract2(contents, rp0, nxt)
 
   def body[BODY](next: Body[BODY]) = Contract2(contents.body(next), rp0, next)
 
@@ -129,8 +136,11 @@ case class Contract1[RP0](contents: ContractContents = ContractContents(), priva
 case class Contract2[RP0, RP1](contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0], private val rp1: RqParam[RP1])
   extends Contract(rp0, rp1) {
   type This = Contract2[RP0, RP1]
+  type Next[T] = Contract2[RP0, T]
 
   override def update(contents: ContractContents) = this.copy(contents = contents)
+
+  override def next[NEXT](contents: ContractContents, nxt: RqParam[NEXT]): Contract2[RP0, NEXT] = throw new UnsupportedOperationException("Too many parameters!")
 
   def at(method: Method) = PathBuilder0(method, contents, req => (rp0.from(req), rp1.from(req), req))
 }
