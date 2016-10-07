@@ -24,7 +24,7 @@ abstract class Contract(rps: RqParam[_]*) {
   def withFilter(filter: Filt) = update(terms.withFilter(filter))
 }
 
-trait Extendable {
+trait ExtendableContract {
   val terms: Terms
 
   type Next[T] <: Contract
@@ -37,7 +37,7 @@ trait Extendable {
 }
 
 case class Contract0(terms: Terms)
-  extends Contract() with Extendable {
+  extends Contract() with ExtendableContract {
   type This = Contract0
   type Next[T] = Contract1[T]
 
@@ -49,7 +49,7 @@ case class Contract0(terms: Terms)
 }
 
 case class Contract1[RP1](terms: Terms, rp1: RqParam[RP1])
-  extends Contract(rp1) with Extendable {
+  extends Contract(rp1) with ExtendableContract {
   type This = Contract1[RP1]
   type Next[T] = Contract2[RP1, T]
 
@@ -61,7 +61,7 @@ case class Contract1[RP1](terms: Terms, rp1: RqParam[RP1])
 }
 
 case class Contract2[RP1, RP2](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2])
-  extends Contract(rp1, rp2) with Extendable {
+  extends Contract(rp1, rp2) with ExtendableContract {
   type This = Contract2[RP1, RP2]
   type Next[T] = Contract3[RP1, RP2, T]
 
@@ -73,7 +73,7 @@ case class Contract2[RP1, RP2](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2
 }
 
 case class Contract3[RP1, RP2, RP3](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2], rp3: RqParam[RP3])
-  extends Contract(rp1, rp2, rp3) with Extendable {
+  extends Contract(rp1, rp2, rp3) with ExtendableContract {
   type This = Contract3[RP1, RP2, RP3]
   type Next[T] = Contract4[RP1, RP2, RP3, T]
 
@@ -85,7 +85,7 @@ case class Contract3[RP1, RP2, RP3](terms: Terms, rp1: RqParam[RP1], rp2: RqPara
 }
 
 case class Contract4[RP1, RP2, RP3, RP4](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2], rp3: RqParam[RP3], rp4: RqParam[RP4])
-  extends Contract(rp1, rp2, rp3, rp4) with Extendable {
+  extends Contract(rp1, rp2, rp3, rp4) with ExtendableContract {
   type This = Contract4[RP1, RP2, RP3, RP4]
   type Next[T] = Contract5[RP1, RP2, RP3, RP4, T]
 
@@ -99,7 +99,7 @@ case class Contract4[RP1, RP2, RP3, RP4](terms: Terms, rp1: RqParam[RP1], rp2: R
 
 case class Contract5[RP1, RP2, RP3, RP4, RP5](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2],
                                               rp3: RqParam[RP3], rp4: RqParam[RP4], rp5: RqParam[RP5])
-  extends Contract(rp1, rp2, rp3, rp4, rp5) with Extendable {
+  extends Contract(rp1, rp2, rp3, rp4, rp5) with ExtendableContract {
   type This = Contract5[RP1, RP2, RP3, RP4, RP5]
   type Next[T] = Contract6[RP1, RP2, RP3, RP4, RP5, T]
 
