@@ -3,7 +3,7 @@ package experiments
 import com.twitter.finagle.http.Method
 import experiments.types.{Filt, RqParam}
 import io.fintrospect.ContentType
-import io.fintrospect.parameters.Body
+import io.fintrospect.parameters.{Binding, Body}
 
 object Contract {
   def apply(summary: String = "<unknown>", description: Option[String] = None) = Contract0(Terms(summary, description))
@@ -24,7 +24,7 @@ abstract class Contract(rps: RqParam[_]*) {
   def withFilter(filter: Filt) = update(terms.withFilter(filter))
 }
 
-trait Extendable {
+trait ExtendableContract {
   val terms: Terms
 
   type Next[T] <: Contract
@@ -37,7 +37,7 @@ trait Extendable {
 }
 
 case class Contract0(terms: Terms)
-  extends Contract() with Extendable {
+  extends Contract() with ExtendableContract {
   type This = Contract0
   type Next[T] = Contract1[T]
 
@@ -45,11 +45,11 @@ case class Contract0(terms: Terms)
 
   override def next[NEXT](terms: Terms, nxt: RqParam[NEXT]) = Contract1(terms, nxt)
 
-  def at(method: Method) = PathBuilder0(method, terms, identity)
+  def at(method: Method) = PathBuilder0(method, terms, identity, Seq())
 }
 
 case class Contract1[RP1](terms: Terms, rp1: RqParam[RP1])
-  extends Contract(rp1) with Extendable {
+  extends Contract(rp1) with ExtendableContract {
   type This = Contract1[RP1]
   type Next[T] = Contract2[RP1, T]
 
@@ -57,11 +57,11 @@ case class Contract1[RP1](terms: Terms, rp1: RqParam[RP1])
 
   override def next[NEXT](terms: Terms, nxt: RqParam[NEXT]) = Contract2(terms, rp1, nxt)
 
-  def at(method: Method) = PathBuilder0(method, terms, req => (rp1.from(req), req))
+  def at(method: Method) = PathBuilder0(method, terms, req => (rp1.from(req), req), (rp1: RP1) => Seq())
 }
 
 case class Contract2[RP1, RP2](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2])
-  extends Contract(rp1, rp2) with Extendable {
+  extends Contract(rp1, rp2) with ExtendableContract {
   type This = Contract2[RP1, RP2]
   type Next[T] = Contract3[RP1, RP2, T]
 
@@ -69,11 +69,11 @@ case class Contract2[RP1, RP2](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2
 
   override def next[NEXT](terms: Terms, nxt: RqParam[NEXT]) = Contract3(terms, rp1, rp2, nxt)
 
-  def at(method: Method) = PathBuilder0(method, terms, req => (rp1.from(req), rp2.from(req), req))
+  def at(method: Method) = PathBuilder0(method, terms, req => (rp1.from(req), rp2.from(req), req), (rp: (RP1, RP2)) => Seq.empty[Binding])
 }
 
 case class Contract3[RP1, RP2, RP3](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2], rp3: RqParam[RP3])
-  extends Contract(rp1, rp2, rp3) with Extendable {
+  extends Contract(rp1, rp2, rp3) with ExtendableContract {
   type This = Contract3[RP1, RP2, RP3]
   type Next[T] = Contract4[RP1, RP2, RP3, T]
 
@@ -81,11 +81,11 @@ case class Contract3[RP1, RP2, RP3](terms: Terms, rp1: RqParam[RP1], rp2: RqPara
 
   override def next[NEXT](terms: Terms, nxt: RqParam[NEXT]) = Contract4(terms, rp1, rp2, rp3, nxt)
 
-  def at(method: Method) = PathBuilder0(method, terms, req => (rp1.from(req), rp2.from(req), rp3.from(req), req))
+  def at(method: Method) = PathBuilder0(method, terms, req => (rp1.from(req), rp2.from(req), rp3.from(req), req), (rp: (RP1, RP2, RP3)) => Seq.empty[Binding])
 }
 
 case class Contract4[RP1, RP2, RP3, RP4](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2], rp3: RqParam[RP3], rp4: RqParam[RP4])
-  extends Contract(rp1, rp2, rp3, rp4) with Extendable {
+  extends Contract(rp1, rp2, rp3, rp4) with ExtendableContract {
   type This = Contract4[RP1, RP2, RP3, RP4]
   type Next[T] = Contract5[RP1, RP2, RP3, RP4, T]
 
@@ -94,12 +94,12 @@ case class Contract4[RP1, RP2, RP3, RP4](terms: Terms, rp1: RqParam[RP1], rp2: R
   override def next[NEXT](terms: Terms, nxt: RqParam[NEXT]) = Contract5(terms, rp1, rp2, rp3, rp4, nxt)
 
   def at(method: Method) = PathBuilder0(method, terms, req =>
-    (rp1.from(req), rp2.from(req), rp3.from(req), rp4.from(req), req))
+    (rp1.from(req), rp2.from(req), rp3.from(req), rp4.from(req), req), (rp: (RP1, RP2, RP3, RP4)) => Seq.empty[Binding])
 }
 
 case class Contract5[RP1, RP2, RP3, RP4, RP5](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2],
                                               rp3: RqParam[RP3], rp4: RqParam[RP4], rp5: RqParam[RP5])
-  extends Contract(rp1, rp2, rp3, rp4, rp5) with Extendable {
+  extends Contract(rp1, rp2, rp3, rp4, rp5) with ExtendableContract {
   type This = Contract5[RP1, RP2, RP3, RP4, RP5]
   type Next[T] = Contract6[RP1, RP2, RP3, RP4, RP5, T]
 
@@ -108,7 +108,7 @@ case class Contract5[RP1, RP2, RP3, RP4, RP5](terms: Terms, rp1: RqParam[RP1], r
   override def next[NEXT](terms: Terms, nxt: RqParam[NEXT]) = Contract6(terms, rp1, rp2, rp3, rp4, rp5, nxt)
 
   def at(method: Method) = PathBuilder0(method, terms, req =>
-    (rp1.from(req), rp2.from(req), rp3.from(req), rp4.from(req), rp5.from(req), req))
+    (rp1.from(req), rp2.from(req), rp3.from(req), rp4.from(req), rp5.from(req), req), (rp: (RP1, RP2, RP3, RP4, RP5)) => Seq.empty[Binding])
 }
 
 case class Contract6[RP1, RP2, RP3, RP4, RP5, RP6](terms: Terms, rp1: RqParam[RP1], rp2: RqParam[RP2],
@@ -119,5 +119,5 @@ case class Contract6[RP1, RP2, RP3, RP4, RP5, RP6](terms: Terms, rp1: RqParam[RP
   override def update(terms: Terms) = this.copy(terms = terms)
 
   def at(method: Method) = PathBuilder0(method, terms, req =>
-    (rp1.from(req), rp2.from(req), rp3.from(req), rp4.from(req), rp5.from(req), rp6.from(req), req))
+    (rp1.from(req), rp2.from(req), rp3.from(req), rp4.from(req), rp5.from(req), rp6.from(req), req), (rp: (RP1, RP2, RP3, RP4, RP5, RP6)) => Seq.empty[Binding])
 }
