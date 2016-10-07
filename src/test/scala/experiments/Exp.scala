@@ -6,13 +6,16 @@ import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 import experiments.types.{Filt, PathParam, RqParam}
-import io.fintrospect.parameters.{Binding, Parameter, PathBindable, PathParameter, Query, Rebindable, Retrieval, Path => FPath}
+import io.fintrospect.ContentType
+import io.fintrospect.parameters.{Binding, Body, PathBindable, PathParameter, Query, Rebindable, Retrieval, Path => FPath}
 import io.fintrospect.util.Extractor
+
+import scala.xml.Elem
 
 object types {
   type Filt = Filter[Request, Response, Request, Response]
   type PathParam[T] = PathParameter[T] with PathBindable[T]
-  type RqParam[T] = Parameter with Retrieval[Request, T] with Extractor[Request, T] with Rebindable[Request, T, Binding]
+  type RqParam[T] = Retrieval[Request, T] with Extractor[Request, T] with Rebindable[Request, T, Binding]
 }
 
 trait PathBuilder[RqParams, T <: Request => RqParams] {
@@ -56,38 +59,66 @@ class PathBuilder2[Base, PP0, PP1](method: Method, contents: ContractContents, e
   }
 }
 
-case class ContractContents(filter: Option[Filt] = None) {
+case class ContractContents(description: Option[String] = None,
+                            filter: Option[Filt] = None,
+                            produces: Set[ContentType] = Set.empty,
+                            consumes: Set[ContentType] = Set.empty,
+                            body: Option[Body[_]] = None) {
   val useFilter: Filt = filter.getOrElse(Filter.identity)
+
+  def withFilter(filter: Filt) = copy(filter = Option(filter))
+
+  def consuming(contentTypes: Seq[ContentType]) = copy(consumes = consumes ++ contentTypes)
+
+  def producing(contentTypes: Seq[ContentType]) = copy(produces = produces ++ contentTypes)
+
+  def body[T](bp: Body[T]) = copy(body = Option(bp), consumes = consumes + bp.contentType)
 }
 
-trait Contract {
-  def params: Seq[RqParam[_]]
+abstract class Contract(rps: RqParam[_]*) {
+  val params: Seq[RqParam[_]] = rps
 }
 
-case class Contract0(private val contents: ContractContents = ContractContents()) extends Contract {
-  val params = Nil
+case class Contract0(private val contents: ContractContents = ContractContents())
+  extends Contract() {
 
   def taking[NEXT](next: RqParam[NEXT]): Contract1[NEXT] = Contract1(contents, next)
 
-  def withFilter(filter: Filt) = copy(contents.copy(filter = Option(filter)))
+  def withFilter(filter: Filt) = copy(contents.withFilter(filter))
+
+  def consuming(contentTypes: ContentType*) = copy(contents.consuming(contentTypes))
+
+  def producing(contentTypes: ContentType*) = copy(contents.producing(contentTypes))
+
+  def body[BODY](next: Body[BODY]) = Contract1(contents.body(next), next)
 
   def at(method: Method) = new PathBuilder0(method, contents, identity)
 }
 
-case class Contract1[RP0](private val contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0]) extends Contract {
-  val params = Seq[RqParam[_]](rp0)
+case class Contract1[RP0](private val contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0])
+  extends Contract(rp0) {
 
   def taking[NEXT](next: RqParam[NEXT]) = Contract2(contents, rp0, next)
 
-  def withFilter(filter: Filt) = copy(contents.copy(filter = Option(filter)))
+  def withFilter(filter: Filt) = copy(contents.withFilter(filter))
+
+  def consuming(contentTypes: ContentType*) = copy(contents.consuming(contentTypes))
+
+  def producing(contentTypes: ContentType*) = copy(contents.producing(contentTypes))
+
+  def body[BODY](next: Body[BODY]) = Contract2(contents.body(next), rp0, next)
 
   def at(method: Method) = new PathBuilder0(method, contents, req => (rp0.from(req), req))
 }
 
-case class Contract2[RP0, RP1](private val contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0], private val rp1: RqParam[RP1]) extends Contract {
-  val params = Seq[RqParam[_]](rp0, rp1)
+case class Contract2[RP0, RP1](private val contents: ContractContents = ContractContents(), private val rp0: RqParam[RP0], private val rp1: RqParam[RP1])
+  extends Contract(rp0, rp1) {
 
-  def withFilter(filter: Filt) = copy(contents.copy(filter = Option(filter)))
+  def withFilter(filter: Filt) = copy(contents.withFilter(filter))
+
+  def consuming(contentTypes: ContentType*) = copy(contents.consuming(contentTypes))
+
+  def producing(contentTypes: ContentType*) = copy(contents.producing(contentTypes))
 
   def at(method: Method) = new PathBuilder0(method, contents, req => (rp0.from(req), rp1.from(req), req))
 }
@@ -102,9 +133,12 @@ object ExpApp extends App {
 
   onePathOneParam.bindTo(svc0)
 
-  private val pathAndParams = Contract0().taking(Query.required.string("a")).taking(Query.required.int("a")).at(Get) / FPath.string("a") / FPath.boolean("a")
+  private val pathAndParams = Contract0()
+    .taking(Query.required.string("a"))
+    .body(Body.xml(Option("xmlBody")))
+    .at(Get) / FPath.string("a") / FPath.boolean("a")
 
-  def svc(c: String, b: Boolean, params: (String, Int, Request)) = Future[Response] {
+  def svc(c: String, b: Boolean, params: (String, Elem, Request)) = Future[Response] {
     val (str, int, req) = params
     ???
   }
