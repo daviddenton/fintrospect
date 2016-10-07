@@ -66,13 +66,13 @@ case class ContractContents(description: Option[String] = None,
                             body: Option[Body[_]] = None) {
   val useFilter: Filt = filter.getOrElse(Filter.identity)
 
-  def withFilter(filter: Filt) = copy(filter = Option(filter))
+  def withFilter(filter: Filt): ContractContents = copy(filter = Option(filter))
 
-  def consuming(contentTypes: Seq[ContentType]) = copy(consumes = consumes ++ contentTypes)
+  def consuming(contentTypes: Seq[ContentType]): ContractContents = copy(consumes = consumes ++ contentTypes)
 
-  def producing(contentTypes: Seq[ContentType]) = copy(produces = produces ++ contentTypes)
+  def producing(contentTypes: Seq[ContentType]): ContractContents = copy(produces = produces ++ contentTypes)
 
-  def body[T](bp: Body[T]) = copy(body = Option(bp), consumes = consumes + bp.contentType)
+  def body[T](bp: Body[T]): ContractContents = copy(body = Option(bp), consumes = consumes + bp.contentType)
 }
 
 abstract class Contract(rps: RqParam[_]*) {
