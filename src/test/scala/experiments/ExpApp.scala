@@ -9,7 +9,8 @@ import io.fintrospect.parameters.{Body, Query, Path => FPath}
 import scala.xml.Elem
 
 object ExpApp extends App {
-  private val onePathOneParam = Contract().taking(Query.required.string("a")).at(Get) / FPath.string("a")
+  private val taking: Contract1[String] = Contract().taking(Query.required.string("a"))
+  private val onePathOneParam: PathBuilder1[(String, Request), String] = taking.at(Get) / FPath.string("a")
 
   def svc0(c: String, params: (String, Request)) = Future[Response] {
     ???
@@ -28,6 +29,7 @@ object ExpApp extends App {
   }
 
   pathAndParams.bindTo(svc)
+
 
   private val pathOnly = Contract().at(Get) / FPath.string("a") / FPath.boolean("a")
 
