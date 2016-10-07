@@ -4,7 +4,7 @@ import com.twitter.finagle.Filter
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
-import io.fintrospect.parameters.{Body, Query}
+import io.fintrospect.parameters.{Body, Query, Path => FPath}
 
 import scala.xml.Elem
 
