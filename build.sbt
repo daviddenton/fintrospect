@@ -4,6 +4,7 @@ lazy val baseSettings = Seq(
   version := "13.9.1",
   scalaVersion := "2.11.8",
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+  resolvers += "JCenter" at "https://jcenter.bintray.com",
   scalacOptions := Seq(
     "-deprecation",
     "-encoding", "UTF-8",
