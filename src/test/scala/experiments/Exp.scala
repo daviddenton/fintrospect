@@ -1,16 +1,13 @@
 package experiments
 
-import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.path.{->, /, Path}
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 import experiments.types.{Filt, PathParam, RqParam}
 import io.fintrospect.ContentType
-import io.fintrospect.parameters.{Binding, Body, PathBindable, PathParameter, Query, Rebindable, Retrieval, Path => FPath}
+import io.fintrospect.parameters.{Binding, Body, PathBindable, PathParameter, Rebindable, Retrieval, Path => FPath}
 import io.fintrospect.util.Extractor
-
-import scala.xml.Elem
 
 object types {
   type Filt = Filter[Request, Response, Request, Response]
@@ -66,13 +63,13 @@ case class ContractContents(description: Option[String] = None,
                             body: Option[Body[_]] = None) {
   val useFilter: Filt = filter.getOrElse(Filter.identity)
 
-  def withFilter(filter: Filt) = copy(filter = Option(filter))
+  def withFilter(filter: Filt): ContractContents = copy(filter = Option(filter))
 
-  def consuming(contentTypes: Seq[ContentType]) = copy(consumes = consumes ++ contentTypes)
+  def consuming(contentTypes: Seq[ContentType]): ContractContents = copy(consumes = consumes ++ contentTypes)
 
-  def producing(contentTypes: Seq[ContentType]) = copy(produces = produces ++ contentTypes)
+  def producing(contentTypes: Seq[ContentType]): ContractContents = copy(produces = produces ++ contentTypes)
 
-  def body[T](bp: Body[T]) = copy(body = Option(bp), consumes = consumes + bp.contentType)
+  def body[T](bp: Body[T]): ContractContents = copy(body = Option(bp), consumes = consumes + bp.contentType)
 }
 
 abstract class Contract(rps: RqParam[_]*) {
@@ -124,52 +121,3 @@ case class Contract2[RP0, RP1](private val contents: ContractContents = Contract
 }
 
 
-object ExpApp extends App {
-  private val onePathOneParam = Contract0().taking(Query.required.string("a")).at(Get) / FPath.string("a")
-
-  def svc0(c: String, params: (String, Request)) = Future[Response] {
-    ???
-  }
-
-  onePathOneParam.bindTo(svc0)
-
-  private val pathAndParams = Contract0()
-    .taking(Query.required.string("a"))
-    .body(Body.xml(Option("xmlBody")))
-    .at(Get) / FPath.string("a") / FPath.boolean("a")
-
-  def svc(c: String, b: Boolean, params: (String, Elem, Request)) = Future[Response] {
-    val (str, int, req) = params
-    ???
-  }
-
-  pathAndParams.bindTo(svc)
-
-  private val pathOnly = Contract0().at(Get) / FPath.string("a") / FPath.boolean("a")
-
-  def svc2(c: String, b: Boolean, req: Request) = Future[Response] {
-    ???
-  }
-
-  pathOnly.bindTo(svc2)
-
-  private val paramsOnly = Contract0()
-    .withFilter(Filter.identity)
-    .taking(Query.required.string("a")).taking(Query.required.int("a")).at(Get)
-
-  def svc3(params: (String, Int, Request)) = Future[Response] {
-    val (str, int, req) = params
-    ???
-  }
-
-  paramsOnly.bindTo(svc3)
-
-  private val nothing = Contract0().at(Get)
-
-  def svc4(req: Request) = Future[Response] {
-    ???
-  }
-
-  nothing.bindTo(svc4)
-
-}
