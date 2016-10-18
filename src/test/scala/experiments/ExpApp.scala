@@ -10,9 +10,9 @@ import scala.xml.Elem
 
 object ExpApp extends App {
   private val taking: Contract1[String] = Contract().taking(Query.required.string("a"))
-  private val onePathOneParam: PathBuilder1[(String), String] = taking.at(Get) / FPath.string("a")
+  private val onePathOneParam = taking.at(Get) / FPath.string("a")
 
-  def svc0(c: String, params: (String), req: Request) = Future[Response] {
+  def svc0(c: String, params: (String, Request)) = Future[Response] {
     ???
   }
 
@@ -23,8 +23,8 @@ object ExpApp extends App {
     .body(Body.xml(Option("xmlBody")))
     .at(Get) / FPath.string("a") / FPath.boolean("a")
 
-  def svc(c: String, b: Boolean, params: (String, Elem), req: Request) = Future[Response] {
-    val (str, int) = params
+  def svc(c: String, b: Boolean, params: (String, Elem, Request)) = Future[Response] {
+    val (str, int, req) = params
     ???
   }
 
@@ -33,7 +33,7 @@ object ExpApp extends App {
 
   private val pathOnly = Contract().at(Get) / FPath.string("a") / FPath.boolean("a")
 
-  def svc2(c: String, b: Boolean, p: Unit, req: Request) = Future[Response] {
+  def svc2(c: String, b: Boolean, req: Request) = Future[Response] {
     ???
   }
 
@@ -43,8 +43,8 @@ object ExpApp extends App {
     .withFilter(Filter.identity)
     .taking(Query.required.string("a")).taking(Query.required.int("a")).at(Get)
 
-  def svc3(params: (String, Int), req: Request) = Future[Response] {
-    val (str, int) = params
+  def svc3(params: (String, Int, Request)) = Future[Response] {
+    val (str, int, req) = params
     ???
   }
 
@@ -52,7 +52,7 @@ object ExpApp extends App {
 
   private val nothing = Contract().at(Get)
 
-  def svc4(params: Unit, req: Request) = Future[Response] {
+  def svc4(params: Request) = Future[Response] {
     ???
   }
 
