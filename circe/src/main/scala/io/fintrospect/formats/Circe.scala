@@ -111,6 +111,12 @@ object Circe extends JsonLibrary[Json, Json] {
     def decode[T](in: Json)(implicit d: Decoder[T]) = d.decodeJson(in).getOrElse(throw new InvalidJsonForDecoding)
 
     /**
+      * Create a function that will patch a given case class with the fields from a incoming JSON object.
+      * Useful for PATCH/PUT requests, where only modified fields are sent to the server.
+      */
+    def patcher[T](in: Json)(implicit d: Decoder[T => T]) = decode[T => T](in)
+
+    /**
       * Convenience method for creating Body that just use straight JSON encoding/decoding logic
       */
     def body[R](description: Option[String] = None, example: R = null)

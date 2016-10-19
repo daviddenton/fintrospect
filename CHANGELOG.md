@@ -2,13 +2,14 @@
 
 The main API is stable, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
-## Backlog/upcoming
+## Backlog
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 13.10.0 (uncut)
+## 13.10.0
 - Upgrade to various dependency versions, including Circe `0.5.4`.
+- `Circe.JsonFormat`: Added explicit `patcher()` method to allow patch updates for case class instances (via auto-marshalling JSON modules).
 - Added support to `StrictContentTypeNegotiation` for routes serving multiple content types. See `StrictMultiContentTypeRoute` example. 
 
 ## 13.9.1
