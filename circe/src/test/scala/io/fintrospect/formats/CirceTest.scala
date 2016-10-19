@@ -18,6 +18,8 @@ case class CirceStreetAddress(address: String)
 
 case class CirceLetter(to: CirceStreetAddress, from: CirceStreetAddress, message: String)
 
+case class CirceLetterOpt(to: CirceStreetAddress, from: CirceStreetAddress, message: Option[String])
+
 class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
 class CirceFiltersTest extends FunSpec with Matchers {
@@ -94,6 +96,8 @@ class CirceFiltersTest extends FunSpec with Matchers {
   }
 }
 
+case class CirceWithOptionalFields(from: Option[String])
+
 class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
 
   import io.circe.generic.auto._
@@ -104,6 +108,21 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
     it("roundtrips to JSON and back") {
       val encoded = encode(aLetter)
       decode[CirceLetter](encoded) shouldBe aLetter
+    }
+
+    it("patcher modifies original object with a non-null value") {
+      val original = CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), None)
+      val modifier = encode(obj("message" -> string("hi there")))
+      val modifyLetter = patcher[CirceLetterOpt](modifier)
+      modifyLetter(original) shouldBe CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), Option("hi there"))
+    }
+
+    // wait for circe 0.6.0, where this bug will be fixed - https://github.com/travisbrown/circe/issues/304
+    ignore("patcher modifies original object with a null value") {
+      val original = CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), Option("hi there"))
+      val modifier = encode(obj())
+      val modifyLetter = patcher[CirceLetterOpt](modifier)
+      modifyLetter(original) shouldBe CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), None)
     }
 
     it("invalid extracted JSON throws up") {

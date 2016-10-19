@@ -26,6 +26,8 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
   <a href="https://github.com/travisbrown/circe">Circe</a>, <a href="https://github.com/google/gson">GSON</a>, 
   <a href="http://json4s.org/">Json4S</a>, <a href="https://github.com/playframework">Play JSON</a>, 
   <a href="https://github.com/spray/spray-json">Spray JSON</a>
+    - Auto-marshaling of case classes instances to/from JSON (for `Argonaut`/`Circe`/`Json4S`/`Play`).
+    - Implement simple `PATCH`/`PUT` endpoints of case class instances (`Circe` only).
   - Native implementations of XML, Plain Text, HTML, XHTML
   - <a href="http://msgpack.org">MsgPack</a> binary format
 - Serve static content from the classpath or a directory
@@ -43,7 +45,7 @@ To activate some optional features, additional dependencies may be required - pl
 Add the following lines to ```build.sbt``` - the lib is hosted in Maven Central and JCenter:
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
-libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "13.9.1"
+libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "13.10.0"
 ```
 
 ## See the code
