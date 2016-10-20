@@ -137,7 +137,7 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
       val modifiedMessage = encode(obj("message" -> string("hi there")))
       val modifiedLetterWithMessage = CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), Some("hi there"))
 
-      val patch = patchBody[CirceLetterOpt]() <-- Circe.ResponseBuilder.OK(modifiedMessage).build()
+      val patch = patchBody[CirceLetterOpt](None, modifiedLetterWithMessage) <-- Circe.ResponseBuilder.OK(modifiedMessage).build()
 
       patch(letterWithNoMessage) shouldBe modifiedLetterWithMessage
     }

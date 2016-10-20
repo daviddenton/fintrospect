@@ -130,7 +130,7 @@ object Circe extends JsonLibrary[Json, Json] {
     def patchBody[R](description: Option[String] = None, example: R = null)
                     (implicit e: Encoder[R], d: Decoder[R => R]): Body[R => R] = Body[R => R](
       BodySpec.string(description, APPLICATION_JSON).map(s => decode[R => R](parse(s))(d),
-        (u: R => R) => compact(encode(u(null.asInstanceOf[R]))(e))), null, ObjectParamType)
+        (u: R => R) => compact(encode(u(example))(e))), Option(example).map(_ => (r: R) => example).orNull, ObjectParamType)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
