@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 13.10.1
+- Replaced `Circe.JsonFormat.patchBodySpec()` with `patchBody()` to ease use of Patch endpoint creations.
+
 ## 13.10.0
 - Upgrade to various dependency versions, including Circe `0.5.4`.
 - `Circe.JsonFormat`: Added explicit `patcher()` method to allow patch updates for case class instances (via auto-marshalling JSON modules).
