@@ -5,6 +5,7 @@ import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
+import io.circe.generic.auto._
 import io.fintrospect.formats.Circe.JsonFormat._
 import io.fintrospect.formats.Circe.ResponseBuilder.implicits._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
@@ -23,8 +24,6 @@ case class CirceLetterOpt(to: CirceStreetAddress, from: CirceStreetAddress, mess
 class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
 class CirceFiltersTest extends FunSpec with Matchers {
-
-  import io.circe.generic.auto._
 
   describe("Circe.Filters") {
     val aLetter = CirceLetter(CirceStreetAddress("my house"), CirceStreetAddress("your house"), "hi there")
@@ -110,7 +109,7 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
       decode[CirceLetter](encoded) shouldBe aLetter
     }
 
-    it("patcher modifies original object with a non-null value") {
+    it("patchbody modifies original object with a non-null value") {
       val original = CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), None)
       val modifier = encode(obj("message" -> string("hi there")))
       val modifyLetter = patcher[CirceLetterOpt](modifier)
@@ -131,6 +130,16 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
 
     it("body spec decodes content") {
       (Body(bodySpec[CirceLetter]()) <-- Circe.ResponseBuilder.OK(encode(aLetter)).build()) shouldBe aLetter
+    }
+
+    it("patch body can be used to modify an existing case class object") {
+      val letterWithNoMessage = CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), None)
+      val modifiedMessage = encode(obj("message" -> string("hi there")))
+      val modifiedLetterWithMessage = CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), Some("hi there"))
+
+      val patch = patchBody[CirceLetterOpt]() <-- Circe.ResponseBuilder.OK(modifiedMessage).build()
+
+      patch(letterWithNoMessage) shouldBe modifiedLetterWithMessage
     }
 
     it("response spec has correct code") {
