@@ -1,4 +1,4 @@
-package examples.msgpack.msgpack
+package examples.msgpack
 
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.Status.Ok
