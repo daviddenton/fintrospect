@@ -10,7 +10,7 @@ import io.fintrospect.ModuleSpec
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 
 /**
-  * This example uses Circe as a JSON format instead of the Argo default. The 3 endpoints show the different methods of
+  * This example uses Circe as a JSON format instead of the Argo default. The 4 endpoints show the different methods of
   * returning values
   */
 object InboxApp extends App {
