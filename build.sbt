@@ -46,9 +46,9 @@ lazy val core = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-core")
   .settings(libraryDependencies ++= Seq(
-    "net.sourceforge.argo" % "argo" % "3.22",
+    "net.sourceforge.argo" % "argo" % "3.40",
     "com.twitter" %% "finagle-http" % finagleVersion,
-    "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
+    "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scalatest" %% "scalatest" % "3.0.0" % "test"
   ))
@@ -59,7 +59,7 @@ lazy val argonaut = project
   .settings(moduleName := "fintrospect-argonaut")
   .settings(description := "Argonaut JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.0.4")
+  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.1")
 
 
 lazy val circe = project
@@ -92,7 +92,7 @@ lazy val play = project
   .settings(moduleName := "fintrospect-play")
   .settings(description := "Play JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.6")
+  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.9")
 
 lazy val spray = project
   .settings(baseSettings)
@@ -122,8 +122,8 @@ lazy val mustache = project
   .settings(moduleName := "fintrospect-mustache")
   .settings(description := "Mustache templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.3",
-    "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.3"))
+  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.4",
+    "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.4"))
 
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
