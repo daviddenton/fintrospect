@@ -116,7 +116,7 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
       modifyLetter(original) shouldBe CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), Option("hi there"))
     }
 
-    // wait for circe 0.6.0, where this bug will be fixed - https://github.com/travisbrown/circe/issues/304
+    // wait for circe 0.6.X, where this bug will be fixed - https://github.com/travisbrown/circe/issues/304
     ignore("patcher modifies original object with a null value") {
       val original = CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), Option("hi there"))
       val modifier = encode(obj())
