@@ -7,11 +7,11 @@
 <a href="https://coveralls.io/github/daviddenton/fintrospect?branch=master"><img src="https://coveralls.io/repos/daviddenton/fintrospect/badge.svg?branch=master"/></a>&nbsp;&nbsp;&nbsp;
 <a href="https://gitter.im/daviddenton/fintrospect"><img src="https://badges.gitter.im/daviddenton/fintrospect.svg"/></a>&nbsp;&nbsp;&nbsp;
 <a href="https://bintray.com/daviddenton/maven/fintrospect/view?source=watch"><img height="45" src="https://www.bintray.com/docs/images/bintray_badge_color.png"/></a>&nbsp;&nbsp;&nbsp;
-</h1>
+</h1
 
 Fintrospect is a library that adds an intelligent HTTP routing layer to the 
-<a href="http://twitter.github.io/finagle/">Finagle</a> RPC framework from Twitter. It provides a simple way to 
-implement contracts for both server and client-side HTTP services which are:
+<a href="http://twitter.github.io/finagle/">Finagle</a> RPC framework from Twitter. Via a shared contract, it provides a simple way to 
+implement both server endpoints and HTTP clients which are:
 
 - ```Type-safe``` : auto-marshalls all request parameters/bodies into the correct types (including primitives + JSON/XML etc...)
 - ```Auto-validating``` : the presence of required and optional request parameters and bodies are checked before entering service-layer code

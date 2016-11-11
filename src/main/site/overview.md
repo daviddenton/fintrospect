@@ -1,8 +1,8 @@
 # overview
 
 Fintrospect is a library that adds an intelligent HTTP routing layer to the 
-<a href="http://twitter.github.io/finagle/">Finagle</a> RPC framework from Twitter. It provides a simple way to 
-implement contracts for both server and client-side HTTP services which are:
+<a href="http://twitter.github.io/finagle/">Finagle</a> RPC framework from Twitter. Via a shared contract, it provides a simple way to 
+implement both server endpoints and HTTP clients which are:
 
 - ```Type-safe``` : auto-marshalls all request parameters/bodies into the correct types (including primitives + JSON/XML etc...)
 - ```Auto-validating``` : the presence of required and optional request parameters and bodies are checked before entering service-layer code
