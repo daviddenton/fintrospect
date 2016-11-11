@@ -3,6 +3,7 @@ package io.fintrospect.formats
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets.UTF_8
 
+import com.twitter.concurrent.AsyncStream
 import com.twitter.finagle.http.{Cookie, Response, Status}
 import com.twitter.io.Buf.Utf8
 import com.twitter.io.{Buf, Reader}
@@ -52,6 +53,16 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
 
   def withContent(buf: Buf): ResponseBuilder[T] = {
     response.content = buf
+    this
+  }
+
+  def withContent(stream: AsyncStream[T]): ResponseBuilder[T] = {
+    val newResponse = Response(response.version, response.status)
+    response.headerMap.foreach(kv => newResponse.headerMap.add(kv._1, kv._2))
+    newResponse.setChunked(true)
+    val writable = newResponse.writer
+    stream.foreachF(chunk => writable.write(toFormat(chunk))).ensure(writable.close())
+    response = newResponse
     this
   }
 

@@ -2,6 +2,7 @@ package io.fintrospect.formats
 
 import java.io.OutputStream
 
+import com.twitter.concurrent.AsyncStream
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Response, Status}
 import com.twitter.io.{Buf, Reader}
@@ -50,6 +51,8 @@ trait AbstractResponseBuilder[T] {
     def apply(content: String): ResponseBuilder[T] = if (status.code < 400) HttpResponse(status).withContent(content) else HttpResponse(status).withErrorMessage(content)
 
     def apply(buf: Buf): ResponseBuilder[T] = HttpResponse(status).withContent(buf)
+
+    def apply(stream: AsyncStream[T]): ResponseBuilder[T] = HttpResponse(status).withContent(stream)
 
     def apply(reader: Reader): ResponseBuilder[T] = HttpResponse(status).withContent(reader)
 

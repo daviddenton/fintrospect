@@ -9,5 +9,5 @@ To activate some optional features, additional dependencies may be required - th
 Add the following lines to ```build.sbt``` - the lib is hosted in Maven Central and JCenter:
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
-libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "13.10.1"
+libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "13.11.0"
 ```

@@ -2,6 +2,7 @@ package io.fintrospect.formats
 
 import java.nio.charset.Charset.defaultCharset
 
+import com.twitter.concurrent.AsyncStream
 import com.twitter.finagle.http.{Cookie, Status}
 import com.twitter.io.Buf.Utf8
 import com.twitter.io.Bufs.utf8Buf
@@ -80,6 +81,13 @@ class ResponseBuilderTest extends FunSpec {
     val response = new ResponseBuilder[PlainTextValue](i => Utf8(i.value), PlainTextValue, e => PlainTextValue(e.getMessage), ContentType("anyContentType"))
       .withContent(utf8Buf("hello")).build()
     response.contentString shouldBe "hello"
+  }
+
+  it("should set the content correctly given AsyncStream") {
+    val stream = AsyncStream.fromSeq(Seq.range(0, 10).map(i => PlainTextValue(i.toString)))
+    val response = new ResponseBuilder[PlainTextValue](i => Utf8(i.value), PlainTextValue, e => PlainTextValue(e.getMessage), ContentType("anyContentType"))
+      .withContent(stream).build()
+    new String(Bufs.ownedByteArray(Await.result(Reader.readAll(response.reader)))) shouldBe "0123456789"
   }
 
   it("should set the content correctly when writing to output stream") {
