@@ -1,5 +1,3 @@
-<b>Important note for upgraders from v`12.X.X` and below to v`13.X.X`. Fintrospect has changed top-level Maven group name to `io.fintrospect`. Please refer to the  <a href="http://fintrospect.io/changelog">changelog</a> for upgrade notes</b>.
-
 <h1>
 <a href="http://fintrospect.io">Fintrospect</a>&nbsp;&nbsp;&nbsp;
 <a href="https://bintray.com/fintrospect/maven/fintrospect-core/_latestVersion"><img src="https://api.bintray.com/packages/fintrospect/maven/fintrospect-core/images/download.svg"/></a>&nbsp;&nbsp;&nbsp;
