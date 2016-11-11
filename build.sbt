@@ -40,7 +40,7 @@ lazy val baseSettings = Seq(
 
 val finagleVersion = "6.38.0"
 val json4sVersion = "3.5.0"
-val circeVersion = "0.5.4"
+val circeVersion = "0.6.0"
 
 lazy val core = project
   .settings(baseSettings)

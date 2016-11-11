@@ -78,7 +78,10 @@ object Circe extends JsonLibrary[Json, Json] {
 
   object JsonFormat extends JsonFormat[Json, Json] {
 
-    override def parse(in: String): Json = io.circe.jawn.parse(in).getOrElse(throw new InvalidJson)
+    override def parse(in: String): Json = io.circe.jawn.parse(in) match {
+      case Right(r) => r
+      case Left(e) => throw new InvalidJson
+    }
 
     override def pretty(node: Json): String = node.spaces2
 
@@ -108,7 +111,10 @@ object Circe extends JsonLibrary[Json, Json] {
 
     def encode[T](in: T)(implicit e: Encoder[T]) = e(in)
 
-    def decode[T](in: Json)(implicit d: Decoder[T]) = d.decodeJson(in).getOrElse(throw new InvalidJsonForDecoding)
+    def decode[T](in: Json)(implicit d: Decoder[T]) = d.decodeJson(in) match {
+      case Right(r) => r
+      case Left(e) => throw new InvalidJsonForDecoding
+    }
 
     /**
       * Function that will modify a given case class with the fields from a incoming JSON object.
