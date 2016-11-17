@@ -59,7 +59,7 @@ lazy val argonaut = project
   .settings(moduleName := "fintrospect-argonaut")
   .settings(description := "Argonaut JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.1")
+  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.2-RC1")
 
 
 lazy val circe = project
