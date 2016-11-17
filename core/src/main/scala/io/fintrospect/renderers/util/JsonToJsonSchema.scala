@@ -43,7 +43,8 @@ class JsonToJsonSchema() {
   }
 
   private def arraySchema(input: Schema): Schema = {
-    val Schema(node, modelDefinitions) = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.definitions))).getOrElse(throw new IllegalSchemaException("Cannot use an empty list for a schema!"))
+    val Schema(node, modelDefinitions) = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.definitions))).getOrElse(throw
+      new IllegalSchemaException("Cannot use an empty list to generate a schema!"))
     Schema(obj("type" -> string("array"), "items" -> node), modelDefinitions)
   }
 
