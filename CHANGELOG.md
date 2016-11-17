@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 13.12.0 (uncut)
+- Upgrade to various dependency versions, including `GSON`.
+
 ## 13.11.0
 - All response Builders can now take a `AsyncStream[T]`, so you can stream responses in a typesafe way. See `streaming` example.
 - Upgrade to various dependency versions, including `circe`, `Json4s` & `scala-xml`.
