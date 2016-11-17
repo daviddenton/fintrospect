@@ -77,7 +77,7 @@ lazy val gson = project
   .settings(moduleName := "fintrospect-gson")
   .settings(description := "GSON JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.7")
+  .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.8.0")
 
 lazy val json4s = project
   .settings(baseSettings)
