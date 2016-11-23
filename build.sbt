@@ -1,7 +1,7 @@
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
-  version := "13.12.0",
+  version := "13.13.0",
   scalaVersion := "2.11.8",
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   resolvers += "JCenter" at "https://jcenter.bintray.com",
@@ -38,7 +38,7 @@ lazy val baseSettings = Seq(
   credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
 )
 
-val finagleVersion = "6.38.0"
+val finagleVersion = "6.40.0"
 val json4sVersion = "3.5.0"
 val circeVersion = "0.6.1"
 
@@ -59,7 +59,7 @@ lazy val argonaut = project
   .settings(moduleName := "fintrospect-argonaut")
   .settings(description := "Argonaut JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.2-RC1")
+  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.2-RC2")
 
 
 lazy val circe = project
@@ -125,10 +125,11 @@ lazy val mustache = project
   .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.4",
     "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.4"))
 
+// other
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
   .settings(unidocSettings: _*)
   .settings(moduleName := "fintrospect-examples")
   .aggregate(core, argonaut, circe, gson, json4s, play, spray, msgpack, handlebars, mustache)
   .dependsOn(core, argonaut, circe, gson, json4s, play, spray, msgpack, handlebars, mustache)
-  .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.6")
+  .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.7")
