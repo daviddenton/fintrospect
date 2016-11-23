@@ -21,23 +21,11 @@ object Module {
     * Convert a ServiceBinding to a Finagle Service
     */
   def toService(binding: ServiceBinding, responseBuilder: AbstractResponseBuilder[_] = Argo.ResponseBuilder): Service[Request, Response] = {
-
-    def pathFrom(req: Request) = {
-      val u = req.uri
-      u.indexOf('?') match {
-        case -1 => u
-        case n => u.substring(0, n)
-      }
-    }
-
-    val routes: ServiceBinding = {
-      case a if binding.isDefinedAt(a) => binding(a)
-    }
     val notFoundPf: ServiceBinding = {
       case _ => Service.mk { r => Future.value(JsonErrorResponseRenderer.notFound()) }
     }
 
-    Service.mk { request => (routes orElse notFoundPf) ((request.method, Path(pathFrom(request))))(request) }
+    Service.mk { request => (binding orElse notFoundPf) ((request.method, Path(request.path)))(request) }
   }
 }
 
