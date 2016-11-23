@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 13.13.0
+- Upgrade to various dependency versions, including `finagle-http 6.40.0`
+
 ## 13.12.0
 - Performance tweaks to path moving.
 - Upgrade to various dependency versions, including `GSON` and `circe`.
