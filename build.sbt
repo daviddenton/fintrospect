@@ -1,7 +1,7 @@
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
-  version := "13.11.0",
+  version := "13.12.0",
   scalaVersion := "2.11.8",
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   resolvers += "JCenter" at "https://jcenter.bintray.com",
@@ -40,7 +40,7 @@ lazy val baseSettings = Seq(
 
 val finagleVersion = "6.38.0"
 val json4sVersion = "3.5.0"
-val circeVersion = "0.6.0"
+val circeVersion = "0.6.1"
 
 lazy val core = project
   .settings(baseSettings)
