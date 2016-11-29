@@ -1,13 +1,14 @@
 package io.fintrospect.filters
 
-import java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME
 import java.time.{Clock, Duration, ZonedDateTime}
+import java.util.TimeZone.getTimeZone
 
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.Headers
 import io.fintrospect.formats.{AbstractResponseBuilder, Argo}
 import io.fintrospect.util.{Extraction, Extractor}
+import org.apache.commons.lang.time.FastDateFormat.getInstance
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.DATE
 
 /**
@@ -29,6 +30,9 @@ object ResponseFilters {
     (req, svc) => svc(req).onFailure(t)
   }
 
+
+  private val dateFormat = getInstance("EEE, dd MMM yyyy HH:mm:ss 'GMT'", getTimeZone("GMT"))
+
   /**
     * Add Date header to the Response in RFC1123 format.
     */
@@ -36,7 +40,7 @@ object ResponseFilters {
     (req, svc) => {
       svc(req)
         .map(Response => {
-          Response.headerMap(DATE) = RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
+          Response.headerMap(DATE) = dateFormat.format(ZonedDateTime.now(clock).toInstant.toEpochMilli)
           Response
         })
     }
