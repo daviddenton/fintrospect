@@ -122,8 +122,7 @@ lazy val mustache = project
   .settings(moduleName := "fintrospect-mustache")
   .settings(description := "Mustache templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.4",
-    "com.github.spullara.mustache.java" % "scala-extensions-2.11" % "0.9.4"))
+  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.4"))
 
 // other
 lazy val examples = project.in(file("."))

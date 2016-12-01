@@ -31,7 +31,7 @@ object ResponseFilters {
   }
 
 
-  private val dateFormat = getInstance("EEE, dd MMM yyyy HH:mm:ss 'GMT'", getTimeZone("GMT"))
+  private val dateFormat = getInstance("EEE, d MMM yyyy HH:mm:ss 'GMT'", getTimeZone("GMT"))
 
   /**
     * Add Date header to the Response in RFC1123 format.

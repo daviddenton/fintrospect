@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets
 import com.github.mustachejava.resolver.{DefaultResolver, FileSystemResolver}
 import com.github.mustachejava.{DefaultMustacheFactory, Mustache}
 import com.twitter.io.Buf
-import com.twitter.mustache.ScalaObjectHandler
 
 object MustacheTemplates extends Templates {
 
