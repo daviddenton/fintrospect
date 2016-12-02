@@ -5,11 +5,12 @@ import java.time.LocalDate
 import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
+import com.twitter.io.Buf
 import io.fintrospect.formats.Argo
 import io.fintrospect.formats.Argo.JsonFormat.{obj, pretty, string}
 import io.fintrospect.util.ExtractionError.Invalid
 import io.fintrospect.util.{Extracted, ExtractionError, ExtractionFailed}
-import io.fintrospect.{ContentTypes, RequestBuilder}
+import io.fintrospect.{ContentType, ContentTypes, RequestBuilder}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.scalatest.{FunSpec, Matchers}
 
@@ -151,6 +152,31 @@ class BodyTest extends FunSpec with Matchers {
       val bindings = Body.xml(None) <-> inRequest
       val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
       XML.loadString(outRequest.contentString) shouldBe inputXml
+    }
+  }
+
+  describe("binary") {
+    val contentType = ContentType("app/exe")
+    val binaryBody = Body.binary(None, contentType)
+    val input = Buf.ByteArray("test".getBytes: _*)
+
+    it("should serialize and deserialize into the request") {
+      val bindings = binaryBody --> input
+
+      val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
+
+      request.content shouldBe input
+      request.headerMap(Names.CONTENT_TYPE) shouldBe contentType.value
+      val deserializedBinary = binaryBody <-- request
+      deserializedBinary shouldBe input
+    }
+
+    it("can rebind valid value") {
+      val inRequest = Request()
+      inRequest.content = input
+      val bindings = binaryBody <-> inRequest
+      val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
+      outRequest.content shouldBe input
     }
   }
 }

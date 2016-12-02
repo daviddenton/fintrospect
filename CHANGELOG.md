@@ -8,6 +8,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
 ## 13.14.0 (uncut)
+- Added `Body.binary`, for transmission of binary HTTP messages
 - Tweaked Mustache implementation and removed a dependency.
 
 ## 13.13.0

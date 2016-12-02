@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Message
+import com.twitter.io.Buf
 import io.fintrospect.ContentType
 import io.fintrospect.formats.{Argo, JsonFormat}
 import io.fintrospect.util.Extractor
@@ -30,6 +31,11 @@ object Body {
     * JSON format HTTP message body. Defaults to Argo JSON format, but this can be overridden by passing an alternative JsonFormat
     */
   def json[T](description: Option[String], example: T = null, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): UniBody[T] = Body(BodySpec.json(description, jsonFormat), example, ObjectParamType)
+
+  /**
+    * Binary HTTP body, with custom ContentType
+    */
+  def binary(description: Option[String], contentType: ContentType): UniBody[Buf] = Body(BodySpec.binary(description, contentType), null, ObjectParamType)
 
   /**
     * Native Scala XML format HTTP message body.
