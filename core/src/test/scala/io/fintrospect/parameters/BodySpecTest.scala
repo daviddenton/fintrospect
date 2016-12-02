@@ -2,8 +2,8 @@ package io.fintrospect.parameters
 
 import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
-import io.fintrospect.ContentTypes
 import io.fintrospect.formats.Argo.JsonFormat.{obj, string}
+import io.fintrospect.{ContentType, ContentTypes}
 import org.scalatest._
 
 import scala.util.{Success, Try}
@@ -50,6 +50,26 @@ class BodySpecTest extends FunSpec with Matchers {
 
     it("serializes correctly") {
       BodySpec.xml().serialize(expected) shouldBe Buf.Utf8("""<field>value</field>""")
+    }
+  }
+
+  describe("binary") {
+    val expected = Buf.ByteArray("test".getBytes: _*)
+
+    it("retrieves a valid value") {
+      Try(BodySpec.binary(None, ContentType("application/exe")).deserialize(expected)) shouldBe Success(expected)
+    }
+
+    it("does not retrieve an invalid value") {
+      Try(BodySpec.binary(None, ContentType("application/exe")).deserialize(Buf.Empty)).isFailure shouldBe true
+    }
+
+    it("does not retrieve an null value") {
+      Try(BodySpec.binary(None, ContentType("application/exe")).deserialize(null)).isFailure shouldBe true
+    }
+
+    it("serializes correctly") {
+      BodySpec.binary(None, ContentType("application/exe")).serialize(expected) shouldBe expected
     }
   }
 
