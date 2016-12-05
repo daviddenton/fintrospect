@@ -20,7 +20,7 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
   val expectedErrorContent: String
   val customError: T
   val customType: T
-  val customTypeSerialised: String
+  val customTypeSerialized: String
 
   describe("Rendering") {
     it("ok") {
@@ -59,8 +59,8 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
     }
 
     it("builds Ok with custom type") {
-      statusAndContentFrom(bldr.OK(customType)) shouldBe(Ok, customTypeSerialised)
-      statusAndContentFrom(Ok(customType)) shouldBe(Ok, customTypeSerialised)
+      statusAndContentFrom(bldr.OK(customType)) shouldBe(Ok, customTypeSerialized)
+      statusAndContentFrom(Ok(customType)) shouldBe(Ok, customTypeSerialized)
     }
 
     it("content - OutputStream") {

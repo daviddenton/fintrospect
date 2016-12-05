@@ -63,6 +63,13 @@ object FormField {
   val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleParameter(spec, FormFieldExtractAndRebind) with FormField[T] with Mandatory[T]
 
+    def file(inName: String, inDescription: String = null) = new SingleFile(inName, inDescription) with MandatoryFile {
+      override def <--?(form: Form): Extraction[FileUpload] = form.files.get(inName) match {
+        case Some(s) => Extracted(s.headOption)
+        case None => ExtractionFailed(Missing(this))
+      }
+    }
+
     override val multi = new Parameters[MultiFormField, MandatorySeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with MandatorySeq[T]
 
@@ -74,18 +81,14 @@ object FormField {
           }
         }
     }
-
-    def file(inName: String, inDescription: String = null) =
-      new SingleFile(inName, inDescription) with MandatoryFile {
-        override def <--?(form: Form): Extraction[FileUpload] = form.files.get(inName) match {
-          case Some(s) => Extracted(s.headOption)
-          case None => ExtractionFailed(Missing(this))
-        }
-      }
   }
 
   val optional = new Parameters[FormField, Optional] with MultiParameters[MultiFormField, OptionalSeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleParameter(spec, FormFieldExtractAndRebind) with FormField[T] with Optional[T]
+
+    def file(inName: String, inDescription: String = null) = new SingleFile(inName, inDescription) with OptionalFile {
+      override def <--?(form: Form): Extraction[FileUpload] = Extracted(form.files.get(inName).flatMap(_.headOption))
+    }
 
     override val multi = new Parameters[MultiFormField, OptionalSeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with OptionalSeq[T]
@@ -99,10 +102,5 @@ object FormField {
         }
 
     }
-
-    def file(inName: String, inDescription: String = null) =
-      new SingleFile(inName, inDescription) with OptionalFile {
-        override def <--?(form: Form): Extraction[FileUpload] = Extracted(form.files.get(inName).flatMap(_.headOption))
-      }
   }
 }
