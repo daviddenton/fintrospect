@@ -10,24 +10,23 @@ import scala.util.{Failure, Success, Try}
 class FormBody(val fields: Seq[FormField[_] with Extractor[Form, _]], encodeDecode: FormCodec)
   extends Body[Form] {
 
-  private val spec = BodySpec.string(None, APPLICATION_FORM_URLENCODED).map(b => encodeDecode.decode(fields, b), (f: Form) => encodeDecode.encode(f))
-
-  override val contentType = spec.contentType
+  override val contentType = APPLICATION_FORM_URLENCODED
 
   override def iterator = fields.iterator
 
   def -->(value: Form): Seq[RequestBinding] =
-    Seq(new RequestBinding(null, t => {
-      val content = spec.serialize(value)
-      t.headerMap.add(Names.CONTENT_TYPE, spec.contentType.value)
-      t.headerMap.add(Names.CONTENT_LENGTH, content.length.toString)
-      t.content = content
-      t
+    Seq(new RequestBinding(null, req => {
+      val contentString = encodeDecode.encode(value)
+      req.headerMap.add(Names.CONTENT_TYPE, contentType.value)
+      req.headerMap.add(Names.CONTENT_LENGTH, contentString.length.toString)
+      req.contentString = contentString
+      req
     })) ++ fields.map(f => new FormFieldBinding(f, ""))
 
-  override def <--?(message: Message): Extraction[Form] =
-    Try(spec.deserialize(message.content)) match {
+  override def <--?(message: Message): Extraction[Form] = {
+    Try(encodeDecode.decode(fields, message)) match {
       case Success(form) => encodeDecode.extract(fields, form)
       case Failure(e) => ExtractionFailed(fields.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
     }
+  }
 }

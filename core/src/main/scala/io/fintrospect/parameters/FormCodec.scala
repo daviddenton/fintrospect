@@ -2,13 +2,13 @@ package io.fintrospect.parameters
 
 import java.net.{URLDecoder, URLEncoder}
 
+import com.twitter.finagle.http.Message
 import io.fintrospect.util._
 
 /**
   * Represents different strategies for decoding and encoding HTML forms.
   */
 trait FormCodec {
-
   protected def decodeFields(content: String): Map[String, Set[String]] = {
     content
       .split("&")
@@ -26,7 +26,7 @@ trait FormCodec {
     case (name, values) => values.map(value => URLEncoder.encode(name, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8"))
   }.mkString("&")
 
-  def decode(fields: Seq[Extractor[Form, _]], s: String): Form
+  def decode(fields: Seq[Extractor[Form, _]], msg: Message): Form
 
   def extract(fields: Seq[Extractor[Form, _]], f: Form): Extraction[Form]
 }
@@ -37,8 +37,8 @@ trait FormCodec {
   * As such, extracting an invalid webform from a request will not fail unless the body encoding itself is invalid.
   */
 class WebFormCodec(messages: Map[Parameter, String]) extends FormCodec {
-  override def decode(fields: Seq[Extractor[Form, _]], content: String): Form = {
-    val rawForm = new Form(decodeFields(content), Map.empty , Nil)
+  override def decode(fields: Seq[Extractor[Form, _]], msg: Message): Form = {
+    val rawForm = new Form(decodeFields(msg. contentString), Map.empty , Nil)
     new Form(rawForm.fields, Map.empty, fields.flatMap {
       _ <--? rawForm match {
         case ExtractionFailed(e) => e.map(er => ExtractionError(er.param, messages.getOrElse(er.param, er.reason)))
@@ -56,7 +56,7 @@ class WebFormCodec(messages: Map[Parameter, String]) extends FormCodec {
   * will auto-reject requests with a BadRequest.
   */
 class StrictFormCodec() extends FormCodec {
-  override def decode(fields: Seq[Extractor[Form, _]], content: String): Form = new Form(decodeFields(content), Map.empty, Nil)
+  override def decode(fields: Seq[Extractor[Form, _]], msg: Message): Form = new Form(decodeFields(msg.contentString), Map.empty, Nil)
 
   override def extract(fields: Seq[Extractor[Form, _]], form: Form): Extraction[Form] = Extraction.combine(fields.map(_.extract(form))) match {
     case failed@ExtractionFailed(_) => failed
