@@ -6,7 +6,7 @@ trait FormField[T]
   override val where = "form"
 }
 
-private object FormFieldExtractAndRebind extends ParameterExtractAndBind[Form, FormFieldBinding] {
+private object FormFieldExtractAndRebind extends ParameterExtractAndBind[Form, String, FormFieldBinding] {
   def newBinding(parameter: Parameter, value: String) = new FormFieldBinding(parameter, value)
 
   def valuesFrom(parameter: Parameter, form: Form): Option[Seq[String]] = form.field(parameter.name).map(_.toSeq)

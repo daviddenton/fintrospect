@@ -8,7 +8,7 @@ trait HeaderParameter[T]
   override val where = "header"
 }
 
-object HeaderExtractAndRebind extends ParameterExtractAndBind[Message, RequestBinding] {
+object HeaderExtractAndRebind extends ParameterExtractAndBind[Message, String, RequestBinding] {
   def newBinding(parameter: Parameter, value: String) = new RequestBinding(parameter, {
     req: Request => {
       req.headerMap.add(parameter.name, value)
