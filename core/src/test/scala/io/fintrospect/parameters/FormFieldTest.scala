@@ -31,7 +31,7 @@ class FormFieldTest extends FunSpec with Matchers {
       it("can rebind valid value") {
         val bindings = FormField.required.int("field") <-> new Form(Map("field" -> Set("123")))
         val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-        outForm.field("field") shouldBe Some(Set("123"))
+        outForm.fields.get("field") shouldBe Some(Set("123"))
       }
     }
 
@@ -54,7 +54,7 @@ class FormFieldTest extends FunSpec with Matchers {
       it("can rebind valid value") {
         val bindings = FormField.required.multi.int("field") <-> new Form(Map("field" -> Set("123", "456")))
         val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-        outForm.field("field") shouldBe Some(Set("123", "456"))
+        outForm.fields.get("field") shouldBe Some(Set("123", "456"))
       }
     }
 
@@ -77,7 +77,7 @@ class FormFieldTest extends FunSpec with Matchers {
       it("can rebind valid value") {
         val bindings = FormField.required.multi.int("field") <-> new Form(Map("field" -> Set("123", "456")))
         val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-        outForm.field("field") shouldBe Some(Set("123", "456"))
+        outForm.fields.get("field") shouldBe Some(Set("123", "456"))
       }
     }
   }
@@ -101,13 +101,13 @@ class FormFieldTest extends FunSpec with Matchers {
 
     it("can rebind valid value") {
       val outForm = FormField.optional.int("field") <-> new Form(Map("field" -> Set("123")))
-      outForm.foldLeft(Form()) { (form, next) => next(form) }.field("field") shouldBe Some(Set("123"))
+      outForm.foldLeft(Form()) { (form, next) => next(form) }.fields.get("field") shouldBe Some(Set("123"))
     }
 
     it("doesn't rebind missing value") {
       val bindings = FormField.optional.int("field") <-> Form()
       val outForm = bindings.foldLeft(Form()) { (requestBuild, next) => next(requestBuild) }
-      outForm.field("field") shouldBe None
+      outForm.fields.get("field") shouldBe None
     }
   }
 

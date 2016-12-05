@@ -66,10 +66,6 @@ case class Form protected[parameters](fields: Map[String, Set[String]],
   def +(key: String, value: String) = Form(fields + (key -> (fields.getOrElse(key, Set()) + value)), files, errors)
 
   def +(key: String, value: FileUpload) = Form(fields, files + (key -> (files.getOrElse(key, Set()) + value)), errors)
-
-  def field(name: String): Option[Set[String]] = fields.get(name)
-
-  def file(name: String): Option[Set[FileUpload]] = files.get(name)
 }
 
 object Form {
