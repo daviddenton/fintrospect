@@ -6,8 +6,8 @@ import io.fintrospect.util.ExtractionError
 /**
   * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
   */
-case class Form protected[parameters](fields: Map[String, Set[String]],
-                                      files: Map[String, Set[FileUpload]]= Map.empty,
+case class Form protected[parameters](fields: Map[String, Set[String]] = Map.empty,
+                                      files: Map[String, Set[FileUpload]] = Map.empty,
                                       errors: Seq[ExtractionError] = Nil) {
 
   def isValid = errors.isEmpty
@@ -73,5 +73,5 @@ object Form {
   /**
     * Make a form to send to a downsteam system from a set of bindings
     */
-  def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form(Map.empty, Map.empty, Nil))((f, b) => b(f))
+  def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form())((f, b) => b(f))
 }
