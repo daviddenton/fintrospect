@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.exp.Multipart.FileUpload
 import io.fintrospect.RequestBuilder
 
 /**
@@ -28,6 +29,10 @@ class RequestBinding(val parameter: Parameter, into: Request => Request) extends
 }
 
 class FormFieldBinding(parameter: Parameter, value: String) extends RequestBinding(parameter, identity) {
+  def apply(form: Form) = form +(parameter.name, value)
+}
+
+class FormFileBinding(parameter: Parameter, value: FileUpload) extends RequestBinding(parameter, identity) {
   def apply(form: Form) = form +(parameter.name, value)
 }
 
