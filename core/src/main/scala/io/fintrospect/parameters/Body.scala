@@ -8,13 +8,13 @@ import io.fintrospect.util.Extractor
 
 import scala.xml.Elem
 
-abstract class Body[T](protected val spec: BodySpec[T]) extends Iterable[BodyParameter]
+trait Body[T] extends Iterable[BodyParameter]
   with Mandatory[Message, T]
   with Rebindable[Message, T, RequestBinding] {
 
   override def <->(from: Message): Iterable[RequestBinding] = this --> (this <-- from)
 
-  val contentType: ContentType = spec.contentType
+  val contentType: ContentType
 }
 
 /**
