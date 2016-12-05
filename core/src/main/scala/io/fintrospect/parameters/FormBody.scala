@@ -7,7 +7,6 @@ import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}
 
-
 class FormBody(val fields: Seq[FormField[_] with Extractor[Form, _]], encodeDecode: FormCodec[Form])
   extends Body(BodySpec.string(None, APPLICATION_FORM_URLENCODED).map(b => encodeDecode.decode(fields, b), (f: Form) => encodeDecode.encode(f))) {
 

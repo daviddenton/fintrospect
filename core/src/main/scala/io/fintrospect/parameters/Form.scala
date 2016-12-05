@@ -1,38 +1,41 @@
 package io.fintrospect.parameters
 
+import com.twitter.finagle.http.exp.Multipart.FileUpload
 import io.fintrospect.util.ExtractionError
 
 /**
- * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
- */
-case class Form protected[parameters](fields: Map[String, Set[String]], errors: Seq[ExtractionError] = Nil) extends Iterable[(String, Set[String])] {
+  * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
+  */
+case class Form protected[parameters](fields: Map[String, Set[String]],
+                                      files: Map[String, Set[FileUpload]]= Map.empty,
+                                      errors: Seq[ExtractionError] = Nil) {
 
   def isValid = errors.isEmpty
 
   /**
-   * Convenience method to retrieve multiple fields from form
-   */
+    * Convenience method to retrieve multiple fields from form
+    */
   def <--[A](fieldA: Retrieval[Form, A]):
   A = fieldA <-- this
 
   /**
-   * Convenience method to retrieve multiple fields from form
-   */
+    * Convenience method to retrieve multiple fields from form
+    */
   def <--[A, B](fieldA: Retrieval[Form, A],
                 fieldB: Retrieval[Form, B]):
   (A, B) = (fieldA <-- this, fieldB <-- this)
 
   /**
-   * Convenience method to retrieve multiple fields from form
-   */
+    * Convenience method to retrieve multiple fields from form
+    */
   def <--[A, B, C](fieldA: Retrieval[Form, A],
                    fieldB: Retrieval[Form, B],
                    fieldC: Retrieval[Form, C]):
   (A, B, C) = (fieldA <-- this, fieldB <-- this, fieldC <-- this)
 
   /**
-   * Convenience method to retrieve multiple fields from form
-   */
+    * Convenience method to retrieve multiple fields from form
+    */
   def <--[A, B, C, D](fieldA: Retrieval[Form, A],
                       fieldB: Retrieval[Form, B],
                       fieldC: Retrieval[Form, C],
@@ -40,8 +43,8 @@ case class Form protected[parameters](fields: Map[String, Set[String]], errors: 
   (A, B, C, D) = (fieldA <-- this, fieldB <-- this, fieldC <-- this, fieldD <-- this)
 
   /**
-   * Convenience method to retrieve multiple fields from form
-   */
+    * Convenience method to retrieve multiple fields from form
+    */
   def <--[A, B, C, D, E](fieldA: Retrieval[Form, A],
                          fieldB: Retrieval[Form, B],
                          fieldC: Retrieval[Form, C],
@@ -50,8 +53,8 @@ case class Form protected[parameters](fields: Map[String, Set[String]], errors: 
   (A, B, C, D, E) = (fieldA <-- this, fieldB <-- this, fieldC <-- this, fieldD <-- this, fieldE <-- this)
 
   /**
-   * Convenience method to retrieve multiple fields from form
-   */
+    * Convenience method to retrieve multiple fields from form
+    */
   def <--[A, B, C, D, E, F](fieldA: Retrieval[Form, A],
                             fieldB: Retrieval[Form, B],
                             fieldC: Retrieval[Form, C],
@@ -60,11 +63,13 @@ case class Form protected[parameters](fields: Map[String, Set[String]], errors: 
                             fieldF: Retrieval[Form, F]):
   (A, B, C, D, E, F) = (fieldA <-- this, fieldB <-- this, fieldC <-- this, fieldD <-- this, fieldE <-- this, fieldF <-- this)
 
-  def +(key: String, value: String) = Form(fields + (key -> (fields.getOrElse(key, Set()) + value)), errors)
+  def +(key: String, value: String) = Form(fields + (key -> (fields.getOrElse(key, Set()) + value)), files, errors)
 
-  def get(name: String): Option[Set[String]] = fields.get(name)
+  def +(key: String, value: FileUpload) = Form(fields, files + (key -> (files.getOrElse(key, Set()) + value)), errors)
 
-  override def iterator: Iterator[(String, Set[String])] = fields.iterator
+  def field(name: String): Option[Set[String]] = fields.get(name)
+
+  def file(name: String): Option[Set[FileUpload]] = files.get(name)
 }
 
 object Form {
@@ -72,5 +77,5 @@ object Form {
   /**
     * Make a form to send to a downsteam system from a set of bindings
     */
-  def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form(Map.empty, Nil))((f, b) => b(f))
+  def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form(Map.empty, Map.empty, Nil))((f, b) => b(f))
 }

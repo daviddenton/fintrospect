@@ -9,7 +9,7 @@ trait FormField[T]
 private object FormFieldExtractAndRebind extends ParameterExtractAndBind[Form, FormFieldBinding] {
   def newBinding(parameter: Parameter, value: String) = new FormFieldBinding(parameter, value)
 
-  def valuesFrom(parameter: Parameter, form: Form): Option[Seq[String]] = form.get(parameter.name).map(_.toSeq)
+  def valuesFrom(parameter: Parameter, form: Form): Option[Seq[String]] = form.field(parameter.name).map(_.toSeq)
 }
 
 abstract class MultiFormField[T](spec: ParameterSpec[T])

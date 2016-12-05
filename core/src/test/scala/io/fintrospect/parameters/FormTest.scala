@@ -18,7 +18,7 @@ class FormTest extends FunSpec with Matchers {
 
   describe("construction") {
     it("from a set of bindings") {
-      Form(Seq(new FormFieldBinding(field1, "value"))).iterator.toSeq shouldBe Seq(("field1", Set("value")))
+      Form(Seq(new FormFieldBinding(field1, "value"))).fields.toSeq shouldBe Seq(("field1", Set("value")))
     }
   }
 
