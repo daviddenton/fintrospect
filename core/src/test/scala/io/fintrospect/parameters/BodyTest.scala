@@ -100,7 +100,7 @@ class BodyTest extends FunSpec with Matchers {
       request.contentString shouldBe "aString=asd"
       request.headerMap(Names.CONTENT_TYPE) shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
-      deserializedForm shouldBe new Form(inputForm.fields, Seq(ExtractionError(anotherString, "Custom")))
+      deserializedForm shouldBe new Form(inputForm.fields, Map.empty, Seq(ExtractionError(anotherString, "Custom")))
     }
   }
 
