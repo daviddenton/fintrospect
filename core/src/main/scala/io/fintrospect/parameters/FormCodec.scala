@@ -7,7 +7,7 @@ import io.fintrospect.util._
 /**
   * Represents different strategies for decoding and encoding HTML forms.
   */
-trait FormCodec[T] {
+trait FormCodec {
 
   protected def decodeFields(content: String): Map[String, Set[String]] = {
     content
@@ -26,9 +26,9 @@ trait FormCodec[T] {
     case (name, values) => values.map(value => URLEncoder.encode(name, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8"))
   }.mkString("&")
 
-  def decode(fields: Seq[Extractor[Form, _]], s: String): T
+  def decode(fields: Seq[Extractor[Form, _]], s: String): Form
 
-  def extract(fields: Seq[Extractor[Form, _]], f: T): Extraction[T]
+  def extract(fields: Seq[Extractor[Form, _]], f: Form): Extraction[Form]
 }
 
 /**
@@ -36,7 +36,7 @@ trait FormCodec[T] {
   * This form-type is to be used for web forms (where feedback is desirable and the user can be redirected back to the form page).
   * As such, extracting an invalid webform from a request will not fail unless the body encoding itself is invalid.
   */
-class WebFormCodec(messages: Map[Parameter, String]) extends FormCodec[Form] {
+class WebFormCodec(messages: Map[Parameter, String]) extends FormCodec {
   override def decode(fields: Seq[Extractor[Form, _]], content: String): Form = {
     val rawForm = new Form(decodeFields(content), Map.empty , Nil)
     new Form(rawForm.fields, Map.empty, fields.flatMap {
@@ -55,7 +55,7 @@ class WebFormCodec(messages: Map[Parameter, String]) extends FormCodec[Form] {
   * This form is used for non-web forms (where the posted form is merely an url-encoded set of form parameters) and
   * will auto-reject requests with a BadRequest.
   */
-class StrictFormCodec() extends FormCodec[Form] {
+class StrictFormCodec() extends FormCodec {
   override def decode(fields: Seq[Extractor[Form, _]], content: String): Form = new Form(decodeFields(content), Map.empty, Nil)
 
   override def extract(fields: Seq[Extractor[Form, _]], form: Form): Extraction[Form] = Extraction.combine(fields.map(_.extract(form))) match {
