@@ -7,7 +7,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 13.14.0 (uncut)
+## 13.14.0
 - Added `Body.binary`, for transmission of binary HTTP messages
 - Added support for MultiPart forms (both strict and with error-reporting).
 - Tweaked Mustache implementation and removed a dependency.
