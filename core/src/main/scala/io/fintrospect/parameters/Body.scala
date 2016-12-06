@@ -47,16 +47,26 @@ object Body {
     * for server-server communications when you want the server to reject with a BadRequest.
     * This method simply takes a set of form fields.
     */
-  def form(fields: FormField[_] with Extractor[Form, _]*): UrlEncodedFormBody = new UrlEncodedFormBody(fields, new StrictFormCodec())
+  def form(fields: FormField[_] with Extractor[Form, _]*): UrlEncodedFormBody = new UrlEncodedFormBody(fields, StrictFormValidator, StrictFormFieldExtractor)
 
   /**
     * HTML encoded form HTTP message body which deserializes even if fields are missing/invalid. Use this
     * for browser-server communications where you want to give feedback to the user.
     * This method takes a set of form fields, combined with their relevant error messages in case of validation failure.
     */
-  def webForm(fields: (FormField[_] with Extractor[Form, _], String)*): UrlEncodedFormBody = new UrlEncodedFormBody(fields.map(_._1), new WebFormCodec(Map(fields: _*)))
+  def webForm(fields: (FormField[_] with Extractor[Form, _], String)*): UrlEncodedFormBody = new UrlEncodedFormBody(fields.map(_._1), new WebFormValidator(Map(fields: _*)), WebFormFieldExtractor)
 
-  def multiPartForm(fields: FormField[_] with Extractor[Form, _]*): MultiPartFormBody = new MultiPartFormBody(fields, new StrictFormCodec())
+  /**
+    * MultiPart encoded form HTTP message body which will fail to deserialize if a single field is missing/invalid. Use this
+    * for server-server communications when you want the server to reject with a BadRequest.
+    * This method simply takes a set of form fields.
+    */
+  def multiPartForm(fields: FormField[_] with Extractor[Form, _]*): MultiPartFormBody = new MultiPartFormBody(fields, StrictFormValidator, StrictFormFieldExtractor)
 
-  def multiPartWebForm(fields: (FormField[_] with Extractor[Form, _], String)*): MultiPartFormBody = new MultiPartFormBody(fields.map(_._1), new StrictFormCodec())
+  /**
+    * MultiPart encoded form HTTP message body which deserializes even if fields are missing/invalid. Use this
+    * for browser-server communications where you want to give feedback to the user.
+    * This method takes a set of form fields, combined with their relevant error messages in case of validation failure.
+    */
+  def multiPartWebForm(fields: (FormField[_] with Extractor[Form, _], String)*): MultiPartFormBody = new MultiPartFormBody(fields.map(_._1), StrictFormValidator, WebFormFieldExtractor)
 }
