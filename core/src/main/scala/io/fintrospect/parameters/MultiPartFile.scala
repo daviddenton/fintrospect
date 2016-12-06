@@ -1,14 +1,15 @@
 package io.fintrospect.parameters
 
 import java.io.{File, RandomAccessFile}
-import java.nio.channels.FileChannel
+import java.nio.channels.FileChannel.MapMode.READ_ONLY
 
+import com.twitter.finagle.http.FileElement
 import com.twitter.finagle.http.exp.Multipart.{FileUpload, InMemoryFileUpload, OnDiskFileUpload}
-import com.twitter.finagle.http.{FileElement, FormElement}
-import com.twitter.io.{Buf, Bufs}
+import com.twitter.io.Buf
+import com.twitter.io.Bufs.ownedBuf
 
 sealed trait MultiPartFile {
-  def toFormElement(name: String): FormElement
+  def toFileElement(name: String): FileElement
 }
 
 object MultiPartFile {
@@ -22,7 +23,7 @@ object MultiPartFile {
   * This is a multipart form file element that is under the max memory limit, and thus has been kept
   */
 case class InMemoryMultiPartFile(content: Buf, contentType: Option[String] = None, filename: Option[String] = None) extends MultiPartFile {
-  def toFormElement(name: String): FormElement = FileElement(name, content, contentType, filename)
+  def toFileElement(name: String): FileElement = FileElement(name, content, contentType, filename)
 }
 
 /**
@@ -30,10 +31,10 @@ case class InMemoryMultiPartFile(content: Buf, contentType: Option[String] = Non
   */
 case class OnDiskMultiPartFile(content: File, contentType: Option[String] = None, filename: Option[String] = None) extends MultiPartFile {
 
-  def toFormElement(name: String): FormElement = FileElement(name, toBuffer(), contentType, filename)
+  def toFileElement(name: String): FileElement = FileElement(name, toBuffer, contentType, filename)
 
-  private def toBuffer() = {
+  private def toBuffer = {
     val channel = new RandomAccessFile(content, "r").getChannel
-    Bufs.ownedBuf(channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size()))
+    ownedBuf(channel.map(READ_ONLY, 0, channel.size()))
   }
 }
