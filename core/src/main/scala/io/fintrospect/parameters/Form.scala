@@ -72,5 +72,5 @@ object Form {
   /**
     * Make a form to send to a downsteam system from a set of bindings
     */
-  def apply(bindings: Iterable[FormFieldBinding]*): Form = bindings.flatten.foldLeft(new Form())((f, b) => b(f))
+  def apply(bindings: Iterable[FormElementBinding]*): Form = bindings.flatten.foldLeft(new Form())((f, b) => b(f))
 }

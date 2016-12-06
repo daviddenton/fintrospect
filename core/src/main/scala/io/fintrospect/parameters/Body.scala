@@ -55,4 +55,8 @@ object Body {
     * This method takes a set of form fields, combined with their relevant error messages in case of validation failure.
     */
   def webForm(fields: (FormField[_] with Extractor[Form, _], String)*): UrlEncodedFormBody = new UrlEncodedFormBody(fields.map(_._1), new WebFormCodec(Map(fields: _*)))
+
+  def multiPartForm(fields: FormField[_] with Extractor[Form, _]*): MultiPartFormBody = new MultiPartFormBody(fields, new StrictFormCodec())
+
+  def multiPartWebForm(fields: (FormField[_] with Extractor[Form, _], String)*): MultiPartFormBody = new MultiPartFormBody(fields.map(_._1), new StrictFormCodec())
 }

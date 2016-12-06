@@ -14,6 +14,7 @@ import io.fintrospect.{ContentType, ContentTypes, RequestBuilder}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 import org.scalatest.{FunSpec, Matchers}
 
+import scala.language.reflectiveCalls
 import scala.xml.XML
 
 class BodyTest extends FunSpec with Matchers {
@@ -99,8 +100,50 @@ class BodyTest extends FunSpec with Matchers {
 
       request.contentString shouldBe "aString=asd"
       request.headerMap(Names.CONTENT_TYPE) shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
+      formBody from request shouldBe new Form(inputForm.fields, Map.empty, Seq(ExtractionError(anotherString, "Custom")))
+    }
+  }
+
+  describe("multipartform") {
+    ignore("should serialize and deserialize into the request") {
+      val date = FormField.required.localDate("date")
+      val file = FormField.required.file("file")
+      val formBody = Body.multiPartForm(date, file)
+      val inputForm = Form(date --> LocalDate.of(1976, 8, 31), file --> MultiPartFile(Buf.Utf8("bob"), None, None))
+      val bindings = formBody --> inputForm
+      val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
+
+      request.headerMap(Names.CONTENT_TYPE) shouldBe ContentTypes.MULTIPART_FORM.value
       val deserializedForm = formBody from request
-      deserializedForm shouldBe new Form(inputForm.fields, Map.empty, Seq(ExtractionError(anotherString, "Custom")))
+      deserializedForm shouldBe inputForm
+    }
+
+    ignore("can rebind valid value") {
+      val date = FormField.required.localDate("date")
+      val file = FormField.required.file("file")
+      val formBody = Body.multiPartForm(date, file)
+      val inputForm = Form(date --> LocalDate.of(1976, 8, 31), file --> MultiPartFile(Buf.Utf8("bob"), None, None))
+      val bindings = formBody --> inputForm
+      val inRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
+      val rebindings = formBody <-> inRequest
+      val outRequest = rebindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
+      val deserializedForm = formBody from outRequest
+      deserializedForm shouldBe inputForm
+    }
+  }
+
+  describe("multipartwebform") {
+    ignore("collects valid and invalid fields from the request, and maps error fields to custom messages") {
+      val optional = FormField.optional.string("anOption")
+      val string = FormField.required.string("aString")
+      val file = FormField.required.file("anotherString")
+      val formBody = Body.multiPartWebForm(optional -> "Custom", string -> "Custom", file -> "Custom")
+      val inputForm = Form(string --> "asd")
+      val bindings = formBody --> inputForm
+      val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
+
+      request.headerMap(Names.CONTENT_TYPE) shouldBe ContentTypes.MULTIPART_FORM.value
+      formBody from request shouldBe new Form(inputForm.fields, Map.empty, Seq(ExtractionError(file, "Custom")))
     }
   }
 

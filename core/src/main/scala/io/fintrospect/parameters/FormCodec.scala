@@ -38,7 +38,7 @@ trait FormCodec {
   */
 class WebFormCodec(messages: Map[Parameter, String]) extends FormCodec {
   override def decode(fields: Seq[Extractor[Form, _]], msg: Message): Form = {
-    val rawForm = new Form(decodeFields(msg. contentString), Map.empty , Nil)
+    val rawForm = new Form(decodeFields(msg.contentString), Map.empty, Nil)
     new Form(rawForm.fields, Map.empty, fields.flatMap {
       _ <--? rawForm match {
         case ExtractionFailed(e) => e.map(er => ExtractionError(er.param, messages.getOrElse(er.param, er.reason)))
