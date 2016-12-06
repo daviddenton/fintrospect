@@ -136,10 +136,10 @@ class BodyTest extends FunSpec with Matchers {
   }
 
   describe("multipartwebform") {
-    ignore("collects valid and invalid fields from the request, and maps error fields to custom messages") {
+    it("collects valid and invalid fields from the request, and maps error fields to custom messages") {
       val optional = FormField.optional.string("anOption")
       val string = FormField.required.string("aString")
-      val file = FormField.required.file("aFile")
+      val file = FormField.required.multi.file("aFile")
       val formBody = Body.multiPartWebForm(optional -> "Custom", string -> "Custom", file -> "Custom")
       val inputForm = Form(string --> "asd")
       val bindings = formBody --> inputForm
