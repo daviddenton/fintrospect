@@ -9,6 +9,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## 13.14.0 (uncut)
 - Added `Body.binary`, for transmission of binary HTTP messages
+- Added support for MultiPart forms (both strict and with error-reporting).
 - Tweaked Mustache implementation and removed a dependency.
 
 ## 13.13.0
