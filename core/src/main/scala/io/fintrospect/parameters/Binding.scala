@@ -27,11 +27,15 @@ class RequestBinding(val parameter: Parameter, into: Request => Request) extends
   def apply(requestBuild: RequestBuilder) = requestBuild.copy(fn = requestBuild.fn.andThen(into))
 }
 
-class FormFieldBinding(parameter: Parameter, value: String) extends RequestBinding(parameter, identity) {
-  def apply(form: Form) = form +(parameter.name, value)
+trait FormElementBinding extends (Form => Form)
+
+class FormFieldBinding(parameter: Parameter, value: String)
+  extends RequestBinding(parameter, identity) with FormElementBinding {
+  override def apply(form: Form) = form + (parameter.name, value)
 }
 
-class FormFileBinding(parameter: Parameter, value: MultiPartFile) extends RequestBinding(parameter, identity) {
-  def apply(form: Form) = form +(parameter.name, value)
+class FormFileBinding(parameter: Parameter, value: MultiPartFile)
+  extends RequestBinding(parameter, identity) with FormElementBinding {
+  def apply(form: Form) = form + (parameter.name, value)
 }
 
