@@ -8,13 +8,13 @@ import io.fintrospect.util.{Extraction, ExtractionError, ExtractionFailed, Extra
 
 import scala.util.{Failure, Success, Try}
 
-class MultiPartFormBody(fields: Seq[FormField[_] with Extractor[Form, _]],
+class MultiPartFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
                         validator: FormValidator, extractor: FormFieldExtractor)
   extends Body[Form] {
 
   override val contentType = MULTIPART_FORM
 
-  override def iterator = fields.iterator
+  override def iterator = formContents.iterator
 
   def -->(value: Form): Seq[RequestBinding] =
     Seq(new RequestBinding(null, req => {
@@ -33,17 +33,15 @@ class MultiPartFormBody(fields: Seq[FormField[_] with Extractor[Form, _]],
   override def <--?(message: Message): Extraction[Form] = message.asInstanceOf[Request].multipart
     .map(m => {
       val multipart = message.asInstanceOf[Request].multipart.get
-      Try(validator(fields, Form(multipart.attributes.mapValues(_.toSet), multipart.files.mapValues(_.map(toMultipartFile).toSet)))) match {
-        case Success(form) => extractor(fields, form)
-        case Failure(e) => ExtractionFailed(fields.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
+      Try(validator(formContents, Form(multipart.attributes.mapValues(_.toSet), multipart.files.mapValues(_.map(toMultipartFile).toSet)))) match {
+        case Success(form) => extractor(formContents, form)
+        case Failure(e) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
       }
-    }).getOrElse(ExtractionFailed(fields.filter(_.required).map(param => ExtractionError(param, "Could not parse"))))
+    }).getOrElse(ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse"))))
 
-  private def toMultipartFile(f: FileUpload) = {
-    f match {
-      case InMemoryFileUpload(content, fileType, name, _) => MultiPartFile(content, Option(fileType), Option(name))
-      // FIXME - OnDiskUploads!
-      case OnDiskFileUpload(_, fileType, name, _) => MultiPartFile(Buf.Empty, Option(fileType), Option(name))
-    }
+  private def toMultipartFile(fileUpload: FileUpload) = fileUpload match {
+    case InMemoryFileUpload(content, fileType, name, _) => MultiPartFile(content, Option(fileType), Option(name))
+    // FIXME - OnDiskUploads!
+    case OnDiskFileUpload(_, fileType, name, _) => MultiPartFile(Buf.Empty, Option(fileType), Option(name))
   }
 }

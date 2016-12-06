@@ -9,13 +9,13 @@ import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}
 
-class UrlEncodedFormBody(fields: Seq[FormField[_] with Extractor[Form, _]],
+class UrlEncodedFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
                          validator: FormValidator, extractor: FormFieldExtractor)
   extends Body[Form] {
 
   override val contentType = APPLICATION_FORM_URLENCODED
 
-  override def iterator = fields.iterator
+  override def iterator = formContents.iterator
 
   private def decodeFields(content: String): Map[String, Set[String]] = {
     content
@@ -42,11 +42,11 @@ class UrlEncodedFormBody(fields: Seq[FormField[_] with Extractor[Form, _]],
       req.headerMap.add(Names.CONTENT_LENGTH, contentString.length.toString)
       req.contentString = contentString
       req
-    })) ++ fields.map(f => new FormFieldBinding(f, ""))
+    })) ++ formContents.map(f => new FormFieldBinding(f, ""))
 
   override def <--?(message: Message): Extraction[Form] =
-    Try(validator(fields, new Form(decodeFields(message.contentString), Map.empty, Nil))) match {
-      case Success(form) => extractor(fields, form)
-      case Failure(e) => ExtractionFailed(fields.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
+    Try(validator(formContents, new Form(decodeFields(message.contentString), Map.empty, Nil))) match {
+      case Success(form) => extractor(formContents, form)
+      case Failure(e) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
     }
 }
