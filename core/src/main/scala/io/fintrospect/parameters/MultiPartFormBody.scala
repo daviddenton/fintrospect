@@ -17,7 +17,7 @@ class MultiPartFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
   def -->(value: Form): Seq[RequestBinding] =
     Seq(new RequestBinding(null, req => {
       val fields = value.fields.flatMap(f => f._2.map(g => SimpleElement(f._1, g))).toSeq
-      val files = value.files.flatMap(f => f._2.map(_.toFormElement(f._1))).toSeq
+      val files = value.files.flatMap(f => f._2.map(_.toFileElement(f._1))).toSeq
 
       val next = RequestBuilder()
         .url("http://notreallyaserver")
