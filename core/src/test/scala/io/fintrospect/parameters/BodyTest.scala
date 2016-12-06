@@ -110,28 +110,28 @@ class BodyTest extends FunSpec with Matchers {
       val date = FormField.required.localDate("date")
       val file = FormField.required.file("file")
       val formBody = Body.multiPartForm(date, file)
-      val inputForm = Form(date --> LocalDate.of(1976, 8, 31), file --> MultiPartFile(Buf.Utf8("bob"), Option("type"), Option("Hello")))
+      val inputForm = Form(date --> LocalDate.of(1976, 8, 31), file --> InMemoryMultiPartFile(Buf.Utf8("bob"), Option("type"), Option("Hello")))
       val bindings = formBody --> inputForm
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
       request.headerMap(CONTENT_TYPE).startsWith(MULTIPART_FORM.value) shouldBe true
       val deserializedForm = formBody from request
       date <-- deserializedForm shouldBe LocalDate.of(1976, 8, 31)
-      Bufs.asUtf8String((file <-- deserializedForm).content) shouldBe "bob"
+      Bufs.asUtf8String((file <-- deserializedForm).asInstanceOf[InMemoryMultiPartFile].content) shouldBe "bob"
     }
 
     it("can rebind valid value") {
       val date = FormField.required.localDate("date")
       val file = FormField.required.file("file")
       val formBody = Body.multiPartForm(date, file)
-      val inputForm = Form(date --> LocalDate.of(1976, 8, 31), file --> MultiPartFile(Buf.Utf8("bob"), None, None))
+      val inputForm = Form(date --> LocalDate.of(1976, 8, 31), file --> InMemoryMultiPartFile(Buf.Utf8("bob"), None, None))
       val bindings = formBody --> inputForm
       val inRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
       val rebindings = formBody <-> inRequest
       val outRequest = rebindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
       val deserializedForm = formBody from outRequest
       date <-- deserializedForm shouldBe LocalDate.of(1976, 8, 31)
-      Bufs.asUtf8String((file <-- deserializedForm).content) shouldBe "bob"
+      Bufs.asUtf8String((file <-- deserializedForm).asInstanceOf[InMemoryMultiPartFile].content) shouldBe "bob"
     }
   }
 
