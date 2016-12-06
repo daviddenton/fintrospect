@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http._
+import com.twitter.io.Buf
 import io.fintrospect.ContentTypes.{APPLICATION_FORM_URLENCODED, MULTIPART_FORM}
 import io.fintrospect.util.{Extraction, ExtractionError, ExtractionFailed, Extractor}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names
@@ -50,7 +51,7 @@ class MultiPartFormBody(val fields: Seq[FormField[_] with Extractor[Form, _]], e
       val multipart = message.asInstanceOf[Request].multipart.get
       Try(Form(
         multipart.attributes.mapValues(_.toSet),
-        multipart.files.mapValues(_.toSet)
+        multipart.files.mapValues(_.map(f => MultiPartFile(Buf.Empty, Option(f.contentType), Option(f.fileName))).toSet)
       )) match {
         case Success(form) => encodeDecode.extract(fields, form)
         case Failure(e) => ExtractionFailed(fields.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
