@@ -3,7 +3,7 @@ package io.fintrospect.formats
 import java.math.BigInteger
 
 /**
-  * Capability to create and parse JSON message formats in a generic way. Used to serialise and deserialise
+  * Capability to create and parse JSON message formats in a generic way. Used to serialize and deserialize
   * request parameters and bodies.
   */
 trait JsonFormat[ROOT_NODETYPE, NODETYPE] {

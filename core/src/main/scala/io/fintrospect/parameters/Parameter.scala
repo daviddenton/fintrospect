@@ -29,10 +29,10 @@ trait Parameter {
 /**
   * Parameter location specific utility functions to assist with extraction and binding of values
   */
-trait ParameterExtractAndBind[From, B <: Binding] {
-  def newBinding(parameter: Parameter, value: String): B
+trait ParameterExtractAndBind[From, Rep, B <: Binding] {
+  def newBinding(parameter: Parameter, value: Rep): B
 
-  def valuesFrom(parameter: Parameter, from: From): Option[Seq[String]]
+  def valuesFrom(parameter: Parameter, from: From): Option[Seq[Rep]]
 }
 
 trait OptionalParameter[From, T, Bnd <: Binding] extends Optional[From, T]
@@ -52,7 +52,7 @@ trait MandatoryParameter[From, T, Bnd <: Binding] extends Mandatory[From, T]
   override def <->(from: From): Iterable[Bnd] = this --> (this <-- from)
 }
 
-abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, B])
+abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends Parameter with Bindable[T, B] {
 
   override val name = spec.name
@@ -64,7 +64,7 @@ abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], ea
   def <--?(from: From) = extractFrom(xs => Try(spec.deserialize(xs.head)), eab.valuesFrom(this, from))
 }
 
-abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, B])
+abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends Parameter with Bindable[Seq[T], B] {
   override val name = spec.name
   override val description = spec.description
@@ -74,3 +74,5 @@ abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab
 
   def <--?(from: From): Extraction[Seq[T]] = extractFrom(xs => Try(xs.map(spec.deserialize)), eab.valuesFrom(this, from))
 }
+
+

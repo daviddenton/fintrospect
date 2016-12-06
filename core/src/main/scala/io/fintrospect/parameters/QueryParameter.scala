@@ -10,7 +10,7 @@ trait QueryParameter[T]
   override val where = "query"
 }
 
-object QueryExtractAndRebind extends ParameterExtractAndBind[Request, QueryBinding] {
+object QueryExtractAndRebind extends ParameterExtractAndBind[Request, String, QueryBinding] {
   def newBinding(parameter: Parameter, value: String) = new QueryBinding(parameter, value)
 
   def valuesFrom(parameter: Parameter, request: Request): Option[Seq[String]] =

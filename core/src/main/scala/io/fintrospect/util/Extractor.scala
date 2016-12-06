@@ -7,12 +7,12 @@ import io.fintrospect.parameters.Parameter
   */
 trait Extractor[-From, +T] {
   /**
-    * Attempt to manually deserialise from the message object.
+    * Attempt to manually deserialize from the message object.
     */
   def <--?(from: From): Extraction[T]
 
   /**
-    * Attempt to manually deserialise from the message object.
+    * Attempt to manually deserialize from the message object.
     * User-friendly synonym for <--?(), which is why the method is final.
     */
   final def extract(from: From): Extraction[T] = <--?(from)
@@ -20,7 +20,7 @@ trait Extractor[-From, +T] {
 
 object Extractor {
   /**
-    * Create an extractable from a simple function. This is stylistic, similar to Service.mk and Filter.mk
+    * Create an extractor from a simple function. This is stylistic, similar to Service.mk and Filter.mk
     */
   def mk[From, T](fn:From => Extraction[T]): Extractor[From, T] = new Extractor[From, T] {
     override def <--?(from: From): Extraction[T] = fn(from)
@@ -33,13 +33,13 @@ object Extractor {
 trait ExtractableParameter[-From, +T] extends Parameter with Extractor[From, T] {
 
   /**
-    * Attempt to manually deserialise from the message object, using a validation predicate and reason for failure.
+    * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
     */
   def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[T] =
     <--?(from).flatMap[T](v => if (v.forall(predicate)) Extraction(v) else ExtractionFailed(ExtractionError(this, reason)))
 
   /**
-    * Attempt to manually deserialise from the message object, using a validation predicate and reason for failure.
+    * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
     * User-friendly synonym for <--?(), which is why the method is final.
     */
   final def extract(from: From, reason: String, predicate: T => Boolean): Extraction[T] = <--?(from, reason, predicate)
