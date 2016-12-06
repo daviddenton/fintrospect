@@ -2,8 +2,6 @@ package io.fintrospect.parameters
 
 import java.time.LocalDate
 
-import com.twitter.finagle.http.exp.Multipart
-import com.twitter.finagle.http.exp.Multipart.InMemoryFileUpload
 import com.twitter.io.Buf
 import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
 import io.fintrospect.util.ExtractionError.{Invalid, Missing}
@@ -44,14 +42,21 @@ class FormFieldTest extends FunSpec with Matchers {
       describe("file") {
         val file = FormField.required.file(paramName)
 
+        val data = MultiPartFile(Buf.Utf8("bob"), None, None)
+
         it("validates value from form file") {
-          val data = InMemoryFileUpload(Buf.Utf8("bob"), "content", "name", "encoding")
           file.extract(formWithFileOf(data)) shouldBe Extracted(Some(data))
           file <-- formWithFileOf(data) shouldBe data
         }
 
         it("does not validate non existent value") {
           file.extract(formWithFileOf()) shouldBe ExtractionFailed(Missing(file))
+        }
+
+        it("can rebind valid value") {
+          val bindings = FormField.required.file("field") <-> new Form(files = Map("field" -> Set(data)))
+          val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
+          outForm.files.get("field") shouldBe Some(Set(data))
         }
       }
     }
@@ -78,20 +83,26 @@ class FormFieldTest extends FunSpec with Matchers {
           val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
           outForm.fields.get("field") shouldBe Some(Set("123", "456"))
         }
+      }
 
-        describe("file") {
-          val file = FormField.required.multi.file(paramName)
+      describe("file") {
+        val file = FormField.required.multi.file(paramName)
+        val data1 = MultiPartFile(Buf.Utf8("bob"), None, None)
+        val data2 = MultiPartFile(Buf.Utf8("bill"), None, None)
 
-          it("validates value from form file") {
-            val data1 = InMemoryFileUpload(Buf.Utf8("bob"), "content", "name", "encoding")
-            val data2 = InMemoryFileUpload(Buf.Utf8("bill"), "content", "name", "encoding")
-            file.extract(formWithFileOf(data1, data2)) shouldBe Extracted(Some(Seq(data1, data2)))
-            file <-- formWithFileOf(data1, data2) shouldBe Seq(data1, data2)
-          }
+        it("validates value from form file") {
+          file.extract(formWithFileOf(data1, data2)) shouldBe Extracted(Some(Seq(data1, data2)))
+          file <-- formWithFileOf(data1, data2) shouldBe Seq(data1, data2)
+        }
 
-          it("does not validate non existent value") {
-            file.extract(formWithFileOf()) shouldBe ExtractionFailed(Missing(file))
-          }
+        it("does not validate non existent value") {
+          file.extract(formWithFileOf()) shouldBe ExtractionFailed(Missing(file))
+        }
+
+        it("can rebind valid value") {
+          val bindings = FormField.required.multi.file("field") <-> new Form(files = Map("field" -> Set(data1, data2)))
+          val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
+          outForm.files.get("field") shouldBe Some(Set(data1, data2))
         }
       }
 
@@ -154,8 +165,9 @@ class FormFieldTest extends FunSpec with Matchers {
     describe("file") {
       val file = FormField.optional.file(paramName)
 
+      val data = MultiPartFile(Buf.Utf8("bob"), None, None)
+
       it("validates value from form file") {
-        val data = InMemoryFileUpload(Buf.Utf8("bob"), "content", "name", "encoding")
         file.extract(formWithFileOf(data)) shouldBe Extracted(Some(data))
         file <-- formWithFileOf(data) shouldBe Some(data)
       }
@@ -164,12 +176,24 @@ class FormFieldTest extends FunSpec with Matchers {
         file.extract(formWithFileOf()) shouldBe Extracted(None)
         file <-- formWithFileOf() shouldBe None
       }
+
+      it("can rebind valid value") {
+        val outForm = FormField.optional.file("field") <-> new Form(files = Map("field" -> Set(data)))
+        outForm.foldLeft(Form()) { (form, next) => next(form) }.files.get("field") shouldBe Some(Set(data))
+      }
+
+      it("doesn't rebind missing value") {
+        val bindings = FormField.optional.file("field") <-> Form()
+        val outForm = bindings.foldLeft(Form()) { (requestBuild, next) => next(requestBuild) }
+        outForm.files.get("field") shouldBe None
+      }
+
     }
 
 
   }
 
-  private def formWithFileOf(value: Multipart.FileUpload*) = if (value.isEmpty) new Form() else new Form(files = Map(paramName -> value.toSet))
+  private def formWithFileOf(value: MultiPartFile*) = if (value.isEmpty) new Form() else new Form(files = Map(paramName -> value.toSet))
 
   private def formWithFieldOf(value: String*) = if (value.isEmpty) new Form() else new Form(Map(paramName -> value.toSet))
 }

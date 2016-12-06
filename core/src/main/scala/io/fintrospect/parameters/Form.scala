@@ -1,13 +1,12 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.exp.Multipart.FileUpload
 import io.fintrospect.util.ExtractionError
 
 /**
   * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
   */
 case class Form protected[parameters](fields: Map[String, Set[String]] = Map.empty,
-                                      files: Map[String, Set[FileUpload]] = Map.empty,
+                                      files: Map[String, Set[MultiPartFile]] = Map.empty,
                                       errors: Seq[ExtractionError] = Nil) {
 
   def isValid = errors.isEmpty
@@ -65,7 +64,7 @@ case class Form protected[parameters](fields: Map[String, Set[String]] = Map.emp
 
   def +(key: String, value: String) = Form(fields + (key -> (fields.getOrElse(key, Set()) + value)), files, errors)
 
-  def +(key: String, value: FileUpload) = Form(fields, files + (key -> (files.getOrElse(key, Set()) + value)), errors)
+  def +(key: String, value: MultiPartFile) = Form(fields, files + (key -> (files.getOrElse(key, Set()) + value)), errors)
 }
 
 object Form {
