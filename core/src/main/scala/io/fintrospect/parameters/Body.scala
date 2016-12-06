@@ -68,5 +68,5 @@ object Body {
     * for browser-server communications where you want to give feedback to the user.
     * This method takes a set of form fields, combined with their relevant error messages in case of validation failure.
     */
-  def multiPartWebForm(fields: (FormField[_] with Extractor[Form, _], String)*): MultiPartFormBody = new MultiPartFormBody(fields.map(_._1), StrictFormValidator, WebFormFieldExtractor)
+  def multiPartWebForm(fields: (FormField[_] with Extractor[Form, _], String)*): MultiPartFormBody = new MultiPartFormBody(fields.map(_._1), new WebFormValidator(Map(fields: _*)), WebFormFieldExtractor)
 }

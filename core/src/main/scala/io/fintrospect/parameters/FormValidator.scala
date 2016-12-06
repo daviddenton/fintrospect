@@ -15,14 +15,13 @@ sealed trait FormValidator {
   * As such, extracting an invalid webform from a request will not fail unless the body encoding itself is invalid.
   */
 class WebFormValidator(messages: Map[Parameter, String]) extends FormValidator {
-  override def apply(fields: Seq[Extractor[Form, _]], rawForm: Form): Form = {
+  override def apply(fields: Seq[Extractor[Form, _]], rawForm: Form): Form =
     new Form(rawForm.fields, rawForm.files, fields.flatMap {
       _ <--? rawForm match {
         case ExtractionFailed(e) => e.map(er => ExtractionError(er.param, messages.getOrElse(er.param, er.reason)))
         case _ => Nil
       }
     })
-  }
 }
 
 /**
