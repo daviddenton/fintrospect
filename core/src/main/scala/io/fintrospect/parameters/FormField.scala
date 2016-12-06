@@ -63,10 +63,11 @@ object FormField {
     override def apply[T](spec: ParameterSpec[T]) = new SingleParameter(spec, FormFieldExtractAndRebind) with FormField[T] with Mandatory[T]
 
     def file(inName: String, inDescription: String = null) = new SingleFile(inName, inDescription) with MandatoryFile {
-      override def <--?(form: Form): Extraction[MultiPartFile] = form.files.get(inName) match {
-        case Some(s) => Extracted(s.headOption)
-        case None => ExtractionFailed(Missing(this))
-      }
+      override def <--?(form: Form): Extraction[MultiPartFile] =
+        form.files.get(inName) match {
+          case Some(files) => Extracted(files.headOption)
+          case None => ExtractionFailed(Missing(this))
+        }
     }
 
     override val multi = new Parameters[MultiFormField, MandatorySeq] {
@@ -75,7 +76,7 @@ object FormField {
       def file(inName: String, inDescription: String = null) =
         new MultiFile(inName, inDescription) with MandatoryFileSeq {
           override def <--?(form: Form): Extraction[Seq[MultiPartFile]] = form.files.get(inName) match {
-            case Some(s) => Extracted(Option(s.toSeq))
+            case Some(files) => Extracted(Option(files.toSeq))
             case None => ExtractionFailed(Missing(this))
           }
         }
@@ -95,7 +96,7 @@ object FormField {
       def file(inName: String, inDescription: String = null) =
         new MultiFile(inName, inDescription) with OptionalFileSeq {
           override def <--?(form: Form): Extraction[Seq[MultiPartFile]] = form.files.get(inName) match {
-            case Some(s) => Extracted(Option(s.toSeq))
+            case Some(files) => Extracted(Option(files.toSeq))
             case None => Extracted(None)
           }
         }
