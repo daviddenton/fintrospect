@@ -35,7 +35,7 @@ object Body {
   /**
     * Binary HTTP body, with custom ContentType
     */
-  def binary(description: Option[String], contentType: ContentType): UniBody[Buf] = Body(BodySpec.binary(description, contentType), null, ObjectParamType)
+  def binary(description: Option[String], contentType: ContentType): UniBody[Buf] = Body(BodySpec.binary(description, contentType), null, FileParamType)
 
   /**
     * Native Scala XML format HTTP message body.
