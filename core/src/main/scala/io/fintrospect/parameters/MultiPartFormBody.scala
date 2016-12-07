@@ -28,9 +28,9 @@ class MultiPartFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
       next
     }))
 
+  // FIXME - horrid cast
   override def <--?(message: Message): Extraction[Form] = message.asInstanceOf[Request].multipart
-    .map(m => {
-      val multipart = message.asInstanceOf[Request].multipart.get
+    .map(multipart => {
       Try(validator(formContents, Form(multipart.attributes.mapValues(_.toSet), multipart.files.mapValues(_.map(MultiPartFile(_)).toSet)))) match {
         case Success(form) => extractor(formContents, form)
         case Failure(e) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
