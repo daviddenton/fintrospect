@@ -1,6 +1,5 @@
 package io.fintrospect.parameters
 
-import io.fintrospect.parameters.FileValidation.EmptyIsInvalid
 import io.fintrospect.util.ExtractionError.Missing
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
 
@@ -26,14 +25,14 @@ abstract class MultiFormField[T](spec: ParameterSpec[T])
   extends MultiParameter(spec, FormFieldExtractAndRebind) with FormField[Seq[T]] {
 }
 
-abstract class SingleFile(val name: String, val description: Option[String], validation: FileValidation)
+abstract class SingleFile(val name: String, val description: Option[String], validation: FileValidations.Rule)
   extends Parameter with Bindable[MultiPartFile, FormFileBinding] with FormField[MultiPartFile] {
   override val paramType = FileParamType
 
   override def -->(value: MultiPartFile): Iterable[FormFileBinding] = Seq(new FormFileBinding(this, value))
 }
 
-abstract class MultiFile(val name: String, val description: Option[String], validation: FileValidation)
+abstract class MultiFile(val name: String, val description: Option[String], validation: FileValidations.Rule)
   extends Parameter with Bindable[Seq[MultiPartFile], FormFileBinding] with FormField[Seq[MultiPartFile]] {
   override val paramType = FileParamType
 
@@ -61,7 +60,7 @@ object FormField {
   val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleParameter(spec, FormFieldExtractAndRebind) with FormField[T] with Mandatory[T]
 
-    def file(name: String, description: String = null, validation: FileValidation = EmptyIsInvalid) =
+    def file(name: String, description: String = null, validation: FileValidations.Rule = FileValidations.EmptyIsInvalid) =
       new SingleFile(name, Option(description), validation) with MandatoryFile {
         override def <--?(form: Form): Extraction[MultiPartFile] = form.files.get(name)
           .map(files => Extracted(files.headOption)).getOrElse(ExtractionFailed(Missing(this)))
@@ -70,7 +69,7 @@ object FormField {
     override val multi = new Parameters[MultiFormField, MandatorySeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with MandatorySeq[T]
 
-      def file(name: String, description: String = null, validation: FileValidation = EmptyIsInvalid) =
+      def file(name: String, description: String = null, validation: FileValidations.Rule = FileValidations.EmptyIsInvalid) =
         new MultiFile(name, Option(description), validation) with MandatoryFileSeq {
           override def <--?(form: Form): Extraction[Seq[MultiPartFile]] = form.files.get(name)
             .map(files => Extracted(Option(files.toSeq))).getOrElse(ExtractionFailed(Missing(this)))
@@ -81,7 +80,7 @@ object FormField {
   val optional = new Parameters[FormField, Optional] with MultiParameters[MultiFormField, OptionalSeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleParameter(spec, FormFieldExtractAndRebind) with FormField[T] with Optional[T]
 
-    def file(name: String, description: String = null, validation: FileValidation = EmptyIsInvalid) =
+    def file(name: String, description: String = null, validation: FileValidations.Rule = FileValidations.EmptyIsInvalid) =
       new SingleFile(name, Option(description), validation) with OptionalFile {
         override def <--?(form: Form): Extraction[MultiPartFile] = Extracted(form.files.get(name).flatMap(_.headOption))
       }
@@ -89,7 +88,7 @@ object FormField {
     override val multi = new Parameters[MultiFormField, OptionalSeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with OptionalSeq[T]
 
-      def file(inName: String, inDescription: String = null, validation: FileValidation = EmptyIsInvalid) =
+      def file(inName: String, inDescription: String = null, validation: FileValidations.Rule = FileValidations.EmptyIsInvalid) =
         new MultiFile(inName, Option(inDescription), validation) with OptionalFileSeq {
           override def <--?(form: Form): Extraction[Seq[MultiPartFile]] = Extracted(form.files.get(inName).map(_.toSeq))
         }

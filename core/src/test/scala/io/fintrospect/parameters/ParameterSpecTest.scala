@@ -3,11 +3,10 @@ package io.fintrospect.parameters
 import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
 import java.util.UUID
 
-import io.fintrospect.parameters.StringValidation.{EmptyIsInvalid, EmptyIsValid}
+import io.fintrospect.parameters.StringValidations._
 import org.scalatest._
 
 import scala.util.{Success, Try}
-
 class ParameterSpecTest extends FunSpec with Matchers {
 
   val paramName = "name"
