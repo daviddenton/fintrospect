@@ -10,6 +10,8 @@ import com.twitter.io.Bufs.ownedBuf
 
 sealed trait MultiPartFile {
   def toFileElement(name: String): FileElement
+
+  def isEmpty(): Boolean
 }
 
 object MultiPartFile {
@@ -23,7 +25,9 @@ object MultiPartFile {
   * This is a multipart form file element that is under the max memory limit, and thus has been kept
   */
 case class InMemoryMultiPartFile(content: Buf, contentType: Option[String] = None, filename: Option[String] = None) extends MultiPartFile {
-  def toFileElement(name: String): FileElement = FileElement(name, content, contentType, filename)
+  override def toFileElement(name: String): FileElement = FileElement(name, content, contentType, filename)
+
+  override def isEmpty(): Boolean = content.isEmpty
 }
 
 /**
@@ -31,7 +35,9 @@ case class InMemoryMultiPartFile(content: Buf, contentType: Option[String] = Non
   */
 case class OnDiskMultiPartFile(content: File, contentType: Option[String] = None, filename: Option[String] = None) extends MultiPartFile {
 
-  def toFileElement(name: String): FileElement = FileElement(name, toBuffer, contentType, filename)
+  override def toFileElement(name: String): FileElement = FileElement(name, toBuffer, contentType, filename)
+
+  override def isEmpty(): Boolean = content.length() == 0
 
   private def toBuffer = {
     val channel = new RandomAccessFile(content, "r").getChannel

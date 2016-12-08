@@ -3,7 +3,6 @@ package io.fintrospect.parameters
 import java.time.LocalDate
 
 import com.twitter.io.Buf
-import io.fintrospect.parameters.StringValidation.EmptyIsInvalid
 import io.fintrospect.util.ExtractionError.{Invalid, Missing}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest._
@@ -109,7 +108,7 @@ class FormFieldTest extends FunSpec with Matchers {
     }
 
     describe("multi-string with empty-is-ok validation turned off") {
-      val field = FormField.required.multi.string(paramName, validation = EmptyIsInvalid)
+      val field = FormField.required.multi.string(paramName, validation = StringValidations.EmptyIsInvalid)
 
       it("validates value from form field") {
         field.extract(new Form(Map(paramName -> Set("123", "456")))) shouldBe Extracted(Some(Seq("123", "456")))

@@ -4,7 +4,6 @@ import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.util.UUID
 
 import io.fintrospect.formats.{Argo, JsonFormat}
-import io.fintrospect.parameters.StringValidation.EmptyIsValid
 
 import scala.language.higherKinds
 import scala.xml.Elem
@@ -69,7 +68,7 @@ trait Parameters[P[_], R[_]] {
    * @param validation validation mode for String values
    * @return a parameter for retrieving a String value from the request
    */
-  def string(name: String, description: String = null, validation: StringValidation = EmptyIsValid): P[String] with R[String] = apply(ParameterSpec.string(name, description, validation))
+  def string(name: String, description: String = null, validation: StringValidations.Rule = StringValidations.EmptyIsValid): P[String] with R[String] = apply(ParameterSpec.string(name, description, validation))
 
   /**
     * Create a UUID parameter
