@@ -9,7 +9,7 @@ import io.fintrospect.util._
   * Represents different strategies for decoding and encoding HTML forms.
   */
 trait FormCodec {
-  protected def decodeFields(content: String): Map[String, Set[String]] = {
+  protected def decodeFields(content: String): Map[String, Seq[String]] = {
     content
       .split("&")
       .filter(_.contains("="))
@@ -19,7 +19,6 @@ trait FormCodec {
       })
       .groupBy(_._1)
       .mapValues(_.map(_._2))
-      .mapValues(_.toSet)
   }
 
   def encode(form: Form): String = form.fields.flatMap {

@@ -5,8 +5,8 @@ import io.fintrospect.util.ExtractionError
 /**
   * The body entity of a encoded HTML form. Basically a wrapper for Form construction and field extraction.
   */
-case class Form protected[parameters](fields: Map[String, Set[String]] = Map.empty,
-                                      files: Map[String, Set[MultiPartFile]] = Map.empty,
+case class Form protected[parameters](fields: Map[String, Seq[String]] = Map.empty,
+                                      files: Map[String, Seq[MultiPartFile]] = Map.empty,
                                       errors: Seq[ExtractionError] = Nil) {
 
   def isValid = errors.isEmpty
@@ -62,9 +62,9 @@ case class Form protected[parameters](fields: Map[String, Set[String]] = Map.emp
                             fieldF: Retrieval[Form, F]):
   (A, B, C, D, E, F) = (fieldA <-- this, fieldB <-- this, fieldC <-- this, fieldD <-- this, fieldE <-- this, fieldF <-- this)
 
-  def +(key: String, value: String) = Form(fields + (key -> (fields.getOrElse(key, Set()) + value)), files, errors)
+  def +(key: String, value: String) = Form(fields + (key -> (value :: fields.getOrElse(key, Seq()).toList)), files, errors)
 
-  def +(key: String, value: MultiPartFile) = Form(fields, files + (key -> (files.getOrElse(key, Set()) + value)), errors)
+  def +(key: String, value: MultiPartFile) = Form(fields, files + (key -> (value :: files.getOrElse(key, Seq()).toList)), errors)
 }
 
 object Form {
