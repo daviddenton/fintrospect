@@ -14,13 +14,13 @@ class MultipartFileTest extends FunSpec with Matchers {
       val tempFile = File.createTempFile("temp", "file")
       Files.write("hello bob", tempFile, UTF_8)
       tempFile.deleteOnExit()
-      Bufs.asUtf8String(OnDiskMultiPartFile(tempFile, None, None).toFileElement("hello").content) shouldBe "hello bob"
+      Bufs.asUtf8String(OnDiskMultiPartFile("file", tempFile, None).toFileElement("hello").content) shouldBe "hello bob"
     }
   }
 
   describe("InMemoryMultiPartFile") {
     it("converts toFileElement") {
-      Bufs.asUtf8String(InMemoryMultiPartFile(Buf.Utf8("hello bob"), None, None).toFileElement("hello").content) shouldBe "hello bob"
+      Bufs.asUtf8String(InMemoryMultiPartFile("file", Buf.Utf8("hello bob"), None).toFileElement("hello").content) shouldBe "hello bob"
     }
   }
 

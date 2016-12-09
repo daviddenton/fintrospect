@@ -16,16 +16,16 @@ sealed trait MultiPartFile {
 
 object MultiPartFile {
   def apply(fileUpload: FileUpload): MultiPartFile = fileUpload match {
-    case InMemoryFileUpload(content, fileType, name, _) => InMemoryMultiPartFile(content, Option(fileType), Option(name))
-    case OnDiskFileUpload(file, fileType, name, _) => OnDiskMultiPartFile(file, Option(fileType), Option(name))
+    case InMemoryFileUpload(content, fileType, name, _) => InMemoryMultiPartFile(name, content, Option(fileType))
+    case OnDiskFileUpload(file, fileType, name, _) => OnDiskMultiPartFile(name, file, Option(fileType))
   }
 }
 
 /**
   * This is a multipart form file element that is under the max memory limit, and thus has been kept
   */
-case class InMemoryMultiPartFile(content: Buf, contentType: Option[String] = None, filename: Option[String] = None) extends MultiPartFile {
-  override def toFileElement(name: String): FileElement = FileElement(name, content, contentType, filename)
+case class InMemoryMultiPartFile(filename: String, content: Buf, contentType: Option[String] = None) extends MultiPartFile {
+  override def toFileElement(name: String): FileElement = FileElement(name, content, contentType, Some(filename))
 
   override def isEmpty(): Boolean = content.isEmpty
 }
@@ -33,9 +33,9 @@ case class InMemoryMultiPartFile(content: Buf, contentType: Option[String] = Non
 /**
   * This is a multipart form file element that is over the max memory limit, and thus has been stored on disk temporarily
   */
-case class OnDiskMultiPartFile(content: File, contentType: Option[String] = None, filename: Option[String] = None) extends MultiPartFile {
+case class OnDiskMultiPartFile(filename: String, content: File, contentType: Option[String] = None) extends MultiPartFile {
 
-  override def toFileElement(name: String): FileElement = FileElement(name, toBuffer, contentType, filename)
+  override def toFileElement(name: String): FileElement = FileElement(name, toBuffer, contentType, Some(filename))
 
   override def isEmpty(): Boolean = content.length() == 0
 

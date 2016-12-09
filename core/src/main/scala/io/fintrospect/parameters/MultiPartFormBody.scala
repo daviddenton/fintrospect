@@ -1,6 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http._
+import com.twitter.finagle.http.exp.Multipart
 import io.fintrospect.ContentTypes.MULTIPART_FORM
 import io.fintrospect.util.{Extraction, ExtractionError, ExtractionFailed, Extractor}
 
@@ -31,9 +32,16 @@ class MultiPartFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
   // FIXME - horrid cast
   override def <--?(message: Message): Extraction[Form] = message.asInstanceOf[Request].multipart
     .map(multipart => {
-      Try(validator(formContents, Form(multipart.attributes.mapValues(_.toSet), multipart.files.mapValues(_.map(MultiPartFile(_)).toSet)))) match {
+      Try(validator(formContents, Form(multipart.attributes.mapValues(_.toSet), filterOutFilesWithNoFilename(multipart)))) match {
         case Success(form) => extractor(formContents, form)
         case Failure(e) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
       }
     }).getOrElse(ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse"))))
+
+  private def filterOutFilesWithNoFilename(multipart: Multipart) = {
+    multipart.files
+      .mapValues(_.filterNot(_.fileName.isEmpty)
+        .map(MultiPartFile(_)).toSet)
+      .filterNot(_._2.isEmpty)
+  }
 }
