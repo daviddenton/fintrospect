@@ -41,7 +41,7 @@ class FormFieldTest extends FunSpec with Matchers {
       describe("file") {
         val file = FormField.required.file(paramName)
 
-        val data = InMemoryMultiPartFile(Buf.Utf8("bob"), None, None)
+        val data = InMemoryMultiPartFile("file", Buf.Utf8("bob"), None)
 
         it("validates value from form file") {
           file.extract(formWithFileOf(data)) shouldBe Extracted(Some(data))
@@ -86,8 +86,8 @@ class FormFieldTest extends FunSpec with Matchers {
 
       describe("file") {
         val file = FormField.required.multi.file(paramName)
-        val data1 = InMemoryMultiPartFile(Buf.Utf8("bob"), None, None)
-        val data2 = InMemoryMultiPartFile(Buf.Utf8("bill"), None, None)
+        val data1 = InMemoryMultiPartFile("file", Buf.Utf8("bob"), None)
+        val data2 = InMemoryMultiPartFile("file2", Buf.Utf8("bill"), None)
 
         it("validates value from form file") {
           file.extract(formWithFileOf(data1, data2)) shouldBe Extracted(Some(Seq(data1, data2)))
@@ -104,7 +104,6 @@ class FormFieldTest extends FunSpec with Matchers {
           outForm.files.get("field") shouldBe Some(Set(data1, data2))
         }
       }
-
     }
 
     describe("multi-string with empty-is-ok validation turned off") {
@@ -164,7 +163,7 @@ class FormFieldTest extends FunSpec with Matchers {
     describe("file") {
       val file = FormField.optional.file(paramName)
 
-      val data = InMemoryMultiPartFile(Buf.Utf8("bob"), None, None)
+      val data = InMemoryMultiPartFile("file", Buf.Utf8("bob"), None)
 
       it("validates value from form file") {
         file.extract(formWithFileOf(data)) shouldBe Extracted(Some(data))
@@ -186,7 +185,6 @@ class FormFieldTest extends FunSpec with Matchers {
         val outForm = bindings.foldLeft(Form()) { (requestBuild, next) => next(requestBuild) }
         outForm.files.get("field") shouldBe None
       }
-
     }
 
 
