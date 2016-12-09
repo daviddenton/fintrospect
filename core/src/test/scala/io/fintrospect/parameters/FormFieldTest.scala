@@ -62,7 +62,7 @@ class FormFieldTest extends FunSpec with Matchers {
 
     describe("multi") {
       describe("field") {
-        val field = FormField.required.multi.localDate(paramName)
+        val field = FormField.required.*.localDate(paramName)
 
         it("validates value from form field") {
           field.extract(formWithFieldOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
@@ -78,14 +78,14 @@ class FormFieldTest extends FunSpec with Matchers {
         }
 
         it("can rebind valid value") {
-          val bindings = FormField.required.multi.int("field") <-> new Form(Map("field" -> Seq("123", "456")))
+          val bindings = FormField.required.*.int("field") <-> new Form(Map("field" -> Seq("123", "456")))
           val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
           outForm.fields.get("field") shouldBe Some(Seq("456", "123"))
         }
       }
 
       describe("file") {
-        val file = FormField.required.multi.file(paramName)
+        val file = FormField.required.*.file(paramName)
         val data1 = InMemoryMultiPartFile("file", Buf.Utf8("bob"), None)
         val data2 = InMemoryMultiPartFile("file2", Buf.Utf8("bill"), None)
 
@@ -99,7 +99,7 @@ class FormFieldTest extends FunSpec with Matchers {
         }
 
         it("can rebind valid value") {
-          val bindings = FormField.required.multi.file("field") <-> new Form(files = Map("field" -> Seq(data1, data2)))
+          val bindings = FormField.required.*.file("field") <-> new Form(files = Map("field" -> Seq(data1, data2)))
           val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
           outForm.files.get("field") shouldBe Some(Seq(data2, data1))
         }
@@ -107,7 +107,7 @@ class FormFieldTest extends FunSpec with Matchers {
     }
 
     describe("multi-string with empty-is-ok validation turned off") {
-      val field = FormField.required.multi.string(paramName, validation = StringValidations.EmptyIsInvalid)
+      val field = FormField.required.*.string(paramName, validation = StringValidations.EmptyIsInvalid)
 
       it("validates value from form field") {
         field.extract(new Form(Map(paramName -> Seq("123", "456")))) shouldBe Extracted(Some(Seq("123", "456")))
@@ -123,7 +123,7 @@ class FormFieldTest extends FunSpec with Matchers {
       }
 
       it("can rebind valid value") {
-        val bindings = FormField.required.multi.int("field") <-> new Form(Map("field" -> Seq("123", "456")))
+        val bindings = FormField.required.*.int("field") <-> new Form(Map("field" -> Seq("123", "456")))
         val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
         outForm.fields.get("field") shouldBe Some(Seq("456", "123"))
       }
