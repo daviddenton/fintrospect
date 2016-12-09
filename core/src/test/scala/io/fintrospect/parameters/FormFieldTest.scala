@@ -187,7 +187,51 @@ class FormFieldTest extends FunSpec with Matchers {
       }
     }
 
+    describe("multi") {
+      describe("field") {
+        val field = FormField.optional.*.localDate(paramName)
 
+        it("validates value from form field") {
+          field.extract(formWithFieldOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
+          field <-- formWithFieldOf("2015-02-04", "2015-02-05") shouldBe Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
+        }
+
+        it("fails to validate invalid value") {
+          field.extract(formWithFieldOf("2015-02-04", "notValid")) shouldBe ExtractionFailed(Invalid(field))
+        }
+
+        it("does not validate non existent value") {
+          field.extract(formWithFieldOf()) shouldBe Extracted(None)
+        }
+
+        it("can rebind valid value") {
+          val bindings = FormField.optional.*.int("field") <-> new Form(Map("field" -> Seq("123", "456")))
+          val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
+          outForm.fields.get("field") shouldBe Some(Seq("456", "123"))
+        }
+      }
+
+      describe("file") {
+        val file = FormField.optional.*.file(paramName)
+        val data1 = InMemoryMultiPartFile("file", Buf.Utf8("bob"), None)
+        val data2 = InMemoryMultiPartFile("file2", Buf.Utf8("bill"), None)
+
+        it("validates value from form file") {
+          file.extract(formWithFileOf(data1, data2)) shouldBe Extracted(Some(Seq(data1, data2)))
+          file <-- formWithFileOf(data1, data2) shouldBe Some(Seq(data1, data2))
+        }
+
+        it("does not validate non existent value") {
+          file.extract(formWithFileOf()) shouldBe Extracted(None)
+        }
+
+        it("can rebind valid value") {
+          val bindings = FormField.optional.*.file("field") <-> new Form(files = Map("field" -> Seq(data1, data2)))
+          val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
+          outForm.files.get("field") shouldBe Some(Seq(data2, data1))
+        }
+      }
+    }
   }
 
   private def formWithFileOf(value: MultiPartFile*) = if (value.isEmpty) new Form() else new Form(files = Map(paramName -> value.toSeq))
