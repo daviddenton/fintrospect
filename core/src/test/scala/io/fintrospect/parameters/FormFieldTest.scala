@@ -32,9 +32,9 @@ class FormFieldTest extends FunSpec with Matchers {
         }
 
         it("can rebind valid value") {
-          val bindings = FormField.required.int("field") <-> new Form(Map("field" -> Set("123")))
+          val bindings = FormField.required.int("field") <-> new Form(Map("field" -> Seq("123")))
           val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-          outForm.fields.get("field") shouldBe Some(Set("123"))
+          outForm.fields.get("field") shouldBe Some(Seq("123"))
         }
       }
 
@@ -53,9 +53,9 @@ class FormFieldTest extends FunSpec with Matchers {
         }
 
         it("can rebind valid value") {
-          val bindings = FormField.required.file("field") <-> new Form(files = Map("field" -> Set(data)))
+          val bindings = FormField.required.file("field") <-> new Form(files = Map("field" -> Seq(data)))
           val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-          outForm.files.get("field") shouldBe Some(Set(data))
+          outForm.files.get("field") shouldBe Some(Seq(data))
         }
       }
     }
@@ -78,9 +78,9 @@ class FormFieldTest extends FunSpec with Matchers {
         }
 
         it("can rebind valid value") {
-          val bindings = FormField.required.multi.int("field") <-> new Form(Map("field" -> Set("123", "456")))
+          val bindings = FormField.required.multi.int("field") <-> new Form(Map("field" -> Seq("123", "456")))
           val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-          outForm.fields.get("field") shouldBe Some(Set("123", "456"))
+          outForm.fields.get("field") shouldBe Some(Seq("456", "123"))
         }
       }
 
@@ -99,9 +99,9 @@ class FormFieldTest extends FunSpec with Matchers {
         }
 
         it("can rebind valid value") {
-          val bindings = FormField.required.multi.file("field") <-> new Form(files = Map("field" -> Set(data1, data2)))
+          val bindings = FormField.required.multi.file("field") <-> new Form(files = Map("field" -> Seq(data1, data2)))
           val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-          outForm.files.get("field") shouldBe Some(Set(data1, data2))
+          outForm.files.get("field") shouldBe Some(Seq(data2, data1))
         }
       }
     }
@@ -110,12 +110,12 @@ class FormFieldTest extends FunSpec with Matchers {
       val field = FormField.required.multi.string(paramName, validation = StringValidations.EmptyIsInvalid)
 
       it("validates value from form field") {
-        field.extract(new Form(Map(paramName -> Set("123", "456")))) shouldBe Extracted(Some(Seq("123", "456")))
-        field <-- new Form(Map(paramName -> Set("123", "456"))) shouldBe Seq("123", "456")
+        field.extract(new Form(Map(paramName -> Seq("123", "456")))) shouldBe Extracted(Some(Seq("123", "456")))
+        field <-- new Form(Map(paramName -> Seq("123", "456"))) shouldBe Seq("123", "456")
       }
 
       it("fails to validate invalid value") {
-        field.extract(new Form(Map(paramName -> Set("", "456")))) shouldBe ExtractionFailed(Invalid(field))
+        field.extract(new Form(Map(paramName -> Seq("", "456")))) shouldBe ExtractionFailed(Invalid(field))
       }
 
       it("does not validate non existent value") {
@@ -123,9 +123,9 @@ class FormFieldTest extends FunSpec with Matchers {
       }
 
       it("can rebind valid value") {
-        val bindings = FormField.required.multi.int("field") <-> new Form(Map("field" -> Set("123", "456")))
+        val bindings = FormField.required.multi.int("field") <-> new Form(Map("field" -> Seq("123", "456")))
         val outForm = bindings.foldLeft(Form()) { (form, next) => next(form) }
-        outForm.fields.get("field") shouldBe Some(Set("123", "456"))
+        outForm.fields.get("field") shouldBe Some(Seq("456", "123"))
       }
     }
   }
@@ -149,8 +149,8 @@ class FormFieldTest extends FunSpec with Matchers {
       }
 
       it("can rebind valid value") {
-        val outForm = FormField.optional.int("field") <-> new Form(Map("field" -> Set("123")))
-        outForm.foldLeft(Form()) { (form, next) => next(form) }.fields.get("field") shouldBe Some(Set("123"))
+        val outForm = FormField.optional.int("field") <-> new Form(Map("field" -> Seq("123")))
+        outForm.foldLeft(Form()) { (form, next) => next(form) }.fields.get("field") shouldBe Some(Seq("123"))
       }
 
       it("doesn't rebind missing value") {
@@ -176,8 +176,8 @@ class FormFieldTest extends FunSpec with Matchers {
       }
 
       it("can rebind valid value") {
-        val outForm = FormField.optional.file("field") <-> new Form(files = Map("field" -> Set(data)))
-        outForm.foldLeft(Form()) { (form, next) => next(form) }.files.get("field") shouldBe Some(Set(data))
+        val outForm = FormField.optional.file("field") <-> new Form(files = Map("field" -> Seq(data)))
+        outForm.foldLeft(Form()) { (form, next) => next(form) }.files.get("field") shouldBe Some(Seq(data))
       }
 
       it("doesn't rebind missing value") {
@@ -190,7 +190,7 @@ class FormFieldTest extends FunSpec with Matchers {
 
   }
 
-  private def formWithFileOf(value: MultiPartFile*) = if (value.isEmpty) new Form() else new Form(files = Map(paramName -> value.toSet))
+  private def formWithFileOf(value: MultiPartFile*) = if (value.isEmpty) new Form() else new Form(files = Map(paramName -> value.toSeq))
 
-  private def formWithFieldOf(value: String*) = if (value.isEmpty) new Form() else new Form(Map(paramName -> value.toSet))
+  private def formWithFieldOf(value: String*) = if (value.isEmpty) new Form() else new Form(Map(paramName -> value.toSeq))
 }

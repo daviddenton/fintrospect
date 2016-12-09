@@ -7,7 +7,8 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 13.14.1 (uncut)
+## 13.15.0 (uncut)
+- Remodelled all parameters so they are modelled as a Seq instead of a Set. Fixes that you can't send multiple parameters with the same value.
 - Bugfix Issue #27. Empty multipart file fields not being detected as missing during extraction.
 
 ## 13.14.0

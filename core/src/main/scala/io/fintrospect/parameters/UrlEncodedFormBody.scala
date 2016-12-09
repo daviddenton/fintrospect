@@ -17,7 +17,7 @@ class UrlEncodedFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]]
 
   override def iterator = formContents.iterator
 
-  private def decodeFields(content: String): Map[String, Set[String]] = {
+  private def decodeFields(content: String): Map[String, Seq[String]] = {
     content
       .split("&")
       .filter(_.contains("="))
@@ -27,7 +27,6 @@ class UrlEncodedFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]]
       })
       .groupBy(_._1)
       .mapValues(_.map(_._2))
-      .mapValues(_.toSet)
   }
 
   private def encode(form: Form): String = form.fields.flatMap {

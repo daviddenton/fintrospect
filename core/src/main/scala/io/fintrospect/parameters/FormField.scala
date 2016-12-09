@@ -66,6 +66,8 @@ object FormField {
           .map(files => Extracted(files.headOption)).getOrElse(ExtractionFailed(Missing(this)))
       }
 
+    override def * = multi
+
     override val multi = new Parameters[MultiFormField, MandatorySeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with MandatorySeq[T]
 
@@ -85,6 +87,7 @@ object FormField {
         override def <--?(form: Form): Extraction[MultiPartFile] = Extracted(form.files.get(name).flatMap(_.headOption))
       }
 
+    override def * = multi
     override val multi = new Parameters[MultiFormField, OptionalSeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with OptionalSeq[T]
 
