@@ -88,3 +88,6 @@ class XmlResponseBuilderTest extends AbstractResponseBuilderSpec(Xml.ResponseBui
   override val customType = <okThing>theMessage</okThing>
   override val customTypeSerialized: String = customType.toString()
 }
+
+
+
