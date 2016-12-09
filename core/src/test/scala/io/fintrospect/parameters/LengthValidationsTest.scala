@@ -2,10 +2,10 @@ package io.fintrospect.parameters
 
 import org.scalatest.{FunSpec, Matchers}
 
-class ValidationsTest extends FunSpec with Matchers {
+class LengthValidationsTest extends FunSpec with Matchers {
 
   describe("Validations") {
-    val validations = new Validations[String] {}
+    val validations = new LengthValidations[String] {}
     it("EmptyIsValid") {
       validations.EmptyIsValid("") shouldBe ""
       validations.EmptyIsValid("asd") shouldBe "asd"
