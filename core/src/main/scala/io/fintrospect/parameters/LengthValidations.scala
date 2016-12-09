@@ -12,5 +12,3 @@ trait LengthValidations[T <: {def isEmpty() : Boolean}] {
 }
 
 object StringValidations extends LengthValidations[String]
-
-object FileValidations extends LengthValidations[MultiPartFile]
