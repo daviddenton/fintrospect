@@ -13,7 +13,7 @@ import io.fintrospect.filters.RequestFilters
 import io.fintrospect.parameters.Path
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.StrictContentTypeNegotiation
-import io.fintrospect.{ModuleSpec, RouteSpec}
+import io.fintrospect.{RouteModule, RouteSpec}
 
 
 /**
@@ -52,6 +52,6 @@ object StrictMultiContentTypeRoute extends App {
 
   Await.ready(
     Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy)
-      .andThen(ModuleSpec(Root, SimpleJson()).withRoute(route).toService))
+      .andThen(RouteModule(Root, SimpleJson()).withRoute(route).toService))
   )
 }

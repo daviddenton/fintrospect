@@ -8,6 +8,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
 ## 13.16.0
+- Deprecation: Renamed `ModuleSpec` to be `RouteModule`. Readded `ModuleSpec` constructors with identical (but deprecated) methods, so no break will occur. Please update your apps.
 - Breaking: Simplified signature of `Module.combine()` to return a new `Module` instead of a `ServiceBinding`. This means that combined lib user can just call `toService()` on the combined module
 instead of calling `Module.toService(serviceBinding)`, so combined Modules are just Modules themselves.
 

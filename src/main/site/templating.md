@@ -1,7 +1,7 @@
 # templating
 Templates are applied by using a custom ```RenderView``` filter to convert ```View``` instances into standard Http Responses. Simply implement the 
 ```View``` trait and then put a matching template file onto the classpath, and chain the output of the model-creating ```Service``` into 
-the filter. You can do this for entire modules by making the ```ModuleSpec``` itself generified on ```View``` by using the 
+the filter. You can do this for entire modules by making the ```RouteModule``` itself generified on ```View``` by using the 
 templating ```Filter``` as a Module-level filter:
 
 ```
@@ -11,7 +11,7 @@ val showMessage = Service.mk[Request, View] { _ => Future.value(ViewMessage("som
 
 val renderer = if(devMode) MustacheTemplates.HotReload("src/main/resources") else MustacheTemplates.CachingClasspath(".")
 
-val webModule = ModuleSpec(Root / "web",
+val webModule = RouteModule(Root / "web",
     new SiteMapModuleRenderer(new URL("http://root.com")),
     new RenderView(Html.ResponseBuilder, renderer))
     .withRoute(RouteSpec().at(Get) / "message" bindTo showMessage)

@@ -11,7 +11,7 @@ import io.fintrospect.formats.Argo.JsonFormat.array
 import io.fintrospect.formats.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.{Body, BodySpec, Query, StringParamType}
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
-import io.fintrospect.{ModuleSpec, ResponseSpec, RouteSpec}
+import io.fintrospect.{ResponseSpec, RouteModule, RouteSpec}
 import presentation.Book
 
 class SearchRoute(books: RemoteBooks) {
@@ -58,7 +58,7 @@ class BookAvailable(books: RemoteBooks) {
 class SearchApp {
   private val apiInfo = ApiInfo("search some books", "1.0", Option("an api for searching our book collection"))
 
-  val service = ModuleSpec(Root, Swagger2dot0Json(apiInfo))
+  val service = RouteModule(Root, Swagger2dot0Json(apiInfo))
     .withRoute(new SearchRoute(new RemoteBooks).route)
     .withRoute(new BookAvailable(new RemoteBooks).route)
     .toService
