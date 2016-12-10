@@ -7,6 +7,10 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 13.16.0
+- Breaking: Simplified signature of `Module.combine()` to return a new `Module` instead of a `ServiceBinding`. This means that combined lib user can just call `toService()` on the combined module
+instead of calling `Module.toService(serviceBinding)`, so combined Modules are just Modules themselves.
+
 ## 13.15.0
 - Remodelled all parameters so they are modelled as a Seq instead of a Set. Fixes that you can't send multiple parameters with the same value.
 - Bugfix Issue #27. Empty multipart file fields not being detected as missing during extraction.
