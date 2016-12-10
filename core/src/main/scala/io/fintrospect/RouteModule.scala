@@ -94,7 +94,7 @@ class RouteModule[RQ, RS] private(basePath: Path,
 
   private def withDefault(otherRoutes: ServiceBinding): ServiceBinding = {
     val descriptionRoute = new UnboundRoute0(RouteSpec("Description route"), Get, descriptionRoutePath) bindTo {
-      Service.mk { r: Request => Future.value(moduleRenderer.description(basePath, security, routes)) }
+      Service.mk { _: Request => Future.value(moduleRenderer.description(basePath, security, routes)) }
     }
 
     val fallback: ServiceBinding = {

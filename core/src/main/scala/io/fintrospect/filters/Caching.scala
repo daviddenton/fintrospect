@@ -7,7 +7,7 @@ import java.time.{Clock, Duration, ZonedDateTime}
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.util.Future
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{CACHE_CONTROL, DATE, ETAG, EXPIRES, IF_MODIFIED_SINCE, VARY}
+import org.jboss.netty.handler.codec.http.HttpHeaders.Names._
 
 /**
   * Useful filters for applying Cache-Controls to request/responses
@@ -82,7 +82,7 @@ object Caching {
             .map(ZonedDateTime.from)
             .getOrElse(ZonedDateTime.now(clock))
         } catch {
-          case e: Exception => ZonedDateTime.now(clock)
+          case _: Exception => ZonedDateTime.now(clock)
         }
       }
     }

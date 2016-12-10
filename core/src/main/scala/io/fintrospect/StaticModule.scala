@@ -29,7 +29,7 @@ class StaticModule private(basePath: Path, resourceLoader: ResourceLoader, modul
   override protected[fintrospect] def serviceBinding: ServiceBinding = {
     case Get -> path if exists(path) =>
       moduleFilter.andThen(Service.mk[Request, Response] {
-        request => HttpResponse(lookup(convertPath(path))).withCode(Ok).withContent(Owned(toByteArray(resourceLoader.load(convertPath(path)))))
+        _ => HttpResponse(lookup(convertPath(path))).withCode(Ok).withContent(Owned(toByteArray(resourceLoader.load(convertPath(path)))))
       })
   }
 

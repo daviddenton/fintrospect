@@ -19,7 +19,7 @@ trait AutoFilters[T] {
     (req, svc) => {
       body <--? req match {
         case Extracted(in) => svc(in.get)
-        case ExtractionFailed(e) => BadRequest("malformed body")
+        case ExtractionFailed(_) => BadRequest("malformed body")
       }
     }
   }
