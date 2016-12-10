@@ -10,7 +10,7 @@ import com.twitter.finagle.{Http, OAuth2Filter, OAuth2Request, Service}
 import com.twitter.util.Await
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.{ModuleSpec, RouteSpec}
+import io.fintrospect.{RouteModule, RouteSpec}
 
 /**
   * OAuth controlled app using finagle-oath2. Use the "access_token" of "token" to gain access to the services.
@@ -20,7 +20,7 @@ import io.fintrospect.{ModuleSpec, RouteSpec}
 object OAuth2App extends App {
   val auth = new OAuth2Filter(new UserDataHandler) with OAuthErrorInJson
 
-  val module = ModuleSpec(Root / "auth", SimpleJson(), auth)
+  val module = RouteModule(Root / "auth", SimpleJson(), auth)
     .withRoute(RouteSpec().at(Get) / "user" bindTo Service.mk {
       rq: OAuth2Request[User] => Ok(rq.authInfo.user.name)
     })

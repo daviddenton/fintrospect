@@ -8,7 +8,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await
 import io.fintrospect.formats.Xml.ResponseBuilder.implicits._
-import io.fintrospect.{ModuleSpec, RouteSpec}
+import io.fintrospect.{RouteModule, RouteSpec}
 
 /**
   * This example shows how to build a server and endpoint which uses twitter's AsyncStream
@@ -20,7 +20,7 @@ object StreamingTypesafeResponses extends App {
 
   val streamOfXml = Service.mk[Request, Response] { req => Ok(infiniteTypesafeStream) }
 
-  val svc = ModuleSpec(Root).withRoute(RouteSpec().at(Get) bindTo streamOfXml).toService
+  val svc = RouteModule(Root).withRoute(RouteSpec().at(Get) bindTo streamOfXml).toService
 
   println("run: \"curl -v http://localhost:9000\" to get infinite chunks of streamed output XML")
 

@@ -11,7 +11,7 @@ import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec.RequestValidation
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
-import io.fintrospect.parameters.{Body, Form, FormField, Header, Path, Query}
+import io.fintrospect.parameters._
 import io.fintrospect.util.ExtractionError.Missing
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
@@ -135,7 +135,7 @@ class RouteSpecTest extends FunSpec with Matchers {
       request.uri = urlParts + "?query=bob"
       val route = fn(RouteSpec().taking(query).taking(date).body(body).at(Get))
 
-      val proxyService = ModuleSpec(Root).withRoute(route bindToProxy expectedRequest).toService
+      val proxyService = RouteModule(Root).withRoute(route bindToProxy expectedRequest).toService
       Await.result(proxyService(request)).status shouldBe Ok
     }
 
