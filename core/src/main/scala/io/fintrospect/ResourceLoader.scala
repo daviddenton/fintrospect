@@ -14,8 +14,8 @@ object ResourceLoader {
     * @param basePackagePath
     */
   def Classpath(basePackagePath: String = "/") = new ResourceLoader {
-    val withStarting = if (basePackagePath.startsWith("/")) basePackagePath else "/" + basePackagePath
-    val finalBasePath = if (withStarting.endsWith("/")) withStarting else withStarting + "/"
+    private val withStarting = if (basePackagePath.startsWith("/")) basePackagePath else "/" + basePackagePath
+    private val finalBasePath = if (withStarting.endsWith("/")) withStarting else withStarting + "/"
 
     override def load(path: String): URL = getClass.getResource(finalBasePath + path)
   }
@@ -25,7 +25,7 @@ object ResourceLoader {
     * @param baseDir
     */
   def Directory(baseDir: String) = new ResourceLoader {
-    val finalBaseDir = if (baseDir.endsWith("/")) baseDir else baseDir + "/"
+    private val finalBaseDir = if (baseDir.endsWith("/")) baseDir else baseDir + "/"
     override def load(path: String): URL = {
       val f = new File(finalBaseDir, path)
       if(f.exists() && f.isFile) f.toURI.toURL else null

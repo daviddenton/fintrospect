@@ -2,7 +2,7 @@ package io.fintrospect
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import io.fintrospect.formats.{Argo, JsonFormat}
-import io.fintrospect.parameters.{Binding, Body, HeaderParameter, Parameter, QueryParameter, Rebindable}
+import io.fintrospect.parameters._
 import io.fintrospect.util.{Extracted, Extraction, Extractor}
 
 /**
@@ -114,7 +114,7 @@ object RouteSpec {
       * Do not perform any validation of the request parameters or the body.
       */
     val none = new RequestValidation {
-      def apply(spec: RouteSpec) = Extractor.mk { (request: Request) => Extracted(None) }
+      def apply(spec: RouteSpec) = Extractor.mk { _: Request => Extracted(None) }
     }
   }
 
