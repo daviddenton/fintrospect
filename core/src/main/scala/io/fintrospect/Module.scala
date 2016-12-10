@@ -15,7 +15,9 @@ object Module {
   /**
     * Combines many modules
     */
-  def combine(modules: Module*): ServiceBinding = modules.map(_.serviceBinding).reduce(_.orElse(_))
+  def combine(modules: Module*): Module = new Module {
+    override protected[fintrospect] def serviceBinding: ServiceBinding = modules.map(_.serviceBinding).reduce(_.orElse(_))
+  }
 
   /**
     * Convert a ServiceBinding to a Finagle Service
@@ -34,7 +36,7 @@ trait Module {
   /**
     * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
     */
-  def combine(that: Module): ServiceBinding = serviceBinding.orElse(that.serviceBinding)
+  def combine(that: Module): Module = Module.combine(this, that)
 
   /**
     * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.

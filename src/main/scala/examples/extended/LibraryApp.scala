@@ -5,9 +5,9 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await
+import io.fintrospect.ModuleSpec
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
-import io.fintrospect.{Module, ModuleSpec}
 
 /**
  * This example shows the intended method for implementing a simple app using Fintrospect routes and modules, using
@@ -42,7 +42,7 @@ object LibraryApp extends App {
   println("See the service description at: http://localhost:8080/library")
 
   Await.ready(
-    Http.serve(":8080", globalCorsFilter.andThen(Module.toService(libraryModule combine statusModule)))
+    Http.serve(":8080", globalCorsFilter.andThen(libraryModule.combine(statusModule).toService))
   )
 }
 
