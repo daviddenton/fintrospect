@@ -45,9 +45,9 @@ Http.serve(":8080",
 )
 
 ```
-Modules with different root contexts can also be combined with one another and then converted to a Service:
+Modules with different root contexts can also be combined with one another and then converted to a `Service`:
 ```
-Module.toService(RouteModule(Root / "a").combine(RouteModule(Root / "b")))
+RouteModule(Root / "a").combine(RouteModule(Root / "b")).toService
 ```
 
 #### self-describing Module APIs
