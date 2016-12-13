@@ -6,7 +6,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
-import io.fintrospect.ModuleSpec
+import io.fintrospect.RouteModule
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.renderers.simplejson.SimpleJson
 import presentation.Books
@@ -17,7 +17,7 @@ class FakeRemoteLibrary(books: Books) {
     request => Ok(books.titles().filter(_.toLowerCase.contains(titlePart.toLowerCase)).mkString(","))
   }
 
-  val service = ModuleSpec(Root, SimpleJson())
+  val service = RouteModule(Root, SimpleJson())
     .withRoute(RemoteBooks.route bindTo search)
     .toService
 

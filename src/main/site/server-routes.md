@@ -39,7 +39,7 @@ routes and then convert into a standard Finagle Service object which is then att
 def listEmployees(): Service[Request, Response] = Service.mk(req => Future.value(Response()))
 
 Http.serve(":8080",
-  ModuleSpec(Root / "employee")
+  RouteModule(Root / "employee")
     .withRoute(RouteSpec("lists all employees").at(Method.Get) bindTo listEmployees)
     .toService
 )
@@ -47,12 +47,12 @@ Http.serve(":8080",
 ```
 Modules with different root contexts can also be combined with one another and then converted to a Service:
 ```
-Module.toService(ModuleSpec(Root / "a").combine(ModuleSpec(Root / "b")))
+Module.toService(RouteModule(Root / "a").combine(RouteModule(Root / "b")))
 ```
 
 #### self-describing Module APIs
 A big feature of the Fintrospect library is the ability to generate API documentation at runtime. This can be activated by passing 
-in a ModuleRenderer implementation when creating the ModuleSpec and when this is done, a new endpoint is created at the root of the 
+in a ModuleRenderer implementation when creating the RouteModule and when this is done, a new endpoint is created at the root of the 
 module context (this location is overridable) which serves this documentation.
 
 Bundled with Fintrospect are:
@@ -62,7 +62,7 @@ Bundled with Fintrospect are:
 
 Other implementations are pluggable by implementing the ```ModuleRenderer```  trait - see the example code for a simple XML implementation.
 ```
-val service = ModuleSpec(Root / "employee", Swagger2dot0Json(ApiInfo("an employee discovery API", "3.0"))).toService
+val service = RouteModule(Root / "employee", Swagger2dot0Json(ApiInfo("an employee discovery API", "3.0"))).toService
 Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service))
 ```
 Note above the usage of the Finagle ```CorsPolicy``` filter, which will allow the services to be called from a Swagger UI - 
@@ -73,7 +73,7 @@ Module routes can secured by adding an implementation of the ```Security``` trai
 all requests will be passed. An ```ApiKey``` implementation is bundled with the library which return an ```401 Unauthorized``` HTTP 
 response code when a request does not pass authentication.
 ```
-ModuleSpec(Root / "employee")
+RouteModule(Root / "employee")
 .securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future.value(key == "extremelySecretThing")))
 ```
 

@@ -74,7 +74,7 @@ object FormField {
       def file(name: String, description: String = null) =
         new MultiFile(name, Option(description)) with MandatoryFileSeq {
           override def <--?(form: Form): Extraction[Seq[MultiPartFile]] = form.files.get(name)
-            .map(files => Extracted(Option(files.toSeq))).getOrElse(ExtractionFailed(Missing(this)))
+            .map(files => Extracted(Option(files))).getOrElse(ExtractionFailed(Missing(this)))
         }
     }
   }

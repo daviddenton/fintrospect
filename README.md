@@ -99,7 +99,7 @@ This module will have a single endpoint ```search```:
 ```scala
 val apiInfo = ApiInfo("Library Example", "1.0", Option("Simple description"))
 val renderer = Swagger2dot0Json(apiInfo) 
-val libraryModule = ModuleSpec(Root / "library", renderer)
+val libraryModule = RouteModule(Root / "library", renderer)
     .withRoute(new BookSearch(new BookRepo()).route)
 val service = Module.toService(libraryModule)
 Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)) 

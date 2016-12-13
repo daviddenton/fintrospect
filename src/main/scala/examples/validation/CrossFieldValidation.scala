@@ -10,7 +10,7 @@ import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
 import io.fintrospect.parameters.Query
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.util.{Extracted, ExtractionFailed, Extractor}
-import io.fintrospect.{ModuleSpec, RouteSpec}
+import io.fintrospect.{RouteModule, RouteSpec}
 
 case class Person(gender: Option[String], experience: Int)
 
@@ -66,7 +66,7 @@ object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
     }
   }
 
-  val svc = ModuleSpec(Root).withRoute(checkClassSize).toService
+  val svc = RouteModule(Root).withRoute(checkClassSize).toService
 
   // print succeeding and failing cases
   println("Missing parameters case: " + statusAndContentFrom(result(svc(Request("?gender=male&pupils=10")))))

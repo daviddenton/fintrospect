@@ -9,8 +9,8 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await
 import examples.customformats.HipsterXml.ResponseBuilder.implicits.{responseBuilderToFuture, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{Body, BodySpec, Header, ParameterSpec, Path, StringParamType}
-import io.fintrospect.{ContentTypes, ModuleSpec, RouteSpec}
+import io.fintrospect.parameters._
+import io.fintrospect.{ContentTypes, RouteModule, RouteSpec}
 
 import scala.language.reflectiveCalls
 
@@ -29,7 +29,7 @@ object HipsterXmlApp extends App {
     .body(Body(xmlAsABody))
     .at(Get) / "view" / Path(HipsterBeardStyle) bindTo aService
 
-  val module = ModuleSpec(Root / "xml", HipsterXmlModuleRenderer).withRoute(route)
+  val module = RouteModule(Root / "xml", HipsterXmlModuleRenderer).withRoute(route)
 
   println("See the service description at: http://localhost:8080/xml")
 

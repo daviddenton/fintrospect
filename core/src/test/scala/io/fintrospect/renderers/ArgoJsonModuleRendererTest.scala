@@ -7,10 +7,10 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.ContentTypes.{APPLICATION_ATOM_XML, APPLICATION_JSON, APPLICATION_SVG_XML}
 import io.fintrospect.formats.Argo
 import io.fintrospect.formats.Argo.JsonFormat.{number, obj, parse}
-import io.fintrospect.parameters.{Body, FormField, Header, Path, Query}
+import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.util.{Echo, ExtractionError}
-import io.fintrospect.{ApiKey, ModuleSpec, ResponseSpec, RouteSpec}
+import io.fintrospect.{ApiKey, ResponseSpec, RouteModule, RouteSpec}
 import org.scalatest.{FunSpec, Matchers}
 
 import scala.io.Source
@@ -25,7 +25,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
 
       val customBody = Body.json(Option("the body of the message"), obj("anObject" -> obj("notAStringField" -> number(123))))
 
-      val module = ModuleSpec(Root / "basepath", renderer)
+      val module = RouteModule(Root / "basepath", renderer)
         .securedBy(ApiKey(Header.required.string("the_api_key"), (_: String) => Future.value(true)))
         .withRoute(
           RouteSpec("summary of this route", "some rambling description of what this thing actually does")

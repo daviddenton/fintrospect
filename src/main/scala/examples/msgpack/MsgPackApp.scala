@@ -12,7 +12,7 @@ import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
 import io.fintrospect.formats.MsgPack.ResponseBuilder.implicits._
 import io.fintrospect.formats.{MsgPack, MsgPackMsg}
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.{ModuleSpec, RouteSpec}
+import io.fintrospect.{RouteModule, RouteSpec}
 
 case class StreetAddress(address: String)
 
@@ -39,7 +39,7 @@ object MsgPackApp extends App {
     Future.value(Letter(StreetAddress("2 Bob St"), in, "hi fools!"))
   })
 
-  val module = ModuleSpec(Root, SimpleJson()).withRoute(viewLetterRoute).withRoute(replyToLetter)
+  val module = RouteModule(Root, SimpleJson()).withRoute(viewLetterRoute).withRoute(replyToLetter)
 
   println("See the service description at: http://localhost:8181")
   Await.ready(

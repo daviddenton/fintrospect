@@ -4,12 +4,12 @@ import com.twitter.finagle.Http
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
-import io.fintrospect.ModuleSpec
+import io.fintrospect.RouteModule
 
 class SearchApp {
-  val service = ModuleSpec(Root).toService
+  val service = RouteModule(Root).toService
   val searchService = new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)
-  Http.serve(":9000", ModuleSpec(Root).withRoute().toService)
+  Http.serve(":9000", RouteModule(Root).withRoute().toService)
 }
 
 

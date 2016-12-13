@@ -12,7 +12,7 @@ import com.twitter.util.Await
 import io.fintrospect.parameters.Body
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.MultiBodyType
-import io.fintrospect.{ModuleSpec, RouteSpec}
+import io.fintrospect.{RouteModule, RouteSpec}
 
 /**
   * Shows how to add routes which can accept multiple body types (based on the Content-Type header)
@@ -39,6 +39,6 @@ object MutiBodyTypeRoute extends App {
 
   Await.ready(
     Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy)
-      .andThen(ModuleSpec(Root, SimpleJson()).withRoute(route).toService))
+      .andThen(RouteModule(Root, SimpleJson()).withRoute(route).toService))
   )
 }

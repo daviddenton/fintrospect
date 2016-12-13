@@ -34,7 +34,7 @@ class MultiPartFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
     .map(multipart => {
       Try(validator(formContents, Form(multipart.attributes, filterOutFilesWithNoFilename(multipart)))) match {
         case Success(form) => extractor(formContents, form)
-        case Failure(e) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
+        case Failure(_) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
       }
     }).getOrElse(ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse"))))
 

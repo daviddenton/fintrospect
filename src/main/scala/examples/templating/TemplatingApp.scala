@@ -12,7 +12,7 @@ import com.twitter.util.Await
 import io.fintrospect.formats.PlainText
 import io.fintrospect.renderers.SiteMapModuleRenderer
 import io.fintrospect.templating.{MustacheTemplates, RenderView}
-import io.fintrospect.{ModuleSpec, RouteSpec}
+import io.fintrospect.{RouteModule, RouteSpec}
 
 object TemplatingApp extends App {
 
@@ -21,7 +21,7 @@ object TemplatingApp extends App {
 
   val renderView = new RenderView(PlainText.ResponseBuilder, renderer)
 
-  val module = ModuleSpec(Root, new SiteMapModuleRenderer(new URL("http://my.cool.app")), renderView)
+  val module = RouteModule(Root, new SiteMapModuleRenderer(new URL("http://my.cool.app")), renderView)
     .withRoute(RouteSpec().at(Get) / "echo" bindTo Service.mk { rq: Request => MustacheView(rq.uri) })
 
   println("See the Sitemap description at: http://localhost:8181")
