@@ -10,7 +10,7 @@ import com.twitter.finagle.{Http, Service}
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
-import io.fintrospect.{ModuleSpec, RouteSpec}
+import io.fintrospect.{RouteModule, RouteSpec}
 import presentation.Books
 
 class SearchRoute(books: Books) {
@@ -33,7 +33,7 @@ class SearchRoute(books: Books) {
 class SearchApp(books: Books) {
   private val apiInfo = ApiInfo("search some books", "1.0", Option("an api for searching our book collection"))
 
-  val service = ModuleSpec(Root, Swagger2dot0Json(apiInfo))
+  val service = RouteModule(Root, Swagger2dot0Json(apiInfo))
     .withRoute(new SearchRoute(books).route)
     .toService
 

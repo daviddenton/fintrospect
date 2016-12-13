@@ -5,7 +5,7 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await
-import io.fintrospect.ModuleSpec
+import io.fintrospect.RouteModule
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 
@@ -16,7 +16,7 @@ import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
  *
  * Note the use of the CORS policy filter to allow the endpoints to be called by the Swagger UI. For normal usage,
  * use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
- * to all routes in the module (by being passed as the optional param to the ModuleSpec constructor)
+ * to all routes in the module (by being passed as the optional param to the RouteModule constructor)
  */
 object LibraryApp extends App {
 
@@ -29,14 +29,14 @@ object LibraryApp extends App {
   // to all routes in the module
   val globalCorsFilter = new HttpFilter(Cors.UnsafePermissivePolicy)
 
-  val libraryModule = ModuleSpec(Root / "library", renderer)
+  val libraryModule = RouteModule(Root / "library", renderer)
     .withRoute(new BookAdd(books).route)
     .withRoute(new BookCollection(books).route)
     .withRoute(new BookLookup(books).route)
     .withRoute(new BookLengthSearch(books).route)
     .withRoute(new BookTermSearch(books).route)
 
-  val statusModule = ModuleSpec(Root / "internal", SimpleJson())
+  val statusModule = RouteModule(Root / "internal", SimpleJson())
     .withRoute(new Ping().route)
 
   println("See the service description at: http://localhost:8080/library")

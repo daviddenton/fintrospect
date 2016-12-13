@@ -7,7 +7,7 @@ import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await
-import io.fintrospect.ModuleSpec
+import io.fintrospect.RouteModule
 import io.fintrospect.formats.Html
 import io.fintrospect.renderers.SiteMapModuleRenderer
 import io.fintrospect.templating.{MustacheTemplates, RenderView}
@@ -20,7 +20,7 @@ object FormValidationApp extends App {
 
   val renderView = new RenderView(Html.ResponseBuilder, MustacheTemplates.HotReload("src/main/resources"))
 
-  val module = ModuleSpec(Root, new SiteMapModuleRenderer(new URL("http://my.cool.app")), renderView)
+  val module = RouteModule(Root, new SiteMapModuleRenderer(new URL("http://my.cool.app")), renderView)
     .withDescriptionPath(_ / "sitemap.xml")
     .withRoutes(new ReportAge(new GreetingDatabase))
 

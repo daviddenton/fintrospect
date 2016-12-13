@@ -5,7 +5,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
 import io.fintrospect.renderers.simplejson.SimpleJson
-import io.fintrospect.{ModuleSpec, ServerRoutes}
+import io.fintrospect.{RouteModule, ServerRoutes}
 
 /**
   * Provides the ability to wrap a pre-constructed service and then override the
@@ -13,10 +13,10 @@ import io.fintrospect.{ModuleSpec, ServerRoutes}
   */
 class OverridableHttpService[T](rawSvc: Service[Request, Response]) {
 
-  def this(moduleSpec: ModuleSpec[Request, Response]) = this(moduleSpec.toService)
+  def this(RouteModule: RouteModule[Request, Response]) = this(RouteModule.toService)
 
   def this(serverRoutes: ServerRoutes[Request, Response]) = this(
-    ModuleSpec(Root,
+    RouteModule(Root,
       SimpleJson())
       .withRoutes(serverRoutes))
 

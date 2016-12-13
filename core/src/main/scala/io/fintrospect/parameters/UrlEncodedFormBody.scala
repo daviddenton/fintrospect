@@ -46,6 +46,6 @@ class UrlEncodedFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]]
   override def <--?(message: Message): Extraction[Form] =
     Try(validator(formContents, new Form(decodeFields(message.contentString), Map.empty, Nil))) match {
       case Success(form) => extractor(formContents, form)
-      case Failure(e) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
+      case Failure(_) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
     }
 }

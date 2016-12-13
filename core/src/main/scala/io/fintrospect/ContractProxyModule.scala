@@ -26,7 +26,7 @@ trait ContractEndpoint {
   * Creates a standard Module which acts as a proxy to the set of routes declared in the passed Contract.
   */
 object ContractProxyModule {
-  def apply[T <: Contract](name: String, service: Service[Request, Response], contract: T, rootPath: Path = Root, description: String = null)(implicit tag: TypeTag[T]): ModuleSpec[Request, Response] = {
+  def apply[T <: Contract](name: String, service: Service[Request, Response], contract: T, rootPath: Path = Root, description: String = null)(implicit tag: TypeTag[T]): RouteModule[Request, Response] = {
     val descriptionOption = if (description == null) Option(s"Proxy services for $name API") else Option(description)
     val routes = universe.typeOf[T].members
       .filter(_.isModule)
@@ -35,7 +35,7 @@ object ContractProxyModule {
       .filter(_.isInstanceOf[ContractEndpoint])
       .map(_.asInstanceOf[ContractEndpoint].route)
 
-    routes.foldLeft(ModuleSpec(rootPath, Swagger2dot0Json(ApiInfo(name, name, descriptionOption)))) {
+    routes.foldLeft(RouteModule(rootPath, Swagger2dot0Json(ApiInfo(name, name, descriptionOption)))) {
       (spec, route) => spec.withRoute(route.bindToProxy(service))
     }
   }

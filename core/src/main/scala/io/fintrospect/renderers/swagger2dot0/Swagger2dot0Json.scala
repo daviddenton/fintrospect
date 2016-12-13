@@ -4,13 +4,13 @@ import argo.jdom.JsonNode
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.formats.Argo.JsonFormat.{Field, array, boolean, nullNode, obj, parse, string}
+import io.fintrospect.formats.Argo.JsonFormat._
 import io.fintrospect.formats.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 import io.fintrospect.util.ExtractionError
-import io.fintrospect.{ApiKey, NoSecurity, ResponseSpec, Security, ServerRoute}
+import io.fintrospect._
 
 import scala.util.Try
 
@@ -66,7 +66,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "supportedContentTypes" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "security" -> array(security match {
         case NoSecurity => Nil
-        case ApiKey(param, _) => Seq(obj("api_key" -> array()))
+        case ApiKey(_, _) => Seq(obj("api_key" -> array()))
       })
     )
     FieldAndDefinitions(jsonRoute, responseDefinitions ++ bodyAndSchemaAndRendered.flatMap(_._2).flatMap(_.definitions))

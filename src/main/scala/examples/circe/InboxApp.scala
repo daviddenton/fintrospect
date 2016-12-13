@@ -6,7 +6,7 @@ import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await
 import examples.circe.Emails.InMemoryEmails
-import io.fintrospect.ModuleSpec
+import io.fintrospect.RouteModule
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 
 /**
@@ -17,7 +17,7 @@ object InboxApp extends App {
 
   private val emails = new InMemoryEmails()
 
-  private val inboxModule = ModuleSpec(Root / "inbox", Swagger2dot0Json(ApiInfo("Inbox Example", "1.0")))
+  private val inboxModule = RouteModule(Root / "inbox", Swagger2dot0Json(ApiInfo("Inbox Example", "1.0")))
     .withRoute(new AddMessage(emails).route)
     .withRoute(new EmailList(emails).route)
     .withRoute(new FindUserWithEmail(emails).route)

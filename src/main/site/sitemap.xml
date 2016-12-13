@@ -308,7 +308,7 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>http://fintrospect.io/api/io/fintrospect/ModuleSpec.html</loc>
+    <loc>http://fintrospect.io/api/io/fintrospect/RouteModule.html</loc>
     <lastmod>2016-06-05T10:48:55+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url>
