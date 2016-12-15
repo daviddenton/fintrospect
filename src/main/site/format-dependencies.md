@@ -36,6 +36,13 @@
     <td><a data-toggle="tooltip" href="#" title="io.fintrospect.formats.Html">Html</a></td>
 </tr>
 <tr>
+    <td><a href="https://github.com/FasterXML/jackson">Json4S Jackson</a> </td>
+    <td>application/json</td>
+    <td>"io.fintrospect" %% "fintrospect-jackson" % "13.17.0"</td>
+    <td>
+    <a data-toggle="tooltip" href="#" title="io.fintrospect.formats.Jackson">Jackson</a>
+</tr>
+<tr>
     <td><a href="http://json4s.org/">Json4S Native</a></td>
     <td>application/json</td>
     <td>"io.fintrospect" %% "fintrospect-json4s" % "13.17.0"</td>
