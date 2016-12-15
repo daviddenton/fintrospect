@@ -35,7 +35,7 @@ class BodyTest extends FunSpec with Matchers {
     it("should retrieve the body value from the pre-extracted Request") {
       val bodyJson = obj("field" -> string("value"))
       val request = Request("/")
-      body.extract(ExtractedBodyRequest(request, Extracted(Some(bodyJson)))) shouldBe Extracted(Some(bodyJson))
+      body.extract(ExtractedRouteRequest(request, Map(body -> Extracted(Some(bodyJson))))) shouldBe Extracted(Some(bodyJson))
     }
 
     it("validation when missing") {

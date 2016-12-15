@@ -61,7 +61,10 @@ abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], ea
 
   override def -->(value: T) = Seq(eab.newBinding(this, spec.serialize(value)))
 
-  def <--?(from: From) = extractFrom(xs => Try(spec.deserialize(xs.head)), eab.valuesFrom(this, from))
+  def <--?(from: From) = from match {
+    case req: ExtractedRouteRequest => req.get(this)
+    case _ => extractFrom(xs => Try(spec.deserialize(xs.head)), eab.valuesFrom(this, from))
+  }
 }
 
 abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
@@ -72,7 +75,10 @@ abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab
 
   override def -->(value: Seq[T]) = value.map(v => eab.newBinding(this, spec.serialize(v)))
 
-  def <--?(from: From): Extraction[Seq[T]] = extractFrom(xs => Try(xs.map(spec.deserialize)), eab.valuesFrom(this, from))
+  def <--?(from: From): Extraction[Seq[T]] = from match {
+    case req: ExtractedRouteRequest => req.get(this)
+    case _ => extractFrom(xs => Try(xs.map(spec.deserialize)), eab.valuesFrom(this, from))
+  }
 }
 
 
