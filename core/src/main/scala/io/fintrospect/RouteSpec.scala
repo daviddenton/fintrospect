@@ -89,10 +89,9 @@ object RouteSpec {
     val all = new RequestValidation {
       def apply(spec: RouteSpec) = Extractor.mk {
         (request: Request) =>
-          val params = spec.requestParams.map(_ <--? request)
-          val body = spec.body.map(_ <--? request)
-          Extraction.combine(params ++ body) match {
-            case Extracted(_) => Extracted(Option(body.map(ExtractedBodyRequest(request, _)).getOrElse(request)))
+          val contents = Map[Any, Extraction[_]]((spec.requestParams ++ spec.body).map(r => (r, r <--? request)): _*)
+          Extraction.combine(contents.values.toSeq) match {
+            case Extracted(_) => Extracted(Option(ExtractedRouteRequest(request, contents)))
             case ExtractionFailed(e) => ExtractionFailed(e)
           }
       }

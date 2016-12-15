@@ -21,6 +21,8 @@ class QueryTest extends FunSpec with Matchers {
       it("retrieves value from field") {
         param.extract(requestWithValueOf("2015-02-04")) shouldBe Extracted(Some(LocalDate.of(2015, 2, 4)))
         param <-- requestWithValueOf("2015-02-04") shouldBe LocalDate.of(2015, 2, 4)
+        val now = LocalDate.now()
+        param.extract(ExtractedRouteRequest(Request(), Map(param -> Extracted(Some(now))))) shouldBe Extracted(Some(now))
       }
 
       it("fails to retrieve invalid value") {
