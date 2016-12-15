@@ -16,15 +16,12 @@ case class RouteSpec private(summary: String,
                              requestParams: Seq[Parameter with Extractor[Request, _] with Rebindable[Request, _, Binding]],
                              responses: Seq[ResponseSpec]) {
 
-  private[fintrospect] def <--?(request: Request): Extraction[Request] = extract(this).<--?(request)
-
-  private def extract(spec: RouteSpec) = Extractor.mk {
-    (request: Request) =>
-      val contents = Map[Any, Extraction[_]]((spec.requestParams ++ spec.body).map(r => (r, r <--? request)): _*)
-      Extraction.combine(contents.values.toSeq) match {
-        case Extracted(_) => Extracted(Option(ExtractedRouteRequest(request, contents)))
-        case ExtractionFailed(e) => ExtractionFailed(e)
-      }
+  private[fintrospect] def <--?(request: Request): Extraction[Request] = {
+    val contents = Map[Any, Extraction[_]]((requestParams ++ body).map(r => (r, r <--? request)): _*)
+    Extraction.combine(contents.values.toSeq) match {
+      case Extracted(_) => Extracted(Option(ExtractedRouteRequest(request, contents)))
+      case ExtractionFailed(e) => ExtractionFailed(e)
+    }
   }
 
   /**
