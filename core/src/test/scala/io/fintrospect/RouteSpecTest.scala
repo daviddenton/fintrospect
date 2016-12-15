@@ -9,7 +9,6 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
-import io.fintrospect.RouteSpec.RequestValidation
 import io.fintrospect.formats.Argo.JsonFormat.obj
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters._
@@ -130,8 +129,6 @@ class RouteSpecTest extends FunSpec with Matchers {
       else BadRequest()
     }
 
-    val baseRoute = RouteSpec().taking(query).taking(date).body(body).at(Get)
-
     def checkProxyRoute(urlParts: String, fn: (UnboundRoute0 => UnboundRoute)): Unit = {
       request.uri = urlParts + "?query=bob"
       val route = fn(RouteSpec().taking(query).taking(date).body(body).at(Get))
@@ -152,73 +149,31 @@ class RouteSpecTest extends FunSpec with Matchers {
     }
   }
 
-  describe("Request validation") {
-
+  describe("retrieval from a pre-extracted request") {
     val param = Query.required.string("bob")
     val body = Body.json(Some("body"))
 
-    describe("all") {
-      val spec = RouteSpec(validation = RequestValidation.all).taking(param).body(body)
+    val spec = RouteSpec().taking(param).body(body)
 
-      it("succeeds when nothing missing") {
-        val request = Request("?bob=bill")
-        request.contentString = "{}"
-        spec <--? request shouldBe Extracted(Some(ExtractedRouteRequest(request, Map(param -> Extracted(Option("bill")), body -> Extracted(Option(obj()))))))
-      }
-
-      it("fails on missing param") {
-        val request = Request("")
-        request.contentString = "{}"
-        spec <--? request shouldBe ExtractionFailed(Missing(param))
-      }
-
-      it("fails on missing body") {
-        val request = Request("?bob=bill")
-        spec <--? request match {
-          case ExtractionFailed(ps) => ps.head.param.name shouldBe "body"
-          case _ => fail("did not fail to extract")
-        }
-      }
+    it("succeeds when nothing missing") {
+      val request = Request("?bob=bill")
+      request.contentString = "{}"
+      spec <--? request shouldBe Extracted(Some(ExtractedRouteRequest(request, Map(param -> Extracted(Option("bill")), body -> Extracted(Option(obj()))))))
     }
 
-    describe("noBody") {
-      val spec = RouteSpec(validation = RequestValidation.noBody).taking(param).body(body)
-
-      it("succeeds on missing body") {
-        spec <--? Request("?bob=bill") shouldBe Extracted(None)
-      }
-
-      it("fails on missing param") {
-        spec <--? Request("") shouldBe ExtractionFailed(Missing(param))
-      }
+    it("fails on missing param") {
+      val request = Request("")
+      request.contentString = "{}"
+      spec <--? request shouldBe ExtractionFailed(Missing(param))
     }
 
-    describe("noParameters") {
-      val spec = RouteSpec(validation = RequestValidation.noParameters).taking(param).body(body)
-
-      it("succeeds on missing params") {
-        val request = Request("")
-        request.contentString = "{}"
-        spec <--? request shouldBe Extracted(None)
-      }
-
-      it("fails on missing body") {
-        spec <--? Request("") match {
-          case ExtractionFailed(ps) => ps.head.param.name shouldBe "body"
-          case _ => fail("did not fail to extract")
-        }
+    it("fails on missing body") {
+      val request = Request("?bob=bill")
+      spec <--? request match {
+        case ExtractionFailed(ps) => ps.head.param.name shouldBe "body"
+        case _ => fail("did not fail to extract")
       }
     }
-
-    describe("none") {
-      val spec = RouteSpec(validation = RequestValidation.none).taking(param).body(body)
-
-      it("succeeds on missing params and body") {
-        val request = Request("")
-        spec <--? request shouldBe Extracted(None)
-      }
-    }
-
   }
 
   def responseFor(future: Future[Response]): (Status, String) = statusAndContentFrom(result(future))
