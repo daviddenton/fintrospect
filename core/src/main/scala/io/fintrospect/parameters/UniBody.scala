@@ -44,9 +44,11 @@ class UniBody[T](spec: BodySpec[T],
 
   override def iterator = Iterator(param)
 
-  override def <--?(message: Message): Extraction[T] =
-    Try(spec.deserialize(message.content)) match {
+  override def <--?(message: Message): Extraction[T] = message match {
+    case req: ExtractedBodyRequest => req.to[T]
+    case _ => Try(spec.deserialize(message.content)) match {
       case Success(v) => Extracted(Some(v))
       case Failure(_) => ExtractionFailed(Invalid(param))
     }
+  }
 }

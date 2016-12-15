@@ -32,6 +32,12 @@ class BodyTest extends FunSpec with Matchers {
       body <-- request shouldBe bodyJson
     }
 
+    it("should retrieve the body value from the pre-extracted Request") {
+      val bodyJson = obj("field" -> string("value"))
+      val request = Request("/")
+      body.extract(ExtractedBodyRequest(request, Extracted(Some(bodyJson)))) shouldBe Extracted(Some(bodyJson))
+    }
+
     it("validation when missing") {
       body.extract(Request()) shouldBe ExtractionFailed(body.iterator.toSeq.map(p => Invalid(p)))
     }
