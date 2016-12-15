@@ -8,6 +8,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
 ## 13.17.0 (uncut)
+- Added module `fintrospect-jackson` to support Jackson JSON library. See `Jackson` to get the Format util and ResponseBuilder for this format.
 - performance tweaks so we cache the extracted request parameters. This means that we can drop the `RouteValidation` options
 as they were introduced specifically to give the user an option as to when to extract.
 

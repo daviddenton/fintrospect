@@ -79,6 +79,13 @@ lazy val gson = project
   .dependsOn(core % "compile->test")
   .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.8.0")
 
+lazy val jackson = project
+  .settings(baseSettings)
+  .settings(moduleName := "fintrospect-jackson")
+  .settings(description := "Jackson JSON library support for Fintrospect")
+  .dependsOn(core % "compile->test")
+  .settings(libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.4")
+
 lazy val json4s = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-json4s")
@@ -122,13 +129,13 @@ lazy val mustache = project
   .settings(moduleName := "fintrospect-mustache")
   .settings(description := "Mustache templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies ++= Seq("com.github.spullara.mustache.java" % "compiler" % "0.9.4"))
+  .settings(libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % "0.9.4")
 
 // other
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
   .settings(unidocSettings: _*)
   .settings(moduleName := "fintrospect-examples")
-  .aggregate(core, argonaut, circe, gson, json4s, play, spray, msgpack, handlebars, mustache)
-  .dependsOn(core, argonaut, circe, gson, json4s, play, spray, msgpack, handlebars, mustache)
+  .aggregate(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
+  .dependsOn(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.1.7")
