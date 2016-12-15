@@ -29,14 +29,17 @@ class MultiPartFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
       next
     }))
 
-  // FIXME - horrid cast
-  override def <--?(message: Message): Extraction[Form] = message.asInstanceOf[Request].multipart
-    .map(multipart =>
-      Try(validator(formContents, Form(multipart.attributes, filterOutFilesWithNoFilename(multipart)))) match {
-        case Success(form) => extractor(formContents, form)
-        case Failure(_) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
-      }
-    ).getOrElse(ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse"))))
+  override def <--?(message: Message): Extraction[Form] = message match {
+    case r: Request => r.multipart
+      .map(multipart =>
+        Try(validator(formContents, Form(multipart.attributes, filterOutFilesWithNoFilename(multipart)))) match {
+          case Success(form) => extractor(formContents, form)
+          case Failure(_) => ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse")))
+        }
+      )
+      .getOrElse(ExtractionFailed(formContents.filter(_.required).map(param => ExtractionError(param, "Could not parse"))))
+    case _ => ExtractionFailed(formContents.map(f => ExtractionError(f, "Could not parse")))
+  }
 
   private def filterOutFilesWithNoFilename(multipart: Multipart) = multipart.files
     .mapValues(_.filterNot(_.fileName.isEmpty)
