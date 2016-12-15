@@ -3,7 +3,7 @@ package io.fintrospect
 import com.twitter.finagle.http.{Method, Request, Response, Status}
 import io.fintrospect.formats.{Argo, JsonFormat}
 import io.fintrospect.parameters._
-import io.fintrospect.util.{Extracted, Extraction, Extractor}
+import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
 
 /**
   * Encapsulates the specification of an HTTP endpoint, for use by either a Finagle server or client.
@@ -15,9 +15,9 @@ case class RouteSpec private(summary: String,
                              body: Option[Body[_]],
                              requestParams: Seq[Parameter with Extractor[Request, _] with Rebindable[Request, _, Binding]],
                              responses: Seq[ResponseSpec],
-                             validation: RouteSpec => Extractor[Request, Nothing]) {
+                             validation: RouteSpec => Extractor[Request, Request]) {
 
-  private[fintrospect] def <--?(request: Request) = validation(this).<--?(request)
+  private[fintrospect] def <--?(request: Request): Extraction[Request] = validation(this).<--?(request)
 
   /**
     * Register content types which the route will consume. This is informational only and is NOT currently enforced.
@@ -74,7 +74,7 @@ case class RouteSpec private(summary: String,
 
 object RouteSpec {
 
-  trait RequestValidation extends (RouteSpec => Extractor[Request, Nothing])
+  trait RequestValidation extends (RouteSpec => Extractor[Request, Request])
 
   /**
     * Defines the validation for the Route which could result in a BadRequest response from this route. By default, this
@@ -88,7 +88,13 @@ object RouteSpec {
       */
     val all = new RequestValidation {
       def apply(spec: RouteSpec) = Extractor.mk {
-        (request: Request) => Extraction.combine(spec.requestParams.++(spec.body).map(_.extract(request)))
+        (request: Request) =>
+          val params = spec.requestParams.map(_ <--? request)
+          val body = spec.body.map(_ <--? request)
+          Extraction.combine(params ++ body) match {
+            case Extracted(_) => Extracted(Option(body.map(ExtractedBodyRequest(request, _)).getOrElse(request)))
+            case ExtractionFailed(e) => ExtractionFailed(e)
+          }
       }
     }
 

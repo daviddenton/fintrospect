@@ -10,6 +10,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.RouteSpec.RequestValidation
+import io.fintrospect.formats.Argo.JsonFormat.obj
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
 import io.fintrospect.parameters._
 import io.fintrospect.util.ExtractionError.Missing
@@ -159,10 +160,15 @@ class RouteSpecTest extends FunSpec with Matchers {
     describe("all") {
       val spec = RouteSpec(validation = RequestValidation.all).taking(param).body(body)
 
-      it("succeeds when nothing missing") {
+      it("succeeds when nothing missing - with body") {
         val request = Request("?bob=bill")
         request.contentString = "{}"
-        spec <--? request shouldBe Extracted(None)
+        spec <--? request shouldBe Extracted(Some(ExtractedBodyRequest(request, Extracted(Option(obj())))))
+      }
+
+      it("succeeds when nothing missing - no body") {
+        val request = Request("?bob=bill")
+        RouteSpec(validation = RequestValidation.all).taking(param) <--? request shouldBe Extracted(Some(request))
       }
 
       it("fails on missing param") {
