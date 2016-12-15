@@ -14,7 +14,9 @@ object XHtml {
 
     private def format(node: Elem): String = node.toString()
 
-    private def formatErrorMessage(errorMessage: String): Elem = <message>{errorMessage}</message>
+    private def formatErrorMessage(errorMessage: String): Elem = <message>
+      {errorMessage}
+    </message>
 
     private def formatError(throwable: Throwable): Elem = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 

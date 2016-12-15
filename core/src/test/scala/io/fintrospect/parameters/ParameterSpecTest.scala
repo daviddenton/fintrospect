@@ -7,6 +7,7 @@ import io.fintrospect.parameters.StringValidations._
 import org.scalatest._
 
 import scala.util.{Success, Try}
+
 class ParameterSpecTest extends FunSpec with Matchers {
 
   val paramName = "name"
@@ -233,7 +234,7 @@ class ParameterSpecTest extends FunSpec with Matchers {
     }
 
     it("can map with read and show") {
-      ParameterSpec.int(paramName, "").map[IClass](IClass, (i:IClass) => i.value + i.value).serialize(IClass(100)) shouldBe "200"
+      ParameterSpec.int(paramName, "").map[IClass](IClass, (i: IClass) => i.value + i.value).serialize(IClass(100)) shouldBe "200"
     }
   }
 }

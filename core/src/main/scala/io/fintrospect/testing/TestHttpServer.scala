@@ -11,7 +11,7 @@ import io.fintrospect.{ServerRoute, ServerRoutes}
 /**
   * Simple, insecure HTTP server which can be used for tests
   */
-class TestHttpServer(port: Int, serverRoutes: ServerRoutes[Request, Response]) extends OverridableHttpService(serverRoutes){
+class TestHttpServer(port: Int, serverRoutes: ServerRoutes[Request, Response]) extends OverridableHttpService(serverRoutes) {
 
   private var server: ListeningServer = _
 

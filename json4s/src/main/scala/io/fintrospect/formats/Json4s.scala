@@ -62,23 +62,23 @@ class Json4sFormat[T](jsonMethods: JsonMethods[T],
     */
   def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
                  (implicit mf: scala.reflect.Manifest[R]) =
-  BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s), formats)(mf), (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
+    BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s), formats)(mf), (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
     */
   def responseSpec[R](statusAndDescription: (Status, String), example: R, formats: Formats = serialization.formats(NoTypeHints))
                      (implicit mf: scala.reflect.Manifest[R]) =
-  ResponseSpec.json(statusAndDescription, encode(example.asInstanceOf[AnyRef]), this)
+    ResponseSpec.json(statusAndDescription, encode(example.asInstanceOf[AnyRef]), this)
 
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
   def parameterSpec[R](name: String, description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
                       (implicit mf: scala.reflect.Manifest[R]) =
-  ParameterSpec[R](name, description, ObjectParamType,
-    s => decode[R](parse(s), formats)(mf),
-    (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
+    ParameterSpec[R](name, description, ObjectParamType,
+      s => decode[R](parse(s), formats)(mf),
+      (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
 }
 
 /**
@@ -89,6 +89,7 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
   extends AutoFilters[JValue] {
 
   override protected val responseBuilder = jsonLibrary.ResponseBuilder
+
   import responseBuilder.implicits._
 
   private val a = json4sFormat.serialization.formats(NoTypeHints)

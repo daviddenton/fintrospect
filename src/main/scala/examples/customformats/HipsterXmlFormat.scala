@@ -1,8 +1,8 @@
 package examples.customformats
 
 /**
- * @param value the content to encase in html
- */
+  * @param value the content to encase in html
+  */
 case class HipsterXmlFormat(value: String) {
   override def toString: String = value
 

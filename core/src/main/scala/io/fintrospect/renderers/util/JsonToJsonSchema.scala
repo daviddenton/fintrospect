@@ -3,26 +3,29 @@ package io.fintrospect.renderers.util
 import argo.jdom.JsonNode
 import argo.jdom.JsonNodeType._
 import io.fintrospect.formats.Argo.JsonFormat.{Field, obj, string}
-import io.fintrospect.parameters.{BooleanParamType, IntegerParamType, NumberParamType, ParamType, StringParamType}
+import io.fintrospect.parameters._
 import io.fintrospect.renderers.util.JsonToJsonSchema.IllegalSchemaException
 import org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode
 
 import scala.collection.JavaConversions._
 
 object JsonToJsonSchema {
+
   class IllegalSchemaException(message: String) extends Exception(message)
+
 }
 
 /**
- * A post-reified and flattened JSON schema model.
- * @param node the main schema node (first level only).
- * @param definitions named, flattened JSON schema definitions of all models involved in the reification.
- */
+  * A post-reified and flattened JSON schema model.
+  *
+  * @param node        the main schema node (first level only).
+  * @param definitions named, flattened JSON schema definitions of all models involved in the reification.
+  */
 case class Schema(node: JsonNode, definitions: Seq[Field])
 
 /**
- * Given a JSON node, converts it to a flattened JSON Schema.
- */
+  * Given a JSON node, converts it to a flattened JSON Schema.
+  */
 class JsonToJsonSchema() {
   private def toSchema(input: Schema): Schema = {
     input.node.getType match {

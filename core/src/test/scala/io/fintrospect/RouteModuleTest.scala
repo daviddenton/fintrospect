@@ -105,6 +105,7 @@ class RouteModuleTest extends FunSpec with Matchers {
         def module(path: String) = {
           RouteModule(Root / path).withRoute(RouteSpec("").at(Get) / "echo" bindTo Service.mk[Request, Response] { _ => Ok(path) })
         }
+
         val totalService = Module.combine(module("rita"), module("bob"), module("sue")).toService
 
         statusAndContentFrom(result(totalService(Request("/rita/echo")))) shouldBe(Ok, "rita")
@@ -220,6 +221,7 @@ class RouteModuleTest extends FunSpec with Matchers {
     describe("identity") {
       it("identifies route with anonymised description when called") {
         def getHeaders(number: Int, aString: String) = Service.mk[Request, Response] { request => Ok(headersFrom(request).toString()) }
+
         val route = RouteSpec("").at(Get) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
         val m = RouteModule(Root).withRoute(route)
         HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldBe(Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")

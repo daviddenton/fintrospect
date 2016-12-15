@@ -56,7 +56,7 @@ object MsgPack {
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoOptionalOut[IN, OUT <: AnyRef](successStatus: Status = Ok): Filter[IN, Response, IN, Option[OUT]] =
-    _AutoOptionalOut(toResponse(successStatus))
+      _AutoOptionalOut(toResponse(successStatus))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios

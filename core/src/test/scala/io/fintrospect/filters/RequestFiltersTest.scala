@@ -35,9 +35,10 @@ class RequestFiltersTest extends FunSpec with Matchers {
       it("when extract fails normally then return bad request") {
 
         Extractor.mk {
-          r: Request => for {
-            a <- Query.optional.string("bob") <--? r
-          } yield None
+          r: Request =>
+            for {
+              a <- Query.optional.string("bob") <--? r
+            } yield None
         }
 
         val filter = RequestFilters.ExtractingRequest[String] {
@@ -121,7 +122,7 @@ class RequestFiltersTest extends FunSpec with Matchers {
 
     describe("BasicAuthorization") {
       it("adds basic authorization header") {
-        result(BasicAuthorization(Credentials("hello", "kitty"))(Request(),  Service.mk {
+        result(BasicAuthorization(Credentials("hello", "kitty"))(Request(), Service.mk {
           req =>
             val r = Response()
             r.contentString = headerOf("Authorization")(req)

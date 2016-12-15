@@ -7,9 +7,9 @@ import io.fintrospect.util.ExtractionError
 import io.fintrospect.{Security, ServerRoute}
 
 /**
- * This is used to render the various standard responses (bad request/the description route).
- * Provide one of these to implement a pluggable custom format for module responses.
- */
+  * This is used to render the various standard responses (bad request/the description route).
+  * Provide one of these to implement a pluggable custom format for module responses.
+  */
 trait ModuleRenderer {
   def notFound(request: Request): Response = Response(NotFound)
 

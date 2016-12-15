@@ -3,7 +3,7 @@ package experiments
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.parameters.{Binding, PathBindable, PathParameter, Rebindable, Retrieval}
+import io.fintrospect.parameters._
 import io.fintrospect.util.Extractor
 
 object types {

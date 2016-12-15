@@ -30,10 +30,11 @@ object MultiBodyType {
         .getOrElse(UnsupportedMediaType(contentType.value))
 
     Service.mk {
-      request: Request => (ContentType.header <-- request)
-        .map(value => ContentType(value.toLowerCase()))
-        .map(contentType => handle(request, contentType))
-        .getOrElse(UnsupportedMediaType("missing Content-Type header"))
+      request: Request =>
+        (ContentType.header <-- request)
+          .map(value => ContentType(value.toLowerCase()))
+          .map(contentType => handle(request, contentType))
+          .getOrElse(UnsupportedMediaType("missing Content-Type header"))
     }
   }
 

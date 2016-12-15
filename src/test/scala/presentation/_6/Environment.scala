@@ -9,5 +9,5 @@ object Environment extends App {
 }
 
 /**
- * showcase: swagger schema
- */
+  * showcase: swagger schema
+  */

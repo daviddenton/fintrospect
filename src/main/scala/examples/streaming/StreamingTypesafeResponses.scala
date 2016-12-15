@@ -16,7 +16,9 @@ import io.fintrospect.{RouteModule, RouteSpec}
   */
 object StreamingTypesafeResponses extends App {
 
-  val infiniteTypesafeStream = AsyncStream.fromSeq(Stream.from(0).map(i => <hello> {i} </hello>))
+  val infiniteTypesafeStream = AsyncStream.fromSeq(Stream.from(0).map(i => <hello>
+    {i}
+  </hello>))
 
   val streamOfXml = Service.mk[Request, Response] { req => Ok(infiniteTypesafeStream) }
 

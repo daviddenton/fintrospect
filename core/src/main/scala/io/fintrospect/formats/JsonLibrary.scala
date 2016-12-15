@@ -4,10 +4,9 @@ import com.twitter.io.Buf
 import io.fintrospect.ContentTypes
 
 
-
-
 /**
   * Defines a supported JSON library format (e.g. Argo or Json4s).
+  *
   * @tparam R - Root node type
   * @tparam N - Node type
   */

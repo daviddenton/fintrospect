@@ -14,4 +14,5 @@ object PlainText {
   object ResponseBuilder extends AbstractResponseBuilder[$] {
     def HttpResponse(): ResponseBuilder[$] = new ResponseBuilder[$](i => Buf.Utf8(i.value), $, e => $(e.getMessage), ContentTypes.TEXT_PLAIN)
   }
+
 }

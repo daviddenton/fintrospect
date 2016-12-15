@@ -10,8 +10,8 @@ import io.fintrospect.util.ExtractionError
 import io.fintrospect.{Security, ServerRoute}
 
 /**
- * Hyper-cool, next-gen, markup used by all true rockstar coderzzzz
- */
+  * Hyper-cool, next-gen, markup used by all true rockstar coderzzzz
+  */
 object HipsterXmlModuleRenderer extends ModuleRenderer {
 
   override def badRequest(badParameters: Seq[ExtractionError]): Response = Error(Status.BadRequest, badParameters.toString())

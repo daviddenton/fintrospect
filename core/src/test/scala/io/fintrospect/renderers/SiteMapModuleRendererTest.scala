@@ -3,7 +3,7 @@ package io.fintrospect.renderers
 import java.net.URL
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Method.{Connect, Delete, Get, Head, Options, Post, Put, Trace}
+import com.twitter.finagle.http.Method._
 import com.twitter.finagle.http.Status.{BadRequest, NotFound, Ok}
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Method, Request, Response}

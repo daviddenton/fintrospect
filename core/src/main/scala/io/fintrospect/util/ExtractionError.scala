@@ -21,4 +21,5 @@ object ExtractionError {
   case class Invalid(param: Parameter) extends ExtractionError {
     val reason = "Invalid"
   }
+
 }

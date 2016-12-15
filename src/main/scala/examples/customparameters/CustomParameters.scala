@@ -1,14 +1,14 @@
 package examples.customparameters
 
 import com.twitter.finagle.http.Request
-import io.fintrospect.parameters.{Header, ParameterSpec, Path, Query, StringParamType}
+import io.fintrospect.parameters._
 
 import scala.language.reflectiveCalls
 
 /**
- * This example shows how to define a custom parameter types which can be retrieved from a request. They can be defined and then
- * used alongside the other normal parameters in exactly the same way.
- */
+  * This example shows how to define a custom parameter types which can be retrieved from a request. They can be defined and then
+  * used alongside the other normal parameters in exactly the same way.
+  */
 
 // Custom domain type
 case class EmailAddress(value: String)

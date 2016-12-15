@@ -66,10 +66,11 @@ class StaticModuleTest extends FunSpec with Matchers {
 
   it("can add a filter") {
     val module = StaticModule(Root / "svc", Classpath("io/fintrospect"), Filter.mk[Request, Response, Request, Response] {
-      (request, svc) => svc(request).map(rsp => {
-        rsp.setStatusCode(Status.ExpectationFailed.code)
-        rsp
-      })
+      (request, svc) =>
+        svc(request).map(rsp => {
+          rsp.setStatusCode(Status.ExpectationFailed.code)
+          rsp
+        })
     })
     val result = Await.result(module.toService(Request("/svc/StaticModule.js")))
     result.status shouldBe Status.ExpectationFailed

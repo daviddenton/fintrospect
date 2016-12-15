@@ -19,5 +19,5 @@ object Environment extends App {
 }
 
 /**
- * showcase: empty api and 404
- */
+  * showcase: empty api and 404
+  */

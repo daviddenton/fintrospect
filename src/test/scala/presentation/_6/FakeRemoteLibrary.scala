@@ -13,7 +13,7 @@ import presentation.Books
 
 
 class FakeRemoteLibrary(books: Books) {
-  def search(titlePart: String) =  Service.mk[Request, Response] {
+  def search(titlePart: String) = Service.mk[Request, Response] {
     request => {
       val results = books.titles().filter(_.toLowerCase.contains(titlePart.toLowerCase))
       Ok(results.mkString(","))

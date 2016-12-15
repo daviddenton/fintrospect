@@ -10,14 +10,14 @@ import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 
 /**
- * This example shows the intended method for implementing a simple app using Fintrospect routes and modules, using
- * a Swagger 2.0 renderer. The Swagger API endpoint lives at the root of the module (in this case /library) instead
- * of /api-docs.
- *
- * Note the use of the CORS policy filter to allow the endpoints to be called by the Swagger UI. For normal usage,
- * use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
- * to all routes in the module (by being passed as the optional param to the RouteModule constructor)
- */
+  * This example shows the intended method for implementing a simple app using Fintrospect routes and modules, using
+  * a Swagger 2.0 renderer. The Swagger API endpoint lives at the root of the module (in this case /library) instead
+  * of /api-docs.
+  *
+  * Note the use of the CORS policy filter to allow the endpoints to be called by the Swagger UI. For normal usage,
+  * use CORs settings that suit your particular use-case. This one allows any cross-domain traffic at all and is applied
+  * to all routes in the module (by being passed as the optional param to the RouteModule constructor)
+  */
 object LibraryApp extends App {
 
   val apiInfo = ApiInfo("Library Example", "1.0", Option("A simple example of how to construct a Fintrospect module"))

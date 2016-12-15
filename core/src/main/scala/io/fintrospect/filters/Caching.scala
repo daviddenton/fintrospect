@@ -92,16 +92,17 @@ object Caching {
       * By default, only applies when the status code of the response is < 400. This is overridable.
       */
     def AddETag[T](predicate: Response => Boolean = _.statusCode < 400): Filter[T, Response, T, Response] = Filter.mk[T, Response, T, Response] {
-      (req, svc) => svc(req)
-        .map {
-          rsp => {
-            if(predicate(rsp)) {
-              val hashedBody = MessageDigest.getInstance("MD5").digest(rsp.contentString.getBytes).map("%02x".format(_)).mkString
-              rsp.headerMap(ETAG) = hashedBody
+      (req, svc) =>
+        svc(req)
+          .map {
+            rsp => {
+              if (predicate(rsp)) {
+                val hashedBody = MessageDigest.getInstance("MD5").digest(rsp.contentString.getBytes).map("%02x".format(_)).mkString
+                rsp.headerMap(ETAG) = hashedBody
+              }
+              rsp
             }
-            rsp
           }
-        }
     }
 
     /**
@@ -111,10 +112,11 @@ object Caching {
       */
     def FallbackCacheControl(clock: Clock, defaultCacheTimings: DefaultCacheTimings, predicate: Response => Boolean = _.statusCode < 400) = new SimpleFilter[Request, Response] {
       override def apply(request: Request, next: Service[Request, Response]): Future[Response] = next(request).map {
-        response => request.method match {
-          case Method.Get if predicate(response) => addDefaultCacheHeadersIfAbsent(response)
-          case _ => response
-        }
+        response =>
+          request.method match {
+            case Method.Get if predicate(response) => addDefaultCacheHeadersIfAbsent(response)
+            case _ => response
+          }
       }
 
       private def addDefaultHeaderIfAbsent(response: Response, header: String, defaultProducer: => String) {

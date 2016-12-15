@@ -12,8 +12,8 @@ import org.jboss.netty.buffer.ChannelBuffer
 import scala.language.implicitConversions
 
 /**
- * Convenience methods for building Http Responses
- */
+  * Convenience methods for building Http Responses
+  */
 trait AbstractResponseBuilder[T] {
 
   object implicits {
@@ -39,8 +39,8 @@ trait AbstractResponseBuilder[T] {
   }
 
   /**
-   * Intermediate object used when constructing a ResponseBuilder from a Status object (via implicit conversion)
-   */
+    * Intermediate object used when constructing a ResponseBuilder from a Status object (via implicit conversion)
+    */
   class ResponseBuilderConfig(status: Status) {
     def apply(): ResponseBuilder[T] = HttpResponse(status)
 

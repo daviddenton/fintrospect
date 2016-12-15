@@ -38,7 +38,11 @@ object BodySpec {
   def xml(description: Option[String] = None): BodySpec[Elem] = BodySpec.string(description, APPLICATION_XML).map(XML.loadString, _.toString())
 
   def binary(description: Option[String] = None, contentType: ContentType): BodySpec[Buf] = BodySpec(description, contentType,
-    b => { require(b.length > 0); b },
-    b => { require(b.length > 0); b }
+    b => {
+      require(b.length > 0); b
+    },
+    b => {
+      require(b.length > 0); b
+    }
   )
 }
