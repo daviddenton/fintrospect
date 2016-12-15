@@ -22,7 +22,7 @@ object Extractor {
   /**
     * Create an extractor from a simple function. This is stylistic, similar to Service.mk and Filter.mk
     */
-  def mk[From, T](fn:From => Extraction[T]): Extractor[From, T] = new Extractor[From, T] {
+  def mk[From, T](fn: From => Extraction[T]): Extractor[From, T] = new Extractor[From, T] {
     override def <--?(from: From): Extraction[T] = fn(from)
   }
 }

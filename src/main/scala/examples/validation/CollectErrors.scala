@@ -16,9 +16,9 @@ object CollectErrors extends App {
     * - use a Validation instead
     */
   def validate(input: Request) = Validator.mk(
-    Query.required.localDate("theFuture") <--?(input, "Must be after the millennium", _.isAfter(millennium)),
+    Query.required.localDate("theFuture") <--? (input, "Must be after the millennium", _.isAfter(millennium)),
     Query.optional.localDate("anyOldDate") <--? input,
-    Query.optional.localDate("thePast") <--?(input, "Must be before the millennium", _.isBefore(millennium))
+    Query.optional.localDate("thePast") <--? (input, "Must be before the millennium", _.isBefore(millennium))
   ) {
     case (future, old, past) => s"validated ok: $future, $old, $past"
   }

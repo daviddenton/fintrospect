@@ -51,7 +51,7 @@ class QueryTest extends FunSpec with Matchers {
 
       it("fails to retrieve invalid value") {
         val param = Query.required.*.long(paramName)
-        param.extract(requestWithValueOf("qwe","notValid")) shouldBe ExtractionFailed(Invalid(param))
+        param.extract(requestWithValueOf("qwe", "notValid")) shouldBe ExtractionFailed(Invalid(param))
       }
 
       it("does not retrieve non existent value") {

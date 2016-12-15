@@ -7,9 +7,10 @@ import argo.jdom.JsonNodeFactories.booleanNode
 import argo.jdom.{JdomParser, JsonNode, JsonNodeFactories, JsonRootNode}
 
 /**
- * Argo JSON support (application/json content type)
- */
+  * Argo JSON support (application/json content type)
+  */
 object Argo extends JsonLibrary[JsonRootNode, JsonNode] {
+
   object JsonFormat extends JsonFormat[JsonRootNode, JsonNode] {
     private val pretty = new PrettyJsonFormatter()
     private val compact = new CompactJsonFormatter()
@@ -36,7 +37,7 @@ object Argo extends JsonLibrary[JsonRootNode, JsonNode] {
 
     override def number(value: Long) = JsonNodeFactories.number(value)
 
-    override  def number(value: BigInteger) = JsonNodeFactories.number(value)
+    override def number(value: BigInteger) = JsonNodeFactories.number(value)
 
     override def boolean(value: Boolean) = booleanNode(value)
 

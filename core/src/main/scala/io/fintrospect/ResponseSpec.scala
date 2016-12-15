@@ -9,8 +9,8 @@ import scala.util.Try
 import scala.xml.Elem
 
 /**
- * Defines a potential response from a route, with a possible example
- */
+  * Defines a potential response from a route, with a possible example
+  */
 class ResponseSpec private[fintrospect](statusAndDescription: (Status, String), val example: Option[String] = None) {
   val status = statusAndDescription._1
   val description = statusAndDescription._2

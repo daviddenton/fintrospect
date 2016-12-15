@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
-import io.fintrospect.formats.Play.JsonFormat.{bodySpec, decode, encode, parameterSpec, parse}
+import io.fintrospect.formats.Play.JsonFormat._
 import io.fintrospect.formats.Play.ResponseBuilder.implicits._
 import io.fintrospect.parameters.{Body, Query}
 import org.scalatest.{FunSpec, Matchers}
@@ -110,6 +110,7 @@ class PlayFiltersTest extends FunSpec with Matchers {
     }
   }
 }
+
 class PlayJsonResponseBuilderTest extends JsonResponseBuilderSpec(Play)
 
 class PlayJsonFormatTest extends JsonFormatSpec(Play.JsonFormat) {

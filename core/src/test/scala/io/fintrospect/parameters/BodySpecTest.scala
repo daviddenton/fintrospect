@@ -101,7 +101,7 @@ class BodySpecTest extends FunSpec with Matchers {
     }
 
     it("can map with read and show") {
-      BodySpec.string(None).map[IClass](IClass, (i:IClass) => i.value + i.value).serialize(IClass("100")) shouldBe Buf.Utf8("100100")
+      BodySpec.string(None).map[IClass](IClass, (i: IClass) => i.value + i.value).serialize(IClass("100")) shouldBe Buf.Utf8("100100")
     }
   }
 }

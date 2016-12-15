@@ -142,20 +142,20 @@ object Circe extends JsonLibrary[Json, Json] {
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
       */
     def bodySpec[R](description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
-    BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s))(d), (u: R) => compact(encode(u)(e)))
+      BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s))(d), (u: R) => compact(encode(u)(e)))
 
     /**
       * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
       */
     def responseSpec[R](statusAndDescription: (Status, String), example: R)
                        (implicit e: Encoder[R], d: Decoder[R]) =
-    ResponseSpec.json(statusAndDescription, encode(example)(e), this)
+      ResponseSpec.json(statusAndDescription, encode(example)(e), this)
 
     /**
       * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
       */
     def parameterSpec[R](name: String, description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
-    ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(d), (u: R) => compact(encode(u)(e)))
+      ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(d), (u: R) => compact(encode(u)(e)))
   }
 
 }

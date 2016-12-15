@@ -7,14 +7,14 @@ import scala.util.Try
 trait PathBindable[T] extends Bindable[T, PathBinding]
 
 /**
- * Parameters which are bound to the path segments of a URL
- */
+  * Parameters which are bound to the path segments of a URL
+  */
 object Path extends Parameters[PathParameter, PathBindable] {
 
   /**
-   * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
-   * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
-   */
+    * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
+    * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
+    */
   def fixed(name: String): PathParameter[String] = new PathParameter[String](
     ParameterSpec[String](name, None, StringParamType, identity, identity), true) with PathBindable[String] {
 
@@ -30,11 +30,12 @@ object Path extends Parameters[PathParameter, PathBindable] {
   }
 
   /**
-   * Create a path parameter using the passed specification
-   * @param spec the parameter spec
-   * @tparam T the type of the parameter
-   * @return a parameter for retrieving a value of type [T] from the request
-   */
+    * Create a path parameter using the passed specification
+    *
+    * @param spec the parameter spec
+    * @tparam T the type of the parameter
+    * @return a parameter for retrieving a value of type [T] from the request
+    */
   def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec, false) with PathBindable[T] {
 
     override val required = true

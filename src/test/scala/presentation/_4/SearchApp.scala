@@ -15,7 +15,7 @@ import io.fintrospect.{RouteModule, RouteSpec}
 class SearchRoute(books: RemoteBooks) {
   private val titlePartParam = Query.required.string("titlePart")
 
-  def search() =  Service.mk[Request, Response] {
+  def search() = Service.mk[Request, Response] {
     request => {
       val titlePart = titlePartParam <-- request
 

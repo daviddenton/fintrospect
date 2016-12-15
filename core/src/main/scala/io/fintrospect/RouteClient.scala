@@ -18,10 +18,11 @@ object RouteClient {
 
 /**
   * Representation of a pre-configured client HTTP call
-  * @param spec the route specification
-  * @param method the HTTP method
+  *
+  * @param spec              the route specification
+  * @param method            the HTTP method
   * @param underlyingService the underlying service to make the request from
-  * @param pathParams the path parameters to use
+  * @param pathParams        the path parameters to use
   */
 class RouteClient(method: Method,
                   spec: RouteSpec,
@@ -35,6 +36,7 @@ class RouteClient(method: Method,
 
   /**
     * Make a request to this client route using the passed bindings
+    *
     * @param userBindings the bindings for this request
     * @return the response Future
     */

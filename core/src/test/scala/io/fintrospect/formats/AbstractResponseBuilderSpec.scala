@@ -64,8 +64,8 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
     }
 
     it("content - OutputStream") {
-      statusAndContentFrom(bldr.HttpResponse().withContent((out:OutputStream) => out.write(expectedContent.getBytes()))) shouldBe(Ok, expectedContent)
-      statusAndContentFrom(Ok((out:OutputStream) => out.write(expectedContent.getBytes()))) shouldBe(Ok, expectedContent)
+      statusAndContentFrom(bldr.HttpResponse().withContent((out: OutputStream) => out.write(expectedContent.getBytes()))) shouldBe(Ok, expectedContent)
+      statusAndContentFrom(Ok((out: OutputStream) => out.write(expectedContent.getBytes()))) shouldBe(Ok, expectedContent)
     }
 
     it("content - String") {
@@ -97,10 +97,10 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
       statusAndContentFrom(NotFound(Buf.Utf8(expectedErrorContent))) shouldBe(NotFound, expectedErrorContent)
     }
 
-//    it("error with message - Reader") {
-//      statusAndContentFrom(bldr.Error(NotFound, Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(NotFound, expectedErrorContent)
-//      statusAndContentFrom(NotFound(Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(NotFound, expectedErrorContent)
-//    }
+    //    it("error with message - Reader") {
+    //      statusAndContentFrom(bldr.Error(NotFound, Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(NotFound, expectedErrorContent)
+    //      statusAndContentFrom(NotFound(Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(NotFound, expectedErrorContent)
+    //    }
 
     it("error with message - ChannelBuffer") {
       statusAndContentFrom(bldr.Error(NotFound, copiedBuffer(message, defaultCharset()))) shouldBe(NotFound, message)

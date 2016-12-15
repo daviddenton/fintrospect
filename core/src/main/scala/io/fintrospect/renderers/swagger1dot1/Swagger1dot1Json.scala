@@ -4,7 +4,7 @@ import argo.jdom.JsonNode
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.formats.Argo.JsonFormat.{Field, array, boolean, nullNode, number, obj, string}
+import io.fintrospect.formats.Argo.JsonFormat._
 import io.fintrospect.formats.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
@@ -14,8 +14,8 @@ import io.fintrospect.{Security, ServerRoute}
 import scala.collection.JavaConversions._
 
 /**
- * ModuleRenderer that provides basic Swagger v1.1 support. No support for bodies or schemas.
- */
+  * ModuleRenderer that provides basic Swagger v1.1 support. No support for bodies or schemas.
+  */
 class Swagger1dot1Json extends ModuleRenderer {
 
   private def render(parameter: Parameter): JsonNode = obj(
@@ -29,8 +29,8 @@ class Swagger1dot1Json extends ModuleRenderer {
   private def render(route: ServerRoute[_, _]): Field = route.method.toString().toLowerCase -> {
     val allParams =
       route.pathParams.flatten ++
-      route.routeSpec.requestParams ++
-      route.routeSpec.body.map(_.iterator).getOrElse(Nil)
+        route.routeSpec.requestParams ++
+        route.routeSpec.body.map(_.iterator).getOrElse(Nil)
 
     obj(
       "Method" -> string(route.method.toString()),

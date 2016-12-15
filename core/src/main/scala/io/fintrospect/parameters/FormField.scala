@@ -88,6 +88,7 @@ object FormField {
       }
 
     override def * = multi
+
     override val multi = new Parameters[MultiFormField, OptionalSeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with OptionalSeq[T]
 

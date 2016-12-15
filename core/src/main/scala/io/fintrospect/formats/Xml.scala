@@ -34,7 +34,7 @@ object Xml {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOut(svc: Service[Elem, Elem], successStatus: Status = Ok): Service[Request, Response] =
-    AutoIn(body).andThen(AutoOut[Elem](successStatus)).andThen(svc)
+      AutoIn(body).andThen(AutoOut[Elem](successStatus)).andThen(svc)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output Elem instances for HTTP POST scenarios
@@ -63,7 +63,9 @@ object Xml {
 
     private def format(node: Elem): String = node.toString()
 
-    private def formatErrorMessage(errorMessage: String): Elem = <message>{errorMessage}</message>
+    private def formatErrorMessage(errorMessage: String): Elem = <message>
+      {errorMessage}
+    </message>
 
     private def formatError(throwable: Throwable): Elem = formatErrorMessage(Option(throwable.getMessage).getOrElse(throwable.getClass.getName))
 

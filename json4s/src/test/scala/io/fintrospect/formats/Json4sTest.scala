@@ -17,6 +17,7 @@ case class Json4sStreetAddress(address: String)
 case class Json4sLetter(to: Json4sStreetAddress, from: Json4sStreetAddress, message: String)
 
 abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFormat[_]) extends FunSpec with Matchers {
+
   import io.fintrospect.formats.Json4s.ResponseBuilder.implicits._
   import jsonFormat._
 
@@ -91,8 +92,11 @@ abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFo
 }
 
 class Json4sNativeFiltersTest extends Json4sFiltersSpec(Json4s.Filters, Json4s.JsonFormat)
+
 class Json4sJacksonFiltersTest extends Json4sFiltersSpec(Json4sJackson.Filters, Json4sJackson.JsonFormat)
+
 class Json4sNativeDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sDoubleMode.Filters, Json4sDoubleMode.JsonFormat)
+
 class Json4sJacksonDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sJacksonDoubleMode.Filters, Json4sJacksonDoubleMode.JsonFormat)
 
 abstract class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends JsonFormatSpec(format) {

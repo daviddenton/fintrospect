@@ -71,7 +71,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOutFilter[BODY, OUT](successStatus: Status = Ok)
-    (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
+                                  (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
     : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
   }
 

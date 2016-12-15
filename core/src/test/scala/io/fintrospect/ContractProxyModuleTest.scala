@@ -14,6 +14,7 @@ object TestContract extends Contract {
     val query = Query.required.string("query")
     override val route = RouteSpec().taking(query).at(Get) / "hello"
   }
+
 }
 
 class ContractProxyModuleTest extends FunSpec with Matchers {

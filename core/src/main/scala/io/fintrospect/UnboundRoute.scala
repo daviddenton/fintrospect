@@ -138,7 +138,7 @@ class UnboundRoute4[A, B, C, D](val routeSpec: RouteSpec, val method: Method, va
                                 pp2: PathParameter[B],
                                 pp3: PathParameter[C],
                                 pp4: PathParameter[D]
-                                 ) extends UnboundRoute {
+                               ) extends UnboundRoute {
   def /(part: String): UnboundRoute5[A, B, C, D, String] = /(Fp.fixed(part))
 
   def /[E](pp5: PathParameter[E]): UnboundRoute5[A, B, C, D, E] = new UnboundRoute5(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5)
@@ -163,7 +163,7 @@ class UnboundRoute5[A, B, C, D, E](val routeSpec: RouteSpec, val method: Method,
                                    pp3: PathParameter[C],
                                    pp4: PathParameter[D],
                                    pp5: PathParameter[E]
-                                    ) extends UnboundRoute {
+                                  ) extends UnboundRoute {
   def /(part: String): UnboundRoute6[A, B, C, D, E, String] = /(Fp.fixed(part))
 
   def /[F](pp6: PathParameter[F]): UnboundRoute6[A, B, C, D, E, F] = new UnboundRoute6(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6)
@@ -189,7 +189,7 @@ class UnboundRoute6[A, B, C, D, E, F](val routeSpec: RouteSpec, val method: Meth
                                       pp4: PathParameter[D],
                                       pp5: PathParameter[E],
                                       pp6: PathParameter[F]
-                                       ) extends UnboundRoute {
+                                     ) extends UnboundRoute {
   def /(part: String): UnboundRoute7[A, B, C, D, E, F, String] = /(Fp.fixed(part))
 
   def /[G](pp7: PathParameter[G]): UnboundRoute7[A, B, C, D, E, F, G] = new UnboundRoute7(routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6, pp7)
@@ -216,7 +216,7 @@ class UnboundRoute7[A, B, C, D, E, F, G](val routeSpec: RouteSpec, val method: M
                                          pp5: PathParameter[E],
                                          pp6: PathParameter[F],
                                          pp7: PathParameter[G]
-                                          ) extends UnboundRoute {
+                                        ) extends UnboundRoute {
   def bindTo[RQ, RS](fn: (A, B, C, D, E, F, G) => Service[RQ, RS]): ServerRoute[RQ, RS] = new ServerRoute[RQ, RS](routeSpec, method, pathFn, pp1, pp2, pp3, pp4, pp5, pp6, pp7) {
     override def toPf(filter: Filter[Request, Response, RQ, RS], basePath: Path) = {
       case actualMethod -> path / pp1(s1) / pp2(s2) / pp3(s3) / pp4(s4) / pp5(s5) / pp6(s6) / pp7(s7) if matches(actualMethod, basePath, path) => filter.andThen(fn(s1, s2, s3, s4, s5, s6, s7))

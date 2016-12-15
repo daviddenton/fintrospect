@@ -25,18 +25,20 @@ case class SchoolClass(pupils: Int, teacher: Person)
   * In this example, we implement a checker for school class sizes.. the rule being that the number of pupils in a class
   * must be greater than their teacher's years of experience.
   */
-object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
+object CrossFieldValidation extends App {
+  type Predicate[T] = T => Boolean
 
   // lower level extractor: extracts a person from the request
   val person: Extractor[Request, Person] = Extractor.mk {
-    req: Request => for {
-      gender <- Query.required.string("gender") <--? req
-      exp <- Query.required.int("experience") <--? req
-    } yield {
-      // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
-      // the mandatory fields would short-circuit the comprehension if they were missing.
-      Person(gender, exp.get)
-    }
+    req: Request =>
+      for {
+        gender <- Query.required.string("gender") <--? req
+        exp <- Query.required.int("experience") <--? req
+      } yield {
+        // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
+        // the mandatory fields would short-circuit the comprehension if they were missing.
+        Person(gender, exp.get)
+      }
   }
 
   // higher-level extractor: uses other extractors and validation rules
@@ -46,12 +48,13 @@ object CrossFieldValidation extends App {type Predicate[T] = T => Boolean
     def lessThanYearsExperience(teacher: Option[Person]): Predicate[Int] = number => teacher.exists(_.experience > number)
 
     Extractor.mk {
-      req: Request => for {
-        teacher <- person <--? req
-        pupils <- Query.required.int("pupils") <--?(req, "Too many pupils", lessThanYearsExperience(teacher))
-      } yield {
-        SchoolClass(pupils.get, teacher.get)
-      }
+      req: Request =>
+        for {
+          teacher <- person <--? req
+          pupils <- Query.required.int("pupils") <--? (req, "Too many pupils", lessThanYearsExperience(teacher))
+        } yield {
+          SchoolClass(pupils.get, teacher.get)
+        }
     }
   }
 

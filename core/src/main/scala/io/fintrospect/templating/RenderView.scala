@@ -8,8 +8,9 @@ import io.fintrospect.formats.AbstractResponseBuilder
 /**
   * Used to render View objects to views based on template files. This template Filter can be added as a module filter
   * to be applied to all routes in that module.
+  *
   * @param responseBuilder The ResponseBuilder to use - this identifies the content type that will be used.
-  * @param renderer The TemplateLoader to use - this handles the conversion of the View to text.
+  * @param renderer        The TemplateLoader to use - this handles the conversion of the View to text.
   */
 class RenderView(responseBuilder: AbstractResponseBuilder[_], renderer: TemplateRenderer)
   extends Filter[Request, Response, Request, View] {

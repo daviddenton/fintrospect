@@ -4,13 +4,13 @@ import argo.jdom.JsonNode
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
+import io.fintrospect._
 import io.fintrospect.formats.Argo.JsonFormat._
 import io.fintrospect.formats.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
 import io.fintrospect.parameters.Parameter
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 import io.fintrospect.util.ExtractionError
-import io.fintrospect._
 
 import scala.util.Try
 

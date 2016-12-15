@@ -8,7 +8,7 @@ import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.formats
-import io.fintrospect.formats.Argonaut.JsonFormat.{bodySpec, decode, encode, obj, parameterSpec, parse}
+import io.fintrospect.formats.Argonaut.JsonFormat._
 import io.fintrospect.formats.Argonaut.ResponseBuilder.implicits._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}

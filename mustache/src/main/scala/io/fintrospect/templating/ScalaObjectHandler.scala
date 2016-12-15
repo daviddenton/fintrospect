@@ -48,4 +48,5 @@ class ScalaObjectHandler extends ReflectionObjectHandler {
       case _ => None
     }
   }
+
 }

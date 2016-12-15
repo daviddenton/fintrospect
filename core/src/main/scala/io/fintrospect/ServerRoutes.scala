@@ -1,8 +1,8 @@
 package io.fintrospect
 
 /**
- * Implement this trait if there is a requirement to have more than one route in a single class.
- */
+  * Implement this trait if there is a requirement to have more than one route in a single class.
+  */
 trait ServerRoutes[RQ, RS] extends Iterable[ServerRoute[RQ, RS]] {
   private val definedRoutes = scala.collection.mutable.MutableList[ServerRoute[RQ, RS]]()
 

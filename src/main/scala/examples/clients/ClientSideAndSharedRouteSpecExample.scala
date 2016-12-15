@@ -9,7 +9,7 @@ import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.{responseBuilderToFuture, statusToResponseBuilderConfig}
-import io.fintrospect.parameters.{Body, Form, FormField, Header, Path, Query}
+import io.fintrospect.parameters._
 import io.fintrospect.testing.TestHttpServer
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}
 

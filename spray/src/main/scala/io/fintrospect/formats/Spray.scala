@@ -6,11 +6,11 @@ import spray.json.DefaultJsonProtocol._
 import spray.json.{JsObject, _}
 
 /**
- * Spray JSON support (application/json content type)
- */
+  * Spray JSON support (application/json content type)
+  */
 object Spray extends JsonLibrary[JsValue, JsValue] {
 
- object JsonFormat extends JsonFormat[JsValue, JsValue] {
+  object JsonFormat extends JsonFormat[JsValue, JsValue] {
 
     override def parse(in: String) = JsonParser(in)
 

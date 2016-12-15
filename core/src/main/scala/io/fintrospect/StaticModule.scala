@@ -14,6 +14,7 @@ import io.fintrospect.formats.ResponseBuilder.HttpResponse
 object StaticModule {
   /**
     * Module to serve static resources. This defaults to using a Classpath ResourceLoader (to serve from the root of the classpath)
+    *
     * @param basePath
     * @param resourceLoader
     * @param moduleFilter

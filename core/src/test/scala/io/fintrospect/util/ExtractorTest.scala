@@ -16,10 +16,11 @@ class ExtractorTest extends FunSpec with Matchers {
   describe("Extractable") {
     it("does not short circuit if all parameters in a for comprehension are optional") {
       val ex = Extractor.mk {
-        request: Request => for {
-          req <- Query.optional.int("req") <--? request
-          opt <- Query.optional.int("optional") <--? request
-        } yield (req, opt)
+        request: Request =>
+          for {
+            req <- Query.optional.int("req") <--? request
+            opt <- Query.optional.int("optional") <--? request
+          } yield (req, opt)
       }
 
       ex <--? Request("/") shouldBe Extracted(Some((None, None)))
@@ -27,10 +28,11 @@ class ExtractorTest extends FunSpec with Matchers {
 
     it("does not short circuit if last parameter in a for comprehension is optional") {
       val ex = Extractor.mk {
-        request: Request => for {
-          req <- Query.required.int("req") <--? request
-          opt <- Query.optional.int("optional") <--? request
-        } yield (req, opt)
+        request: Request =>
+          for {
+            req <- Query.required.int("req") <--? request
+            opt <- Query.optional.int("optional") <--? request
+          } yield (req, opt)
       }
 
       ex <--? Request("/?req=123") shouldBe Extracted(Some((Some(123), None)))
@@ -39,11 +41,12 @@ class ExtractorTest extends FunSpec with Matchers {
     describe("non-embedded extraction") {
       val int = Query.required.int("name3")
       val c = Extractor.mk {
-        request: Request => for {
-          name3 <- int.extract(request)
-          name1 <- Query.optional.string("name1").extract(request)
-          name2 <- Query.optional.string("name2").extract(request)
-        } yield Example(name1, name2, name3.get)
+        request: Request =>
+          for {
+            name3 <- int.extract(request)
+            name1 <- Query.optional.string("name1").extract(request)
+            name2 <- Query.optional.string("name2").extract(request)
+          } yield Example(name1, name2, name3.get)
       }
 
       it("successfully extracts when all parameters present") {
@@ -71,8 +74,8 @@ class ExtractorTest extends FunSpec with Matchers {
         request: Request => {
           for {
             startDate <- start <--? request
-            middleDate <- middle <--?(request, "not after start", (i: LocalDate) => i.isAfter(startDate.get))
-            endDate <- end <--?(request, "not after start", e => startDate.forall(s => e.isAfter(s)))
+            middleDate <- middle <--? (request, "not after start", (i: LocalDate) => i.isAfter(startDate.get))
+            endDate <- end <--? (request, "not after start", e => startDate.forall(s => e.isAfter(s)))
           } yield Range(startDate.get, middleDate, endDate.get)
         }
       }
@@ -84,18 +87,20 @@ class ExtractorTest extends FunSpec with Matchers {
       val innerInt = Query.required.int("innerInt")
       val outerInt = Query.required.int("outerInt")
       val inner = Extractor.mk {
-        request: Request => for {
-          name3 <- innerInt.extract(request)
-          name1 <- Query.optional.string("name1").extract(request)
-          name2 <- Query.optional.string("name2").extract(request)
-        } yield Some(Example(name1, name2, name3.get))
+        request: Request =>
+          for {
+            name3 <- innerInt.extract(request)
+            name1 <- Query.optional.string("name1").extract(request)
+            name2 <- Query.optional.string("name2").extract(request)
+          } yield Some(Example(name1, name2, name3.get))
       }
 
       val outer = Extractor.mk {
-        request: Request => for {
-          name4 <- outerInt <--? request
-          inner <- inner <--? request
-        } yield WrappedExample(inner.get, name4.get)
+        request: Request =>
+          for {
+            name4 <- outerInt <--? request
+            inner <- inner <--? request
+          } yield WrappedExample(inner.get, name4.get)
       }
 
       it("success") {
