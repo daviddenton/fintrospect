@@ -14,10 +14,18 @@ case class RouteSpec private(summary: String,
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
                              requestParams: Seq[Parameter with Extractor[Request, _] with Rebindable[Request, _, Binding]],
-                             responses: Seq[ResponseSpec],
-                             validation: RouteSpec => Extractor[Request, Request]) {
+                             responses: Seq[ResponseSpec]) {
 
-  private[fintrospect] def <--?(request: Request): Extraction[Request] = validation(this).<--?(request)
+  private[fintrospect] def <--?(request: Request): Extraction[Request] = extract(this).<--?(request)
+
+  private def extract(spec: RouteSpec) = Extractor.mk {
+    (request: Request) =>
+      val contents = Map[Any, Extraction[_]]((spec.requestParams ++ spec.body).map(r => (r, r <--? request)): _*)
+      Extraction.combine(contents.values.toSeq) match {
+        case Extracted(_) => Extracted(Option(ExtractedRouteRequest(request, contents)))
+        case ExtractionFailed(e) => ExtractionFailed(e)
+      }
+  }
 
   /**
     * Register content types which the route will consume. This is informational only and is NOT currently enforced.
@@ -74,55 +82,6 @@ case class RouteSpec private(summary: String,
 
 object RouteSpec {
 
-  trait RequestValidation extends (RouteSpec => Extractor[Request, Request])
-
-  /**
-    * Defines the validation for the Route which could result in a BadRequest response from this route. By default, this
-    * is set to RequestValidation.all . It is overrideable in high performance scenarios, or where custom extraction logic
-    * is to be applied.
-    */
-  object RequestValidation {
-
-    /**
-      * Validates the presence and format of all parameters (mandatory and optional), and the request body.
-      */
-    val all = new RequestValidation {
-      def apply(spec: RouteSpec) = Extractor.mk {
-        (request: Request) =>
-          val contents = Map[Any, Extraction[_]]((spec.requestParams ++ spec.body).map(r => (r, r <--? request)): _*)
-          Extraction.combine(contents.values.toSeq) match {
-            case Extracted(_) => Extracted(Option(ExtractedRouteRequest(request, contents)))
-            case ExtractionFailed(e) => ExtractionFailed(e)
-          }
-      }
-    }
-
-    /**
-      * Validates the presence and format of all parameters (mandatory and optional) only.
-      */
-    val noBody = new RequestValidation {
-      def apply(spec: RouteSpec) = Extractor.mk {
-        (request: Request) => Extraction.combine(spec.requestParams.map(_.extract(request)))
-      }
-    }
-
-    /**
-      * Validates the presence and format of body only.
-      */
-    val noParameters = new RequestValidation {
-      def apply(spec: RouteSpec) = Extractor.mk {
-        (request: Request) => Extraction.combine(spec.body.map(_.extract(request)).toSeq)
-      }
-    }
-
-    /**
-      * Do not perform any validation of the request parameters or the body.
-      */
-    val none = new RequestValidation {
-      def apply(spec: RouteSpec) = Extractor.mk { _: Request => Extracted(None) }
-    }
-  }
-
-  def apply(summary: String = "<unknown>", description: String = null, validation: RequestValidation = RequestValidation.all): RouteSpec =
-    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil, validation)
+  def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
+    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil)
 }

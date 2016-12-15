@@ -7,9 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 13.17.0 
-- performance tweaks so we only parse the request parameters once. this also means that we can drop the `RouteValidation` options
-as they were introduced specifically for this purpose.
+## 13.17.0 (uncut)
+- performance tweaks so we cache the extracted request parameters. This means that we can drop the `RouteValidation` options
+as they were introduced specifically to give the user an option as to when to extract.
 
 ## 13.16.0 
 - AKA: The slight API-tidy release!
