@@ -23,7 +23,6 @@ trait TestingFintrospectRoute {
     * @param timeout defaults to 1s.
     * @return response
     */
-  def responseFor(request: Request, timeout: Duration = Duration(1, TimeUnit.SECONDS)): Response = {
+  def responseFor(request: Request, timeout: Duration = Duration(1, TimeUnit.SECONDS)): Response =
     Await.result(RouteModule(Root, SimpleJson()).withRoute(route).toService.apply(request))
-  }
 }

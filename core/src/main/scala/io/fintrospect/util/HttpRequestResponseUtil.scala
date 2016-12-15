@@ -7,9 +7,7 @@ object HttpRequestResponseUtil {
 
   def statusAndContentFrom(msg: Response): (Status, String) = (msg.status, msg.contentString)
 
-  def headersFrom(msg: Message): Map[String, String] = {
-    Map(msg.headerMap.map(entry => entry._1 -> entry._2).toSeq: _*)
-  }
+  def headersFrom(msg: Message): Map[String, String] = Map(msg.headerMap.map(entry => entry._1 -> entry._2).toSeq: _*)
 
   def headerOf(name: String)(msg: Message) = msg.headerMap.getAll(name).mkString(", ")
 }

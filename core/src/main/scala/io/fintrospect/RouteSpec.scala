@@ -78,7 +78,6 @@ case class RouteSpec private(summary: String,
 }
 
 object RouteSpec {
-
   def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
     RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil)
 }

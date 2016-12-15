@@ -27,7 +27,6 @@ object ContentType {
 }
 
 object ContentTypes {
-
   val APPLICATION_ATOM_XML = ContentType("application/atom+xml")
   val APPLICATION_FORM_URLENCODED = ContentType("application/x-www-form-urlencoded")
   val APPLICATION_JSON = ContentType("application/json")
