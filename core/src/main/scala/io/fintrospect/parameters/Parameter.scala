@@ -61,7 +61,7 @@ abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], ea
 
   override def -->(value: T) = Seq(eab.newBinding(this, spec.serialize(value)))
 
-  def <--?(from: From) = from match {
+  def <--?(from: From): Extraction[T] = from match {
     case req: ExtractedRouteRequest => req.get(this)
     case _ => extractFrom(xs => Try(spec.deserialize(xs.head)), eab.valuesFrom(this, from))
   }
