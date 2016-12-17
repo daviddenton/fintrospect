@@ -5,9 +5,8 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
-import io.fintrospect.ContentTypes
 import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
-import io.fintrospect.formats.MsgPack.Format.body
+import io.fintrospect.formats.MsgPack.Format.bodySpec
 import io.fintrospect.parameters.{Body, BodySpec, FileParamType}
 
 /**
@@ -43,7 +42,7 @@ object MsgPack {
       */
     def AutoInOptionalOut[BODY <: AnyRef, OUT <: AnyRef](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
                                                         (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
-    : Service[Request, Response] = _AutoInOptionalOut(svc, body[BODY](None, example)(mf), toResponse(successStatus))
+    : Service[Request, Response] = _AutoInOptionalOut(svc, Body(bodySpec[BODY](None)(mf), example), toResponse(successStatus))
 
     /**
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
@@ -63,27 +62,21 @@ object MsgPack {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOutFilter[BODY <: AnyRef, OUT <: AnyRef](successStatus: Status = Ok)(implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
-    : Filter[Request, Response, BODY, OUT] = AutoIn(body[BODY](None, example)(mf)).andThen(AutoOut[BODY, OUT](successStatus))
+    : Filter[Request, Response, BODY, OUT] = AutoIn(Body(bodySpec[BODY](None)(mf), example)).andThen(AutoOut[BODY, OUT](successStatus))
   }
 
   /**
     * Convenience format handling methods
     */
   object Format {
-    private def rawBodySpec(description: Option[String]) = BodySpec(description, ContentTypes.APPLICATION_X_MSGPACK, buf => new MsgPackMsg(extract(buf)), (m: MsgPackMsg) => m.toBuf)
-
     def decode[T <: AnyRef](buf: Buf)(implicit mf: scala.reflect.Manifest[T]): T = new MsgPackMsg(extract(buf)).as[T](mf)
 
     def encode[T <: AnyRef](in: T): Buf = MsgPackMsg(in).toBuf
 
-    def bodySpec[T <: AnyRef](description: Option[String])(implicit mf: scala.reflect.Manifest[T]) =
-      rawBodySpec(description).map[T]((m: MsgPackMsg) => m.as[T](mf), (t: T) => MsgPackMsg(t))
-
-    /**
-      * Convenience method for creating Body that just uses straight MsgPack encoding/decoding logic
-      */
-    def body[R <: AnyRef](description: Option[String] = None, example: R = null)
-                         (implicit mf: scala.reflect.Manifest[R]) = Body.custom(bodySpec[R](description)(mf), example, FileParamType)
+    def bodySpec[T <: AnyRef](description: Option[String] = None)(implicit mf: scala.reflect.Manifest[T]): BodySpec[T] =
+      BodySpec(description, APPLICATION_X_MSGPACK, FileParamType,
+        buf => new MsgPackMsg(extract(buf)), (m: MsgPackMsg) => m.toBuf)
+        .map[T]((m: MsgPackMsg) => m.as[T](mf), (t: T) => MsgPackMsg(t))
   }
 
   object ResponseBuilder extends AbstractResponseBuilder[MsgPackMsg] {
