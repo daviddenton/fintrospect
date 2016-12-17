@@ -6,7 +6,7 @@ import com.twitter.finagle.{Filter, Service}
 import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
-import io.fintrospect.parameters.{Body, BodySpec, FileParamType}
+import io.fintrospect.parameters.{Body, BodySpec}
 
 /**
   * MsgPack support (application/x-msgpack content type)
@@ -31,7 +31,7 @@ object MsgPack {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
-                                                (implicit example: BODY = null, mf: Manifest[BODY])
+                            (implicit example: BODY = null, mf: Manifest[BODY])
     : Service[Request, Response] = AutoInOutFilter(successStatus)(example, mf).andThen(svc)
 
     /**
@@ -40,7 +40,7 @@ object MsgPack {
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
-                                                        (implicit example: BODY = null, mf: Manifest[BODY])
+                                    (implicit example: BODY = null, mf: Manifest[BODY])
     : Service[Request, Response] = _AutoInOptionalOut(svc, Body(bodySpec[BODY](None)(mf), example), toResponse(successStatus))
 
     /**
@@ -77,9 +77,7 @@ object MsgPack {
     * Convenience body spec method
     */
   def bodySpec[T](description: Option[String] = None)(implicit mf: Manifest[T]): BodySpec[T] =
-    BodySpec(description, APPLICATION_X_MSGPACK, FileParamType,
-      buf => new MsgPackMsg(extract(buf)), (m: MsgPackMsg) => m.toBuf)
-      .map[T]((m: MsgPackMsg) => m.as[T](mf), (t: T) => MsgPackMsg(t))
+    BodySpec.binary(description, APPLICATION_X_MSGPACK).map(buf => Format.decode(buf), m => Format.encode(m))
 
   object ResponseBuilder extends AbstractResponseBuilder[MsgPackMsg] {
 
