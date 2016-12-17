@@ -30,7 +30,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       (t: OUT) => successStatus(Play.JsonFormat.encode(t)(e))
 
     private def toBody[BODY](db: Reads[BODY], eb: Writes[BODY])(implicit example: BODY = null) =
-      Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example, ObjectParamType)
+      Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -115,7 +115,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Convenience method for creating Body that just use straight JSON encoding/decoding logic
       */
     def body[R](description: Option[String] = None, example: R = null)
-               (implicit reads: Reads[R], writes: Writes[R]) = Body(bodySpec[R](description)(reads, writes), example, ObjectParamType)
+               (implicit reads: Reads[R], writes: Writes[R]) = Body(bodySpec[R](description)(reads, writes), example)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic

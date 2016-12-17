@@ -8,7 +8,7 @@ import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentTypes
 import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
 import io.fintrospect.formats.MsgPack.Format.body
-import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType}
+import io.fintrospect.parameters.{Body, BodySpec, FileParamType}
 
 /**
   * MsgPack support (application/x-msgpack content type)
@@ -83,7 +83,7 @@ object MsgPack {
       * Convenience method for creating Body that just uses straight MsgPack encoding/decoding logic
       */
     def body[R <: AnyRef](description: Option[String] = None, example: R = null)
-                         (implicit mf: scala.reflect.Manifest[R]) = Body(bodySpec[R](description)(mf), example, ObjectParamType)
+                         (implicit mf: scala.reflect.Manifest[R]) = Body.custom(bodySpec[R](description)(mf), example, FileParamType)
   }
 
   object ResponseBuilder extends AbstractResponseBuilder[MsgPackMsg] {
