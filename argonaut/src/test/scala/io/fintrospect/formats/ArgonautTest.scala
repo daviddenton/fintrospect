@@ -10,6 +10,7 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.formats
 import io.fintrospect.formats.Argonaut.JsonFormat._
 import io.fintrospect.formats.Argonaut.ResponseBuilder.implicits._
+import io.fintrospect.formats.Argonaut._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
 import org.scalatest.{FunSpec, Matchers}
@@ -125,7 +126,7 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(formats.Argonaut.JsonFormat)
     }
 
     it("response spec has correct code") {
-      formats.Argonaut.JsonFormat.responseSpec[ArgonautLetter](Ok -> "ok", aLetter).status shouldBe Ok
+      formats.Argonaut.responseSpec[ArgonautLetter](Ok -> "ok", aLetter).status shouldBe Ok
     }
 
   }

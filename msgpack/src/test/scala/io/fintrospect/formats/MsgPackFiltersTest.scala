@@ -7,8 +7,8 @@ import com.twitter.io.Buf.ByteArray.Shared.extract
 import com.twitter.util.Await.result
 import com.twitter.util.Future
 import io.fintrospect.formats.MsgPack.Filters._
-import io.fintrospect.formats.MsgPack.Format.bodySpec
 import io.fintrospect.formats.MsgPack.ResponseBuilder.implicits._
+import io.fintrospect.formats.MsgPack.bodySpec
 import io.fintrospect.parameters.Body
 import org.scalatest.{FunSpec, Matchers}
 

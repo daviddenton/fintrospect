@@ -7,8 +7,9 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.circe.{Decoder, Encoder, Json}
 import io.fintrospect.ResponseSpec
+import io.fintrospect.formats.Circe.JsonFormat.{decode, encode}
 import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
 
 /**
   * Circe JSON support (application/json content type)
@@ -23,13 +24,11 @@ object Circe extends JsonLibrary[Json, Json] {
 
     override protected val responseBuilder = Circe.ResponseBuilder
 
-    import responseBuilder.implicits._
-
     private def toResponse[OUT](successStatus: Status, e: Encoder[OUT]) =
       (t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e))
 
     private def toBody[BODY](db: Decoder[BODY], eb: Encoder[BODY])(implicit example: BODY = null) =
-      Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example)
+      Body[BODY](Circe.bodySpec[BODY](None)(eb, db), example)
 
 
     /**
@@ -110,41 +109,42 @@ object Circe extends JsonLibrary[Json, Json] {
       case Right(r) => r
       case Left(e) => throw new InvalidJsonForDecoding
     }
-
-    /**
-      * Function that will modify a given case class with the fields from a incoming JSON object.
-      * Useful for PATCH/PUT requests, where only modified fields are sent to the server.
-      */
-    def patcher[T](in: Json)(implicit d: Decoder[T => T]) = decode[T => T](in)
-
-    /**
-      * A Body that provides a function that will modify a given case class with the fields from a incoming JSON object.
-      * Useful for PATCH/PUT requests, where only fields to be modified are sent to the server. Note that this Body only
-      * supports inbound messages.
-      */
-    def patchBody[R](description: Option[String] = None, example: R = null)
-                    (implicit e: Encoder[R], d: Decoder[R => R]): Body[R => R] = Body[R => R](
-      BodySpec.json(description, this).map(j => decode[R => R](j)(d),
-        (u: R => R) => encode(u(example))(e)), Option(example).map(_ => (r: R) => example).orNull)
-
-    /**
-      * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
-      */
-    def bodySpec[R](description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
-      BodySpec.json(description, this).map(j => decode[R](j)(d), (u: R) => encode(u)(e))
-
-    /**
-      * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
-      */
-    def responseSpec[R](statusAndDescription: (Status, String), example: R)
-                       (implicit e: Encoder[R], d: Decoder[R]) =
-      ResponseSpec.json(statusAndDescription, encode(example)(e), this)
-
-    /**
-      * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
-      */
-    def parameterSpec[R](name: String, description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
-      ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(d), (u: R) => compact(encode(u)(e)))
   }
+
+
+  /**
+    * Function that will modify a given case class with the fields from a incoming JSON object.
+    * Useful for PATCH/PUT requests, where only modified fields are sent to the server.
+    */
+  def patcher[T](in: Json)(implicit d: Decoder[T => T]) = decode[T => T](in)
+
+  /**
+    * A Body that provides a function that will modify a given case class with the fields from a incoming JSON object.
+    * Useful for PATCH/PUT requests, where only fields to be modified are sent to the server. Note that this Body only
+    * supports inbound messages.
+    */
+  def patchBody[R](description: Option[String] = None, example: R = null)
+                  (implicit e: Encoder[R], d: Decoder[R => R]): Body[R => R] = Body[R => R](
+    BodySpec.json(description, JsonFormat).map(j => decode[R => R](j)(d),
+      (u: R => R) => encode(u(example))(e)), Option(example).map(_ => (r: R) => example).orNull)
+
+  /**
+    * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+    */
+  def bodySpec[R](description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
+    BodySpec.json(description, JsonFormat).map(j => decode[R](j)(d), (u: R) => encode(u)(e))
+
+  /**
+    * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
+    */
+  def responseSpec[R](statusAndDescription: (Status, String), example: R)
+                     (implicit e: Encoder[R], d: Decoder[R]) =
+    ResponseSpec.json(statusAndDescription, encode(example)(e), JsonFormat)
+
+  /**
+    * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+    */
+  def parameterSpec[R](name: String, description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
+    ParameterSpec.json(name, description.orNull, JsonFormat).map(j => decode[R](j)(d), (u: R) => encode(u)(e))
 
 }

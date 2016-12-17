@@ -8,6 +8,7 @@ import com.twitter.util.{Await, Future}
 import io.circe.generic.auto._
 import io.fintrospect.formats.Circe.JsonFormat._
 import io.fintrospect.formats.Circe.ResponseBuilder.implicits._
+import io.fintrospect.formats.Circe._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
 import org.scalatest.{FunSpec, Matchers}
@@ -143,7 +144,7 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
     }
 
     it("response spec has correct code") {
-      Circe.JsonFormat.responseSpec[CirceLetter](Ok -> "ok", aLetter).status shouldBe Ok
+      Circe.responseSpec[CirceLetter](Ok -> "ok", aLetter).status shouldBe Ok
     }
 
     it("param spec decodes content") {

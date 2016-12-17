@@ -8,6 +8,7 @@ import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.Play.JsonFormat._
 import io.fintrospect.formats.Play.ResponseBuilder.implicits._
+import io.fintrospect.formats.Play._
 import io.fintrospect.parameters.{Body, Query}
 import org.scalatest.{FunSpec, Matchers}
 import play.api.libs.json._
