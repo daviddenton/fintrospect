@@ -12,12 +12,10 @@ import scala.util.{Failure, Success, Try}
   * Represents a single entity which makes up the entirety of an HTTP message body.
   *
   * @param spec         the specification of this body type
-  * @param theParamType the documented type of this body. Usually this is StringParamType, apart from for JSON, which is ObjectParamType
   * @param theExample   an example object of this body
   * @tparam T the type of the request when it has been deserialized from the request
   */
 class UniBody[T](spec: BodySpec[T],
-                 theParamType: ParamType,
                  theExample: Option[T])
   extends Body[T] {
   private val param = new BodyParameter with Bindable[T, RequestBinding] {
@@ -25,7 +23,7 @@ class UniBody[T](spec: BodySpec[T],
     override val description = spec.description
     override val name = "body"
     override val where = "body"
-    override val paramType = theParamType
+    override val paramType = spec.paramType
 
     override def -->(value: T) = Seq(new RequestBinding(this, t => {
       val content = spec.serialize(value)

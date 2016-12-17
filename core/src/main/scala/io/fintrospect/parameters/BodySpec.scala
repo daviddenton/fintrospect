@@ -18,31 +18,35 @@ import scala.xml.{Elem, XML}
   * @param serialize   function to take the input type and serialize it to a string to be represented in the request
   * @tparam T the type of the parameter
   */
-case class BodySpec[T](description: Option[String], contentType: ContentType, deserialize: Buf => T, serialize: T => Buf = (s: T) => Buf.Utf8(s.toString)) {
+case class BodySpec[T](description: Option[String], contentType: ContentType, paramType: ParamType, deserialize: Buf => T, serialize: T => Buf = (s: T) => Buf.Utf8(s.toString)) {
   /**
     * Combined map and reverse-map operation
     */
-  def map[O](in: T => O, out: O => T): BodySpec[O] = BodySpec[O](description, contentType, s => in(deserialize(s)), b => serialize(out(b)))
+  def map[O](in: T => O, out: O => T): BodySpec[O] = BodySpec[O](description, contentType, paramType, s => in(deserialize(s)), b => serialize(out(b)))
 
   /**
     * Traditional map operation. Duh.
     */
-  def map[O](in: T => O) = BodySpec[O](description, contentType, s => in(deserialize(s)))
+  def map[O](in: T => O) = BodySpec[O](description, contentType, paramType, s => in(deserialize(s)))
 }
 
 object BodySpec {
-  def string(description: Option[String] = None, contentType: ContentType = TEXT_PLAIN): BodySpec[String] = BodySpec[String](description, contentType, b => new String(extract(b)))
+  def string(description: Option[String] = None, contentType: ContentType = TEXT_PLAIN): BodySpec[String] =
+    BodySpec[String](description, contentType, StringParamType, b => new String(extract(b)))
 
-  def json[T](description: Option[String] = None, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): BodySpec[T] = BodySpec.string(description, APPLICATION_JSON).map(jsonFormat.parse, jsonFormat.compact)
+  def json[T](description: Option[String] = None, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): BodySpec[T] =
+    BodySpec[T](description, APPLICATION_JSON, ObjectParamType, b => jsonFormat.parse(new String(extract(b))), t => Buf.Utf8(jsonFormat.compact(t)))
 
   def xml(description: Option[String] = None): BodySpec[Elem] = BodySpec.string(description, APPLICATION_XML).map(XML.loadString, _.toString())
 
-  def binary(description: Option[String] = None, contentType: ContentType): BodySpec[Buf] = BodySpec(description, contentType,
+  def binary(description: Option[String] = None, contentType: ContentType): BodySpec[Buf] = BodySpec(description, contentType, FileParamType,
     b => {
-      require(b.length > 0); b
+      require(b.length > 0)
+      b
     },
     b => {
-      require(b.length > 0); b
+      require(b.length > 0)
+      b
     }
   )
 }
