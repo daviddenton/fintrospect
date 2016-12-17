@@ -4,7 +4,7 @@ import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_XML, TEXT_PLAIN}
-import io.fintrospect.formats.{Argo, JsonFormat, JsonLibrary}
+import io.fintrospect.formats.{Argo, JsonLibrary}
 
 import scala.xml.{Elem, XML}
 
@@ -13,19 +13,21 @@ import scala.xml.{Elem, XML}
   *
   * @param description Description to be used in the documentation
   * @param contentType The HTTP content type header value
+  * @param paramType How the body is represented when documenting APIs.
   * @param deserialize function to take the input string from the request and attempt to construct a deserialized instance. Exceptions are
   *                    automatically caught and translated into the appropriate result, so just concentrate on the Happy-path case
   * @param serialize   function to take the input type and serialize it to a string to be represented in the request
   * @tparam T the type of the parameter
   */
 case class BodySpec[T](description: Option[String], contentType: ContentType, paramType: ParamType, deserialize: Buf => T, serialize: T => Buf = (s: T) => Buf.Utf8(s.toString)) {
+
   /**
-    * Combined map and reverse-map operation
+    * Bi-directional map functions for this ParameterSpec type. Use this to implement custom Parameter types
     */
   def map[O](in: T => O, out: O => T): BodySpec[O] = BodySpec[O](description, contentType, paramType, s => in(deserialize(s)), b => serialize(out(b)))
 
   /**
-    * Traditional map operation. Duh.
+    * Uni-directional map functions for this BodySpec type. Use this to implement custom Body types
     */
   def map[O](in: T => O) = BodySpec[O](description, contentType, paramType, s => in(deserialize(s)))
 }

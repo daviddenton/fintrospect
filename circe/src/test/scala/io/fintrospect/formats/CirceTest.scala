@@ -1,7 +1,7 @@
 package io.fintrospect.formats
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.{Created, Ok}
+import com.twitter.finagle.http.Status.{BadRequest, Created, NotFound, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
@@ -53,7 +53,7 @@ class CirceFiltersTest extends FunSpec with Matchers {
 
       it("returns NotFound when missing present") {
         val svc = Circe.Filters.AutoInOptionalOut(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldBe Status.NotFound
+        result(svc(request)).status shouldBe NotFound
       }
     }
 
@@ -66,7 +66,7 @@ class CirceFiltersTest extends FunSpec with Matchers {
       it("rejects illegal content with a BadRequest") {
         val request = Request()
         request.contentString = "not xml"
-        Await.result(svc(request)).status shouldBe Status.BadRequest
+        Await.result(svc(request)).status shouldBe BadRequest
       }
     }
 
@@ -89,8 +89,8 @@ class CirceFiltersTest extends FunSpec with Matchers {
       }
 
       it("returns NotFound when missing present") {
-        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(None) })
-        result(svc(aLetter)).status shouldBe Status.NotFound
+        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { _ => Future.value(None) })
+        result(svc(aLetter)).status shouldBe NotFound
       }
     }
   }

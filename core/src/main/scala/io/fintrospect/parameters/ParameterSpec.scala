@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter.{ISO_LOCAL_DATE, ISO_LOCAL_DATE_TIME, 
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.util.UUID
 
-import io.fintrospect.formats.{Argo, JsonFormat, JsonLibrary}
+import io.fintrospect.formats.{Argo, JsonLibrary}
 
 import scala.xml.{Elem, XML}
 
@@ -25,12 +25,12 @@ case class ParameterSpec[T](name: String,
                             deserialize: String => T,
                             serialize: T => String = (s: T) => s.toString) {
   /**
-    * Combined map and reverse-map operation
+    * Bi-directional map functions for this ParameterSpec type. Use this to implement custom Parameter types
     */
   def map[O](in: T => O, out: O => T): ParameterSpec[O] = ParameterSpec[O](name, description, paramType, s => in(deserialize(s)), b => serialize(out(b)))
 
   /**
-    * Traditional map operation. Duh.
+    * Uni-directional map functions for this ParameterSpec type. Use this to implement custom Parameter types
     */
   def map[O](in: T => O) = ParameterSpec[O](name, description, paramType, s => in(deserialize(s)))
 }

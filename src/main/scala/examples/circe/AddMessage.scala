@@ -8,7 +8,7 @@ import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.Circe
-import io.fintrospect.formats.Circe.{bodySpec, responseSpec}
+import io.fintrospect.formats.Circe.responseSpec
 import io.fintrospect.parameters.{Body, Path}
 
 /**
@@ -17,7 +17,7 @@ import io.fintrospect.parameters.{Body, Path}
 class AddMessage(emails: Emails) {
   private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", 250)
 
-  private val email = Body(bodySpec[Email](Option("email")), exampleEmail)
+  private val email = Body(Circe.bodySpec[Email](Option("email")), exampleEmail)
 
   private def addEmail(address: EmailAddress): Service[Request, Response] =
     Circe.Filters.AutoInOut(
