@@ -64,7 +64,7 @@ object Birthday {
 // 
 val birthdayAsAQueryParam = Query.required(ParameterSpec[Birthday]("DOB", None, StringParamType, Birthday.from, _.toString))
 
-/* Or, more simply, we can use map() on an existing ParameterSpec - this will handle the */
+/* Or, more simply, we can use map() on an existing ParameterSpec - this will handle the validation */
 
 val birthdayAsAQueryParam = Query.required(ParameterSpec.localDate("DOB").map(Birthday(_), (b:Birthday) => b.value))
 
@@ -90,7 +90,7 @@ Notice that in the above we specified an example of the JSON message. This is no
 Additionally, in the case of some JSON libraries that provide auto marshalling and demarshalling to case class instances, you can remove the JSON step altogether:
 ```
 case class Email(address: String)
-val email = Body(jsonFormat.bodySpec[Email](Option("an email address")), Email("jim@example.com"), ObjectParamType)
+val email = Body(Argonaut.bodySpec[Email](Option("an email address")), Email("jim@example.com"))
 val retrieved: Email = email <-- request
 ```
 
