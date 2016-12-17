@@ -1,7 +1,7 @@
 package io.fintrospect
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
-import io.fintrospect.formats.{Argo, JsonFormat}
+import io.fintrospect.formats.{Argo, JsonLibrary}
 import io.fintrospect.parameters._
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
 
@@ -67,7 +67,7 @@ case class RouteSpec private(summary: String,
   /**
     * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
     */
-  def returning[T](code: (Status, String), example: T, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): RouteSpec = copy(responses = ResponseSpec.json(code, example, jsonFormat) +: responses)
+  def returning[T](code: (Status, String), example: T, jsonLib: JsonLibrary[T, _] = Argo): RouteSpec = copy(responses = ResponseSpec.json(code, example, jsonLib) +: responses)
 
   /**
     * Register a possible response which could be produced by this route, with an example body (used for schema generation).

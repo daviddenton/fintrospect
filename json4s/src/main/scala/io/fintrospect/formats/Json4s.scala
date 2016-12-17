@@ -129,21 +129,21 @@ abstract class Json4sLibrary[T] extends JsonLibrary[JValue, JValue] {
     */
   def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
                  (implicit mf: Manifest[R]) =
-    BodySpec.json(description, JsonFormat).map(j => decode[R](j, formats)(mf), (u: R) => encode(u))
+    BodySpec.json(description, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
     */
   def responseSpec[R](statusAndDescription: (Status, String), example: R, formats: Formats = serialization.formats(NoTypeHints))
                      (implicit mf: Manifest[R]) =
-    ResponseSpec.json(statusAndDescription, encode(example), JsonFormat)
+    ResponseSpec.json(statusAndDescription, encode(example), this)
 
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
   def parameterSpec[R](name: String, description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
                       (implicit mf: Manifest[R]) =
-    ParameterSpec.json(name, description.orNull, JsonFormat).map(j => decode[R](j, formats)(mf), (u: R) => encode(u))
+    ParameterSpec.json(name, description.orNull, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u))
 
 }
 

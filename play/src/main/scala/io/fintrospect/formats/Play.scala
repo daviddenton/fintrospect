@@ -111,7 +111,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
       */
     def parameterSpec[R](name: String, description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
-      ParameterSpec.json(name, description.orNull, this).map(s => decode[R](s)(reads), (u: R) => encode(u)(writes))
+      ParameterSpec.json(name, description.orNull, Play).map(s => decode[R](s)(reads), (u: R) => encode(u)(writes))
   }
 
   /**
@@ -119,11 +119,11 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     */
   def responseSpec[R](statusAndDescription: (Status, String), example: R)
                      (implicit reads: Reads[R], writes: Writes[R]) =
-    ResponseSpec.json(statusAndDescription, encode(example)(writes), JsonFormat)
+    ResponseSpec.json(statusAndDescription, encode(example)(writes), Play)
 
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
   def bodySpec[R](description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
-    BodySpec.json(description, JsonFormat).map(j => JsonFormat.decode[R](j)(reads), (u: R) => encode(u)(writes))
+    BodySpec.json(description, Play).map(j => JsonFormat.decode[R](j)(reads), (u: R) => encode(u)(writes))
 }

@@ -4,7 +4,7 @@ import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_XML, TEXT_PLAIN}
-import io.fintrospect.formats.{Argo, JsonFormat}
+import io.fintrospect.formats.{Argo, JsonFormat, JsonLibrary}
 
 import scala.xml.{Elem, XML}
 
@@ -34,8 +34,8 @@ object BodySpec {
   def string(description: Option[String] = None, contentType: ContentType = TEXT_PLAIN): BodySpec[String] =
     BodySpec[String](description, contentType, StringParamType, b => new String(extract(b)))
 
-  def json[T](description: Option[String] = None, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): BodySpec[T] =
-    BodySpec[T](description, APPLICATION_JSON, ObjectParamType, b => jsonFormat.parse(new String(extract(b))), t => Buf.Utf8(jsonFormat.compact(t)))
+  def json[T](description: Option[String] = None, jsonLib: JsonLibrary[T, _] = Argo): BodySpec[T] =
+    BodySpec[T](description, APPLICATION_JSON, ObjectParamType, b => jsonLib.JsonFormat.parse(new String(extract(b))), t => Buf.Utf8(jsonLib.JsonFormat.compact(t)))
 
   def xml(description: Option[String] = None): BodySpec[Elem] = string(description, APPLICATION_XML).map(XML.loadString, _.toString())
 

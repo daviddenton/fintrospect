@@ -103,7 +103,7 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
 
 class ArgonautJsonResponseBuilderTest extends JsonResponseBuilderSpec(formats.Argonaut)
 
-class ArgonautJsonFormatTest extends JsonFormatSpec(formats.Argonaut.JsonFormat) {
+class ArgonautJsonFormatTest extends JsonFormatSpec(formats.Argonaut) {
 
   describe("Argonaut.JsonFormat") {
     val aLetter = ArgonautLetter(ArgonautStreetAddress("my house"), ArgonautStreetAddress("your house"), "hi there")
