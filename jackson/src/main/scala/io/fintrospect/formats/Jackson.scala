@@ -63,24 +63,24 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
 
     def encode[T](in: T): JsonNode = mapper.convertValue(in, classOf[JsonNode])
 
-    def decode[R](in: JsonNode)(implicit mf: scala.reflect.Manifest[R]): R = mapper.readerFor(mf.runtimeClass).readValue(in)
+    def decode[R](in: JsonNode)(implicit mf: Manifest[R]): R = mapper.readerFor(mf.runtimeClass).readValue(in)
   }
 
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
-  def bodySpec[R](description: Option[String] = None)(implicit mf: scala.reflect.Manifest[R]) =
+  def bodySpec[R](description: Option[String] = None)(implicit mf: Manifest[R]) =
     BodySpec.json(description, JsonFormat).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u.asInstanceOf[AnyRef]))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
     */
-  def responseSpec[R](statusAndDescription: (Status, String), example: R)(implicit mf: scala.reflect.Manifest[R]) =
+  def responseSpec[R](statusAndDescription: (Status, String), example: R)(implicit mf: Manifest[R]) =
     ResponseSpec.json(statusAndDescription, JsonFormat.encode(example.asInstanceOf[AnyRef]), JsonFormat)
 
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
-  def parameterSpec[R](name: String, description: Option[String] = None)(implicit mf: scala.reflect.Manifest[R]) =
+  def parameterSpec[R](name: String, description: Option[String] = None)(implicit mf: Manifest[R]) =
     ParameterSpec.json(name, description.orNull, JsonFormat).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u.asInstanceOf[AnyRef]))
 }

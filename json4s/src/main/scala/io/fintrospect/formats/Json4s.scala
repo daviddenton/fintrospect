@@ -44,27 +44,27 @@ class Json4sFormat[T](jsonMethods: JsonMethods[T],
 
   def decode[R](in: JValue,
                 formats: Formats = serialization.formats(NoTypeHints))
-               (implicit mf: scala.reflect.Manifest[R]): R = in.extract[R](formats, mf)
+               (implicit mf: Manifest[R]): R = in.extract[R](formats, mf)
 
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
   def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
-                 (implicit mf: scala.reflect.Manifest[R]) =
+                 (implicit mf: Manifest[R]) =
     BodySpec.json(description, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u.asInstanceOf[AnyRef]))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
     */
   def responseSpec[R](statusAndDescription: (Status, String), example: R, formats: Formats = serialization.formats(NoTypeHints))
-                     (implicit mf: scala.reflect.Manifest[R]) =
+                     (implicit mf: Manifest[R]) =
     ResponseSpec.json(statusAndDescription, encode(example.asInstanceOf[AnyRef]), this)
 
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
   def parameterSpec[R](name: String, description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
-                      (implicit mf: scala.reflect.Manifest[R]) =
+                      (implicit mf: Manifest[R]) =
     ParameterSpec.json(name, description.orNull, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u.asInstanceOf[AnyRef]))
 }
 
@@ -86,7 +86,7 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
       successStatus(json4sFormat.encode(t, formats))
     }
 
-  private def toBody[BODY](mf: scala.reflect.Manifest[BODY])(implicit example: BODY = null) =
+  private def toBody[BODY](mf: Manifest[BODY])(implicit example: BODY = null) =
     Body[BODY](json4sFormat.bodySpec[BODY](None)(mf), example)
 
 
@@ -97,7 +97,7 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
     */
   def AutoInOut[BODY, OUT <: AnyRef](svc: Service[BODY, OUT], successStatus: Status = Ok,
                                      formats: Formats = a)
-                                    (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
+                                    (implicit example: BODY = null, mf: Manifest[BODY])
   : Service[Request, Response] = AutoInOutFilter(successStatus)(example, mf).andThen(svc)
 
   /**
@@ -107,7 +107,7 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
     */
   def AutoInOptionalOut[BODY, OUT <: AnyRef](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok,
                                              formats: Formats = a)
-                                            (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
+                                            (implicit example: BODY = null, mf: Manifest[BODY])
   : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(mf), toResponse(successStatus, formats))
 
   /**
@@ -133,7 +133,7 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
     */
   def AutoInOutFilter[BODY, OUT <: AnyRef](successStatus: Status = Ok,
                                            formats: Formats = a)
-                                          (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
+                                          (implicit example: BODY = null, mf: Manifest[BODY])
   : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(mf)).andThen(AutoOut[BODY, OUT](successStatus, formats))
 }
 
