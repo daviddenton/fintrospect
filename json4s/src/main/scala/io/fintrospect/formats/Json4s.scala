@@ -25,11 +25,7 @@ class Json4sFormat[T](jsonMethods: JsonMethods[T],
 
   override def obj(fields: Iterable[Field]): JValue = JObject(fields.toList)
 
-  override def obj(fields: (String, JValue)*): JValue = obj(fields)
-
   override def string(value: String): JValue = JString(value)
-
-  override def array(elements: JValue*): JValue = array(elements)
 
   override def array(elements: Iterable[JValue]): JValue = JArray(elements.toList)
 

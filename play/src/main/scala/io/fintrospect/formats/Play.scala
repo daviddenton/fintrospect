@@ -85,11 +85,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
 
     override def obj(fields: Iterable[Field]): JsValue = JsObject(fields.map(f => field(f._1, f._2)).toSeq)
 
-    override def obj(fields: Field*): JsValue = obj(fields)
-
     override def array(elements: Iterable[JsValue]) = JsArray(elements.toSeq)
-
-    override def array(elements: JsValue*) = JsArray(elements.toSeq)
 
     override def string(value: String) = JsString(value)
 
