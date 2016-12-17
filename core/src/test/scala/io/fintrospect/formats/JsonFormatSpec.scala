@@ -17,7 +17,7 @@ abstract class JsonFormatSpec[X <: Y, Y](val format: JsonFormat[X, Y]) extends F
     it("creates JSON objects as expected") {
       format.compact(format.objSym(
         'string -> format.string("hello"),
-        'object -> format.obj("field1" -> format.string("aString")).asInstanceOf[Y],
+        'object -> format.obj("field1" -> format.string("aString")),
         'int -> format.number(1),
         'long -> format.number(2L),
         'decimal -> format.number(BigDecimal(1.2)),

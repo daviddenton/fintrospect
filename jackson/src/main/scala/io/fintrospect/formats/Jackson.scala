@@ -76,7 +76,7 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
     */
   def responseSpec[R](statusAndDescription: (Status, String), example: R)(implicit mf: Manifest[R]) =
-    ResponseSpec.json(statusAndDescription, JsonFormat.encode(example.asInstanceOf[AnyRef]), JsonFormat)
+    ResponseSpec.json(statusAndDescription, JsonFormat.encode(example), JsonFormat)
 
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
