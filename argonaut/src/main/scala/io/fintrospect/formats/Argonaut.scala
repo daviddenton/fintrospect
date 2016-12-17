@@ -110,18 +110,18 @@ object Argonaut extends JsonLibrary[Json, Json] {
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
   def bodySpec[R](description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-    BodySpec.json(description, JsonFormat).map(j => JsonFormat.decode[R](j)(decodec), (u: R) => JsonFormat.encode(u)(encodec))
+    BodySpec.json(description, this).map(j => JsonFormat.decode[R](j)(decodec), (u: R) => JsonFormat.encode(u)(encodec))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
     */
   def responseSpec[R](statusAndDescription: (Status, String), example: R)
                      (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-    ResponseSpec.json(statusAndDescription, JsonFormat.encode(example)(encodec), JsonFormat)
+    ResponseSpec.json(statusAndDescription, JsonFormat.encode(example)(encodec), this)
 
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
   def parameterSpec[R](name: String, description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-    ParameterSpec.json(name, description.orNull, JsonFormat).map(j => JsonFormat.decode[R](j)(decodec), (u: R) => JsonFormat.encode(u)(encodec))
+    ParameterSpec.json(name, description.orNull, this).map(j => JsonFormat.decode[R](j)(decodec), (u: R) => JsonFormat.encode(u)(encodec))
 }

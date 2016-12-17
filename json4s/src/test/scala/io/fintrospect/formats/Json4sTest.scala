@@ -99,22 +99,23 @@ class Json4sNativeDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sDoubleMo
 
 class Json4sJacksonDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sJacksonDoubleMode, Json4sJacksonDoubleMode.Filters, Json4sJacksonDoubleMode.JsonFormat)
 
-abstract class RoundtripEncodeDecodeSpec[T](format: Json4sFormat[T]) extends JsonFormatSpec(format) {
+abstract class RoundtripEncodeDecodeSpec[T](jsonLibrary: Json4sLibrary[T]) extends JsonFormatSpec(jsonLibrary) {
 
   val aLetter = Json4sLetter(Json4sStreetAddress("my house"), Json4sStreetAddress("your house"), "hi there")
 
+  import jsonLibrary.JsonFormat._
   describe(format.getClass.getSimpleName) {
     it("roundtrips to JSON and back") {
-      format.decode[Json4sLetter](format.encode(aLetter)) shouldBe aLetter
+      decode[Json4sLetter](encode(aLetter)) shouldBe aLetter
     }
 
     it("invalid extracted JSON throws up") {
-      intercept[MappingException](format.decode[Json4sLetter](format.obj()))
+      intercept[MappingException](decode[Json4sLetter](format.obj()))
     }
   }
 }
 
-class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.JsonFormat) {
+class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s) {
   it("body spec decodes content") {
     (Body(Json4s.bodySpec[Json4sLetter]()) <-- Json4s.ResponseBuilder.OK(Json4s.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
@@ -131,7 +132,7 @@ class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s.Json
 
 class Json4sNativeJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s)
 
-class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sDoubleMode.JsonFormat) {
+class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sDoubleMode) {
   it("body spec decodes content") {
     (Body(Json4sDoubleMode.bodySpec[Json4sLetter]()) <-- Json4sDoubleMode.ResponseBuilder.OK(Json4sDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
@@ -148,7 +149,7 @@ class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4
 
 class Json4sNativeDoubleJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4sDoubleMode)
 
-class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJackson.JsonFormat) {
+class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJackson) {
   it("body spec decodes content") {
     (Body(Json4sJackson.bodySpec[Json4sLetter]()) <-- Json4sDoubleMode.ResponseBuilder.OK(Json4sJackson.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
@@ -166,7 +167,7 @@ class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJack
 
 class Json4sJacksonJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4sJackson)
 
-class Json4sJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJacksonDoubleMode.JsonFormat) {
+class Json4sJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJacksonDoubleMode) {
   it("body spec decodes content") {
     (Body(Json4sJacksonDoubleMode.bodySpec[Json4sLetter]()) <-- Json4sJacksonDoubleMode.ResponseBuilder.OK(Json4sJacksonDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
