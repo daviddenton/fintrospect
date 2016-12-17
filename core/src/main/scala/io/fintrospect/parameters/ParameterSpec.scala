@@ -16,7 +16,7 @@ import scala.xml.{Elem, XML}
   * @param paramType   The parameter type to be used in the documentation. For custom types, this is usually ObjectParamType (for JSON) or StringParamType
   * @param serialize   function to take the input type and serialize it to a string to be represented in the request
   * @param description optional description of the parameter (for use in description endpoints)
-  * @tparam T the type of the parameter
+  * @tparam T the type of the deserialised parameter
   * @return a parameter for retrieving a value of type [T] from the request
   */
 case class ParameterSpec[T](name: String,
