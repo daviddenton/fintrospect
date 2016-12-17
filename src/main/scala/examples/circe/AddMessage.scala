@@ -8,8 +8,8 @@ import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.Circe
-import io.fintrospect.formats.Circe.JsonFormat.{bodySpec, responseSpec}
-import io.fintrospect.parameters.{Body, ObjectParamType, Path}
+import io.fintrospect.formats.Circe.JsonFormat.{body, responseSpec}
+import io.fintrospect.parameters.Path
 
 /**
   * This endpoint uses the "Circe.Filters.AutoInOut" Filter to automatically create a HTTP 200 response from some returned case class content.
@@ -17,7 +17,7 @@ import io.fintrospect.parameters.{Body, ObjectParamType, Path}
 class AddMessage(emails: Emails) {
   private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", 250)
 
-  private val email = Body(bodySpec[Email](Option("email")), exampleEmail, ObjectParamType)
+  private val email = body[Email](Option("email"), exampleEmail)
 
   private def addEmail(address: EmailAddress): Service[Request, Response] =
     Circe.Filters.AutoInOut(
