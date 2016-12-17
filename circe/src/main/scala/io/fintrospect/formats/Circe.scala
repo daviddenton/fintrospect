@@ -9,7 +9,7 @@ import io.circe.{Decoder, Encoder, Json}
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.Circe.JsonFormat.encode
 import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
 
 /**
   * Circe JSON support (application/json content type)
@@ -30,7 +30,7 @@ object Circe extends JsonLibrary[Json, Json] {
       (t: OUT) => successStatus(encode(t)(e))
 
     private def toBody[BODY](db: Decoder[BODY], eb: Encoder[BODY])(implicit example: BODY = null) =
-      Body[BODY](Circe.bodySpec[BODY](None)(eb, db), example)
+      Body[BODY](Circe.bodySpec(None)(eb, db), example)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios

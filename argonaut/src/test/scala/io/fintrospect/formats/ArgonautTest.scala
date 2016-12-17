@@ -3,11 +3,11 @@ package io.fintrospect.formats
 import argonaut.Argonaut.{casecodec1, casecodec3}
 import argonaut._
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.{Created, Ok}
+import com.twitter.finagle.http.Status.{BadRequest, Created, NotFound, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
-import io.fintrospect.formats
+import io.fintrospect.formats.Argonaut.Filters.{AutoOptionalOut, AutoOut}
 import io.fintrospect.formats.Argonaut.JsonFormat._
 import io.fintrospect.formats.Argonaut.ResponseBuilder.implicits._
 import io.fintrospect.formats.Argonaut._
@@ -35,11 +35,11 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
     val aLetter = ArgonautLetter(ArgonautStreetAddress("my house"), ArgonautStreetAddress("your house"), "hi there")
 
     val request = Request()
-    request.contentString = formats.Argonaut.JsonFormat.compact(encode(aLetter))
+    request.contentString = Argonaut.JsonFormat.compact(encode(aLetter))
 
     describe("AutoInOut") {
       it("returns Ok") {
-        val svc = formats.Argonaut.Filters.AutoInOut(Service.mk { in: ArgonautLetter => Future.value(in) }, Created)
+        val svc = Filters.AutoInOut(Service.mk { in: ArgonautLetter => Future.value(in) }, Created)
 
         val response = result(svc(request))
         response.status shouldBe Created
@@ -49,7 +49,7 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
 
     describe("AutoInOptionalOut") {
       it("returns Ok when present") {
-        val svc = formats.Argonaut.Filters.AutoInOptionalOut(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(Option(in)) })
+        val svc = Filters.AutoInOptionalOut(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(request))
         response.status shouldBe Ok
@@ -57,27 +57,27 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
       }
 
       it("returns NotFound when missing present") {
-        val svc = formats.Argonaut.Filters.AutoInOptionalOut(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldBe Status.NotFound
+        val svc = Filters.AutoInOptionalOut(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(None) })
+        result(svc(request)).status shouldBe NotFound
       }
     }
 
     describe("AutoIn") {
-      val svc = formats.Argonaut.Filters.AutoIn(Body(bodySpec[ArgonautLetter]())).andThen(Service.mk { in: ArgonautLetter => Status.Ok(formats.Argonaut.JsonFormat.encode(in)) })
+      val svc = Filters.AutoIn(Body(bodySpec[ArgonautLetter]())).andThen(Service.mk { in: ArgonautLetter => Ok(encode(in)) })
       it("takes the object from the request") {
-        formats.Argonaut.JsonFormat.decode[ArgonautLetter](parse(result(svc(request)).contentString)) shouldBe aLetter
+        decode[ArgonautLetter](parse(result(svc(request)).contentString)) shouldBe aLetter
       }
 
       it("rejects illegal content with a BadRequest") {
         val request = Request()
         request.contentString = "not xml"
-        Await.result(svc(request)).status shouldBe Status.BadRequest
+        Await.result(svc(request)).status shouldBe BadRequest
       }
     }
 
     describe("AutoOut") {
       it("takes the object from the request") {
-        val svc = formats.Argonaut.Filters.AutoOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk { in: ArgonautLetter => Future.value(in) })
+        val svc = AutoOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk { in: ArgonautLetter => Future.value(in) })
         val response = result(svc(aLetter))
         response.status shouldBe Created
         decode[ArgonautLetter](parse(response.contentString)) shouldBe aLetter
@@ -86,7 +86,7 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
 
     describe("AutoOptionalOut") {
       it("returns Ok when present") {
-        val svc = formats.Argonaut.Filters.AutoOptionalOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(Option(in)) })
+        val svc = AutoOptionalOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(aLetter))
         response.status shouldBe Created
@@ -94,16 +94,16 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
       }
 
       it("returns NotFound when missing present") {
-        val svc = formats.Argonaut.Filters.AutoOptionalOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(None) })
-        result(svc(aLetter)).status shouldBe Status.NotFound
+        val svc = AutoOptionalOut[ArgonautLetter, ArgonautLetter](Created).andThen(Service.mk[ArgonautLetter, Option[ArgonautLetter]] { in => Future.value(None) })
+        result(svc(aLetter)).status shouldBe NotFound
       }
     }
   }
 }
 
-class ArgonautJsonResponseBuilderTest extends JsonResponseBuilderSpec(formats.Argonaut)
+class ArgonautJsonResponseBuilderTest extends JsonResponseBuilderSpec(Argonaut)
 
-class ArgonautJsonFormatTest extends JsonFormatSpec(formats.Argonaut) {
+class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut) {
 
   describe("Argonaut.JsonFormat") {
     val aLetter = ArgonautLetter(ArgonautStreetAddress("my house"), ArgonautStreetAddress("your house"), "hi there")
@@ -117,7 +117,7 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(formats.Argonaut) {
     }
 
     it("body spec decodes content") {
-      (Body(bodySpec[ArgonautLetter]()) <-- formats.Argonaut.ResponseBuilder.OK(encode(aLetter)).build()) shouldBe aLetter
+      Body(bodySpec[ArgonautLetter]()) <-- Argonaut.ResponseBuilder.OK(encode(aLetter)).build() shouldBe aLetter
     }
 
     it("param spec decodes content") {
@@ -126,7 +126,7 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(formats.Argonaut) {
     }
 
     it("response spec has correct code") {
-      formats.Argonaut.responseSpec[ArgonautLetter](Ok -> "ok", aLetter).status shouldBe Ok
+      responseSpec[ArgonautLetter](Ok -> "ok", aLetter).status shouldBe Ok
     }
 
   }
