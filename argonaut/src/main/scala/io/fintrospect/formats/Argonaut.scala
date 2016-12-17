@@ -31,7 +31,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       (t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e))
 
     private def toBody[BODY](db: DecodeJson[BODY], eb: EncodeJson[BODY])(implicit example: BODY = null) =
-      Body[BODY](Argonaut.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
+      Body[BODY](Argonaut.JsonFormat.bodySpec[BODY](None)(eb, db), example)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -114,7 +114,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * Convenience method for creating Body that just use straight JSON encoding/decoding logic
       */
     def body[R](description: Option[String] = None, example: R = null)
-               (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) = Body(bodySpec[R](description)(encodec, decodec), example, ObjectParamType)
+               (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) = Body(bodySpec[R](description)(encodec, decodec), example)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
