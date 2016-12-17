@@ -2,7 +2,7 @@ package io.fintrospect
 
 import com.twitter.finagle.http.Status
 import com.twitter.io.Buf.ByteArray.Shared.extract
-import io.fintrospect.formats.{Argo, JsonFormat}
+import io.fintrospect.formats.{Argo, JsonLibrary}
 import io.fintrospect.parameters.BodySpec
 
 import scala.util.Try
@@ -17,8 +17,8 @@ class ResponseSpec private[fintrospect](statusAndDescription: (Status, String), 
 }
 
 object ResponseSpec {
-  def json[T](statusAndDescription: (Status, String), example: T, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): ResponseSpec =
-    ResponseSpec(statusAndDescription, example, BodySpec.json(None, jsonFormat))
+  def json[T](statusAndDescription: (Status, String), example: T, jsonLib: JsonLibrary[T, _] = Argo): ResponseSpec =
+    ResponseSpec(statusAndDescription, example, BodySpec.json(None, jsonLib))
 
   def xml(statusAndDescription: (Status, String), example: Elem): ResponseSpec =
     ResponseSpec(statusAndDescription, example, BodySpec.xml())

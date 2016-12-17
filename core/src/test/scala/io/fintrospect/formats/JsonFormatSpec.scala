@@ -7,7 +7,9 @@ import org.scalatest.{FunSpec, Matchers}
 
 import scala.util.{Success, Try}
 
-abstract class JsonFormatSpec[X <: Y, Y](val format: JsonFormat[X, Y]) extends FunSpec with Matchers {
+abstract class JsonFormatSpec[X <: Y, Y](val jsonLib: JsonLibrary[X, Y]) extends FunSpec with Matchers {
+
+  val format = jsonLib.JsonFormat
 
   val expectedJson = """{"string":"hello","object":{"field1":"aString"},"int":1,"long":2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
 
@@ -39,19 +41,19 @@ abstract class JsonFormatSpec[X <: Y, Y](val format: JsonFormat[X, Y]) extends F
     describe("ParameterSpec json") {
       describe(getClass.getName + " Json") {
         it("retrieves a valid value") {
-          Try(ParameterSpec.json(paramName, "", format).deserialize(format.compact(expected))) shouldBe Success(expected)
+          Try(ParameterSpec.json(paramName, "", jsonLib).deserialize(format.compact(expected))) shouldBe Success(expected)
         }
 
         it("does not retrieve an invalid value") {
-          Try(ParameterSpec.json(paramName, "", format).deserialize("notJson")).isFailure shouldBe true
+          Try(ParameterSpec.json(paramName, "", jsonLib).deserialize("notJson")).isFailure shouldBe true
         }
 
         it("does not retrieve an null value") {
-          Try(ParameterSpec.json(paramName, "", format).deserialize(null)).isFailure shouldBe true
+          Try(ParameterSpec.json(paramName, "", jsonLib).deserialize(null)).isFailure shouldBe true
         }
 
         it("serializes correctly") {
-          ParameterSpec.json(paramName, "", format).serialize(expected) shouldBe """{"field":"value"}"""
+          ParameterSpec.json(paramName, "", jsonLib).serialize(expected) shouldBe """{"field":"value"}"""
         }
       }
     }

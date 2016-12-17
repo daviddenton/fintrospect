@@ -16,7 +16,7 @@ case class JacksonLetterOpt(to: JacksonStreetAddress, from: JacksonStreetAddress
 
 class JacksonJsonResponseBuilderTest extends JsonResponseBuilderSpec(Jackson)
 
-class JacksonJsonFormatTest extends JsonFormatSpec(Jackson.JsonFormat) {
+class JacksonJsonFormatTest extends JsonFormatSpec(Jackson) {
   override val expectedJson: String = """{"string":"hello","null":null,"bigInt":12344,"object":{"field1":"aString"},"decimal":1.2,"array":["world",true],"long":2,"bool":true,"int":1}"""
 
   describe("Jackson.JsonFormat") {

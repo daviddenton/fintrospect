@@ -98,7 +98,7 @@ class CirceFiltersTest extends FunSpec with Matchers {
 
 case class CirceWithOptionalFields(from: Option[String])
 
-class CirceJsonFormatTest extends JsonFormatSpec(Circe.JsonFormat) {
+class CirceJsonFormatTest extends JsonFormatSpec(Circe) {
 
   import io.circe.generic.auto._
 

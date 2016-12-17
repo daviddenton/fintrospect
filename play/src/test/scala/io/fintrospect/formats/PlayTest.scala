@@ -114,7 +114,7 @@ class PlayFiltersTest extends FunSpec with Matchers {
 
 class PlayJsonResponseBuilderTest extends JsonResponseBuilderSpec(Play)
 
-class PlayJsonFormatTest extends JsonFormatSpec(Play.JsonFormat) {
+class PlayJsonFormatTest extends JsonFormatSpec(Play) {
 
   describe("Play.JsonFormat") {
     val aLetter = PlayLetter(PlayStreetAddress("my house"), PlayStreetAddress("your house"), "hi there")

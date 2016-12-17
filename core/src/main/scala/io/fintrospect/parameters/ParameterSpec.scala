@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter.{ISO_LOCAL_DATE, ISO_LOCAL_DATE_TIME, 
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.util.UUID
 
-import io.fintrospect.formats.{Argo, JsonFormat}
+import io.fintrospect.formats.{Argo, JsonFormat, JsonLibrary}
 
 import scala.xml.{Elem, XML}
 
@@ -60,7 +60,7 @@ object ParameterSpec {
 
   def integer(name: String, description: String = null) = ParameterSpec[Integer](name, Option(description), IntegerParamType, new Integer(_), _.toString)
 
-  def json[T](name: String, description: String = null, format: JsonFormat[T, _] = Argo.JsonFormat) = ParameterSpec[T](name, Option(description), ObjectParamType, format.parse, format.compact)
+  def json[T](name: String, description: String = null, jsonLib: JsonLibrary[T, _] = Argo) = ParameterSpec[T](name, Option(description), ObjectParamType, jsonLib.JsonFormat.parse, jsonLib.JsonFormat.compact)
 
   def xml(name: String, description: String = null) = ParameterSpec[Elem](name, Option(description), StringParamType, XML.loadString, _.toString())
 }
