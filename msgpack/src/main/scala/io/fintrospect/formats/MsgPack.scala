@@ -6,6 +6,7 @@ import com.twitter.finagle.{Filter, Service}
 import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
+import io.fintrospect.formats.MsgPack.Format.{decode, encode}
 import io.fintrospect.parameters.{Body, BodySpec}
 
 /**
@@ -77,7 +78,7 @@ object MsgPack {
     * Convenience body spec method
     */
   def bodySpec[T](description: Option[String] = None)(implicit mf: Manifest[T]): BodySpec[T] =
-    BodySpec.binary(description, APPLICATION_X_MSGPACK).map(buf => Format.decode(buf), m => Format.encode(m))
+    BodySpec.binary(description, APPLICATION_X_MSGPACK).map(buf => decode(buf), m => encode(m))
 
   object ResponseBuilder extends AbstractResponseBuilder[MsgPackMsg] {
 

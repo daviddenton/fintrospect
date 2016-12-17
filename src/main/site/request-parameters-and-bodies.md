@@ -80,7 +80,7 @@ a single line of code change.
 ```
 val jsonFormat = Argonaut.JsonFormat
 val exampleObject = jsonFormat.obj("fieldName" -> json.string("hello"))
-val json = Body.json(Option("my lovely JSON object"), exampleObject, jsonFormat)
+val json = Body.json(Option("my lovely JSON object"), exampleObject, Argonaut)
 val body: Json = json <-- request
 ```
 
