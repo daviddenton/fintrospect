@@ -137,10 +137,13 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
   : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(mf)).andThen(AutoOut[BODY, OUT](successStatus, formats))
 }
 
+abstract class Json4sLibrary extends JsonLibrary[JValue, JValue] {
+
+}
 /**
   * Native Json4S support (application/json content type) - uses BigDecimal for decimal
   */
-object Json4s extends JsonLibrary[JValue, JValue] {
+object Json4s extends Json4sLibrary {
 
   val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, true)
 
@@ -150,7 +153,7 @@ object Json4s extends JsonLibrary[JValue, JValue] {
 /**
   * Native Json4S support (application/json content type) - uses Doubles for decimal
   */
-object Json4sDoubleMode extends JsonLibrary[JValue, JValue] {
+object Json4sDoubleMode extends Json4sLibrary {
 
   val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, false)
 
@@ -160,7 +163,7 @@ object Json4sDoubleMode extends JsonLibrary[JValue, JValue] {
 /**
   * Jackson Json4S support (application/json content type) - uses BigDecimal for decimal
   */
-object Json4sJackson extends JsonLibrary[JValue, JValue] {
+object Json4sJackson extends Json4sLibrary {
 
   val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, true)
 
@@ -170,7 +173,7 @@ object Json4sJackson extends JsonLibrary[JValue, JValue] {
 /**
   * Jackson Json4S support (application/json content type) - uses Doubles for decimal
   */
-object Json4sJacksonDoubleMode extends JsonLibrary[JValue, JValue] {
+object Json4sJacksonDoubleMode extends Json4sLibrary {
 
   val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, false)
 
