@@ -9,7 +9,7 @@ import io.fintrospect.formats.{Argo, JsonFormat}
 import scala.xml.{Elem, XML}
 
 /**
-  * Spec required to marshall and demarshall a parameter of a custom type
+  * Spec required to marshal and unmarshal a parameter of a custom type
   *
   * @param deserialize function to take the input string from the request and attempt to construct a deserialized instance of T. Exceptions are
   *                    automatically caught and translated into the appropriate result, so just concentrate on the Happy-path case
@@ -40,17 +40,17 @@ case class ParameterSpec[T](name: String,
   */
 object ParameterSpec {
 
-  def localDate(name: String, description: String = null) = ParameterSpec[LocalDate](name, Option(description), StringParamType, LocalDate.parse(_), ISO_LOCAL_DATE.format(_))
+  def localDate(name: String, description: String = null) = string(name, description).map(LocalDate.parse, (i: LocalDate) => ISO_LOCAL_DATE.format(i))
 
-  def zonedDateTime(name: String, description: String = null) = ParameterSpec[ZonedDateTime](name, Option(description), StringParamType, ZonedDateTime.parse(_), ISO_ZONED_DATE_TIME.format(_))
+  def zonedDateTime(name: String, description: String = null) = string(name, description).map(ZonedDateTime.parse, (i: ZonedDateTime) => ISO_ZONED_DATE_TIME.format(i))
 
-  def dateTime(name: String, description: String = null) = ParameterSpec[LocalDateTime](name, Option(description), StringParamType, LocalDateTime.parse(_), ISO_LOCAL_DATE_TIME.format(_))
+  def dateTime(name: String, description: String = null) = string(name, description).map(LocalDateTime.parse, (i: LocalDateTime) => ISO_LOCAL_DATE_TIME.format(i))
 
   def boolean(name: String, description: String = null) = ParameterSpec[Boolean](name, Option(description), BooleanParamType, _.toBoolean, _.toString)
 
   def string(name: String, description: String = null, validation: StringValidations.Rule = StringValidations.EmptyIsValid) = ParameterSpec[String](name, Option(description), StringParamType, validation, _.toString)
 
-  def uuid(name: String, description: String = null) = ParameterSpec[UUID](name, Option(description), StringParamType, UUID.fromString, _.toString)
+  def uuid(name: String, description: String = null) = string(name, description).map(UUID.fromString)
 
   def bigDecimal(name: String, description: String = null) = ParameterSpec[BigDecimal](name, Option(description), NumberParamType, BigDecimal(_), _.toString())
 
