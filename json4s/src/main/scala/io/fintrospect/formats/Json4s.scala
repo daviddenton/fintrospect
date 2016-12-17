@@ -8,6 +8,7 @@ import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ResponseSpec
 import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
 import org.json4s.Extraction.decompose
+import org.json4s.native.Document
 import org.json4s.{Formats, JValue, JsonMethods, NoTypeHints, Serialization}
 
 class Json4sFormat[T](jsonMethods: JsonMethods[T],
@@ -40,39 +41,18 @@ class Json4sFormat[T](jsonMethods: JsonMethods[T],
 
   override def nullNode(): JValue = JNull
 
-  def encode(in: AnyRef, formats: Formats = serialization.formats(NoTypeHints)): JValue = decompose(in)(formats)
+  def encode[R](in: R, formats: Formats = serialization.formats(NoTypeHints)): JValue = decompose(in)(formats)
 
   def decode[R](in: JValue,
                 formats: Formats = serialization.formats(NoTypeHints))
                (implicit mf: Manifest[R]): R = in.extract[R](formats, mf)
-
-  /**
-    * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
-    */
-  def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
-                 (implicit mf: Manifest[R]) =
-    BodySpec.json(description, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u.asInstanceOf[AnyRef]))
-
-  /**
-    * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
-    */
-  def responseSpec[R](statusAndDescription: (Status, String), example: R, formats: Formats = serialization.formats(NoTypeHints))
-                     (implicit mf: Manifest[R]) =
-    ResponseSpec.json(statusAndDescription, encode(example.asInstanceOf[AnyRef]), this)
-
-  /**
-    * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
-    */
-  def parameterSpec[R](name: String, description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
-                      (implicit mf: Manifest[R]) =
-    ParameterSpec.json(name, description.orNull, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u.asInstanceOf[AnyRef]))
 }
 
 /**
   * Auto-marshalling filters which can be used to create Services which take and return domain objects
   * instead of HTTP responses
   */
-class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary: JsonLibrary[JValue, JValue])
+class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary: Json4sLibrary[T])
   extends AutoFilters[JValue] {
 
   override protected val responseBuilder = jsonLibrary.ResponseBuilder
@@ -87,7 +67,7 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
     }
 
   private def toBody[BODY](mf: Manifest[BODY])(implicit example: BODY = null) =
-    Body[BODY](json4sFormat.bodySpec[BODY](None)(mf), example)
+    Body[BODY](jsonLibrary.bodySpec[BODY](None)(mf), example)
 
 
   /**
@@ -137,13 +117,38 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
   : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(mf)).andThen(AutoOut[BODY, OUT](successStatus, formats))
 }
 
-abstract class Json4sLibrary extends JsonLibrary[JValue, JValue] {
+abstract class Json4sLibrary[T] extends JsonLibrary[JValue, JValue] {
+
+  val JsonFormat: Json4sFormat[T]
+
+  import JsonFormat._
+  /**
+    * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+    */
+  def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
+                 (implicit mf: Manifest[R]) =
+    BodySpec.json(description, JsonFormat).map(j => decode[R](j, formats)(mf), (u: R) => encode(u.asInstanceOf[AnyRef]))
+
+  /**
+    * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
+    */
+  def responseSpec[R](statusAndDescription: (Status, String), example: R, formats: Formats = serialization.formats(NoTypeHints))
+                     (implicit mf: Manifest[R]) =
+    ResponseSpec.json(statusAndDescription, encode(example.asInstanceOf[AnyRef]), JsonFormat)
+
+  /**
+    * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+    */
+  def parameterSpec[R](name: String, description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
+                      (implicit mf: Manifest[R]) =
+    ParameterSpec.json(name, description.orNull, JsonFormat).map(j => decode[R](j, formats)(mf), (u: R) => encode(u.asInstanceOf[AnyRef]))
 
 }
+
 /**
   * Native Json4S support (application/json content type) - uses BigDecimal for decimal
   */
-object Json4s extends Json4sLibrary {
+object Json4s extends Json4sLibrary[Document] {
 
   val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, true)
 
@@ -153,7 +158,7 @@ object Json4s extends Json4sLibrary {
 /**
   * Native Json4S support (application/json content type) - uses Doubles for decimal
   */
-object Json4sDoubleMode extends Json4sLibrary {
+object Json4sDoubleMode extends Json4sLibrary[Document] {
 
   val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, false)
 
@@ -163,7 +168,7 @@ object Json4sDoubleMode extends Json4sLibrary {
 /**
   * Jackson Json4S support (application/json content type) - uses BigDecimal for decimal
   */
-object Json4sJackson extends Json4sLibrary {
+object Json4sJackson extends Json4sLibrary[JValue] {
 
   val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, true)
 
@@ -173,7 +178,7 @@ object Json4sJackson extends Json4sLibrary {
 /**
   * Jackson Json4S support (application/json content type) - uses Doubles for decimal
   */
-object Json4sJacksonDoubleMode extends Json4sLibrary {
+object Json4sJacksonDoubleMode extends Json4sLibrary[JValue] {
 
   val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, false)
 
