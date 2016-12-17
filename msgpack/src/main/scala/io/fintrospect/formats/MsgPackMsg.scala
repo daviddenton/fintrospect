@@ -17,5 +17,5 @@ object MsgPackMsg {
 
   private val formats = Serialization.formats(NoTypeHints)
 
-  def apply[T <: AnyRef](in: T): MsgPackMsg = new MsgPackMsg(pack(decompose(in)(formats)))
+  def apply[T](in: T): MsgPackMsg = new MsgPackMsg(pack(decompose(in)(formats)))
 }
