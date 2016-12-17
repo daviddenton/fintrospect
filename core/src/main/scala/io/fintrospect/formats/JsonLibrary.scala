@@ -10,7 +10,7 @@ import io.fintrospect.ContentTypes
   * @tparam R - Root node type
   * @tparam N - Node type
   */
-trait JsonLibrary[R, N] {
+trait JsonLibrary[R <: N, N] {
 
   /**
     * Use this to parse and create JSON objects in a generic way

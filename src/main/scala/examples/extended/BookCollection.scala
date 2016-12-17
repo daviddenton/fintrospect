@@ -14,9 +14,10 @@ class BookCollection(books: Books) {
 
   private def listBooks() = Service.mk[Request, Response] { _ => Ok(array(books.list().map(_.toJson))) }
 
+  private val json = Book("a book", "authorName", 99).toJson
   val route = RouteSpec("show collection")
     .producing(APPLICATION_JSON)
-    .returning(Status.Ok -> "list of books", array(Book("a book", "authorName", 99).toJson))
+    .returning(Status.Ok -> "list of books", array(json))
     .at(Get) / "book" bindTo listBooks
 }
 
