@@ -57,7 +57,7 @@ class CirceFiltersTest extends FunSpec with Matchers {
     }
 
     describe("AutoIn") {
-      val svc = Circe.Filters.AutoIn(Circe.JsonFormat.body[CirceLetter]()).andThen(Service.mk { in: CirceLetter => Status.Ok(Circe.JsonFormat.encode(in)) })
+      val svc = Circe.Filters.AutoIn(Body(bodySpec[CirceLetter]())).andThen(Service.mk { in: CirceLetter => Status.Ok(Circe.JsonFormat.encode(in)) })
       it("takes the object from the request") {
         decode[CirceLetter](parse(result(svc(request)).contentString)) shouldBe aLetter
       }

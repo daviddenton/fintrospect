@@ -10,7 +10,7 @@ import com.twitter.finagle.http.Status
 import com.twitter.io.Buf
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
-import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 
 import scala.collection.JavaConverters._
 
@@ -65,12 +65,6 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
     def encode[T](in: T): JsonNode = mapper.convertValue(in, classOf[JsonNode])
 
     def decode[R](in: JsonNode)(implicit mf: scala.reflect.Manifest[R]): R = mapper.readerFor(mf.runtimeClass).readValue(in)
-
-    /**
-      * Convenience method for creating Body that just use straight JSON encoding/decoding logic
-      */
-    def body[R](description: Option[String] = None, example: R = null)(implicit mf: scala.reflect.Manifest[R]) =
-      Body(bodySpec[R](description), example)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic

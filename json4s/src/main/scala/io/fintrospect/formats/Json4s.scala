@@ -48,12 +48,6 @@ class Json4sFormat[T](jsonMethods: JsonMethods[T],
                (implicit mf: scala.reflect.Manifest[R]): R = in.extract[R](formats, mf)
 
   /**
-    * Convenience method for creating Body that just use straight JSON encoding/decoding logic
-    */
-  def body[R](description: Option[String] = None, example: R = null, formats: Formats = serialization.formats(NoTypeHints))
-             (implicit mf: scala.reflect.Manifest[R]) = Body(bodySpec[R](description, formats)(mf), example)
-
-  /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
   def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
