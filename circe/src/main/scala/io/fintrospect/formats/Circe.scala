@@ -6,7 +6,6 @@ import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.circe.{Decoder, Encoder, Json}
-import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
@@ -125,14 +124,14 @@ object Circe extends JsonLibrary[Json, Json] {
       */
     def patchBody[R](description: Option[String] = None, example: R = null)
                     (implicit e: Encoder[R], d: Decoder[R => R]): Body[R => R] = Body[R => R](
-      BodySpec.string(description, APPLICATION_JSON).map(s => decode[R => R](parse(s))(d),
-        (u: R => R) => compact(encode(u(example))(e))), Option(example).map(_ => (r: R) => example).orNull)
+      BodySpec.json(description, this).map(j => decode[R => R](j)(d),
+        (u: R => R) => encode(u(example))(e)), Option(example).map(_ => (r: R) => example).orNull)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
       */
     def bodySpec[R](description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
-      BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s))(d), (u: R) => compact(encode(u)(e)))
+      BodySpec.json(description, this).map(j => decode[R](j)(d), (u: R) => encode(u)(e))
 
     /**
       * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
