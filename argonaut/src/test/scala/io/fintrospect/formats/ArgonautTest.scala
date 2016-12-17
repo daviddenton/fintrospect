@@ -62,9 +62,9 @@ class ArgonautFiltersTest extends FunSpec with Matchers {
     }
 
     describe("AutoIn") {
-      val svc = formats.Argonaut.Filters.AutoIn(formats.Argonaut.JsonFormat.body[ArgonautLetter]()).andThen(Service.mk { in: ArgonautLetter => Status.Ok(formats.Argonaut.JsonFormat.encode(in)) })
+      val svc = formats.Argonaut.Filters.AutoIn(Body(bodySpec[ArgonautLetter]())).andThen(Service.mk { in: ArgonautLetter => Status.Ok(formats.Argonaut.JsonFormat.encode(in)) })
       it("takes the object from the request") {
-        formats.Argonaut.JsonFormat.decode[ArgonautLetter](formats.Argonaut.JsonFormat.parse(result(svc(request)).contentString)) shouldBe aLetter
+        formats.Argonaut.JsonFormat.decode[ArgonautLetter](parse(result(svc(request)).contentString)) shouldBe aLetter
       }
 
       it("rejects illegal content with a BadRequest") {

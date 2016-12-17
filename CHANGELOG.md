@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 13.18.0
+- Tidying up of `Body` API for clarity. Bodies should only be instantiated using a method from `Body`, be it `Body.<format>()` or  `Body(<format>.bodySpec())` for custom types.
+
 ## 13.17.0
 - Added module `fintrospect-jackson` to support Jackson JSON library. See `Jackson` to get the Format util and ResponseBuilder for this format.
 - Performance tweaks so we cache the extracted request parameters. This means that we can drop the `RouteValidation` options

@@ -53,7 +53,7 @@ abstract class Json4sFiltersSpec(filters: Json4sFilters[_], jsonFormat: Json4sFo
     }
 
     describe("AutoIn") {
-      val svc = filters.AutoIn(jsonFormat.body[Json4sLetter]()).andThen(Service.mk { in: Json4sLetter => Status.Ok(jsonFormat.encode(in)) })
+      val svc = filters.AutoIn(Body(jsonFormat.bodySpec[Json4sLetter]())).andThen(Service.mk { in: Json4sLetter => Status.Ok(jsonFormat.encode(in)) })
       it("takes the object from the request") {
         jsonFormat.decode[Json4sLetter](jsonFormat.parse(result(svc(request)).contentString)) shouldBe aLetter
       }
