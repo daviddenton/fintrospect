@@ -7,7 +7,6 @@ import argonaut.{DecodeJson, EncodeJson, Json}
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
-import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
@@ -110,7 +109,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
       */
     def bodySpec[R](description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-      BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
+      BodySpec.json(description, this).map(j => decode[R](j)(decodec), (u: R) => encode(u)(encodec))
 
     /**
       * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples

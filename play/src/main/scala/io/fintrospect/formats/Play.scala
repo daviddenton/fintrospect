@@ -5,7 +5,6 @@ import java.math.BigInteger
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
-import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
@@ -112,7 +111,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       */
 
     def bodySpec[R](description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
-      BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s))(reads), (u: R) => compact(encode(u)(writes)))
+      BodySpec.json(description, this).map(j => decode[R](j)(reads), (u: R) => encode(u)(writes))
 
     /**
       * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
