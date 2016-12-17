@@ -40,15 +40,11 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
       root
     }
 
-    override def obj(fields: (String, JsonNode)*): JsonNode = obj(fields)
-
     override def array(elements: Iterable[JsonNode]): ArrayNode = {
       val root = mapper.createArrayNode()
       root.addAll(elements.asJavaCollection)
       root
     }
-
-    override def array(elements: JsonNode*): JsonNode = array(elements)
 
     override def string(value: String) = new TextNode(value)
 

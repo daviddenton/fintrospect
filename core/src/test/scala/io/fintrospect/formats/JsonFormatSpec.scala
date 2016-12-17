@@ -7,7 +7,7 @@ import org.scalatest.{FunSpec, Matchers}
 
 import scala.util.{Success, Try}
 
-abstract class JsonFormatSpec[X, Y](val format: JsonFormat[X, Y]) extends FunSpec with Matchers {
+abstract class JsonFormatSpec[X <: Y, Y](val format: JsonFormat[X, Y]) extends FunSpec with Matchers {
 
   val expectedJson = """{"string":"hello","object":{"field1":"aString"},"int":1,"long":2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
 
@@ -17,7 +17,7 @@ abstract class JsonFormatSpec[X, Y](val format: JsonFormat[X, Y]) extends FunSpe
     it("creates JSON objects as expected") {
       format.compact(format.objSym(
         'string -> format.string("hello"),
-        'object -> format.obj(Seq("field1" -> format.string("aString"))).asInstanceOf[Y],
+        'object -> format.obj("field1" -> format.string("aString")).asInstanceOf[Y],
         'int -> format.number(1),
         'long -> format.number(2L),
         'decimal -> format.number(BigDecimal(1.2)),

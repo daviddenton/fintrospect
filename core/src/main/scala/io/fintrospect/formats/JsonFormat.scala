@@ -6,7 +6,7 @@ import java.math.BigInteger
   * Capability to create and parse JSON message formats in a generic way. Used to serialize and deserialize
   * request parameters and bodies.
   */
-trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
+trait JsonFormat[ROOT_NODETYPE <: NODETYPE, NODETYPE] {
 
   type Field = (String, NODETYPE)
 
@@ -35,7 +35,7 @@ trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
   /**
     * Create a JSON object from the passed String -> Node pairs
     */
-  def obj(fields: Field*): ROOT_NODETYPE
+  final def obj(fields: Field*): ROOT_NODETYPE = obj(fields)
 
   /**
     * Create a JSON object from the passed Symbol -> Node pairs
@@ -45,12 +45,12 @@ trait JsonFormat[ROOT_NODETYPE, NODETYPE] {
   /**
     * Create a JSON array from the passed elements
     */
-  def array(elements: Iterable[NODETYPE]): NODETYPE
+  def array(elements: Iterable[NODETYPE]): ROOT_NODETYPE
 
   /**
     * Create a JSON array from the passed elements
     */
-  def array(elements: NODETYPE*): NODETYPE
+  final def array(elements: NODETYPE*): ROOT_NODETYPE = array(elements)
 
   /**
     * Create a JSON string node

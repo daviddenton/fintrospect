@@ -23,11 +23,7 @@ object Argo extends JsonLibrary[JsonRootNode, JsonNode] {
 
     override def obj(fields: Iterable[Field]): JsonRootNode = JsonNodeFactories.`object`(fields.map(f => field(f._1, f._2)).toSeq: _*)
 
-    override def obj(fields: Field*): JsonRootNode = obj(fields)
-
-    override def array(elements: Iterable[JsonNode]) = JsonNodeFactories.array(elements.toSeq: _*)
-
-    override def array(elements: JsonNode*) = JsonNodeFactories.array(elements.toSeq: _*)
+    override def array(elements: Iterable[JsonNode]): JsonRootNode = JsonNodeFactories.array(elements.toSeq: _*)
 
     override def string(value: String) = JsonNodeFactories.string(value)
 
