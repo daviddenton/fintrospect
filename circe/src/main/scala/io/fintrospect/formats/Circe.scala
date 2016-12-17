@@ -7,6 +7,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.circe.{Decoder, Encoder, Json}
 import io.fintrospect.ResponseSpec
+import io.fintrospect.formats.Circe.JsonFormat.encode
 import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 
@@ -26,7 +27,7 @@ object Circe extends JsonLibrary[Json, Json] {
     import responseBuilder.implicits._
 
     private def toResponse[OUT](successStatus: Status, e: Encoder[OUT]) =
-      (t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e))
+      (t: OUT) => successStatus(encode(t)(e))
 
     private def toBody[BODY](db: Decoder[BODY], eb: Encoder[BODY])(implicit example: BODY = null) =
       Body[BODY](Circe.bodySpec[BODY](None)(eb, db), example)
@@ -107,7 +108,7 @@ object Circe extends JsonLibrary[Json, Json] {
 
     def decode[T](in: Json)(implicit d: Decoder[T]) = d.decodeJson(in) match {
       case Right(r) => r
-      case Left(e) => throw new InvalidJsonForDecoding
+      case Left(_) => throw new InvalidJsonForDecoding
     }
   }
 
@@ -125,24 +126,24 @@ object Circe extends JsonLibrary[Json, Json] {
   def patchBody[R](description: Option[String] = None, example: R = null)
                   (implicit e: Encoder[R], d: Decoder[R => R]): Body[R => R] = Body[R => R](
     BodySpec.json(description, JsonFormat).map(j => JsonFormat.decode[R => R](j)(d),
-      (u: R => R) => JsonFormat.encode(u(example))(e)), Option(example).map(_ => (r: R) => example).orNull)
+      (u: R => R) => encode(u(example))(e)), Option(example).map(_ => (r: R) => example).orNull)
 
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
   def bodySpec[R](description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
-    BodySpec.json(description, JsonFormat).map(j => JsonFormat.decode[R](j)(d), (u: R) => JsonFormat.encode(u)(e))
+    BodySpec.json(description, JsonFormat).map(j => JsonFormat.decode[R](j)(d), (u: R) => encode(u)(e))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
     */
   def responseSpec[R](statusAndDescription: (Status, String), example: R)
                      (implicit e: Encoder[R], d: Decoder[R]) =
-    ResponseSpec.json(statusAndDescription, JsonFormat.encode(example)(e), JsonFormat)
+    ResponseSpec.json(statusAndDescription, encode(example)(e), JsonFormat)
 
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
   def parameterSpec[R](name: String, description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
-    ParameterSpec.json(name, description.orNull, JsonFormat).map(j => JsonFormat.decode[R](j)(d), (u: R) => JsonFormat.encode(u)(e))
+    ParameterSpec.json(name, description.orNull, JsonFormat).map(j => JsonFormat.decode[R](j)(d), (u: R) => encode(u)(e))
 }
