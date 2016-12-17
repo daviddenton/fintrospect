@@ -31,7 +31,7 @@ object MsgPack {
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
     def AutoInOut[BODY <: AnyRef, OUT <: AnyRef](svc: Service[BODY, OUT], successStatus: Status = Ok)
-                                                (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
+                                                (implicit example: BODY = null, mf: Manifest[BODY])
     : Service[Request, Response] = AutoInOutFilter(successStatus)(example, mf).andThen(svc)
 
     /**
@@ -40,7 +40,7 @@ object MsgPack {
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
     def AutoInOptionalOut[BODY <: AnyRef, OUT <: AnyRef](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
-                                                        (implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
+                                                        (implicit example: BODY = null, mf: Manifest[BODY])
     : Service[Request, Response] = _AutoInOptionalOut(svc, Body(bodySpec[BODY](None)(mf), example), toResponse(successStatus))
 
     /**
@@ -60,7 +60,7 @@ object MsgPack {
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOutFilter[BODY <: AnyRef, OUT <: AnyRef](successStatus: Status = Ok)(implicit example: BODY = null, mf: scala.reflect.Manifest[BODY])
+    def AutoInOutFilter[BODY <: AnyRef, OUT <: AnyRef](successStatus: Status = Ok)(implicit example: BODY = null, mf: Manifest[BODY])
     : Filter[Request, Response, BODY, OUT] = AutoIn(Body(bodySpec[BODY](None)(mf), example)).andThen(AutoOut[BODY, OUT](successStatus))
   }
 
@@ -68,7 +68,7 @@ object MsgPack {
     * Convenience format handling methods
     */
   object Format {
-    def decode[T <: AnyRef](buf: Buf)(implicit mf: scala.reflect.Manifest[T]): T = new MsgPackMsg(extract(buf)).as[T](mf)
+    def decode[T <: AnyRef](buf: Buf)(implicit mf: Manifest[T]): T = new MsgPackMsg(extract(buf)).as[T](mf)
 
     def encode[T <: AnyRef](in: T): Buf = MsgPackMsg(in).toBuf
   }
@@ -76,7 +76,7 @@ object MsgPack {
   /**
     * Convenience body spec method
     */
-  def bodySpec[T <: AnyRef](description: Option[String] = None)(implicit mf: scala.reflect.Manifest[T]): BodySpec[T] =
+  def bodySpec[T <: AnyRef](description: Option[String] = None)(implicit mf: Manifest[T]): BodySpec[T] =
     BodySpec(description, APPLICATION_X_MSGPACK, FileParamType,
       buf => new MsgPackMsg(extract(buf)), (m: MsgPackMsg) => m.toBuf)
       .map[T]((m: MsgPackMsg) => m.as[T](mf), (t: T) => MsgPackMsg(t))

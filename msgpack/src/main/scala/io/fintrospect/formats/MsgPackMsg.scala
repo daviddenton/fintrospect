@@ -10,7 +10,7 @@ import org.velvia.msgpack._
 class MsgPackMsg private[formats](private val bytes: Array[Byte]) {
   def toBuf = Buf.ByteArray(bytes: _*)
 
-  def as[OUT](implicit mf: scala.reflect.Manifest[OUT]): OUT = unpack[JValue](bytes).extract[OUT](MsgPackMsg.formats, mf)
+  def as[OUT](implicit mf: Manifest[OUT]): OUT = unpack[JValue](bytes).extract[OUT](MsgPackMsg.formats, mf)
 }
 
 object MsgPackMsg {
