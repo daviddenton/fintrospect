@@ -17,7 +17,7 @@ import scala.xml.{Elem, XML}
   * @param deserialize function to take the input string from the request and attempt to construct a deserialized instance. Exceptions are
   *                    automatically caught and translated into the appropriate result, so just concentrate on the Happy-path case
   * @param serialize   function to take the input type and serialize it to a string to be represented in the request
-  * @tparam T the type of the parameter
+  * @tparam T the type of the deserialised body
   */
 case class BodySpec[T](description: Option[String], contentType: ContentType, paramType: ParamType, deserialize: Buf => T, serialize: T => Buf = (s: T) => Buf.Utf8(s.toString)) {
 
