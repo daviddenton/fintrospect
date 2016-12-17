@@ -22,7 +22,7 @@ object EmailAddress {
 
   private def emailTo(email: EmailAddress): String = email.value
 
-  val spec = ParameterSpec("theEmailAddress", None, StringParamType, emailFrom, emailTo)
+  val spec = ParameterSpec.string("theEmailAddress", "a valid email address").map(emailFrom, emailTo)
 }
 
 object CustomParameters extends App {
