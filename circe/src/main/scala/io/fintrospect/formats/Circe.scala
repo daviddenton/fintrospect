@@ -30,7 +30,7 @@ object Circe extends JsonLibrary[Json, Json] {
       (t: OUT) => successStatus(Circe.JsonFormat.encode(t)(e))
 
     private def toBody[BODY](db: Decoder[BODY], eb: Encoder[BODY])(implicit example: BODY = null) =
-      Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example, ObjectParamType)
+      Body[BODY](Circe.JsonFormat.bodySpec[BODY](None)(eb, db), example)
 
 
     /**
@@ -126,7 +126,7 @@ object Circe extends JsonLibrary[Json, Json] {
       * Create a Body that just use straight JSON encoding/decoding logic to bind to/from HTTP messages
       */
     def body[R](description: Option[String] = None, example: R = null)
-               (implicit e: Encoder[R], d: Decoder[R]) = Body(bodySpec[R](description)(e, d), example, ObjectParamType)
+               (implicit e: Encoder[R], d: Decoder[R]) = Body(bodySpec[R](description)(e, d), example)
 
     /**
       * A Body that provides a function that will modify a given case class with the fields from a incoming JSON object.
@@ -136,7 +136,7 @@ object Circe extends JsonLibrary[Json, Json] {
     def patchBody[R](description: Option[String] = None, example: R = null)
                     (implicit e: Encoder[R], d: Decoder[R => R]): Body[R => R] = Body[R => R](
       BodySpec.string(description, APPLICATION_JSON).map(s => decode[R => R](parse(s))(d),
-        (u: R => R) => compact(encode(u(example))(e))), Option(example).map(_ => (r: R) => example).orNull, ObjectParamType)
+        (u: R => R) => compact(encode(u(example))(e))), Option(example).map(_ => (r: R) => example).orNull)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic

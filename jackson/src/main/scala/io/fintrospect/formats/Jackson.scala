@@ -74,7 +74,7 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
       * Convenience method for creating Body that just use straight JSON encoding/decoding logic
       */
     def body[R](description: Option[String] = None, example: R = null)(implicit mf: scala.reflect.Manifest[R]) =
-      Body(bodySpec[R](description), example, ObjectParamType)
+      Body(bodySpec[R](description), example)
 
     /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic

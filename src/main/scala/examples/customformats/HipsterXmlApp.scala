@@ -26,7 +26,7 @@ object HipsterXmlApp extends App {
 
   val route = RouteSpec("an xml endpoint")
     .taking(Header.optional(xmlAsAParam))
-    .body(Body(xmlAsABody))
+    .body(Body.custom(xmlAsABody, paramType = StringParamType))
     .at(Get) / "view" / Path(HipsterBeardStyle) bindTo aService
 
   val module = RouteModule(Root / "xml", HipsterXmlModuleRenderer).withRoute(route)

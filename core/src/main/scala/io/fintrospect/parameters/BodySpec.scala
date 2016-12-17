@@ -2,9 +2,9 @@ package io.fintrospect.parameters
 
 import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
-import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_XML}
+import io.fintrospect.ContentType
+import io.fintrospect.ContentTypes.{APPLICATION_JSON, APPLICATION_XML, TEXT_PLAIN}
 import io.fintrospect.formats.{Argo, JsonFormat}
-import io.fintrospect.{ContentType, ContentTypes}
 
 import scala.xml.{Elem, XML}
 
@@ -31,7 +31,7 @@ case class BodySpec[T](description: Option[String], contentType: ContentType, de
 }
 
 object BodySpec {
-  def string(description: Option[String] = None, contentType: ContentType = ContentTypes.TEXT_PLAIN): BodySpec[String] = BodySpec[String](description, contentType, b => new String(extract(b)))
+  def string(description: Option[String] = None, contentType: ContentType = TEXT_PLAIN): BodySpec[String] = BodySpec[String](description, contentType, b => new String(extract(b)))
 
   def json[T](description: Option[String] = None, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): BodySpec[T] = BodySpec.string(description, APPLICATION_JSON).map(jsonFormat.parse, jsonFormat.compact)
 

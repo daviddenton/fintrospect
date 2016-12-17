@@ -55,7 +55,7 @@ class Json4sFormat[T](jsonMethods: JsonMethods[T],
     * Convenience method for creating Body that just use straight JSON encoding/decoding logic
     */
   def body[R](description: Option[String] = None, example: R = null, formats: Formats = serialization.formats(NoTypeHints))
-             (implicit mf: scala.reflect.Manifest[R]) = Body(bodySpec[R](description, formats)(mf), example, ObjectParamType)
+             (implicit mf: scala.reflect.Manifest[R]) = Body(bodySpec[R](description, formats)(mf), example)
 
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
@@ -100,7 +100,7 @@ class Json4sFilters[T](json4sFormat: Json4sFormat[T], protected val jsonLibrary:
     }
 
   private def toBody[BODY](mf: scala.reflect.Manifest[BODY])(implicit example: BODY = null) =
-    Body[BODY](json4sFormat.bodySpec[BODY](None)(mf), example, ObjectParamType)
+    Body[BODY](json4sFormat.bodySpec[BODY](None)(mf), example)
 
 
   /**
