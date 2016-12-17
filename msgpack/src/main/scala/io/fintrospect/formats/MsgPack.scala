@@ -23,14 +23,14 @@ object MsgPack {
 
     import MsgPack.ResponseBuilder.implicits._
 
-    private def toResponse[OUT <: AnyRef](successStatus: Status) = (t: OUT) => successStatus(MsgPackMsg(t))
+    private def toResponse[OUT](successStatus: Status) = (t: OUT) => successStatus(MsgPackMsg(t))
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
       * which return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOut[BODY <: AnyRef, OUT <: AnyRef](svc: Service[BODY, OUT], successStatus: Status = Ok)
+    def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
                                                 (implicit example: BODY = null, mf: Manifest[BODY])
     : Service[Request, Response] = AutoInOutFilter(successStatus)(example, mf).andThen(svc)
 
@@ -39,7 +39,7 @@ object MsgPack {
       * which may return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
-    def AutoInOptionalOut[BODY <: AnyRef, OUT <: AnyRef](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
+    def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
                                                         (implicit example: BODY = null, mf: Manifest[BODY])
     : Service[Request, Response] = _AutoInOptionalOut(svc, Body(bodySpec[BODY](None)(mf), example), toResponse(successStatus))
 
@@ -47,20 +47,20 @@ object MsgPack {
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoOut[IN, OUT <: AnyRef](successStatus: Status = Ok): Filter[IN, Response, IN, OUT] = _AutoOut(toResponse(successStatus))
+    def AutoOut[IN, OUT](successStatus: Status = Ok): Filter[IN, Response, IN, OUT] = _AutoOut(toResponse(successStatus))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
-    def AutoOptionalOut[IN, OUT <: AnyRef](successStatus: Status = Ok): Filter[IN, Response, IN, Option[OUT]] =
+    def AutoOptionalOut[IN, OUT](successStatus: Status = Ok): Filter[IN, Response, IN, Option[OUT]] =
       _AutoOptionalOut(toResponse(successStatus))
 
     /**
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOutFilter[BODY <: AnyRef, OUT <: AnyRef](successStatus: Status = Ok)(implicit example: BODY = null, mf: Manifest[BODY])
+    def AutoInOutFilter[BODY, OUT](successStatus: Status = Ok)(implicit example: BODY = null, mf: Manifest[BODY])
     : Filter[Request, Response, BODY, OUT] = AutoIn(Body(bodySpec[BODY](None)(mf), example)).andThen(AutoOut[BODY, OUT](successStatus))
   }
 
@@ -68,15 +68,15 @@ object MsgPack {
     * Convenience format handling methods
     */
   object Format {
-    def decode[T <: AnyRef](buf: Buf)(implicit mf: Manifest[T]): T = new MsgPackMsg(extract(buf)).as[T](mf)
+    def decode[T](buf: Buf)(implicit mf: Manifest[T]): T = new MsgPackMsg(extract(buf)).as[T](mf)
 
-    def encode[T <: AnyRef](in: T): Buf = MsgPackMsg(in).toBuf
+    def encode[T](in: T): Buf = MsgPackMsg(in).toBuf
   }
 
   /**
     * Convenience body spec method
     */
-  def bodySpec[T <: AnyRef](description: Option[String] = None)(implicit mf: Manifest[T]): BodySpec[T] =
+  def bodySpec[T](description: Option[String] = None)(implicit mf: Manifest[T]): BodySpec[T] =
     BodySpec(description, APPLICATION_X_MSGPACK, FileParamType,
       buf => new MsgPackMsg(extract(buf)), (m: MsgPackMsg) => m.toBuf)
       .map[T]((m: MsgPackMsg) => m.as[T](mf), (t: T) => MsgPackMsg(t))
