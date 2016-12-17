@@ -106,24 +106,24 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     def encode[T](in: T)(implicit writes: Writes[T]) = writes.writes(in)
 
     def decode[T](in: JsValue)(implicit reads: Reads[T]) = reads.reads(in).asOpt.getOrElse(throw new InvalidJsonForDecoding)
-
-    /**
-      * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
-      */
-    def parameterSpec[R](name: String, description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
-      ParameterSpec.json(name, description.orNull, Play).map(s => decode[R](s)(reads), (u: R) => encode(u)(writes))
   }
+
+  /**
+    * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+    */
+  def parameterSpec[R](name: String, description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
+    ParameterSpec.json(name, description.orNull, Play).map(s => JsonFormat.decode[R](s), (u: R) => encode(u))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
     */
   def responseSpec[R](statusAndDescription: (Status, String), example: R)
                      (implicit reads: Reads[R], writes: Writes[R]) =
-    ResponseSpec.json(statusAndDescription, encode(example)(writes), Play)
+    ResponseSpec.json(statusAndDescription, encode(example), Play)
 
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
   def bodySpec[R](description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
-    BodySpec.json(description, Play).map(j => JsonFormat.decode[R](j)(reads), (u: R) => encode(u)(writes))
+    BodySpec.json(description, Play).map(j => JsonFormat.decode[R](j), (u: R) => encode(u))
 }
