@@ -5,7 +5,6 @@ import java.math.BigInteger
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
-import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import org.json4s.Extraction.decompose
@@ -52,7 +51,7 @@ class Json4sFormat[T](jsonMethods: JsonMethods[T],
     */
   def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
                  (implicit mf: scala.reflect.Manifest[R]) =
-    BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s), formats)(mf), (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
+    BodySpec.json(description, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u.asInstanceOf[AnyRef]))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples

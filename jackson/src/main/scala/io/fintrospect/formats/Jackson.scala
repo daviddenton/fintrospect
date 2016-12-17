@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.twitter.finagle.http.Status
 import com.twitter.io.Buf
-import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.ResponseSpec
 import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
 
@@ -70,7 +69,7 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
       */
     def bodySpec[R](description: Option[String] = None)(implicit mf: scala.reflect.Manifest[R]) =
-      BodySpec.string(description, APPLICATION_JSON).map(s => decode[R](parse(s)), (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
+      BodySpec.json(description, this).map(j => decode[R](j), (u: R) => encode(u.asInstanceOf[AnyRef]))
 
     /**
       * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
