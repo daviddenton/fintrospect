@@ -37,7 +37,7 @@ object BodySpec {
   def json[T](description: Option[String] = None, jsonFormat: JsonFormat[T, _] = Argo.JsonFormat): BodySpec[T] =
     BodySpec[T](description, APPLICATION_JSON, ObjectParamType, b => jsonFormat.parse(new String(extract(b))), t => Buf.Utf8(jsonFormat.compact(t)))
 
-  def xml(description: Option[String] = None): BodySpec[Elem] = BodySpec.string(description, APPLICATION_XML).map(XML.loadString, _.toString())
+  def xml(description: Option[String] = None): BodySpec[Elem] = string(description, APPLICATION_XML).map(XML.loadString, _.toString())
 
   def binary(description: Option[String] = None, contentType: ContentType): BodySpec[Buf] = BodySpec(description, contentType, FileParamType,
     b => {
