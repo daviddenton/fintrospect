@@ -9,7 +9,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
 
 /**
   * Argonaut JSON support (application/json content type)
@@ -30,7 +30,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       (t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e))
 
     private def toBody[BODY](db: DecodeJson[BODY], eb: EncodeJson[BODY])(implicit example: BODY = null) =
-      Body[BODY](Argonaut.JsonFormat.bodySpec[BODY](None)(eb, db), example)
+      Body[BODY](Argonaut.bodySpec[BODY](None)(eb, db), example)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -104,25 +104,24 @@ object Argonaut extends JsonLibrary[Json, Json] {
     def encode[T](in: T)(implicit encodec: EncodeJson[T]) = encodec.encode(in)
 
     def decode[T](in: Json)(implicit decodec: DecodeJson[T]) = decodec.decodeJson(in).getOr(throw new InvalidJsonForDecoding)
-
-    /**
-      * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
-      */
-    def bodySpec[R](description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-      BodySpec.json(description, this).map(j => decode[R](j)(decodec), (u: R) => encode(u)(encodec))
-
-    /**
-      * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
-      */
-    def responseSpec[R](statusAndDescription: (Status, String), example: R)
-                       (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-      ResponseSpec.json(statusAndDescription, encode(example)(encodec), this)
-
-    /**
-      * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
-      */
-    def parameterSpec[R](name: String, description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
-      ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(decodec), (u: R) => compact(encode(u)(encodec)))
   }
 
+  /**
+    * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+    */
+  def bodySpec[R](description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
+    BodySpec.json(description, JsonFormat).map(j => JsonFormat.decode[R](j)(decodec), (u: R) => JsonFormat.encode(u)(encodec))
+
+  /**
+    * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
+    */
+  def responseSpec[R](statusAndDescription: (Status, String), example: R)
+                     (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
+    ResponseSpec.json(statusAndDescription, JsonFormat.encode(example)(encodec), JsonFormat)
+
+  /**
+    * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+    */
+  def parameterSpec[R](name: String, description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =
+    ParameterSpec.json(name, description.orNull, JsonFormat).map(j => JsonFormat.decode[R](j)(decodec), (u: R) => JsonFormat.encode(u)(encodec))
 }
