@@ -8,7 +8,7 @@ import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.Circe
-import io.fintrospect.formats.Circe.JsonFormat.{bodySpec, responseSpec}
+import io.fintrospect.formats.Circe.{bodySpec, responseSpec}
 import io.fintrospect.parameters.{Body, Path}
 
 /**

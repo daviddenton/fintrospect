@@ -7,6 +7,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
+import io.fintrospect.formats.Play.JsonFormat.encode
 import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
 import play.api.libs.json.{Json, _}
 
@@ -26,10 +27,10 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     import responseBuilder.implicits._
 
     private def toResponse[OUT](successStatus: Status, e: Writes[OUT]) =
-      (t: OUT) => successStatus(Play.JsonFormat.encode(t)(e))
+      (t: OUT) => successStatus(encode(t)(e))
 
     private def toBody[BODY](db: Reads[BODY], eb: Writes[BODY])(implicit example: BODY = null) =
-      Body[BODY](Play.JsonFormat.bodySpec[BODY](None)(db, eb), example)
+      Body[BODY](Play.bodySpec[BODY](None)(db, eb), example)
 
     /**
       * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
@@ -107,24 +108,22 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     def decode[T](in: JsValue)(implicit reads: Reads[T]) = reads.reads(in).asOpt.getOrElse(throw new InvalidJsonForDecoding)
 
     /**
-      * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
-      */
-
-    def bodySpec[R](description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
-      BodySpec.json(description, this).map(j => decode[R](j)(reads), (u: R) => encode(u)(writes))
-
-    /**
-      * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
-      */
-    def responseSpec[R](statusAndDescription: (Status, String), example: R)
-                       (implicit reads: Reads[R], writes: Writes[R]) =
-      ResponseSpec.json(statusAndDescription, encode(example)(writes), this)
-
-    /**
       * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
       */
     def parameterSpec[R](name: String, description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
       ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(reads), (u: R) => compact(encode(u)(writes)))
   }
 
+  /**
+    * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
+    */
+  def responseSpec[R](statusAndDescription: (Status, String), example: R)
+                     (implicit reads: Reads[R], writes: Writes[R]) =
+    ResponseSpec.json(statusAndDescription, encode(example)(writes), JsonFormat)
+
+  /**
+    * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+    */
+  def bodySpec[R](description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
+    BodySpec.json(description, JsonFormat).map(j => JsonFormat.decode[R](j)(reads), (u: R) => encode(u)(writes))
 }

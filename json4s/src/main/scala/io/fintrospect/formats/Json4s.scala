@@ -6,7 +6,7 @@ import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ResponseSpec
-import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
 import org.json4s.Extraction.decompose
 import org.json4s.{Formats, JValue, JsonMethods, NoTypeHints, Serialization}
 
@@ -65,9 +65,7 @@ class Json4sFormat[T](jsonMethods: JsonMethods[T],
     */
   def parameterSpec[R](name: String, description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
                       (implicit mf: scala.reflect.Manifest[R]) =
-    ParameterSpec[R](name, description, ObjectParamType,
-      s => decode[R](parse(s), formats)(mf),
-      (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
+    ParameterSpec.json(name, description.orNull, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u.asInstanceOf[AnyRef]))
 }
 
 /**

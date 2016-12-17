@@ -6,7 +6,6 @@ import com.twitter.finagle.{Filter, Service}
 import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
-import io.fintrospect.formats.MsgPack.Format.bodySpec
 import io.fintrospect.parameters.{Body, BodySpec, FileParamType}
 
 /**
@@ -72,12 +71,15 @@ object MsgPack {
     def decode[T <: AnyRef](buf: Buf)(implicit mf: scala.reflect.Manifest[T]): T = new MsgPackMsg(extract(buf)).as[T](mf)
 
     def encode[T <: AnyRef](in: T): Buf = MsgPackMsg(in).toBuf
-
-    def bodySpec[T <: AnyRef](description: Option[String] = None)(implicit mf: scala.reflect.Manifest[T]): BodySpec[T] =
-      BodySpec(description, APPLICATION_X_MSGPACK, FileParamType,
-        buf => new MsgPackMsg(extract(buf)), (m: MsgPackMsg) => m.toBuf)
-        .map[T]((m: MsgPackMsg) => m.as[T](mf), (t: T) => MsgPackMsg(t))
   }
+
+  /**
+    * Convenience body spec method
+    */
+  def bodySpec[T <: AnyRef](description: Option[String] = None)(implicit mf: scala.reflect.Manifest[T]): BodySpec[T] =
+    BodySpec(description, APPLICATION_X_MSGPACK, FileParamType,
+      buf => new MsgPackMsg(extract(buf)), (m: MsgPackMsg) => m.toBuf)
+      .map[T]((m: MsgPackMsg) => m.as[T](mf), (t: T) => MsgPackMsg(t))
 
   object ResponseBuilder extends AbstractResponseBuilder[MsgPackMsg] {
 

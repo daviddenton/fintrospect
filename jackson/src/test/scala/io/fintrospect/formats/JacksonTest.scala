@@ -3,6 +3,7 @@ package io.fintrospect.formats
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.Status.Ok
 import io.fintrospect.formats.Jackson.JsonFormat._
+import io.fintrospect.formats.Jackson._
 import io.fintrospect.parameters.{Body, Query}
 
 import scala.language.reflectiveCalls
@@ -35,7 +36,7 @@ class JacksonJsonFormatTest extends JsonFormatSpec(Jackson.JsonFormat) {
     }
 
     it("response spec has correct code") {
-      Jackson.JsonFormat.responseSpec[JacksonLetter](Ok -> "ok", aLetter).status shouldBe Ok
+      Jackson.responseSpec[JacksonLetter](Ok -> "ok", aLetter).status shouldBe Ok
     }
 
     it("param spec decodes content") {

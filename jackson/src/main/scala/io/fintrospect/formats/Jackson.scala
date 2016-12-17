@@ -9,7 +9,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.twitter.finagle.http.Status
 import com.twitter.io.Buf
 import io.fintrospect.ResponseSpec
-import io.fintrospect.parameters.{BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{BodySpec, ParameterSpec}
 
 import scala.collection.JavaConverters._
 
@@ -64,26 +64,23 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
     def encode[T](in: T): JsonNode = mapper.convertValue(in, classOf[JsonNode])
 
     def decode[R](in: JsonNode)(implicit mf: scala.reflect.Manifest[R]): R = mapper.readerFor(mf.runtimeClass).readValue(in)
-
-    /**
-      * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
-      */
-    def bodySpec[R](description: Option[String] = None)(implicit mf: scala.reflect.Manifest[R]) =
-      BodySpec.json(description, this).map(j => decode[R](j), (u: R) => encode(u.asInstanceOf[AnyRef]))
-
-    /**
-      * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
-      */
-    def responseSpec[R](statusAndDescription: (Status, String), example: R)(implicit mf: scala.reflect.Manifest[R]) =
-      ResponseSpec.json(statusAndDescription, encode(example.asInstanceOf[AnyRef]), this)
-
-    /**
-      * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
-      */
-    def parameterSpec[R](name: String, description: Option[String] = None)(implicit mf: scala.reflect.Manifest[R]) =
-      ParameterSpec[R](name, description, ObjectParamType,
-        s => decode[R](parse(s)),
-        (u: R) => compact(encode(u.asInstanceOf[AnyRef])))
   }
 
+  /**
+    * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
+    */
+  def bodySpec[R](description: Option[String] = None)(implicit mf: scala.reflect.Manifest[R]) =
+    BodySpec.json(description, JsonFormat).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u.asInstanceOf[AnyRef]))
+
+  /**
+    * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
+    */
+  def responseSpec[R](statusAndDescription: (Status, String), example: R)(implicit mf: scala.reflect.Manifest[R]) =
+    ResponseSpec.json(statusAndDescription, JsonFormat.encode(example.asInstanceOf[AnyRef]), JsonFormat)
+
+  /**
+    * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
+    */
+  def parameterSpec[R](name: String, description: Option[String] = None)(implicit mf: scala.reflect.Manifest[R]) =
+    ParameterSpec.json(name, description.orNull, JsonFormat).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u.asInstanceOf[AnyRef]))
 }
