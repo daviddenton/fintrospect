@@ -25,12 +25,7 @@ object Body {
   /**
     * Create a custom body type for the request. Encapsulates the means to insert/retrieve into the request
     */
-  def custom[T](bodySpec: BodySpec[T], example: T = null, paramType: ParamType): UniBody[T] = new UniBody[T](bodySpec, paramType, Option(example))
-
-  /**
-    * Create a custom body type for the request, with a wire-type of "Object"
-    */
-  def apply[T](bodySpec: BodySpec[T], example: T = null): UniBody[T] = new UniBody[T](bodySpec, ObjectParamType, Option(example))
+  def apply[T](bodySpec: BodySpec[T], example: T = null): UniBody[T] = new UniBody[T](bodySpec, Option(example))
 
   /**
     * JSON format HTTP message body. Defaults to Argo JSON format, but this can be overridden by passing an alternative JsonFormat
@@ -40,12 +35,12 @@ object Body {
   /**
     * Binary HTTP body, with custom ContentType
     */
-  def binary(description: Option[String], contentType: ContentType): UniBody[Buf] = Body.custom(BodySpec.binary(description, contentType), null, FileParamType)
+  def binary(description: Option[String], contentType: ContentType): UniBody[Buf] = Body(BodySpec.binary(description, contentType), null)
 
   /**
     * Native Scala XML format HTTP message body.
     */
-  def xml(description: Option[String], example: Elem = null): UniBody[Elem] = Body.custom(BodySpec.xml(description), example, StringParamType)
+  def xml(description: Option[String], example: Elem = null): UniBody[Elem] = Body(BodySpec.xml(description), example)
 
   /**
     * HTML encoded form HTTP message body which will fail to deserialize if a single field is missing/invalid. Use this

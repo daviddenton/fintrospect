@@ -6,7 +6,10 @@ import com.twitter.finagle.http.{Request, Status}
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import com.twitter.util.Await.result
 import com.twitter.util.Future
+import io.fintrospect.formats.MsgPack.Filters._
+import io.fintrospect.formats.MsgPack.Format.bodySpec
 import io.fintrospect.formats.MsgPack.ResponseBuilder.implicits._
+import io.fintrospect.parameters.Body
 import org.scalatest.{FunSpec, Matchers}
 
 import scala.language.reflectiveCalls
@@ -21,7 +24,7 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
 
     describe("AutoInOut") {
       it("returns Ok") {
-        val svc = MsgPack.Filters.AutoInOut(Service.mk { in: MsgPackLetter => Future.value(in) }, Created)
+        val svc = AutoInOut(Service.mk { in: MsgPackLetter => Future.value(in) }, Created)
 
         val response = result(svc(request))
         new MsgPackMsg(extract(response.content)).as[MsgPackLetter] shouldBe aLetter
@@ -30,7 +33,7 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
 
     describe("AutoInOptionalOut") {
       it("returns Ok when present") {
-        val svc = MsgPack.Filters.AutoInOptionalOut(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(Option(in)) })
+        val svc = AutoInOptionalOut(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(request))
         response.status shouldBe Status.Ok
@@ -38,13 +41,13 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
       }
 
       it("returns NotFound when missing present") {
-        val svc = MsgPack.Filters.AutoInOptionalOut(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(None) })
+        val svc = AutoInOptionalOut(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(None) })
         result(svc(request)).status shouldBe Status.NotFound
       }
     }
 
     describe("AutoIn") {
-      val svc = MsgPack.Filters.AutoIn(MsgPack.Format.body[MsgPackLetter]()).andThen(Service.mk { in: MsgPackLetter => Status.Ok(MsgPackMsg(in)) })
+      val svc = AutoIn(Body(bodySpec[MsgPackLetter]())).andThen(Service.mk { in: MsgPackLetter => Status.Ok(MsgPackMsg(in)) })
       it("takes the object from the request") {
         MsgPack.Format.decode[MsgPackLetter](result(svc(request)).content) shouldBe aLetter
       }
@@ -59,7 +62,7 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
 
     describe("AutoOut") {
       it("takes the object from the request") {
-        val svc = MsgPack.Filters.AutoOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk { in: MsgPackLetter => Future.value(in) })
+        val svc = AutoOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk { in: MsgPackLetter => Future.value(in) })
         val response = result(svc(aLetter))
         response.status shouldBe Created
         new MsgPackMsg(extract(response.content)).as[MsgPackLetter] shouldBe aLetter
@@ -68,7 +71,7 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
 
     describe("AutoOptionalOut") {
       it("returns Ok when present") {
-        val svc = MsgPack.Filters.AutoOptionalOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(Option(in)) })
+        val svc = AutoOptionalOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(aLetter))
         response.status shouldBe Created
@@ -76,7 +79,7 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
       }
 
       it("returns NotFound when missing present") {
-        val svc = MsgPack.Filters.AutoOptionalOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(None) })
+        val svc = AutoOptionalOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(None) })
         result(svc(aLetter)).status shouldBe Status.NotFound
       }
     }

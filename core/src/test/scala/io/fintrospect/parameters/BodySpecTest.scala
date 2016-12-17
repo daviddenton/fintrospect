@@ -74,7 +74,7 @@ class BodySpecTest extends FunSpec with Matchers {
   }
 
   describe("custom") {
-    val bodySpec = BodySpec[MyCustomType](None, ContentTypes.TEXT_PLAIN, b => MyCustomType(new String(extract(b)).toInt), ct => Buf.Utf8(ct.value.toString))
+    val bodySpec = BodySpec[MyCustomType](None, ContentTypes.TEXT_PLAIN, StringParamType, b => MyCustomType(new String(extract(b)).toInt), ct => Buf.Utf8(ct.value.toString))
 
     it("retrieves a valid value") {
       Try(bodySpec.deserialize(Buf.Utf8("123"))) shouldBe Success(MyCustomType(123))
