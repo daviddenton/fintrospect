@@ -33,7 +33,7 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
 
     describe("AutoInOptionalOut") {
       it("returns Ok when present") {
-        val svc = AutoInOptionalOut(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(Option(in)) })
+        val svc = AutoInOptionalOut(Service.mk { in: MsgPackLetter => Future.value(Option(in)) })
 
         val response = result(svc(request))
         response.status shouldBe Status.Ok
@@ -71,7 +71,7 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
 
     describe("AutoOptionalOut") {
       it("returns Ok when present") {
-        val svc = AutoOptionalOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(Option(in)) })
+        val svc = AutoOptionalOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk { in: MsgPackLetter => Future.value(Option(in)) })
 
         val response = result(svc(aLetter))
         response.status shouldBe Created
@@ -79,7 +79,7 @@ class MsgPackFiltersTest extends FunSpec with Matchers {
       }
 
       it("returns NotFound when missing present") {
-        val svc = AutoOptionalOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(None) })
+        val svc = AutoOptionalOut[MsgPackLetter, MsgPackLetter](Created).andThen(Service.mk { in: MsgPackLetter => Future.value(None) })
         result(svc(aLetter)).status shouldBe Status.NotFound
       }
     }
