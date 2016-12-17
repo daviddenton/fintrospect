@@ -8,7 +8,7 @@ import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.Play.JsonFormat.encode
-import io.fintrospect.parameters.{Body, BodySpec, ObjectParamType, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
 import play.api.libs.json.{Json, _}
 
 /**
@@ -111,7 +111,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
       */
     def parameterSpec[R](name: String, description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
-      ParameterSpec[R](name, description, ObjectParamType, s => decode[R](parse(s))(reads), (u: R) => compact(encode(u)(writes)))
+      ParameterSpec.json(name, description.orNull, this).map(s => decode[R](s)(reads), (u: R) => encode(u)(writes))
   }
 
   /**

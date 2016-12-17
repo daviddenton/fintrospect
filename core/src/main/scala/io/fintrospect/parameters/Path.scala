@@ -15,8 +15,7 @@ object Path extends Parameters[PathParameter, PathBindable] {
     * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
     * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
     */
-  def fixed(name: String): PathParameter[String] = new PathParameter[String](
-    ParameterSpec[String](name, None, StringParamType, identity, identity), true) with PathBindable[String] {
+  def fixed(name: String): PathParameter[String] = new PathParameter[String](ParameterSpec.string(name, null), true) with PathBindable[String] {
 
     override val required = true
 

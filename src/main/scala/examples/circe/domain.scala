@@ -1,11 +1,11 @@
 package examples.circe
 
-import io.fintrospect.parameters.{ParameterSpec, StringParamType}
+import io.fintrospect.parameters.ParameterSpec
 
 case class Email(to: EmailAddress, from: EmailAddress, subject: String, bytes: Int)
 
 case class EmailAddress(address: String)
 
 object EmailAddress {
-  val spec = ParameterSpec[EmailAddress]("address", Option("user email"), StringParamType, EmailAddress(_), e => e.address)
+  val spec = ParameterSpec.string("address", "user email").map(i => EmailAddress(i), (e: EmailAddress) => e.address)
 }
