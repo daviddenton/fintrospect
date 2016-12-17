@@ -86,7 +86,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
 
     override def obj(fields: Iterable[Field]): Json = Json.obj(fields.map(f => (f._1, f._2)).toSeq: _*)
 
-    override def obj(fields: Field*): Json = Json.obj(fields.map(f => (f._1, f._2)): _*)
+    override def obj(fields: Field*): Json = obj(fields)
 
     override def array(elements: Iterable[Json]) = Json.array(elements.toSeq: _*)
 

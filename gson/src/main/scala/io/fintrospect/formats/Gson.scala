@@ -20,10 +20,10 @@ object Gson extends JsonLibrary[JsonElement, JsonElement] {
 
     override def compact(node: JsonElement): String = compact.toJson(node)
 
-    override def obj(fields: Iterable[Field]) =
+    override def obj(fields: Iterable[Field]): JsonObject =
       fields.foldLeft(new JsonObject()) { case (memo, (name, o)) => memo.add(name, o); memo }
 
-    override def obj(fields: Field*) = obj(fields)
+    override def obj(fields: Field*): JsonObject = obj(fields)
 
     override def array(elements: Iterable[JsonElement]) =
       elements.foldLeft(new JsonArray()) { case (memo, o) => memo.add(o); memo }
