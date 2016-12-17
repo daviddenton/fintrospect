@@ -107,12 +107,6 @@ object Argonaut extends JsonLibrary[Json, Json] {
     def decode[T](in: Json)(implicit decodec: DecodeJson[T]) = decodec.decodeJson(in).getOr(throw new InvalidJsonForDecoding)
 
     /**
-      * Convenience method for creating Body that just use straight JSON encoding/decoding logic
-      */
-    def body[R](description: Option[String] = None, example: R = null)
-               (implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) = Body(bodySpec[R](description)(encodec, decodec), example)
-
-    /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
       */
     def bodySpec[R](description: Option[String] = None)(implicit encodec: EncodeJson[R], decodec: DecodeJson[R]) =

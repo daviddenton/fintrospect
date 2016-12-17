@@ -108,12 +108,6 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     def decode[T](in: JsValue)(implicit reads: Reads[T]) = reads.reads(in).asOpt.getOrElse(throw new InvalidJsonForDecoding)
 
     /**
-      * Convenience method for creating Body that just use straight JSON encoding/decoding logic
-      */
-    def body[R](description: Option[String] = None, example: R = null)
-               (implicit reads: Reads[R], writes: Writes[R]) = Body(bodySpec[R](description)(reads, writes), example)
-
-    /**
       * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
       */
 

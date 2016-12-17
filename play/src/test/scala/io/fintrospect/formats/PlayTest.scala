@@ -72,10 +72,10 @@ class PlayFiltersTest extends FunSpec with Matchers {
     }
 
     describe("AutoIn") {
-      val svc = Play.Filters.AutoIn(Play.JsonFormat.body[PlayLetter]()).andThen(Service.mk { in: PlayLetter => Ok(Play.JsonFormat.encode(in)) })
+      val svc = Play.Filters.AutoIn(Body(bodySpec[PlayLetter]())).andThen(Service.mk { in: PlayLetter => Ok(Play.JsonFormat.encode(in)) })
 
       it("takes the object from the request") {
-        Play.JsonFormat.body[PlayLetter]() <-- result(svc(request)) shouldBe aLetter
+        Body(bodySpec[PlayLetter]()) <-- result(svc(request)) shouldBe aLetter
       }
 
       it("rejects illegal content with a BadRequest") {

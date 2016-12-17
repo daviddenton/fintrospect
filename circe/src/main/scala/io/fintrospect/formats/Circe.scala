@@ -119,12 +119,6 @@ object Circe extends JsonLibrary[Json, Json] {
     def patcher[T](in: Json)(implicit d: Decoder[T => T]) = decode[T => T](in)
 
     /**
-      * Create a Body that just use straight JSON encoding/decoding logic to bind to/from HTTP messages
-      */
-    def body[R](description: Option[String] = None, example: R = null)
-               (implicit e: Encoder[R], d: Decoder[R]) = Body(bodySpec[R](description)(e, d), example)
-
-    /**
       * A Body that provides a function that will modify a given case class with the fields from a incoming JSON object.
       * Useful for PATCH/PUT requests, where only fields to be modified are sent to the server. Note that this Body only
       * supports inbound messages.
