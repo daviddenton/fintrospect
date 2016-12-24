@@ -38,7 +38,7 @@ lazy val baseSettings = Seq(
   credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
 )
 
-val finagleVersion = "6.40.0"
+val finagleVersion = "6.41.0"
 val json4sVersion = "3.5.0"
 val circeVersion = "0.6.1"
 
@@ -99,7 +99,7 @@ lazy val play = project
   .settings(moduleName := "fintrospect-play")
   .settings(description := "Play JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.9")
+  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.0-M1")
 
 lazy val spray = project
   .settings(baseSettings)
