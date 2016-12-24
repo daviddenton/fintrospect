@@ -49,7 +49,6 @@ lazy val core = project
     "net.sourceforge.argo" % "argo" % "3.40",
     "com.twitter" %% "finagle-http" % finagleVersion,
     "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
-    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scalatest" %% "scalatest" % "3.0.0" % "test"
   ))
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
