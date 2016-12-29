@@ -1,13 +1,12 @@
 package io.fintrospect.formats
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.Play.JsonFormat._
-import io.fintrospect.formats.Play.ResponseBuilder.implicits._
+import io.fintrospect.formats.Play.ResponseBuilder._
 import io.fintrospect.formats.Play._
 import io.fintrospect.parameters.{Body, Query}
 import org.scalatest.{FunSpec, Matchers}
@@ -49,10 +48,10 @@ class PlayFiltersTest extends FunSpec with Matchers {
 
     describe("AutoInOut") {
       it("returns Ok") {
-        val svc = Play.Filters.AutoInOut(Service.mk { in: PlayLetter => Future.value(in) }, Created)
+        val svc = Play.Filters.AutoInOut(Service.mk { in: PlayLetter => Future.value(in) }, Status.Created)
 
         val response = result(svc(request))
-        response.status shouldBe Created
+        response.status shouldBe Status.Created
         decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
@@ -88,24 +87,24 @@ class PlayFiltersTest extends FunSpec with Matchers {
 
     describe("AutoOut") {
       it("takes the object from the request") {
-        val svc = Play.Filters.AutoOut[PlayLetter, PlayLetter](Created).andThen(Service.mk { in: PlayLetter => Future.value(in) })
+        val svc = Play.Filters.AutoOut[PlayLetter, PlayLetter](Status.Created).andThen(Service.mk { in: PlayLetter => Future.value(in) })
         val response = result(svc(aLetter))
-        response.status shouldBe Created
+        response.status shouldBe Status.Created
         decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
 
     describe("AutoOptionalOut") {
       it("returns Ok when present") {
-        val svc = Play.Filters.AutoOptionalOut[PlayLetter, PlayLetter](Created).andThen(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(Option(in)) })
+        val svc = Play.Filters.AutoOptionalOut[PlayLetter, PlayLetter](Status.Created).andThen(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(aLetter))
-        response.status shouldBe Created
+        response.status shouldBe Status.Created
         decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
-        val svc = Play.Filters.AutoOptionalOut[PlayLetter, PlayLetter](Created).andThen(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(None) })
+        val svc = Play.Filters.AutoOptionalOut[PlayLetter, PlayLetter](Status.Created).andThen(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(None) })
         result(svc(aLetter)).status shouldBe Status.NotFound
       }
     }

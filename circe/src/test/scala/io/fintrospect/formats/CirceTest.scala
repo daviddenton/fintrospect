@@ -1,13 +1,12 @@
 package io.fintrospect.formats
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.{BadRequest, Created, NotFound, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.circe.generic.auto._
 import io.fintrospect.formats.Circe.JsonFormat._
-import io.fintrospect.formats.Circe.ResponseBuilder.implicits._
+import io.fintrospect.formats.Circe.ResponseBuilder._
 import io.fintrospect.formats.Circe._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, Query}
@@ -34,10 +33,10 @@ class CirceFiltersTest extends FunSpec with Matchers {
 
     describe("AutoInOut") {
       it("returns Ok") {
-        val svc = Circe.Filters.AutoInOut(Service.mk { in: CirceLetter => Future.value(in) }, Created)
+        val svc = Circe.Filters.AutoInOut(Service.mk { in: CirceLetter => Future.value(in) }, Status.Created)
 
         val response = result(svc(request))
-        response.status shouldBe Created
+        response.status shouldBe Status.Created
         decode[CirceLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
@@ -47,18 +46,18 @@ class CirceFiltersTest extends FunSpec with Matchers {
         val svc = Circe.Filters.AutoInOptionalOut(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(request))
-        response.status shouldBe Ok
+        response.status shouldBe Status.Ok
         decode[CirceLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
         val svc = Circe.Filters.AutoInOptionalOut(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldBe NotFound
+        result(svc(request)).status shouldBe Status.NotFound
       }
     }
 
     describe("AutoIn") {
-      val svc = Circe.Filters.AutoIn(Body(bodySpec[CirceLetter]())).andThen(Service.mk { in: CirceLetter => Status.Ok(Circe.JsonFormat.encode(in)) })
+      val svc = Circe.Filters.AutoIn(Body(bodySpec[CirceLetter]())).andThen(Service.mk { in: CirceLetter => Ok(Circe.JsonFormat.encode(in)) })
       it("takes the object from the request") {
         decode[CirceLetter](parse(result(svc(request)).contentString)) shouldBe aLetter
       }
@@ -66,31 +65,31 @@ class CirceFiltersTest extends FunSpec with Matchers {
       it("rejects illegal content with a BadRequest") {
         val request = Request()
         request.contentString = "not xml"
-        Await.result(svc(request)).status shouldBe BadRequest
+        Await.result(svc(request)).status shouldBe Status.BadRequest
       }
     }
 
     describe("AutoOut") {
       it("takes the object from the request") {
-        val svc = Circe.Filters.AutoOut[CirceLetter, CirceLetter](Created).andThen(Service.mk { in: CirceLetter => Future.value(in) })
+        val svc = Circe.Filters.AutoOut[CirceLetter, CirceLetter](Status.Created).andThen(Service.mk { in: CirceLetter => Future.value(in) })
         val response = result(svc(aLetter))
-        response.status shouldBe Created
+        response.status shouldBe Status.Created
         decode[CirceLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
 
     describe("AutoOptionalOut") {
       it("returns Ok when present") {
-        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(Option(in)) })
+        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Status.Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(aLetter))
-        response.status shouldBe Created
+        response.status shouldBe Status.Created
         decode[CirceLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
-        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { _ => Future.value(None) })
-        result(svc(aLetter)).status shouldBe NotFound
+        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Status.Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { _ => Future.value(None) })
+        result(svc(aLetter)).status shouldBe Status.NotFound
       }
     }
   }
@@ -144,7 +143,7 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe) {
     }
 
     it("response spec has correct code") {
-      Circe.responseSpec[CirceLetter](Ok -> "ok", aLetter).status shouldBe Ok
+      Circe.responseSpec[CirceLetter](Status.Ok -> "ok", aLetter).status shouldBe Status.Ok
     }
 
     it("param spec decodes content") {

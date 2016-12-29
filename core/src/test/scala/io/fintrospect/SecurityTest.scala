@@ -1,11 +1,10 @@
 package io.fintrospect
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.{Ok, Unauthorized}
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
-import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
+import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters.Query
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import org.scalatest.{FunSpec, Matchers}
@@ -22,7 +21,7 @@ class SecurityTest extends FunSpec with Matchers {
         result(ApiKey(param, (i: Int) => Future.value(true)).filter(Request(paramName -> "1"), next)
           .map(statusAndContentFrom))
 
-      status should be(Ok)
+      status should be(Status.Ok)
       content should be("hello")
     }
 
@@ -31,7 +30,7 @@ class SecurityTest extends FunSpec with Matchers {
         result(ApiKey(param, (i: Int) => Future.value(true)).filter(Request(), next)
           .map(statusAndContentFrom))
 
-      status should be(Unauthorized)
+      status should be(Status.Unauthorized)
       content should be("")
     }
 
@@ -40,7 +39,7 @@ class SecurityTest extends FunSpec with Matchers {
         result(ApiKey(param, (i: Int) => Future.value(true)).filter(Request(paramName -> "notAnInt"), next)
           .map(statusAndContentFrom))
 
-      status should be(Unauthorized)
+      status should be(Status.Unauthorized)
       content should be("")
     }
 
@@ -49,7 +48,7 @@ class SecurityTest extends FunSpec with Matchers {
         result(ApiKey(param, (i: Int) => Future.value(false)).filter(Request(paramName -> "1"), next)
           .map(statusAndContentFrom))
 
-      status should be(Unauthorized)
+      status should be(Status.Unauthorized)
       content should be("")
     }
 

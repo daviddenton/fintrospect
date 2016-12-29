@@ -5,12 +5,11 @@ import java.util.Base64
 
 import com.google.common.net.HttpHeaders
 import com.twitter.finagle.Filter
-import com.twitter.finagle.http.Status.NotAcceptable
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.fintrospect.ContentType.fromAcceptHeaders
 import io.fintrospect.configuration.{Authority, Credentials}
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
@@ -41,7 +40,7 @@ object RequestFilters {
         .filter(acceptable =>
           !acceptable.exists(contentTypes.contains) && !acceptable.contains(ContentTypes.WILDCARD)
         )
-        .map(_ => NotAcceptable().toFuture)
+        .map(_ => NotAcceptable("").toFuture)
         .getOrElse(svc(req))
     }
   }

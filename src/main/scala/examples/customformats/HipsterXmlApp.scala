@@ -1,14 +1,13 @@
 package examples.customformats
 
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await
-import examples.customformats.HipsterXml.ResponseBuilder.implicits.{responseBuilderToFuture, statusToResponseBuilderConfig}
+import examples.customformats.HipsterXml.ResponseBuilder._
 import io.fintrospect.parameters._
 import io.fintrospect.{ContentTypes, RouteModule, RouteSpec}
 

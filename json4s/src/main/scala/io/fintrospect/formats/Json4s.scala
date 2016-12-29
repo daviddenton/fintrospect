@@ -2,7 +2,6 @@ package io.fintrospect.formats
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ResponseSpec
@@ -60,13 +59,8 @@ class Json4sFilters[T](protected val jsonLibrary: Json4sLibrary[T])
   private val formats = jsonLibrary.JsonFormat.serialization.formats(NoTypeHints)
   private val json4sFormat = jsonLibrary.JsonFormat
 
-  import responseBuilder.implicits._
-
-
   private def toResponse[OUT](successStatus: Status, formats: Formats = formats) =
-    (t: OUT) => {
-      successStatus(json4sFormat.encode(t, formats))
-    }
+    (t: OUT) => responseBuilder.HttpResponse(successStatus).withContent(json4sFormat.encode(t, formats))
 
   private def toBody[BODY](mf: Manifest[BODY])(implicit example: BODY = null) =
     Body[BODY](jsonLibrary.bodySpec[BODY](None)(mf), example)
@@ -77,9 +71,9 @@ class Json4sFilters[T](protected val jsonLibrary: Json4sLibrary[T])
     * which return an object.
     * HTTP OK is returned by default in the auto-marshalled response (overridable).
     */
-  def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok,
-                                     formats: Formats = formats)
-                                    (implicit example: BODY = null, mf: Manifest[BODY])
+  def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Status.Ok,
+                           formats: Formats = formats)
+                          (implicit example: BODY = null, mf: Manifest[BODY])
   : Service[Request, Response] = AutoInOutFilter(successStatus)(example, mf).andThen(svc)
 
   /**
@@ -87,9 +81,9 @@ class Json4sFilters[T](protected val jsonLibrary: Json4sLibrary[T])
     * which may return an object.
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
-  def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok,
-                                             formats: Formats = formats)
-                                            (implicit example: BODY = null, mf: Manifest[BODY])
+  def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Status.Ok,
+                                   formats: Formats = formats)
+                                  (implicit example: BODY = null, mf: Manifest[BODY])
   : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(mf), toResponse(successStatus, formats))
 
   /**
@@ -97,7 +91,7 @@ class Json4sFilters[T](protected val jsonLibrary: Json4sLibrary[T])
     * HTTP OK is returned by default in the auto-marshalled response (overridable).
     */
   def AutoOut[IN, OUT]
-  (successStatus: Status = Ok, formats: Formats = formats): Filter[IN, Response, IN, OUT]
+  (successStatus: Status = Status.Ok, formats: Formats = formats): Filter[IN, Response, IN, OUT]
   = _AutoOut(toResponse(successStatus, formats))
 
   /**
@@ -105,17 +99,17 @@ class Json4sFilters[T](protected val jsonLibrary: Json4sLibrary[T])
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def AutoOptionalOut[IN, OUT]
-  (successStatus: Status = Ok, formats: Formats = formats)
+  (successStatus: Status = Status.Ok, formats: Formats = formats)
   : Filter[IN, Response, IN, Option[OUT]]
-  = _AutoOptionalOut((t: OUT) => successStatus(json4sFormat.encode(t, formats)))
+  = _AutoOptionalOut((t: OUT) => responseBuilder.HttpResponse(successStatus).withContent(json4sFormat.encode(t, formats)))
 
   /**
     * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
     * HTTP OK is returned by default in the auto-marshalled response (overridable).
     */
-  def AutoInOutFilter[BODY, OUT](successStatus: Status = Ok,
-                                           formats: Formats = formats)
-                                          (implicit example: BODY = null, mf: Manifest[BODY])
+  def AutoInOutFilter[BODY, OUT](successStatus: Status = Status.Ok,
+                                 formats: Formats = formats)
+                                (implicit example: BODY = null, mf: Manifest[BODY])
   : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(mf)).andThen(AutoOut[BODY, OUT](successStatus, formats))
 }
 
@@ -124,6 +118,7 @@ abstract class Json4sLibrary[T] extends JsonLibrary[JValue, JValue] {
   val JsonFormat: Json4sFormat[T]
 
   import JsonFormat._
+
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */

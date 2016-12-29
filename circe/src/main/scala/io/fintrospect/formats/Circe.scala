@@ -24,10 +24,8 @@ object Circe extends JsonLibrary[Json, Json] {
 
     override protected val responseBuilder = Circe.ResponseBuilder
 
-    import responseBuilder.implicits._
-
     private def toResponse[OUT](successStatus: Status, e: Encoder[OUT]) =
-      (t: OUT) => successStatus(encode(t)(e))
+      (t: OUT) => responseBuilder.HttpResponse(successStatus).withContent(encode(t)(e))
 
     private def toBody[BODY](db: Decoder[BODY], eb: Encoder[BODY])(implicit example: BODY = null) =
       Body[BODY](Circe.bodySpec(None)(eb, db), example)

@@ -4,7 +4,6 @@ import java.math.BigInteger
 
 import argonaut.Argonaut._
 import argonaut.{DecodeJson, EncodeJson, Json}
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ResponseSpec
@@ -16,8 +15,6 @@ import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
   */
 object Argonaut extends JsonLibrary[Json, Json] {
 
-  import Argonaut.ResponseBuilder.implicits._
-
   /**
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
@@ -27,7 +24,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
     override protected val responseBuilder = Argonaut.ResponseBuilder
 
     private def toResponse[OUT](successStatus: Status, e: EncodeJson[OUT]) =
-      (t: OUT) => successStatus(Argonaut.JsonFormat.encode(t)(e))
+      (t: OUT) => responseBuilder.HttpResponse(successStatus).withContent(Argonaut.JsonFormat.encode(t)(e))
 
     private def toBody[BODY](db: DecodeJson[BODY], eb: EncodeJson[BODY])(implicit example: BODY = null) =
       Body[BODY](Argonaut.bodySpec[BODY](None)(eb, db), example)
@@ -37,7 +34,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * which return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
+    def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Status.Ok)
                             (implicit db: DecodeJson[BODY], eb: EncodeJson[BODY], e: EncodeJson[OUT], example: BODY = null)
     : Service[Request, Response] = AutoInOutFilter(successStatus)(db, eb, e, example).andThen(svc)
 
@@ -46,7 +43,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * which may return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
-    def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
+    def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Status.Ok)
                                     (implicit db: DecodeJson[BODY], eb: EncodeJson[BODY], e: EncodeJson[OUT], example: BODY = null)
     : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(db, eb), toResponse(successStatus, e))
 
@@ -54,7 +51,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoOut[IN, OUT](successStatus: Status = Ok)
+    def AutoOut[IN, OUT](successStatus: Status = Status.Ok)
                         (implicit e: EncodeJson[OUT]): Filter[IN, Response, IN, OUT]
     = _AutoOut(toResponse(successStatus, e))
 
@@ -62,7 +59,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
-    def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
+    def AutoOptionalOut[IN, OUT](successStatus: Status = Status.Ok)
                                 (implicit e: EncodeJson[OUT]): Filter[IN, Response, IN, Option[OUT]]
     = _AutoOptionalOut(toResponse(successStatus, e))
 
@@ -70,7 +67,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOutFilter[BODY, OUT](successStatus: Status = Ok)
+    def AutoInOutFilter[BODY, OUT](successStatus: Status = Status.Ok)
                                   (implicit db: DecodeJson[BODY], eb: EncodeJson[BODY], e: EncodeJson[OUT], example: BODY = null)
     : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
   }

@@ -1,7 +1,6 @@
 package examples.msgpack
 
 import com.twitter.finagle.http.Method.{Get, Post}
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
@@ -9,7 +8,7 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
-import io.fintrospect.formats.MsgPack.ResponseBuilder.implicits._
+import io.fintrospect.formats.MsgPack.ResponseBuilder._
 import io.fintrospect.formats.{MsgPack, MsgPackMsg}
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{RouteModule, RouteSpec}

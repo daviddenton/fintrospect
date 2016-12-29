@@ -4,12 +4,11 @@ import java.lang.Integer.MIN_VALUE
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Post
-import com.twitter.finagle.http.Status.{BadRequest, Ok}
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.Argo.JsonFormat.array
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits.statusToResponseBuilderConfig
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.parameters.{Body, FormField}
 
 class BookLengthSearch(books: Books) {
@@ -26,8 +25,8 @@ class BookLengthSearch(books: Books) {
 
   val route = RouteSpec("search for books by number of pages", "This won't work in Swagger because it's a form... :(")
     .body(form)
-    .returning(Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
-    .returning(BadRequest -> "invalid request")
+    .returning(Status.Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
+    .returning(Status.BadRequest -> "invalid request")
     .producing(APPLICATION_JSON)
     .at(Post) / "lengthSearch" bindTo search
 }
