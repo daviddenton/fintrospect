@@ -1,14 +1,13 @@
 package io.fintrospect
 
 import com.twitter.finagle.http.Method.{Get, Post}
-import com.twitter.finagle.http.Status.{NotFound, Ok}
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.formats.Argo
-import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.statusToResponseBuilderConfig
+import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.formats.ResponseBuilder.responseToFuture
 import io.fintrospect.parameters._
 import io.fintrospect.renderers.simplejson.SimpleJson
@@ -67,35 +66,35 @@ class RouteModuleTest extends FunSpec with Matchers {
 
       it("with all fixed segments") {
         val module = m.withRoute(d.at(Get) / "svc" / "1" / "2" / "3" / "4" / "5" / "6" bindTo Service.mk { r: Request => Response() })
-        Await.result(module.toService(Request("/svc/1/2/3/4/5/6"))).status shouldBe Ok
+        Await.result(module.toService(Request("/svc/1/2/3/4/5/6"))).status shouldBe Status.Ok
       }
 
       it("with trailing segments") {
         val module = m.withRoute(d.at(Get) / "svc" / Path.string("first") / "a" / "b" / "c" / "d" / "e" / "f"
           bindTo ((_1, _2, _3, _4, _5, _6, _7) => AService(Seq(_2, _3, _4, _5, _6, _7))))
 
-        Await.result(module.toService(Request("/svc/1/a/b/c/d/e/f"))).status shouldBe Ok
+        Await.result(module.toService(Request("/svc/1/a/b/c/d/e/f"))).status shouldBe Status.Ok
       }
     }
 
     describe("description route is added") {
       it("at default location at the root of the module") {
         val m = RouteModule(Root, SimpleJson())
-        statusAndContentFrom(result(m.toService(Request("/")))) shouldBe(Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
+        statusAndContentFrom(result(m.toService(Request("/")))) shouldBe(Status.Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
       }
 
       it("at custom location") {
         val m = RouteModule(Root, SimpleJson()).withDescriptionPath(_ / "bob")
-        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldBe(Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
+        statusAndContentFrom(result(m.toService(Request("/bob")))) shouldBe(Status.Ok, SimpleJson().description(Root, NoSecurity, Nil).contentString)
 
-        Await.result(m.toService(Request("/"))).status shouldBe NotFound
+        Await.result(m.toService(Request("/"))).status shouldBe Status.NotFound
       }
     }
 
     describe("when no module renderer is used") {
       it("at default location at the root of the module") {
         val m = RouteModule(Root)
-        statusAndContentFrom(result(m.toService(Request("/")))) shouldBe(NotFound, "")
+        statusAndContentFrom(result(m.toService(Request("/")))) shouldBe(Status.NotFound, "")
       }
     }
 
@@ -108,15 +107,15 @@ class RouteModuleTest extends FunSpec with Matchers {
 
         val totalService = Module.combine(module("rita"), module("bob"), module("sue")).toService
 
-        statusAndContentFrom(result(totalService(Request("/rita/echo")))) shouldBe(Ok, "rita")
-        statusAndContentFrom(result(totalService(Request("/bob/echo")))) shouldBe(Ok, "bob")
-        statusAndContentFrom(result(totalService(Request("/sue/echo")))) shouldBe(Ok, "sue")
+        statusAndContentFrom(result(totalService(Request("/rita/echo")))) shouldBe(Status.Ok, "rita")
+        statusAndContentFrom(result(totalService(Request("/bob/echo")))) shouldBe(Status.Ok, "bob")
+        statusAndContentFrom(result(totalService(Request("/sue/echo")))) shouldBe(Status.Ok, "sue")
       }
     }
 
     describe("when a route path cannot be found") {
       it("returns a 404") {
-        result(RouteModule(Root).toService(Request("/svc/noSuchRoute"))).status shouldBe NotFound
+        result(RouteModule(Root).toService(Request("/svc/noSuchRoute"))).status shouldBe Status.NotFound
       }
     }
 
@@ -208,7 +207,7 @@ class RouteModuleTest extends FunSpec with Matchers {
 
       it("it returns a 200 when the optional param is missing") {
         val request = Request("/svc")
-        result(service(request)).status shouldBe Ok
+        result(service(request)).status shouldBe Status.Ok
       }
 
       it("it returns a 400 when the optional param is not the correct type") {
@@ -224,7 +223,7 @@ class RouteModuleTest extends FunSpec with Matchers {
 
         val route = RouteSpec("").at(Get) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
         val m = RouteModule(Root).withRoute(route)
-        HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldBe(Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
+        HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldBe(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
       }
     }
 
@@ -232,7 +231,7 @@ class RouteModuleTest extends FunSpec with Matchers {
 
   def assertOkResponse(module: RouteModule[_, _], segments: Seq[String]): Unit = {
     val result = Await.result(module.toService(Request("/svc/" + segments.mkString("/"))))
-    result.status shouldBe Ok
+    result.status shouldBe Status.Ok
     result.contentString shouldBe segments.mkString(",")
   }
 

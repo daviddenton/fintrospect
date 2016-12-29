@@ -2,7 +2,6 @@ package io.fintrospect.formats
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.ResponseSpec
@@ -24,10 +23,10 @@ object Play extends JsonLibrary[JsValue, JsValue] {
 
     override protected val responseBuilder = Play.ResponseBuilder
 
-    import responseBuilder.implicits._
+    import ResponseBuilder._
 
     private def toResponse[OUT](successStatus: Status, e: Writes[OUT]) =
-      (t: OUT) => successStatus(encode(t)(e))
+      (t: OUT) => HttpResponse(successStatus).withContent(encode(t)(e))
 
     private def toBody[BODY](db: Reads[BODY], eb: Writes[BODY])(implicit example: BODY = null) =
       Body[BODY](Play.bodySpec[BODY](None)(db, eb), example)
@@ -37,7 +36,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * which return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
+    def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Status.Ok)
                             (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
     : Service[Request, Response] = AutoInOutFilter(successStatus)(db, eb, e, example).andThen(svc)
 
@@ -46,7 +45,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * which may return an object.
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
-    def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
+    def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Status.Ok)
                                     (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
     : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(db, eb), toResponse(successStatus, e))
 
@@ -54,7 +53,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoOut[IN, OUT](successStatus: Status = Ok)
+    def AutoOut[IN, OUT](successStatus: Status = Status.Ok)
                         (implicit e: Writes[OUT]): Filter[IN, Response, IN, OUT]
     = _AutoOut(toResponse(successStatus, e))
 
@@ -62,7 +61,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
       * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
       */
-    def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
+    def AutoOptionalOut[IN, OUT](successStatus: Status = Status.Ok)
                                 (implicit e: Writes[OUT]): Filter[IN, Response, IN, Option[OUT]]
     = _AutoOptionalOut(toResponse(successStatus, e))
 
@@ -70,7 +69,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
       * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
       * HTTP OK is returned by default in the auto-marshalled response (overridable).
       */
-    def AutoInOutFilter[BODY, OUT](successStatus: Status = Ok)
+    def AutoInOutFilter[BODY, OUT](successStatus: Status = Status.Ok)
                                   (implicit db: Reads[BODY], eb: Writes[BODY], e: Writes[OUT], example: BODY = null)
     : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
   }

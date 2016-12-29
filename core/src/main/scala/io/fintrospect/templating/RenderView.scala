@@ -1,6 +1,5 @@
 package io.fintrospect.templating
 
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.formats.AbstractResponseBuilder
@@ -12,11 +11,10 @@ import io.fintrospect.formats.AbstractResponseBuilder
   * @param responseBuilder The ResponseBuilder to use - this identifies the content type that will be used.
   * @param renderer        The TemplateLoader to use - this handles the conversion of the View to text.
   */
-class RenderView(responseBuilder: AbstractResponseBuilder[_], renderer: TemplateRenderer)
+class RenderView[T](responseBuilder: AbstractResponseBuilder[T], renderer: TemplateRenderer)
   extends Filter[Request, Response, Request, View] {
 
-  import responseBuilder.implicits.statusToResponseBuilderConfig
-
   override def apply(request: Request, service: Service[Request, View]) = service(request)
-    .flatMap { view => Ok(renderer.toBuf(view)) }
+    .map(renderer.toBuf)
+    .map(responseBuilder.Ok(_))
 }

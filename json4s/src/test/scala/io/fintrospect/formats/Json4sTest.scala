@@ -1,7 +1,6 @@
 package io.fintrospect.formats
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.{Created, Ok}
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
@@ -18,7 +17,7 @@ case class Json4sLetter(to: Json4sStreetAddress, from: Json4sStreetAddress, mess
 
 abstract class Json4sFiltersSpec(json4sLibrary: Json4sLibrary[_], filters: Json4sFilters[_], jsonFormat: Json4sFormat[_]) extends FunSpec with Matchers {
 
-  import io.fintrospect.formats.Json4s.ResponseBuilder.implicits._
+  import io.fintrospect.formats.Json4s.ResponseBuilder._
   import jsonFormat._
 
   describe("filters") {
@@ -29,10 +28,10 @@ abstract class Json4sFiltersSpec(json4sLibrary: Json4sLibrary[_], filters: Json4
 
     describe("AutoInOut") {
       it("returns Ok") {
-        val svc = filters.AutoInOut(Service.mk { in: Json4sLetter => Future.value(in) }, Created)
+        val svc = filters.AutoInOut(Service.mk { in: Json4sLetter => Future.value(in) }, Status.Created)
 
         val response = result(svc(request))
-        response.status shouldBe Created
+        response.status shouldBe Status.Created
         decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
@@ -42,7 +41,7 @@ abstract class Json4sFiltersSpec(json4sLibrary: Json4sLibrary[_], filters: Json4
         val svc = filters.AutoInOptionalOut(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(request))
-        response.status shouldBe Ok
+        response.status shouldBe Status.Ok
         decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
       }
 
@@ -53,7 +52,7 @@ abstract class Json4sFiltersSpec(json4sLibrary: Json4sLibrary[_], filters: Json4
     }
 
     describe("AutoIn") {
-      val svc = filters.AutoIn(Body(json4sLibrary.bodySpec[Json4sLetter]())).andThen(Service.mk { in: Json4sLetter => Status.Ok(jsonFormat.encode(in)) })
+      val svc = filters.AutoIn(Body(json4sLibrary.bodySpec[Json4sLetter]())).andThen(Service.mk { in: Json4sLetter => Ok(jsonFormat.encode(in)) })
       it("takes the object from the request") {
         jsonFormat.decode[Json4sLetter](jsonFormat.parse(result(svc(request)).contentString)) shouldBe aLetter
       }
@@ -67,24 +66,24 @@ abstract class Json4sFiltersSpec(json4sLibrary: Json4sLibrary[_], filters: Json4
 
     describe("AutoOut") {
       it("takes the object from the request") {
-        val svc = filters.AutoOut[Json4sLetter, Json4sLetter](Created).andThen(Service.mk { in: Json4sLetter => Future.value(in) })
+        val svc = filters.AutoOut[Json4sLetter, Json4sLetter](Status.Created).andThen(Service.mk { in: Json4sLetter => Future.value(in) })
         val response = result(svc(aLetter))
-        response.status shouldBe Created
+        response.status shouldBe Status.Created
         decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
       }
     }
 
     describe("AutoOptionalOut") {
       it("returns Ok when present") {
-        val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(Option(in)) })
+        val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Status.Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(Option(in)) })
 
         val response = result(svc(aLetter))
-        response.status shouldBe Created
+        response.status shouldBe Status.Created
         decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
-        val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(None) })
+        val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Status.Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(None) })
         result(svc(aLetter)).status shouldBe Status.NotFound
       }
     }
@@ -127,7 +126,7 @@ class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s) {
   }
 
   it("response spec has correct code") {
-    Json4s.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+    Json4s.responseSpec[Json4sLetter](Status.Ok -> "ok", aLetter).status shouldBe Status.Ok
   }
 }
 
@@ -144,7 +143,7 @@ class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4
   }
 
   it("response spec has correct code") {
-    Json4sDoubleMode.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+    Json4sDoubleMode.responseSpec[Json4sLetter](Status.Ok -> "ok", aLetter).status shouldBe Status.Ok
   }
 }
 
@@ -161,7 +160,7 @@ class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJack
   }
 
   it("response spec has correct code") {
-    Json4sJackson.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+    Json4sJackson.responseSpec[Json4sLetter](Status.Ok -> "ok", aLetter).status shouldBe Status.Ok
   }
 
 }
@@ -179,7 +178,7 @@ class Json4sJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json
   }
 
   it("response spec has correct code") {
-    Json4sJacksonDoubleMode.responseSpec[Json4sLetter](Ok -> "ok", aLetter).status shouldBe Ok
+    Json4sJacksonDoubleMode.responseSpec[Json4sLetter](Status.Ok -> "ok", aLetter).status shouldBe Status.Ok
   }
 
 }

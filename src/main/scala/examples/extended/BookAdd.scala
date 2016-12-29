@@ -1,9 +1,8 @@
 package examples.extended
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.{Conflict, Created}
-import com.twitter.finagle.http.{Method, Request, Response}
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
+import com.twitter.finagle.http.{Method, Request, Response, Status}
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.parameters.{Body, Path}
 import io.fintrospect.{ResponseSpec, RouteSpec}
 
@@ -26,7 +25,7 @@ class BookAdd(books: Books) {
 
   val route = RouteSpec("add book by isbn number", "This book must not already exist")
     .body(jsonBody)
-    .returning(ResponseSpec.json(Created -> "we added your book", exampleBook.toJson))
+    .returning(ResponseSpec.json(Status.Created -> "we added your book", exampleBook.toJson))
     .returning(bookExistsResponse)
     .at(Method.Post) / "book" / Path.string("isbn", "the isbn of the book") bindTo addBook
 }

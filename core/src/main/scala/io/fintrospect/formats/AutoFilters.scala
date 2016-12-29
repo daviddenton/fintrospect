@@ -1,6 +1,5 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.http.Status.{BadRequest, NotFound}
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.parameters.{Body, Mandatory}
@@ -10,7 +9,7 @@ trait AutoFilters[T] {
 
   protected val responseBuilder: AbstractResponseBuilder[T]
 
-  import responseBuilder.implicits._
+  import responseBuilder._
 
   type ToResponse[L] = (L) => ResponseBuilder[_]
   type ToBody[BODY] = () => Body[BODY]
@@ -31,6 +30,6 @@ trait AutoFilters[T] {
 
   def _AutoOptionalOut[IN, OUT](success: ToResponse[OUT]): Filter[IN, Response, IN, Option[OUT]] =
     Filter.mk[IN, Response, IN, Option[OUT]] {
-      (req, svc) => svc(req).map(optT => optT.map(t => success(t).build()).getOrElse(NotFound().build()))
+      (req, svc) => svc(req).map(optT => optT.map(t => success(t).build()).getOrElse(NotFound("").build()))
     }
 }

@@ -2,7 +2,6 @@ package examples.strictcontenttypes
 
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
@@ -26,12 +25,12 @@ object StrictMultiContentTypeRoute extends App {
 
   private def serveJson(name: String) = Service.mk { (rq: Request) =>
     import io.fintrospect.formats.Argo.JsonFormat._
-    import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
+    import io.fintrospect.formats.Argo.ResponseBuilder._
     Ok(obj("field" -> string(name)))
   }
 
   private def serveXml(name: String) = Service.mk {
-    import io.fintrospect.formats.Xml.ResponseBuilder.implicits._
+    import io.fintrospect.formats.Xml.ResponseBuilder._
     (rq: Request) =>
       Ok(<root>
         <field>

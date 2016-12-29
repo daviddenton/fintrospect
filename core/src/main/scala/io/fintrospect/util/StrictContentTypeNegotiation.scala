@@ -1,9 +1,8 @@
 package io.fintrospect.util
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.NotAcceptable
 import com.twitter.finagle.http.{Request, Response}
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.{ContentType, ContentTypes}
 
 /**
@@ -27,7 +26,7 @@ object StrictContentTypeNegotiation {
       .orElse(if (accepted.contains(ContentTypes.WILDCARD)) services.headOption.map(_._2) else None)
   }
 
-  private val notAcceptable = Service.constant(NotAcceptable())
+  private val notAcceptable = Service.constant(NotAcceptable(""))
 
   implicit def apply(mappings: (ContentType, Service[Request, Response])*): Service[Request, Response] =
     Service.mk[Request, Response] { req => matching(req, mappings).getOrElse(notAcceptable)(req) }

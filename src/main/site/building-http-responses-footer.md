@@ -7,7 +7,7 @@ Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashin
 ... although with tiny bit of implicit magic to convert the `Status` object to a `ResponseBuilder` and then convert the `ResponseBuilder` to 
 a `Future[Response]`, you can reduce this to the rather more concise:
 ```
-import io.fintrospect.formats.Xml.ResponseBuilder.implicits._
+import io.fintrospect.formats.Xml.ResponseBuilder._
 val responseViaImplicits: Future[Response] = Status.Ok(<xml>lashings and lashings of wonderful</xml>)
 ```
 
@@ -23,7 +23,7 @@ methods present on the relevant Fintrospect `JsonFormat` format instance (e.g. `
 case class EmailAddress(address: String)
 
 import io.circe.generic.auto._
-import io.fintrospect.formats.Circe.ResponseBuilder.implicits._
+import io.fintrospect.formats.Circe.ResponseBuilder._
 
 Status.Ok(Circe.JsonFormat.encode(EmailAddress("dev@fintrospect.io")
 ```

@@ -1,9 +1,8 @@
 package examples.customformats
 
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.path.Path
-import com.twitter.finagle.http.{Request, Response, Status}
-import examples.customformats.HipsterXml.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
+import com.twitter.finagle.http.{Request, Response}
+import examples.customformats.HipsterXml.ResponseBuilder._
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.util.ExtractionError
 import io.fintrospect.{Security, ServerRoute}
@@ -13,9 +12,9 @@ import io.fintrospect.{Security, ServerRoute}
   */
 object HipsterXmlModuleRenderer extends ModuleRenderer {
 
-  override def badRequest(badParameters: Seq[ExtractionError]): Response = Status.BadRequest(badParameters.toString())
+  override def badRequest(badParameters: Seq[ExtractionError]): Response = BadRequest(badParameters.toString())
 
-  override def notFound(request: Request): Response = Status.NotFound()
+  override def notFound(request: Request): Response = NotFound("hey")
 
   private def renderRoute(basePath: Path, route: ServerRoute[_, _]): HipsterXmlFormat = HipsterXmlFormat(s"<entry>${route.method}:${route.describeFor(basePath)}</entry>")
 
