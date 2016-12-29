@@ -15,6 +15,8 @@ import play.api.libs.json.{Json, _}
   */
 object Play extends JsonLibrary[JsValue, JsValue] {
 
+  object F2 extends NuAutoFilters[JsValue](Play.ResponseBuilder)
+
   /**
     * Auto-marshalling filters which can be used to create Services which take and return domain objects
     * instead of HTTP responses
@@ -125,4 +127,8 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     */
   def bodySpec[R](description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]) =
     BodySpec.json(description, Play).map(j => JsonFormat.decode[R](j), (u: R) => encode(u))
+}
+
+object Bob {
+  val autoIn = Play.F2.AutoIn(Body(Play.bodySpec[String]()))
 }

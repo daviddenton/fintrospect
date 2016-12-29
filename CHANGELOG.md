@@ -1,6 +1,6 @@
 <h1 class="githubonly">Roadmap/Release Notes/Migration Guide</h1>
 
-The main API is stable, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
+The main API is very stable, but expect some amount of breaking changes around major releases as new features are added. All breaking changes are documented with a migration step where possible.
 
 ## Backlog
 - Add strict `Content-Type` header checking for `RouteSpec`s based on `consuming()` and `withBody()` settings. Option for non-strictness.
@@ -9,10 +9,15 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## 13.19.0 (uncut)
 - Upgrade to various dependency versions, including `finagle-http 6.41.0`.
+- (Small) Breaking: remodel/repackage of `ResponseBuilder` instantiation for custom formats. This only affects API users if using implicit conversion of `Status` objects to `ResponseBuilder`. This conversion has
+been replaced with explicit methods on `ResponseBuilder` objects for each status code, along with a `ResponseBuilderMagnet` to convert the various input content types (such as String, JSON, Buf, etc) - see below:
+To fix: 
+1. Replace `Status.Ok("content").withHeader(etc)` type calls with `ResponseBuilder.Ok("content").withHeader(etc)` 
+2. Replace `<format>.ResponseBuilder.implicits._` import with `<format>.ResponseBuilder._`. This import also brings in the various conversions for the `ResponseBuilderMagnet`.
 
 ## 13.18.0
-- Breaking: Tidying up of `Body` API for clarity. Bodies should only be instantiated using a method from `Body`, be it `Body.<format>()` or  `Body(<format>.bodySpec())` for custom types.
-- Breaking: Moved methods from JsonFormat objects onto main format object - e.g. `Circe.JsonFormat.bodySpec` -> `Circe.bodySpec` 
+- (Small) Breaking: Tidying up of `Body` API for clarity. Bodies should only be instantiated using a method from `Body`, be it `Body.<format>()` or  `Body(<format>.bodySpec())` for custom types.
+- (Small) Breaking: Moved methods from `JsonFormat` objects onto main format object - e.g. `Circe.JsonFormat.bodySpec` -> `Circe.bodySpec` 
 
 ## 13.17.0
 - Added module `fintrospect-jackson` to support Jackson JSON library. See `Jackson` to get the Format util and ResponseBuilder for this format.
@@ -22,7 +27,7 @@ as they were introduced specifically to give the user an option as to when to ex
 ## 13.16.0 
 - AKA: The slight API-tidy release!
 - Deprecation: Renamed `ModuleSpec` to be `RouteModule`. Readded `ModuleSpec` constructors with identical (but deprecated) methods, so no break will occur. Please update your apps.
-- Breaking: Simplified signature of `Module.combine()` to return a new `Module` instead of a `ServiceBinding`. This means that combined lib user can just call `toService()` on the combined module
+- (Small) Breaking: Simplified signature of `Module.combine()` to return a new `Module` instead of a `ServiceBinding`. This means that combined lib user can just call `toService()` on the combined module
 instead of calling `Module.toService(serviceBinding)`, so combined Modules are just Modules themselves.
 
 ## 13.15.0
