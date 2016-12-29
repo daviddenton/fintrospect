@@ -23,8 +23,13 @@ class AbstractResponseBuilderSpec extends FunSpec with Matchers {
   describe("abstract response builder") {
 
     it("status builders") {
-      def checkError(b: ResponseBuilder[Int], s: Status) = statusAndContentFrom(b) shouldBe(s, "5")
-      def checkBuilder(b: ResponseBuilder[Int], s: Status) = statusAndContentFrom(b) shouldBe(s, "hello")
+      def checkError(b: ResponseBuilder[Int], s: Status) = {
+        statusAndContentFrom(b) shouldBe(s, "5")
+      }
+
+      def checkBuilder(b: ResponseBuilder[Int], s: Status) = {
+        statusAndContentFrom(b) shouldBe(s, "hello")
+      }
 
       checkBuilder(builder.Continue("hello"), Status.Continue)
       checkBuilder(builder.SwitchingProtocols("hello"), Status.SwitchingProtocols)
@@ -126,26 +131,26 @@ class AbstractResponseBuilderSpec extends FunSpec with Matchers {
     }
 
     it("error with message - String") {
-      statusAndContentFrom(builder.NotFound(""))._1 shouldBe Status.NotFound
+      statusAndContentFrom(builder.HttpResponse(Status.NotFound).withContent(message)) shouldBe(Status.NotFound, message)
+      statusAndContentFrom(builder.NotFound(message))._1 shouldBe Status.NotFound
     }
 
     it("error with custom type") {
-      statusAndContentFrom(builder.NotFound(5)) shouldBe(Status.NotFound, 5.toString)
+      statusAndContentFrom(builder.HttpResponse(Status.NotFound).withContent(5)) shouldBe(Status.NotFound, "5")
       statusAndContentFrom(builder.NotFound(5)) shouldBe(Status.NotFound, 5.toString)
     }
 
     it("error with message - Buf") {
-      statusAndContentFrom(builder.NotFound(Buf.Utf8(5.toString))) shouldBe(Status.NotFound, 5.toString)
+      statusAndContentFrom(builder.HttpResponse(Status.NotFound).withContent(Buf.Utf8(5.toString))) shouldBe(Status.NotFound, "5")
       statusAndContentFrom(builder.NotFound(Buf.Utf8(5.toString))) shouldBe(Status.NotFound, 5.toString)
     }
 
     //    it("error with message - Reader") {
     //      statusAndContentFrom(bldr.NotFound(Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(Status.NotFound, expectedErrorContent)
-    //      statusAndContentFrom(NotFound(Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(Status.NotFound, expectedErrorContent)
     //    }
 
     it("error with message - ChannelBuffer") {
-      statusAndContentFrom(builder.NotFound(copiedBuffer(message, defaultCharset()))) shouldBe(Status.NotFound, message)
+      statusAndContentFrom(builder.HttpResponse(Status.NotFound).withContent(copiedBuffer(message, defaultCharset()))) shouldBe(Status.NotFound, message)
       statusAndContentFrom(builder.NotFound(copiedBuffer(message, defaultCharset()))) shouldBe(Status.NotFound, message)
     }
 
