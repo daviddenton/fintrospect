@@ -106,8 +106,8 @@ class AbstractResponseBuilderSpec extends FunSpec with Matchers {
 
     it("content - OutputStream") {
       statusAndContentFrom(builder.HttpResponse().withContent((out: OutputStream) => out.write(message.getBytes()))) shouldBe(Status.Ok, message)
-      val streamToUnit1 = (out: OutputStream) => out.write(message.getBytes())
-      statusAndContentFrom(builder.Ok(streamToUnit1)) shouldBe(Status.Ok, message)
+      val streamFn = (out: OutputStream) => out.write(message.getBytes())
+      statusAndContentFrom(builder.Ok(streamFn)) shouldBe(Status.Ok, message)
     }
 
     it("content - String") {
@@ -125,11 +125,11 @@ class AbstractResponseBuilderSpec extends FunSpec with Matchers {
       statusAndContentFrom(builder.Ok(copiedBuffer(message, defaultCharset()))) shouldBe(Status.Ok, message)
     }
 
-    it("error with code only") {
+    it("error with message - String") {
       statusAndContentFrom(builder.NotFound(""))._1 shouldBe Status.NotFound
     }
 
-    it("error with message - String") {
+    it("error with custom type") {
       statusAndContentFrom(builder.NotFound(5)) shouldBe(Status.NotFound, 5.toString)
       statusAndContentFrom(builder.NotFound(5)) shouldBe(Status.NotFound, 5.toString)
     }
