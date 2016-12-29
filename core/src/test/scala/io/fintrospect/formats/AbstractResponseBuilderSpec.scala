@@ -24,24 +24,24 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
 
   describe("Rendering") {
     it("ok") {
-      statusAndContentFrom(bldr.OK) shouldBe(Ok, "")
+      statusAndContentFrom(bldr.Ok()) shouldBe(Ok, "")
       statusAndContentFrom(Ok()) shouldBe(Ok, "")
     }
 
     it("ok with message - String") {
-      statusAndContentFrom(bldr.OK(message)) shouldBe(Ok, expectedContent)
+      statusAndContentFrom(bldr.Ok(message)) shouldBe(Ok, expectedContent)
       statusAndContentFrom(Ok(message)) shouldBe(Ok, expectedContent)
     }
 
     it("ok with message - Buf") {
-      statusAndContentFrom(bldr.OK(Bufs.utf8Buf(message))) shouldBe(Ok, expectedContent)
+      statusAndContentFrom(bldr.Ok(Bufs.utf8Buf(message))) shouldBe(Ok, expectedContent)
       statusAndContentFrom(Ok(Bufs.utf8Buf(message))) shouldBe(Ok, expectedContent)
     }
 
     it("ok with message - Reader") {
       {
         val reader = Reader.writable()
-        val okBuilder = bldr.OK(reader)
+        val okBuilder = bldr.Ok(reader)
         reader.write(Bufs.utf8Buf(message)).ensure(reader.close())
         Await.result(okBuilder.reader.read(message.length)).map(Bufs.asUtf8String).get shouldBe message
       }
@@ -54,12 +54,12 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
     }
 
     it("ok with message - ChannelBuffer") {
-      statusAndContentFrom(bldr.OK(copiedBuffer(message, defaultCharset()))) shouldBe(Ok, expectedContent)
+      statusAndContentFrom(bldr.Ok(copiedBuffer(message, defaultCharset()))) shouldBe(Ok, expectedContent)
       statusAndContentFrom(Ok(copiedBuffer(message, defaultCharset()))) shouldBe(Ok, expectedContent)
     }
 
     it("builds Ok with custom type") {
-      statusAndContentFrom(bldr.OK(customType)) shouldBe(Ok, customTypeSerialized)
+      statusAndContentFrom(bldr.Ok(customType)) shouldBe(Ok, customTypeSerialized)
       statusAndContentFrom(Ok(customType)) shouldBe(Ok, customTypeSerialized)
     }
 
@@ -84,38 +84,38 @@ abstract class AbstractResponseBuilderSpec[T](bldr: AbstractResponseBuilder[T]) 
     }
 
     it("error with code only") {
-      statusAndContentFrom(bldr.Error(NotFound))._1 shouldBe NotFound
+      statusAndContentFrom(bldr.NotFound())._1 shouldBe NotFound
     }
 
     it("error with message - String") {
-      statusAndContentFrom(bldr.Error(NotFound, customError)) shouldBe(NotFound, expectedErrorContent)
+      statusAndContentFrom(bldr.NotFound(customError)) shouldBe(NotFound, expectedErrorContent)
       statusAndContentFrom(NotFound(customError)) shouldBe(NotFound, expectedErrorContent)
     }
 
     it("error with message - Buf") {
-      statusAndContentFrom(bldr.Error(NotFound, Buf.Utf8(expectedErrorContent))) shouldBe(NotFound, expectedErrorContent)
+      statusAndContentFrom(bldr.NotFound(Buf.Utf8(expectedErrorContent))) shouldBe(NotFound, expectedErrorContent)
       statusAndContentFrom(NotFound(Buf.Utf8(expectedErrorContent))) shouldBe(NotFound, expectedErrorContent)
     }
 
-    //    it("error with message - Reader") {
-    //      statusAndContentFrom(bldr.Error(NotFound, Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(NotFound, expectedErrorContent)
-    //      statusAndContentFrom(NotFound(Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(NotFound, expectedErrorContent)
-    //    }
+    it("error with message - Reader") {
+      statusAndContentFrom(bldr.NotFound(Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(NotFound, expectedErrorContent)
+      statusAndContentFrom(NotFound(Reader.fromBuf(Buf.Utf8(expectedErrorContent)))) shouldBe(NotFound, expectedErrorContent)
+    }
 
     it("error with message - ChannelBuffer") {
-      statusAndContentFrom(bldr.Error(NotFound, copiedBuffer(message, defaultCharset()))) shouldBe(NotFound, message)
+      statusAndContentFrom(bldr.NotFound(copiedBuffer(message, defaultCharset()))) shouldBe(NotFound, message)
       statusAndContentFrom(NotFound(copiedBuffer(message, defaultCharset()))) shouldBe(NotFound, message)
     }
 
     it("errors - message") {
       statusAndContentFrom(bldr.HttpResponse(BadGateway).withErrorMessage(message).build()) shouldBe(BadGateway, expectedErrorContent)
-      statusAndContentFrom(bldr.Error(NotFound, message)) shouldBe(NotFound, expectedErrorContent)
+      statusAndContentFrom(bldr.NotFound(message)) shouldBe(NotFound, expectedErrorContent)
       statusAndContentFrom(NotFound(message)) shouldBe(NotFound, expectedErrorContent)
     }
 
     it("errors - exception") {
       statusAndContentFrom(bldr.HttpResponse(BadGateway).withError(new RuntimeException(message))) shouldBe(BadGateway, expectedErrorContent)
-      statusAndContentFrom(bldr.Error(NotFound, new RuntimeException(message))) shouldBe(NotFound, expectedErrorContent)
+      statusAndContentFrom(bldr.NotFound(new RuntimeException(message))) shouldBe(NotFound, expectedErrorContent)
       statusAndContentFrom(BadGateway(new RuntimeException(message))) shouldBe(BadGateway, expectedErrorContent)
     }
 

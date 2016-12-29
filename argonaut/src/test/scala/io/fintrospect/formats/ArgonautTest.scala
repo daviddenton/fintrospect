@@ -117,7 +117,7 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut) {
     }
 
     it("body spec decodes content") {
-      Body(bodySpec[ArgonautLetter]()) <-- Argonaut.ResponseBuilder.OK(encode(aLetter)).build() shouldBe aLetter
+      Body(bodySpec[ArgonautLetter]()) <-- Argonaut.ResponseBuilder.Ok(encode(aLetter)).build() shouldBe aLetter
     }
 
     it("param spec decodes content") {

@@ -3,7 +3,6 @@ package io.fintrospect.formats
 import java.io.OutputStream
 
 import com.twitter.concurrent.AsyncStream
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Response, Status}
 import com.twitter.io.{Buf, Reader}
 import com.twitter.util.Future
@@ -65,29 +64,117 @@ trait AbstractResponseBuilder[T] {
 
   def HttpResponse(status: Status): ResponseBuilder[T] = HttpResponse().withCode(status)
 
-  def OK: Response = HttpResponse(Ok).build()
+  def Continue(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Continue))
 
-  def OK(channelBuffer: ChannelBuffer) = implicits.statusToResponseBuilderConfig(Ok)(channelBuffer)
+  def SwitchingProtocols(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.SwitchingProtocols))
 
-  def OK(reader: Reader) = implicits.statusToResponseBuilderConfig(Ok)(reader)
+  def Processing(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Processing))
 
-  def OK(buf: Buf) = implicits.statusToResponseBuilderConfig(Ok)(buf)
+  def Ok(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Ok))
 
-  def OK(content: T) = implicits.statusToResponseBuilderConfig(Ok)(content)
+  def Created(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Created))
 
-  def OK(content: String) = implicits.statusToResponseBuilderConfig(Ok)(content)
+  def Accepted(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Accepted))
 
-  def Error(status: Status, reader: Reader) = implicits.statusToResponseBuilderConfig(status)(reader)
+  def NonAuthoritativeInformation(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.NonAuthoritativeInformation))
 
-  def Error(status: Status) = implicits.statusToResponseBuilderConfig(status)("")
+  def NoContent(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.NoContent))
 
-  def Error(status: Status, channelBuffer: ChannelBuffer) = implicits.statusToResponseBuilderConfig(status)(channelBuffer)
+  def ResetContent(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.ResetContent))
 
-  def Error(status: Status, buf: Buf) = implicits.statusToResponseBuilderConfig(status)(buf)
+  def PartialContent(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.PartialContent))
 
-  def Error(status: Status, t: T) = implicits.statusToResponseBuilderConfig(status)(t)
+  def MultiStatus(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.MultiStatus))
 
-  def Error(status: Status, message: String) = implicits.statusToResponseBuilderConfig(status)().withErrorMessage(message)
+  def MultipleChoices(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.MultipleChoices))
 
-  def Error(status: Status, error: Throwable) = implicits.statusToResponseBuilderConfig(status)().withError(error).build()
+  def MovedPermanently(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.MovedPermanently))
+
+  def Found(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Found))
+
+  def SeeOther(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.SeeOther))
+
+  def NotModified(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.NotModified))
+
+  def UseProxy(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.UseProxy))
+
+  def TemporaryRedirect(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.TemporaryRedirect))
+
+  def BadRequest(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.BadRequest))
+
+  def Unauthorized(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Unauthorized))
+
+  def PaymentRequired(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.PaymentRequired))
+
+  def Forbidden(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Forbidden))
+
+  def NotFound(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.NotFound))
+
+  def MethodNotAllowed(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.MethodNotAllowed))
+
+  def NotAcceptable(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.NotAcceptable))
+
+  def ProxyAuthenticationRequired(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.ProxyAuthenticationRequired))
+
+  def RequestTimeout(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.RequestTimeout))
+
+  def Conflict(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Conflict))
+
+  def Gone(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Gone))
+
+  def LengthRequired(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.LengthRequired))
+
+  def PreconditionFailed(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.PreconditionFailed))
+
+  def RequestEntityTooLarge(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.RequestEntityTooLarge))
+
+  def RequestURITooLong(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.RequestURITooLong))
+
+  def UnsupportedMediaType(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.UnsupportedMediaType))
+
+  def RequestedRangeNotSatisfiable(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.RequestedRangeNotSatisfiable))
+
+  def ExpectationFailed(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.ExpectationFailed))
+
+  def EnhanceYourCalm(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.EnhanceYourCalm))
+
+  def UnprocessableEntity(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.UnprocessableEntity))
+
+  def Locked(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.Locked))
+
+  def FailedDependency(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.FailedDependency))
+
+  def UnorderedCollection(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.UnorderedCollection))
+
+  def UpgradeRequired(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.UpgradeRequired))
+
+  def PreconditionRequired(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.PreconditionRequired))
+
+  def TooManyRequests(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.TooManyRequests))
+
+  def RequestHeaderFieldsTooLarge(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.RequestHeaderFieldsTooLarge))
+
+  def UnavailableForLegalReasons(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.UnavailableForLegalReasons))
+
+  def ClientClosedRequest(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.ClientClosedRequest))
+
+  def InternalServerError(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.InternalServerError))
+
+  def NotImplemented(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.NotImplemented))
+
+  def BadGateway(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.BadGateway))
+
+  def ServiceUnavailable(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.ServiceUnavailable))
+
+  def GatewayTimeout(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.GatewayTimeout))
+
+  def HttpVersionNotSupported(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.HttpVersionNotSupported))
+
+  def VariantAlsoNegotiates(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.VariantAlsoNegotiates))
+
+  def InsufficientStorage(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.InsufficientStorage))
+
+  def NotExtended(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.NotExtended))
+
+  def NetworkAuthenticationRequired(responseMagnet: ResponseMagnet[T]): ResponseBuilder[T] = responseMagnet(HttpResponse(Status.NetworkAuthenticationRequired))
 }
