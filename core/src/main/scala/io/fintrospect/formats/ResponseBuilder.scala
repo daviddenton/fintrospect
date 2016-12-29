@@ -9,7 +9,6 @@ import com.twitter.io.Buf.Utf8
 import com.twitter.io.{Buf, Reader}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
-import io.fintrospect.util.Builder
 import org.jboss.netty.buffer.ChannelBuffer
 
 import scala.language.implicitConversions
@@ -25,7 +24,7 @@ import scala.language.implicitConversions
   */
 class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
                          exceptionFormat: Throwable => T,
-                         contentType: ContentType) extends Builder[Response] {
+                         contentType: ContentType) {
 
   private var response = Response()
 
@@ -89,7 +88,7 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
     this
   }
 
-  override def build(): Response = {
+  def build(): Response = {
     response.setContentType(contentType.value)
     response
   }
