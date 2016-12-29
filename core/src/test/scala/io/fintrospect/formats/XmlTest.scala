@@ -81,7 +81,7 @@ class XmlFiltersTest extends FunSpec with Matchers {
   }
 }
 
-class XmlResponseBuilderTest extends AbstractResponseBuilderSpec(Xml.ResponseBuilder) {
+class XmlResponseBuilderTest extends ResponseBuilderSpec(Xml.ResponseBuilder) {
   override val expectedContent = message
   override val customError = <message>{message}</message>
   override val expectedErrorContent = s"<message>$message</message>"
