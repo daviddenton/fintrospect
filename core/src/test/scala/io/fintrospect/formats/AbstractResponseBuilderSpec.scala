@@ -17,63 +17,126 @@ object LengthyIntResponseBuilder extends AbstractResponseBuilder[Int] {
 
 class AbstractResponseBuilderSpec extends FunSpec with Matchers {
 
-  val bldr = LengthyIntResponseBuilder
+  val builder = LengthyIntResponseBuilder
   val message = "some text goes here"
 
   describe("abstract response builder") {
 
+    it("status builders") {
+      def checkError(b: ResponseBuilder[Int], s: Status) = statusAndContentFrom(b) shouldBe(s, "5")
+      def checkBuilder(b: ResponseBuilder[Int], s: Status) = statusAndContentFrom(b) shouldBe(s, "hello")
+
+      checkBuilder(builder.Continue("hello"), Status.Continue)
+      checkBuilder(builder.SwitchingProtocols("hello"), Status.SwitchingProtocols)
+      checkBuilder(builder.Processing("hello"), Status.Processing)
+      checkBuilder(builder.Ok("hello"), Status.Ok)
+      checkBuilder(builder.Created("hello"), Status.Created)
+      checkBuilder(builder.Accepted("hello"), Status.Accepted)
+      checkBuilder(builder.NonAuthoritativeInformation("hello"), Status.NonAuthoritativeInformation)
+      checkBuilder(builder.NoContent("hello"), Status.NoContent)
+      checkBuilder(builder.ResetContent("hello"), Status.ResetContent)
+      checkBuilder(builder.PartialContent("hello"), Status.PartialContent)
+      checkBuilder(builder.MultiStatus("hello"), Status.MultiStatus)
+      checkBuilder(builder.MultipleChoices("hello"), Status.MultipleChoices)
+      checkBuilder(builder.MovedPermanently("hello"), Status.MovedPermanently)
+      checkBuilder(builder.Found("hello"), Status.Found)
+      checkBuilder(builder.SeeOther("hello"), Status.SeeOther)
+      checkBuilder(builder.NotModified("hello"), Status.NotModified)
+      checkBuilder(builder.UseProxy("hello"), Status.UseProxy)
+      checkBuilder(builder.TemporaryRedirect("hello"), Status.TemporaryRedirect)
+      checkError(builder.BadRequest("hello"), Status.BadRequest)
+      checkError(builder.Unauthorized("hello"), Status.Unauthorized)
+      checkError(builder.PaymentRequired("hello"), Status.PaymentRequired)
+      checkError(builder.Forbidden("hello"), Status.Forbidden)
+      checkError(builder.NotFound("hello"), Status.NotFound)
+      checkError(builder.MethodNotAllowed("hello"), Status.MethodNotAllowed)
+      checkError(builder.NotAcceptable("hello"), Status.NotAcceptable)
+      checkError(builder.ProxyAuthenticationRequired("hello"), Status.ProxyAuthenticationRequired)
+      checkError(builder.RequestTimeout("hello"), Status.RequestTimeout)
+      checkError(builder.Conflict("hello"), Status.Conflict)
+      checkError(builder.Gone("hello"), Status.Gone)
+      checkError(builder.LengthRequired("hello"), Status.LengthRequired)
+      checkError(builder.PreconditionFailed("hello"), Status.PreconditionFailed)
+      checkError(builder.RequestEntityTooLarge("hello"), Status.RequestEntityTooLarge)
+      checkError(builder.RequestURITooLong("hello"), Status.RequestURITooLong)
+      checkError(builder.UnsupportedMediaType("hello"), Status.UnsupportedMediaType)
+      checkError(builder.RequestedRangeNotSatisfiable("hello"), Status.RequestedRangeNotSatisfiable)
+      checkError(builder.ExpectationFailed("hello"), Status.ExpectationFailed)
+      checkError(builder.EnhanceYourCalm("hello"), Status.EnhanceYourCalm)
+      checkError(builder.UnprocessableEntity("hello"), Status.UnprocessableEntity)
+      checkError(builder.Locked("hello"), Status.Locked)
+      checkError(builder.FailedDependency("hello"), Status.FailedDependency)
+      checkError(builder.UnorderedCollection("hello"), Status.UnorderedCollection)
+      checkError(builder.UpgradeRequired("hello"), Status.UpgradeRequired)
+      checkError(builder.PreconditionRequired("hello"), Status.PreconditionRequired)
+      checkError(builder.TooManyRequests("hello"), Status.TooManyRequests)
+      checkError(builder.RequestHeaderFieldsTooLarge("hello"), Status.RequestHeaderFieldsTooLarge)
+      checkError(builder.UnavailableForLegalReasons("hello"), Status.UnavailableForLegalReasons)
+      checkError(builder.ClientClosedRequest("hello"), Status.ClientClosedRequest)
+      checkError(builder.InternalServerError("hello"), Status.InternalServerError)
+      checkError(builder.NotImplemented("hello"), Status.NotImplemented)
+      checkError(builder.BadGateway("hello"), Status.BadGateway)
+      checkError(builder.ServiceUnavailable("hello"), Status.ServiceUnavailable)
+      checkError(builder.GatewayTimeout("hello"), Status.GatewayTimeout)
+      checkError(builder.HttpVersionNotSupported("hello"), Status.HttpVersionNotSupported)
+      checkError(builder.VariantAlsoNegotiates("hello"), Status.VariantAlsoNegotiates)
+      checkError(builder.InsufficientStorage("hello"), Status.InsufficientStorage)
+      checkError(builder.NotExtended("hello"), Status.NotExtended)
+      checkError(builder.NetworkAuthenticationRequired("hello"), Status.NetworkAuthenticationRequired)
+    }
+
     it("ok with message - Buf") {
-      statusAndContentFrom(bldr.Ok(Bufs.utf8Buf(message))) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.Ok(Bufs.utf8Buf(message))) shouldBe(Status.Ok, message)
     }
 
     it("ok with message - Reader") {
       val reader = Reader.writable()
-      val okBuilder = bldr.Ok(reader)
+      val okBuilder = builder.Ok(reader)
       reader.write(Bufs.utf8Buf(message)).ensure(reader.close())
       Await.result(okBuilder.reader.read(message.length)).map(Bufs.asUtf8String).get shouldBe message
     }
 
     it("ok with message - ChannelBuffer") {
-      statusAndContentFrom(bldr.Ok(copiedBuffer(message, defaultCharset()))) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.Ok(copiedBuffer(message, defaultCharset()))) shouldBe(Status.Ok, message)
     }
 
     it("builds Ok with custom type") {
-      statusAndContentFrom(bldr.Ok(10)) shouldBe(Status.Ok, "10")
+      statusAndContentFrom(builder.Ok(10)) shouldBe(Status.Ok, "10")
     }
 
     it("content - OutputStream") {
-      statusAndContentFrom(bldr.HttpResponse().withContent((out: OutputStream) => out.write(message.getBytes()))) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.HttpResponse().withContent((out: OutputStream) => out.write(message.getBytes()))) shouldBe(Status.Ok, message)
       val streamToUnit1 = (out: OutputStream) => out.write(message.getBytes())
-      statusAndContentFrom(bldr.Ok(streamToUnit1)) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.Ok(streamToUnit1)) shouldBe(Status.Ok, message)
     }
 
     it("content - String") {
-      statusAndContentFrom(bldr.HttpResponse().withContent(message)) shouldBe(Status.Ok, message)
-      statusAndContentFrom(bldr.Ok(message)) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.HttpResponse().withContent(message)) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.Ok(message)) shouldBe(Status.Ok, message)
     }
 
     it("content - Buf") {
-      statusAndContentFrom(bldr.HttpResponse().withContent(Bufs.utf8Buf(message))) shouldBe(Status.Ok, message)
-      statusAndContentFrom(bldr.Ok(Bufs.utf8Buf(message))) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.HttpResponse().withContent(Bufs.utf8Buf(message))) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.Ok(Bufs.utf8Buf(message))) shouldBe(Status.Ok, message)
     }
 
     it("content - ChannelBuffer") {
-      statusAndContentFrom(bldr.HttpResponse().withContent(copiedBuffer(message, defaultCharset()))) shouldBe(Status.Ok, message)
-      statusAndContentFrom(bldr.Ok(copiedBuffer(message, defaultCharset()))) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.HttpResponse().withContent(copiedBuffer(message, defaultCharset()))) shouldBe(Status.Ok, message)
+      statusAndContentFrom(builder.Ok(copiedBuffer(message, defaultCharset()))) shouldBe(Status.Ok, message)
     }
 
     it("error with code only") {
-      statusAndContentFrom(bldr.NotFound(""))._1 shouldBe Status.NotFound
+      statusAndContentFrom(builder.NotFound(""))._1 shouldBe Status.NotFound
     }
 
     it("error with message - String") {
-      statusAndContentFrom(bldr.NotFound(5)) shouldBe(Status.NotFound, 5.toString)
-      statusAndContentFrom(bldr.NotFound(5)) shouldBe(Status.NotFound, 5.toString)
+      statusAndContentFrom(builder.NotFound(5)) shouldBe(Status.NotFound, 5.toString)
+      statusAndContentFrom(builder.NotFound(5)) shouldBe(Status.NotFound, 5.toString)
     }
 
     it("error with message - Buf") {
-      statusAndContentFrom(bldr.NotFound(Buf.Utf8(5.toString))) shouldBe(Status.NotFound, 5.toString)
-      statusAndContentFrom(bldr.NotFound(Buf.Utf8(5.toString))) shouldBe(Status.NotFound, 5.toString)
+      statusAndContentFrom(builder.NotFound(Buf.Utf8(5.toString))) shouldBe(Status.NotFound, 5.toString)
+      statusAndContentFrom(builder.NotFound(Buf.Utf8(5.toString))) shouldBe(Status.NotFound, 5.toString)
     }
 
     //    it("error with message - Reader") {
@@ -82,18 +145,18 @@ class AbstractResponseBuilderSpec extends FunSpec with Matchers {
     //    }
 
     it("error with message - ChannelBuffer") {
-      statusAndContentFrom(bldr.NotFound(copiedBuffer(message, defaultCharset()))) shouldBe(Status.NotFound, message)
-      statusAndContentFrom(bldr.NotFound(copiedBuffer(message, defaultCharset()))) shouldBe(Status.NotFound, message)
+      statusAndContentFrom(builder.NotFound(copiedBuffer(message, defaultCharset()))) shouldBe(Status.NotFound, message)
+      statusAndContentFrom(builder.NotFound(copiedBuffer(message, defaultCharset()))) shouldBe(Status.NotFound, message)
     }
 
     it("errors - message") {
-      statusAndContentFrom(bldr.HttpResponse(Status.BadGateway).withErrorMessage(message).build()) shouldBe(Status.BadGateway, message.length.toString)
-      statusAndContentFrom(bldr.NotFound(message)) shouldBe(Status.NotFound, message.length.toString)
+      statusAndContentFrom(builder.HttpResponse(Status.BadGateway).withErrorMessage(message).build()) shouldBe(Status.BadGateway, message.length.toString)
+      statusAndContentFrom(builder.NotFound(message)) shouldBe(Status.NotFound, message.length.toString)
     }
 
     it("errors - exception") {
-      statusAndContentFrom(bldr.HttpResponse(Status.BadGateway).withError(new RuntimeException(message))) shouldBe(Status.BadGateway, message.length.toString)
-      statusAndContentFrom(bldr.NotFound(new RuntimeException(message))) shouldBe(Status.NotFound, message.length.toString)
+      statusAndContentFrom(builder.HttpResponse(Status.BadGateway).withError(new RuntimeException(message))) shouldBe(Status.BadGateway, message.length.toString)
+      statusAndContentFrom(builder.NotFound(new RuntimeException(message))) shouldBe(Status.NotFound, message.length.toString)
     }
   }
 
