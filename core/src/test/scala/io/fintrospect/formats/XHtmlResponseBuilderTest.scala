@@ -1,6 +1,6 @@
 package io.fintrospect.formats
 
-class XHtmlResponseBuilderTest extends AbstractResponseBuilderSpec(XHtml.ResponseBuilder) {
+class XHtmlResponseBuilderTest extends ResponseBuilderSpec(XHtml.ResponseBuilder) {
   override val expectedContent = message
   override val customError = <message>{message}</message>
   override val expectedErrorContent = s"<message>$message</message>"
