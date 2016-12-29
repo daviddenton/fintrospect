@@ -1,14 +1,12 @@
 The simplest (least concise) way to invoke an auto-marshalling (ie. typesafe) ResponseBuilder is along the lines of:
 ```
-val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(
-Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashings of wonderful</xml>)
-)
+Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashings of wonderful</xml>).toFuture
 ```
-... although with tiny bit of implicit magic to convert the `Status` object to a `ResponseBuilder` and then convert the `ResponseBuilder` to 
+... although with tiny bit of implicit magic, we can use custom status methods and then convert the `ResponseBuilder` to 
 a `Future[Response]`, you can reduce this to the rather more concise:
 ```
 import io.fintrospect.formats.Xml.ResponseBuilder._
-val responseViaImplicits: Future[Response] = Status.Ok(<xml>lashings and lashings of wonderful</xml>)
+val responseViaImplicits: Future[Response] = Ok(<xml>lashings and lashings of wonderful</xml>)
 ```
 
 These ResponseBuilders also support `AsyncStream[T]`, so you can build services which can stream responses in a typesafe way.
