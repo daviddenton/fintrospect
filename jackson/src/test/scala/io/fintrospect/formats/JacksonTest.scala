@@ -32,7 +32,7 @@ class JacksonJsonFormatTest extends JsonFormatSpec(Jackson) {
     }
 
     it("body spec decodes content") {
-      (Body(bodySpec[JacksonLetter]()) <-- Jackson.ResponseBuilder.OK(encode(aLetter)).build()) shouldBe aLetter
+      (Body(bodySpec[JacksonLetter]()) <-- Jackson.ResponseBuilder.Ok(encode(aLetter)).build()) shouldBe aLetter
     }
 
     it("response spec has correct code") {

@@ -130,7 +130,7 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe) {
     }
 
     it("body spec decodes content") {
-      (Body(bodySpec[CirceLetter]()) <-- Circe.ResponseBuilder.OK(encode(aLetter)).build()) shouldBe aLetter
+      (Body(bodySpec[CirceLetter]()) <-- Circe.ResponseBuilder.Ok(encode(aLetter)).build()) shouldBe aLetter
     }
 
     it("patch body can be used to modify an existing case class object") {
@@ -138,7 +138,7 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe) {
       val modifiedMessage = encode(obj("message" -> string("hi there")))
       val modifiedLetterWithMessage = CirceLetterOpt(CirceStreetAddress("my house"), CirceStreetAddress("your house"), Some("hi there"))
 
-      val patch = patchBody[CirceLetterOpt](None, modifiedLetterWithMessage) <-- Circe.ResponseBuilder.OK(modifiedMessage).build()
+      val patch = patchBody[CirceLetterOpt](None, modifiedLetterWithMessage) <-- Circe.ResponseBuilder.Ok(modifiedMessage).build()
 
       patch(letterWithNoMessage) shouldBe modifiedLetterWithMessage
     }
