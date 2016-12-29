@@ -2,7 +2,7 @@ The simplest (least concise) way to invoke an auto-marshalling (ie. typesafe) Re
 ```
 Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashings of wonderful</xml>).toFuture
 ```
-... although with tiny bit of implicit magic, we can use custom status methods and then convert the `ResponseBuilder` to 
+... although with tiny bit of implicit magic, we can use custom status methods on the builders and then convert the `ResponseBuilder` to 
 a `Future[Response]`, you can reduce this to the rather more concise:
 ```
 import io.fintrospect.formats.Xml.ResponseBuilder._
