@@ -2,9 +2,7 @@ package io.fintrospect.formats
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.Status.Ok
-import com.twitter.finagle.http.{Request, Response, Status}
-import com.twitter.finagle.{Filter, Service}
+import com.twitter.finagle.http.Status
 import io.circe.{Decoder, Encoder, Json}
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.Circe.JsonFormat.encode
