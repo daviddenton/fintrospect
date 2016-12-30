@@ -1,114 +1,38 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Request, Status}
-import com.twitter.util.Await.result
-import com.twitter.util.{Await, Future}
+import com.twitter.finagle.http.Request
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.Play.JsonFormat._
-import io.fintrospect.formats.Play.ResponseBuilder._
 import io.fintrospect.formats.Play._
-import io.fintrospect.parameters.{Body, Query}
-import org.scalatest.{FunSpec, Matchers}
+import io.fintrospect.parameters.{Body, BodySpec, Query}
 import play.api.libs.json._
 
 import scala.language.reflectiveCalls
 
-case class PlayStreetAddress(address: String)
-
-object PlayStreetAddress {
-  implicit val Writes = new Writes[PlayStreetAddress] {
-    override def writes(in: PlayStreetAddress) = JsObject(Seq("address" -> JsString(in.address)))
+object helpers {
+  implicit val SAWrites = new Writes[StreetAddress] {
+    override def writes(in: StreetAddress) = JsObject(Seq("address" -> JsString(in.address)))
   }
-  implicit val Reads = new Reads[PlayStreetAddress] {
-    override def reads(in: JsValue) = JsSuccess(PlayStreetAddress(
+  implicit val SAReads = new Reads[StreetAddress] {
+    override def reads(in: JsValue) = JsSuccess(StreetAddress(
       (in \ "address").as[String]
     ))
   }
+
+  implicit val Writes = Json.writes[Letter]
+  implicit val Reads = Json.reads[Letter]
 }
 
-case class PlayLetter(to: PlayStreetAddress, from: PlayStreetAddress, message: String)
 
-object PlayLetter {
+class PlayFilterTest extends AutoFiltersSpec(Play.Filters) {
 
-  implicit val R = PlayStreetAddress.Reads
-  implicit val W = PlayStreetAddress.Writes
+  override def toString(l: Letter): String = compact(Play.JsonFormat.encode(l)(helpers.Writes))
 
-  implicit val Writes = Json.writes[PlayLetter]
-  implicit val Reads = Json.reads[PlayLetter]
-}
+  override def fromString(s: String): Letter = decode[Letter](parse(s))(helpers.Reads)
 
-class PlayFiltersTest extends FunSpec with Matchers {
+  override def bodySpec: BodySpec[Letter] = Play.bodySpec[Letter]()(helpers.Reads, helpers.Writes)
 
-  describe("Play.Filters") {
-    val aLetter = PlayLetter(PlayStreetAddress("my house"), PlayStreetAddress("your house"), "hi there")
-
-    val request = Request()
-    request.contentString = Play.JsonFormat.compact(encode(aLetter))
-
-    describe("AutoInOut") {
-      it("returns Ok") {
-        val svc = Play.Filters.AutoInOut(Service.mk { in: PlayLetter => Future.value(in) }, Status.Created)
-
-        val response = result(svc(request))
-        response.status shouldBe Status.Created
-        decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
-      }
-    }
-
-    describe("AutoInOptionalOut") {
-      it("returns Ok when present") {
-        val svc = Play.Filters.AutoInOptionalOut(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(Option(in)) })
-
-        val response = result(svc(request))
-        response.status shouldBe Status.Ok
-        decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = Play.Filters.AutoInOptionalOut(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldBe Status.NotFound
-      }
-    }
-
-    describe("AutoIn") {
-      val svc = Play.Filters.AutoIn(Body(bodySpec[PlayLetter]())).andThen(Service.mk { in: PlayLetter => Ok(Play.JsonFormat.encode(in)) })
-
-      it("takes the object from the request") {
-        Body(bodySpec[PlayLetter]()) <-- result(svc(request)) shouldBe aLetter
-      }
-
-      it("rejects illegal content with a BadRequest") {
-        val request = Request()
-        request.contentString = "not xml"
-        Await.result(svc(request)).status shouldBe Status.BadRequest
-      }
-    }
-
-    describe("AutoOut") {
-      it("takes the object from the request") {
-        val svc = Play.Filters.AutoOut[PlayLetter, PlayLetter](Status.Created).andThen(Service.mk { in: PlayLetter => Future.value(in) })
-        val response = result(svc(aLetter))
-        response.status shouldBe Status.Created
-        decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
-      }
-    }
-
-    describe("AutoOptionalOut") {
-      it("returns Ok when present") {
-        val svc = Play.Filters.AutoOptionalOut[PlayLetter, PlayLetter](Status.Created).andThen(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(Option(in)) })
-
-        val response = result(svc(aLetter))
-        response.status shouldBe Status.Created
-        decode[PlayLetter](parse(response.contentString)) shouldBe aLetter
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = Play.Filters.AutoOptionalOut[PlayLetter, PlayLetter](Status.Created).andThen(Service.mk[PlayLetter, Option[PlayLetter]] { in => Future.value(None) })
-        result(svc(aLetter)).status shouldBe Status.NotFound
-      }
-    }
-  }
+  override def toOut() = Play.Filters.tToToOut[Letter](helpers.Writes)
 }
 
 class PlayJsonResponseBuilderTest extends JsonResponseBuilderSpec(Play)
@@ -116,24 +40,24 @@ class PlayJsonResponseBuilderTest extends JsonResponseBuilderSpec(Play)
 class PlayJsonFormatTest extends JsonFormatSpec(Play) {
 
   describe("Play.JsonFormat") {
-    val aLetter = PlayLetter(PlayStreetAddress("my house"), PlayStreetAddress("your house"), "hi there")
+    val aLetter = Letter(StreetAddress("my house"), StreetAddress("your house"), "hi there")
 
     it("roundtrips to JSON and back") {
-      val encoded = Play.JsonFormat.encode(aLetter)(PlayLetter.Writes)
-      Play.JsonFormat.decode[PlayLetter](encoded)(PlayLetter.Reads) shouldBe aLetter
+      val encoded = Play.JsonFormat.encode(aLetter)(helpers.Writes)
+      Play.JsonFormat.decode[Letter](encoded)(helpers.Reads) shouldBe aLetter
     }
 
     it("invalid extracted JSON throws up") {
-      intercept[InvalidJsonForDecoding](Play.JsonFormat.decode[PlayLetter](Play.JsonFormat.obj()))
+      intercept[InvalidJsonForDecoding](Play.JsonFormat.decode[Letter](Play.JsonFormat.obj())(helpers.Reads))
     }
 
     it("body spec decodes content") {
-      (Body(bodySpec[PlayLetter]()) <-- Play.ResponseBuilder.Ok(encode(aLetter)).build()) shouldBe aLetter
+      (Body(bodySpec[Letter]()(helpers.Reads, helpers.Writes)) <-- Play.ResponseBuilder.Ok(encode(aLetter)(helpers.Writes)).build()) shouldBe aLetter
     }
 
     it("param spec decodes content") {
-      val param = Query.required(parameterSpec[PlayLetter]("name"))
-      (param <-- Request("?name=" + encode(aLetter))) shouldBe aLetter
+      val param = Query.required(parameterSpec[Letter]("name")(helpers.Reads, helpers.Writes))
+      (param <-- Request("?name=" + encode(aLetter)(helpers.Writes))) shouldBe aLetter
     }
   }
 
