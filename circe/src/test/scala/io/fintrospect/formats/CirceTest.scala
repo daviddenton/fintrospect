@@ -19,12 +19,12 @@ case class CirceLetterOpt(to: CirceStreetAddress, from: CirceStreetAddress, mess
 class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
 
-class CirceFiltersTest extends AutoFiltersSpec(Circe.NuFilters) {
+class CirceFiltersTest extends AutoFiltersSpec(Circe.Filters) {
 
   override def toString(l: Letter): String = encode(l).noSpaces
   override def fromString(s: String): Letter = decode[Letter](parse(s))
   override def bodySpec: BodySpec[Letter] = Circe.bodySpec[Letter]()
-  override def toOut() = Circe.NuFilters.tToToOut[Letter]
+  override def toOut() = Circe.Filters.tToToOut[Letter]
 }
 
 class CirceJsonFormatTest extends JsonFormatSpec(Circe) {

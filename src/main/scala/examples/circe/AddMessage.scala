@@ -8,6 +8,7 @@ import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.Circe
+import io.fintrospect.formats.Circe.Filters._
 import io.fintrospect.formats.Circe.responseSpec
 import io.fintrospect.parameters.{Body, Path}
 
@@ -20,7 +21,7 @@ class AddMessage(emails: Emails) {
   private val email = Body(Circe.bodySpec[Email](Option("email")), exampleEmail)
 
   private def addEmail(address: EmailAddress): Service[Request, Response] =
-    Circe.Filters.AutoInOut(
+    AutoInOut[Email, Seq[Email]](email).andThen(
       Service.mk {
         newEmail: Email => {
           // validate that the receiver is as passed as the one in the URL
