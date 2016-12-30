@@ -25,7 +25,7 @@ abstract class AutoFiltersSpec[J](val f: NuAutoFilters[J]) extends FunSpec with 
 
   def toString(l: Letter): String
 
-  def toOut(): f.ToOut[Letter, J]
+  def toOut(): f.AsOut[Letter, J]
 
   def fromString(s: String): Letter
 
