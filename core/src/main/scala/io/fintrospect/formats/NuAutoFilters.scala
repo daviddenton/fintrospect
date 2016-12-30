@@ -5,7 +5,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.parameters.{Body, Mandatory}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 
-class NuAutoFilters[T](val responseBuilder: AbstractResponseBuilder[T]) {
+class NuAutoFilters[T](responseBuilder: AbstractResponseBuilder[T]) {
 
   type SvcBody[IN] = Body[IN] with Mandatory[Request, IN]
   type AsOut[IN, OUT] = (IN => OUT)
