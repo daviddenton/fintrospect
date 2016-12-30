@@ -144,4 +144,9 @@ object Circe extends JsonLibrary[Json, Json] {
     */
   def parameterSpec[R](name: String, description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
     ParameterSpec.json(name, description.orNull, this).map(j => JsonFormat.decode[R](j), (u: R) => encode(u))
+
+  object NuFilters extends NuAutoFilters[Json](ResponseBuilder) {
+    implicit def tToToOut[T](implicit e: Encoder[T]): ToOut[T, Json] = (t: T) => e(t)
+  }
+
 }

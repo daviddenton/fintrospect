@@ -1,16 +1,11 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Status}
-import com.twitter.util.Await.result
-import com.twitter.util.{Await, Future}
 import io.circe.generic.auto._
 import io.fintrospect.formats.Circe.JsonFormat._
-import io.fintrospect.formats.Circe.ResponseBuilder._
 import io.fintrospect.formats.Circe._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
-import io.fintrospect.parameters.{Body, Query}
-import org.scalatest.{FunSpec, Matchers}
+import io.fintrospect.parameters.{Body, BodySpec, Query}
 
 import scala.language.reflectiveCalls
 
@@ -23,79 +18,14 @@ case class CirceLetterOpt(to: CirceStreetAddress, from: CirceStreetAddress, mess
 
 class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
-class CirceFiltersTest extends FunSpec with Matchers {
 
-  describe("Circe.Filters") {
-    val aLetter = CirceLetter(CirceStreetAddress("my house"), CirceStreetAddress("your house"), "hi there")
+class CirceFiltersTest extends AutoFiltersSpec(Circe.NuFilters) {
 
-    val request = Request()
-    request.contentString = encode(aLetter).noSpaces
-
-    describe("AutoInOut") {
-      it("returns Ok") {
-        val svc = Circe.Filters.AutoInOut(Service.mk { in: CirceLetter => Future.value(in) }, Status.Created)
-
-        val response = result(svc(request))
-        response.status shouldBe Status.Created
-        decode[CirceLetter](parse(response.contentString)) shouldBe aLetter
-      }
-    }
-
-    describe("AutoInOptionalOut") {
-      it("returns Ok when present") {
-        val svc = Circe.Filters.AutoInOptionalOut(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(Option(in)) })
-
-        val response = result(svc(request))
-        response.status shouldBe Status.Ok
-        decode[CirceLetter](parse(response.contentString)) shouldBe aLetter
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = Circe.Filters.AutoInOptionalOut(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldBe Status.NotFound
-      }
-    }
-
-    describe("AutoIn") {
-      val svc = Circe.Filters.AutoIn(Body(bodySpec[CirceLetter]())).andThen(Service.mk { in: CirceLetter => Ok(Circe.JsonFormat.encode(in)) })
-      it("takes the object from the request") {
-        decode[CirceLetter](parse(result(svc(request)).contentString)) shouldBe aLetter
-      }
-
-      it("rejects illegal content with a BadRequest") {
-        val request = Request()
-        request.contentString = "not xml"
-        Await.result(svc(request)).status shouldBe Status.BadRequest
-      }
-    }
-
-    describe("AutoOut") {
-      it("takes the object from the request") {
-        val svc = Circe.Filters.AutoOut[CirceLetter, CirceLetter](Status.Created).andThen(Service.mk { in: CirceLetter => Future.value(in) })
-        val response = result(svc(aLetter))
-        response.status shouldBe Status.Created
-        decode[CirceLetter](parse(response.contentString)) shouldBe aLetter
-      }
-    }
-
-    describe("AutoOptionalOut") {
-      it("returns Ok when present") {
-        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Status.Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { in => Future.value(Option(in)) })
-
-        val response = result(svc(aLetter))
-        response.status shouldBe Status.Created
-        decode[CirceLetter](parse(response.contentString)) shouldBe aLetter
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = Circe.Filters.AutoOptionalOut[CirceLetter, CirceLetter](Status.Created).andThen(Service.mk[CirceLetter, Option[CirceLetter]] { _ => Future.value(None) })
-        result(svc(aLetter)).status shouldBe Status.NotFound
-      }
-    }
-  }
+  override def toString(l: Letter): String = encode(l).noSpaces
+  override def fromString(s: String): Letter = decode[Letter](parse(s))
+  override def bodySpec: BodySpec[Letter] = Circe.bodySpec[Letter]()
+  override def toOut() = Circe.NuFilters.tToToOut[Letter]
 }
-
-case class CirceWithOptionalFields(from: Option[String])
 
 class CirceJsonFormatTest extends JsonFormatSpec(Circe) {
 
