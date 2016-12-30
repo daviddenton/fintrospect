@@ -20,57 +20,8 @@ object Circe extends JsonLibrary[Json, Json] {
     * Auto-marshalling filters that can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends AutoFilters[Json] {
-
-    override protected val responseBuilder = Circe.ResponseBuilder
-
-    private def toResponse[OUT](successStatus: Status, e: Encoder[OUT]) =
-      (t: OUT) => responseBuilder.HttpResponse(successStatus).withContent(encode(t)(e))
-
-    private def toBody[BODY](db: Decoder[BODY], eb: Encoder[BODY])(implicit example: BODY = null) =
-      Body[BODY](Circe.bodySpec(None)(eb, db), example)
-
-    /**
-      * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
-      * that return an object.
-      * HTTP OK is returned by default in the auto-marshalled response (overridable).
-      */
-    def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Ok)
-                            (implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
-    : Service[Request, Response] = AutoInOutFilter(successStatus)(db, eb, e, example).andThen(svc)
-
-    /**
-      * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
-      * that may return an object.
-      * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
-      */
-    def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Ok)
-                                    (implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
-    : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(db, eb), toResponse(successStatus, e))
-
-    /**
-      * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
-      * HTTP OK is returned by default in the auto-marshalled response (overridable).
-      */
-    def AutoOut[IN, OUT](successStatus: Status = Ok)
-                        (implicit e: Encoder[OUT]): Filter[IN, Response, IN, OUT]
-    = _AutoOut(toResponse(successStatus, e))
-
-    /**
-      * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
-      * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
-      */
-    def AutoOptionalOut[IN, OUT](successStatus: Status = Ok)
-                                (implicit e: Encoder[OUT]): Filter[IN, Response, IN, Option[OUT]]
-    = _AutoOptionalOut(toResponse(successStatus, e))
-
-    /**
-      * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
-      * HTTP OK is returned by default in the auto-marshalled response (overridable).
-      */
-    def AutoInOutFilter[BODY, OUT](successStatus: Status = Ok)
-                                  (implicit db: Decoder[BODY], eb: Encoder[BODY], e: Encoder[OUT], example: BODY = null)
-    : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(db, eb)).andThen(AutoOut[BODY, OUT](successStatus)(e))
+  object Filters extends NuAutoFilters[Json](ResponseBuilder) {
+    implicit def tToToOut[T](implicit e: Encoder[T]): ToOut[T, Json] = (t: T) => e(t)
   }
 
   object JsonFormat extends JsonFormat[Json, Json] {
@@ -144,9 +95,5 @@ object Circe extends JsonLibrary[Json, Json] {
     */
   def parameterSpec[R](name: String, description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
     ParameterSpec.json(name, description.orNull, this).map(j => JsonFormat.decode[R](j), (u: R) => encode(u))
-
-  object NuFilters extends NuAutoFilters[Json](ResponseBuilder) {
-    implicit def tToToOut[T](implicit e: Encoder[T]): ToOut[T, Json] = (t: T) => e(t)
-  }
 
 }
