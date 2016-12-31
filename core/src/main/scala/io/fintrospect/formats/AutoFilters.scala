@@ -1,6 +1,6 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import io.fintrospect.parameters.{Body, Mandatory}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
@@ -30,6 +30,6 @@ trait AutoFilters[T] {
 
   def _AutoOptionalOut[IN, OUT](success: ToResponse[OUT]): Filter[IN, Response, IN, Option[OUT]] =
     Filter.mk[IN, Response, IN, Option[OUT]] {
-      (req, svc) => svc(req).map(optT => optT.map(t => success(t).build()).getOrElse(NotFound("").build()))
+      (req, svc) => svc(req).map(optT => optT.map(t => success(t).build()).getOrElse(HttpResponse(Status.NotFound).build()))
     }
 }

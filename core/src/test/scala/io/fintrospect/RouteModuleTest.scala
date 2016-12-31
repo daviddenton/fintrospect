@@ -26,7 +26,7 @@ class RouteModuleTest extends FunSpec with Matchers {
   describe("RouteModule") {
     describe("when a route path can be found") {
       val m = RouteModule(Root)
-      val d = RouteSpec("")
+      val d = RouteSpec()
 
       it("with 0 segment (convenience)") {
         assertOkResponse(m.withRoute(d.at(Get) / "svc" bindTo AService(Nil)), Nil)
@@ -102,7 +102,7 @@ class RouteModuleTest extends FunSpec with Matchers {
       it("can get to all routes") {
 
         def module(path: String) = {
-          RouteModule(Root / path).withRoute(RouteSpec("").at(Get) / "echo" bindTo Service.mk[Request, Response] { _ => Ok(path) })
+          RouteModule(Root / path).withRoute(RouteSpec().at(Get) / "echo" bindTo Service.mk[Request, Response] { _ => Ok(path) })
         }
 
         val totalService = Module.combine(module("rita"), module("bob"), module("sue")).toService
@@ -126,7 +126,7 @@ class RouteModuleTest extends FunSpec with Matchers {
           resp
         })
       }))
-        .withRoute(RouteSpec("").at(Get) / "svc" bindTo AService(Nil))
+        .withRoute(RouteSpec().at(Get) / "svc" bindTo AService(Nil))
 
       it("applies to routes in module") {
         result(module.toService(Request("/svc"))).headerMap("MYHEADER") shouldBe "BOB"
@@ -137,7 +137,7 @@ class RouteModuleTest extends FunSpec with Matchers {
     }
 
     describe("when a valid path does not contain all required request parameters") {
-      val d = RouteSpec("").taking(Header.required.int("aNumberHeader"))
+      val d = RouteSpec().taking(Header.required.int("aNumberHeader"))
       val m = RouteModule(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil))
 
       it("it returns a 400 when the required param is missing") {
@@ -153,7 +153,7 @@ class RouteModuleTest extends FunSpec with Matchers {
     }
 
     describe("when a valid path does not contain all required form fields") {
-      val d = RouteSpec("").body(Body.form(FormField.required.int("aNumber")))
+      val d = RouteSpec().body(Body.form(FormField.required.int("aNumber")))
       val service = RouteModule(Root).withRoute(d.at(Post) / "svc" bindTo AService(Nil)).toService
 
       it("it returns a 400 when a required form field is missing") {
@@ -169,7 +169,7 @@ class RouteModuleTest extends FunSpec with Matchers {
     }
 
     describe("when a valid path does not contain required JSON body") {
-      val d = RouteSpec("").body(Body.json(None, Argo.JsonFormat.obj()))
+      val d = RouteSpec().body(Body.json(None, Argo.JsonFormat.obj()))
       val service = RouteModule(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 
       it("it returns a 400 when the required body is missing") {
@@ -186,7 +186,7 @@ class RouteModuleTest extends FunSpec with Matchers {
 
     describe("when a valid path does not contain required custom body") {
       val body = Body[Int](BodySpec.string(None, ContentTypes.TEXT_PLAIN).map(_.toInt, _.toString), example = 1)
-      val d = RouteSpec("").body(body)
+      val d = RouteSpec().body(body)
       val service = RouteModule(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 
       it("it returns a 400 when the required body is missing") {
@@ -202,7 +202,7 @@ class RouteModuleTest extends FunSpec with Matchers {
     }
 
     describe("when a valid path contains illegal values for an optional parameter") {
-      val d = RouteSpec("").taking(Header.optional.int("aNumberHeader"))
+      val d = RouteSpec().taking(Header.optional.int("aNumberHeader"))
       val service = RouteModule(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 
       it("it returns a 200 when the optional param is missing") {
@@ -221,7 +221,7 @@ class RouteModuleTest extends FunSpec with Matchers {
       it("identifies route with anonymised description when called") {
         def getHeaders(number: Int, aString: String) = Service.mk[Request, Response] { request => Ok(headersFrom(request).toString()) }
 
-        val route = RouteSpec("").at(Get) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
+        val route = RouteSpec().at(Get) / "svc" / Path.int("anInt") / Path.fixed("fixed") bindTo getHeaders
         val m = RouteModule(Root).withRoute(route)
         HttpRequestResponseUtil.statusAndContentFrom(result(m.toService(Request("svc/1/fixed")))) shouldBe(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:/svc/{anInt}/fixed)")
       }

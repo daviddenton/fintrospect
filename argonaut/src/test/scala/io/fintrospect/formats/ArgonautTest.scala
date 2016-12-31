@@ -7,17 +7,14 @@ import io.fintrospect.formats.Argonaut.JsonFormat.{compact, decode, encode, pars
 import io.fintrospect.formats.Argonaut._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, BodySpec, Query}
-import helpers._
 
 import scala.language.reflectiveCalls
 
-object helpers {
+class ArgonautFiltersTest extends AutoFiltersSpec(Argonaut.Filters) {
+
   implicit def StreetAddressCodec: CodecJson[StreetAddress] = casecodec1(StreetAddress.apply, StreetAddress.unapply)("address")
 
   implicit def LetterCodec: CodecJson[Letter] = casecodec3(Letter.apply, Letter.unapply)("to", "from", "message")
-}
-
-class ArgonautFiltersTest extends AutoFiltersSpec(Argonaut.Filters) {
 
   override def toString(l: Letter): String = compact(encode(l))
 
@@ -31,6 +28,10 @@ class ArgonautFiltersTest extends AutoFiltersSpec(Argonaut.Filters) {
 class ArgonautJsonResponseBuilderTest extends JsonResponseBuilderSpec(Argonaut)
 
 class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut) {
+
+  implicit def StreetAddressCodec: CodecJson[StreetAddress] = casecodec1(StreetAddress.apply, StreetAddress.unapply)("address")
+
+  implicit def LetterCodec: CodecJson[Letter] = casecodec3(Letter.apply, Letter.unapply)("to", "from", "message")
 
   describe("Argonaut.JsonFormat") {
     val aLetter = Letter(StreetAddress("my house"), StreetAddress("your house"), "hi there")
