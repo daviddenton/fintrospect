@@ -2,19 +2,16 @@ package io.fintrospect.formats
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.{Request, Response, Status}
-import com.twitter.finagle.{Filter, Service}
+import com.twitter.finagle.http.Status
 import io.fintrospect.ResponseSpec
-import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
+import io.fintrospect.parameters.{BodySpec, ParameterSpec}
 import org.json4s.Extraction.decompose
 import org.json4s.native.Document
-import org.json4s.{Formats, JValue, JsonMethods, NoTypeHints, Serialization}
+import org.json4s.{Formats, JValue, JsonMethods, NoTypeHints, Serialization, _}
 
-class Json4sFormat[T](jsonMethods: JsonMethods[T],
-                      val serialization: Serialization,
-                      useBigDecimalForDouble: Boolean) extends JsonFormat[JValue, JValue] {
-
-  import org.json4s._
+class Json4sFormat[+T](jsonMethods: JsonMethods[T],
+                       val serialization: Serialization,
+                       useBigDecimalForDouble: Boolean) extends JsonFormat[JValue, JValue] {
 
   override def pretty(in: JValue): String = jsonMethods.pretty(jsonMethods.render(in))
 
@@ -48,76 +45,23 @@ class Json4sFormat[T](jsonMethods: JsonMethods[T],
 }
 
 /**
-  * Auto-marshalling filters which can be used to create Services which take and return domain objects
+  * Auto-marshalling filters that can be used to create Services which take and return domain objects
   * instead of HTTP responses
   */
-class Json4sFilters[T](protected val jsonLibrary: Json4sLibrary[T])
-  extends AutoFilters[JValue] {
+abstract class Json4sAutoFilters[D](json4sFormat: Json4sFormat[D], builder: AbstractResponseBuilder[JValue]) extends NuAutoFilters[JValue](builder) {
 
-  override protected val responseBuilder = jsonLibrary.ResponseBuilder
-
-  private val formats = jsonLibrary.JsonFormat.serialization.formats(NoTypeHints)
-  private val json4sFormat = jsonLibrary.JsonFormat
-
-  private def toResponse[OUT](successStatus: Status, formats: Formats = formats) =
-    (t: OUT) => responseBuilder.HttpResponse(successStatus).withContent(json4sFormat.encode(t, formats))
-
-  private def toBody[BODY](mf: Manifest[BODY])(implicit example: BODY = null) =
-    Body[BODY](jsonLibrary.bodySpec[BODY](None)(mf), example)
-
-
-  /**
-    * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
-    * which return an object.
-    * HTTP OK is returned by default in the auto-marshalled response (overridable).
-    */
-  def AutoInOut[BODY, OUT](svc: Service[BODY, OUT], successStatus: Status = Status.Ok,
-                           formats: Formats = formats)
-                          (implicit example: BODY = null, mf: Manifest[BODY])
-  : Service[Request, Response] = AutoInOutFilter(successStatus)(example, mf).andThen(svc)
-
-  /**
-    * Wrap the enclosed service with auto-marshalling of input and output case class instances for HTTP POST scenarios
-    * which may return an object.
-    * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
-    */
-  def AutoInOptionalOut[BODY, OUT](svc: Service[BODY, Option[OUT]], successStatus: Status = Status.Ok,
-                                   formats: Formats = formats)
-                                  (implicit example: BODY = null, mf: Manifest[BODY])
-  : Service[Request, Response] = _AutoInOptionalOut(svc, toBody(mf), toResponse(successStatus, formats))
-
-  /**
-    * Filter to provide auto-marshalling of output case class instances for HTTP scenarios where an object is returned.
-    * HTTP OK is returned by default in the auto-marshalled response (overridable).
-    */
-  def AutoOut[IN, OUT]
-  (successStatus: Status = Status.Ok, formats: Formats = formats): Filter[IN, Response, IN, OUT]
-  = _AutoOut(toResponse(successStatus, formats))
-
-  /**
-    * Filter to provide auto-marshalling of case class instances for HTTP scenarios where an object may not be returned
-    * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
-    */
-  def AutoOptionalOut[IN, OUT]
-  (successStatus: Status = Status.Ok, formats: Formats = formats)
-  : Filter[IN, Response, IN, Option[OUT]]
-  = _AutoOptionalOut((t: OUT) => responseBuilder.HttpResponse(successStatus).withContent(json4sFormat.encode(t, formats)))
-
-  /**
-    * Filter to provide auto-marshalling of case class instances for HTTP POST scenarios
-    * HTTP OK is returned by default in the auto-marshalled response (overridable).
-    */
-  def AutoInOutFilter[BODY, OUT](successStatus: Status = Status.Ok,
-                                 formats: Formats = formats)
-                                (implicit example: BODY = null, mf: Manifest[BODY])
-  : Filter[Request, Response, BODY, OUT] = AutoIn(toBody(mf)).andThen(AutoOut[BODY, OUT](successStatus, formats))
+  implicit def tToToOut[T]() = (t: T) => json4sFormat.encode[T](t)
 }
 
-abstract class Json4sLibrary[T] extends JsonLibrary[JValue, JValue] {
+abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
 
-  val JsonFormat: Json4sFormat[T]
+  val JsonFormat: Json4sFormat[D]
 
   import JsonFormat._
+
+  object Filters extends NuAutoFilters(ResponseBuilder) {
+    implicit def tToToOut[T] = (t: T) => JsonFormat.encode[T](t)
+  }
 
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
@@ -146,10 +90,8 @@ abstract class Json4sLibrary[T] extends JsonLibrary[JValue, JValue] {
   * Native Json4S support (application/json content type) - uses BigDecimal for decimal
   */
 object Json4s extends Json4sLibrary[Document] {
-
   val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, true)
 
-  val Filters = new Json4sFilters(Json4s)
 }
 
 /**
@@ -158,8 +100,6 @@ object Json4s extends Json4sLibrary[Document] {
 object Json4sDoubleMode extends Json4sLibrary[Document] {
 
   val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, false)
-
-  val Filters = new Json4sFilters(Json4sDoubleMode)
 }
 
 /**
@@ -168,8 +108,6 @@ object Json4sDoubleMode extends Json4sLibrary[Document] {
 object Json4sJackson extends Json4sLibrary[JValue] {
 
   val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, true)
-
-  val Filters = new Json4sFilters(Json4sJackson)
 }
 
 /**
@@ -178,6 +116,4 @@ object Json4sJackson extends Json4sLibrary[JValue] {
 object Json4sJacksonDoubleMode extends Json4sLibrary[JValue] {
 
   val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, false)
-
-  val Filters = new Json4sFilters(Json4sJacksonDoubleMode)
 }

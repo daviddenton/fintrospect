@@ -1,12 +1,8 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Status}
-import com.twitter.util.Await.result
-import com.twitter.util.{Await, Future}
-import io.fintrospect.parameters.{Body, Query}
-import org.json4s.MappingException
-import org.scalatest.{FunSpec, Matchers}
+import io.fintrospect.parameters.{Body, BodySpec, Query}
+import org.json4s.{JValue, MappingException}
 
 import scala.language.reflectiveCalls
 
@@ -15,88 +11,29 @@ case class Json4sStreetAddress(address: String)
 
 case class Json4sLetter(to: Json4sStreetAddress, from: Json4sStreetAddress, message: String)
 
-abstract class Json4sFiltersSpec(json4sLibrary: Json4sLibrary[_], filters: Json4sFilters[_], jsonFormat: Json4sFormat[_]) extends FunSpec with Matchers {
 
-  import io.fintrospect.formats.Json4s.ResponseBuilder._
-  import jsonFormat._
+abstract class Json4sFiltersSpec[D](json4sLibrary: Json4sLibrary[D]) extends AutoFiltersSpec(json4sLibrary.Filters) {
 
-  describe("filters") {
-    val aLetter = Json4sLetter(Json4sStreetAddress("my house"), Json4sStreetAddress("your house"), "hi there")
+  import json4sLibrary.JsonFormat._
 
-    val request = Request()
-    request.contentString = jsonFormat.compact(jsonFormat.encode(aLetter))
+  override def toString(l: Letter): String = compact(encode(l))
 
-    describe("AutoInOut") {
-      it("returns Ok") {
-        val svc = filters.AutoInOut(Service.mk { in: Json4sLetter => Future.value(in) }, Status.Created)
+  override def fromString(s: String): Letter = decode[Letter](parse(s))
 
-        val response = result(svc(request))
-        response.status shouldBe Status.Created
-        decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
-      }
-    }
+  override def bodySpec: BodySpec[Letter] = json4sLibrary.bodySpec[Letter]()
 
-    describe("AutoInOptionalOut") {
-      it("returns Ok when present") {
-        val svc = filters.AutoInOptionalOut(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(Option(in)) })
+  private def mf[T](implicit mf: Manifest[T]) = mf
 
-        val response = result(svc(request))
-        response.status shouldBe Status.Ok
-        decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = filters.AutoInOptionalOut(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldBe Status.NotFound
-      }
-    }
-
-    describe("AutoIn") {
-      val svc = filters.AutoIn(Body(json4sLibrary.bodySpec[Json4sLetter]())).andThen(Service.mk { in: Json4sLetter => Ok(jsonFormat.encode(in)) })
-      it("takes the object from the request") {
-        jsonFormat.decode[Json4sLetter](jsonFormat.parse(result(svc(request)).contentString)) shouldBe aLetter
-      }
-
-      it("rejects illegal content with a BadRequest") {
-        val request = Request()
-        request.contentString = "not xml"
-        Await.result(svc(request)).status shouldBe Status.BadRequest
-      }
-    }
-
-    describe("AutoOut") {
-      it("takes the object from the request") {
-        val svc = filters.AutoOut[Json4sLetter, Json4sLetter](Status.Created).andThen(Service.mk { in: Json4sLetter => Future.value(in) })
-        val response = result(svc(aLetter))
-        response.status shouldBe Status.Created
-        decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
-      }
-    }
-
-    describe("AutoOptionalOut") {
-      it("returns Ok when present") {
-        val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Status.Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(Option(in)) })
-
-        val response = result(svc(aLetter))
-        response.status shouldBe Status.Created
-        decode[Json4sLetter](parse(response.contentString)) shouldBe aLetter
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = filters.AutoOptionalOut[Json4sLetter, Json4sLetter](Status.Created).andThen(Service.mk[Json4sLetter, Option[Json4sLetter]] { in => Future.value(None) })
-        result(svc(aLetter)).status shouldBe Status.NotFound
-      }
-    }
-  }
+  override def toOut() = json4sLibrary.Filters.tToToOut[Letter]
 }
 
-class Json4sNativeFiltersTest extends Json4sFiltersSpec(Json4s, Json4s.Filters, Json4s.JsonFormat)
+class Json4sNativeFiltersTest extends Json4sFiltersSpec(Json4s)
 
-class Json4sJacksonFiltersTest extends Json4sFiltersSpec(Json4sJackson, Json4sJackson.Filters, Json4sJackson.JsonFormat)
+class Json4sJacksonFiltersTest extends Json4sFiltersSpec(Json4sJackson)
 
-class Json4sNativeDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sDoubleMode, Json4sDoubleMode.Filters, Json4sDoubleMode.JsonFormat)
+class Json4sNativeDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sDoubleMode)
 
-class Json4sJacksonDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sJacksonDoubleMode, Json4sJacksonDoubleMode.Filters, Json4sJacksonDoubleMode.JsonFormat)
+class Json4sJacksonDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sJacksonDoubleMode)
 
 abstract class RoundtripEncodeDecodeSpec[T](jsonLibrary: Json4sLibrary[T]) extends JsonFormatSpec(jsonLibrary) {
 
