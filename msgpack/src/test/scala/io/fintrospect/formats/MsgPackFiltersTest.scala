@@ -1,94 +1,17 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Request, Status}
-import com.twitter.io.Buf.ByteArray.Shared.extract
-import com.twitter.io.{Buf, Bufs}
-import com.twitter.util.Await.result
-import com.twitter.util.Future
-import io.fintrospect.formats.MsgPack.Filters._
-import io.fintrospect.formats.MsgPack.ResponseBuilder._
-import io.fintrospect.formats.MsgPack.bodySpec
-import io.fintrospect.parameters.{Body, BodySpec}
-import org.scalatest.{FunSpec, Matchers}
+import com.twitter.io.Buf
+import io.fintrospect.parameters.BodySpec
 
 import scala.language.reflectiveCalls
 
-//class MsgPackFilters2Test extends AutoFiltersSpec(MsgPack.Filters2) {
-//
-//  override def toBuf(l: Letter): String = Bufs.asUtf8String(MsgPackMsg(l).toBuf)
-//  override def fromBuf(s: Buf): Letter = MsgPackMsg.f
-//  override def bodySpec: BodySpec[Letter] = Circe.bodySpec[Letter]()
-//  override def toOut() = Circe.Filters.tToToOut[Letter]
-//}
-class MsgPackFiltersTest extends FunSpec with Matchers {
+class MsgPackFiltersTest extends AutoFiltersSpec(MsgPack.Filters) {
 
-  describe("MsgPack.Filters") {
-    val aLetter = MsgPackLetter(MsgPackStreetAddress("my house"), MsgPackStreetAddress("your house"), "hi there")
+  override def toBuf(l: Letter) = MsgPackMsg(l).toBuf
 
-    val request = Request()
-    request.content = MsgPackMsg(aLetter).toBuf
+  override def fromBuf(s: Buf): Letter = MsgPack.Format.decode[Letter](s)
 
-    describe("AutoInOut") {
-      it("returns Ok") {
-        val svc = AutoInOut(Service.mk { in: MsgPackLetter => Future.value(in) }, Status.Created)
+  override def bodySpec: BodySpec[Letter] = MsgPack.bodySpec[Letter]()
 
-        val response = result(svc(request))
-        new MsgPackMsg(extract(response.content)).as[MsgPackLetter] shouldBe aLetter
-      }
-    }
-
-    describe("AutoInOptionalOut") {
-      it("returns Ok when present") {
-        val svc = AutoInOptionalOut(Service.mk { in: MsgPackLetter => Future.value(Option(in)) })
-
-        val response = result(svc(request))
-        response.status shouldBe Status.Ok
-        new MsgPackMsg(extract(response.content)).as[MsgPackLetter] shouldBe aLetter
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = AutoInOptionalOut(Service.mk[MsgPackLetter, Option[MsgPackLetter]] { in => Future.value(None) })
-        result(svc(request)).status shouldBe Status.NotFound
-      }
-    }
-
-    describe("AutoIn") {
-      val svc = AutoIn(Body(bodySpec[MsgPackLetter]())).andThen(Service.mk { in: MsgPackLetter => Ok(MsgPackMsg(in)) })
-      it("takes the object from the request") {
-        MsgPack.Format.decode[MsgPackLetter](result(svc(request)).content) shouldBe aLetter
-      }
-
-      it("rejects illegal content with a BadRequest") {
-        val request = Request()
-        request.contentString = "not msgpack"
-        result(svc(request)).status shouldBe Status.BadRequest
-      }
-
-    }
-
-    describe("AutoOut") {
-      it("takes the object from the request") {
-        val svc = AutoOut[MsgPackLetter, MsgPackLetter](Status.Created).andThen(Service.mk { in: MsgPackLetter => Future.value(in) })
-        val response = result(svc(aLetter))
-        response.status shouldBe Status.Created
-        new MsgPackMsg(extract(response.content)).as[MsgPackLetter] shouldBe aLetter
-      }
-    }
-
-    describe("AutoOptionalOut") {
-      it("returns Ok when present") {
-        val svc = AutoOptionalOut[MsgPackLetter, MsgPackLetter](Status.Created).andThen(Service.mk { in: MsgPackLetter => Future.value(Option(in)) })
-
-        val response = result(svc(aLetter))
-        response.status shouldBe Status.Created
-        new MsgPackMsg(extract(response.content)).as[MsgPackLetter] shouldBe aLetter
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = AutoOptionalOut[MsgPackLetter, MsgPackLetter](Status.Created).andThen(Service.mk { in: MsgPackLetter => Future.value(None) })
-        result(svc(aLetter)).status shouldBe Status.NotFound
-      }
-    }
-  }
+  override def toOut() = MsgPack.Filters.tToToOut[Letter]
 }
