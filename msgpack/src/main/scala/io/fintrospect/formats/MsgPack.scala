@@ -15,7 +15,7 @@ object MsgPack {
     * Auto-marshalling filters that can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends NuAutoFilters[MsgPackMsg](ResponseBuilder) {
+  object Filters extends AutoFilters[MsgPackMsg](ResponseBuilder) {
     implicit def tToToOut[T]: AsOut[T, MsgPackMsg] = MsgPackMsg(_)
   }
 

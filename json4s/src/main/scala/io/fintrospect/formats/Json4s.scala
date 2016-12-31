@@ -48,7 +48,7 @@ class Json4sFormat[+T](jsonMethods: JsonMethods[T],
   * Auto-marshalling filters that can be used to create Services which take and return domain objects
   * instead of HTTP responses
   */
-abstract class Json4sAutoFilters[D](json4sFormat: Json4sFormat[D], builder: AbstractResponseBuilder[JValue]) extends NuAutoFilters[JValue](builder) {
+abstract class Json4sAutoFilters[D](json4sFormat: Json4sFormat[D], builder: AbstractResponseBuilder[JValue]) extends AutoFilters[JValue](builder) {
 
   implicit def tToToOut[T]() = (t: T) => json4sFormat.encode[T](t)
 }
@@ -59,7 +59,7 @@ abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
 
   import JsonFormat._
 
-  object Filters extends NuAutoFilters(ResponseBuilder) {
+  object Filters extends AutoFilters(ResponseBuilder) {
     implicit def tToToOut[T] = (t: T) => JsonFormat.encode[T](t)
   }
 

@@ -19,7 +19,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     * Auto-marshalling filters that can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends NuAutoFilters[JsValue](ResponseBuilder) {
+  object Filters extends AutoFilters[JsValue](ResponseBuilder) {
     implicit def tToToOut[T](implicit db: Writes[T]): AsOut[T, JsValue] = (t: T) => JsonFormat.encode[T](t)
   }
 

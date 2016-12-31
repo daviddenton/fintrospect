@@ -5,7 +5,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.parameters.{Body, Mandatory}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 
-class NuAutoFilters[R](responseBuilder: AbstractResponseBuilder[R]) {
+class AutoFilters[R](responseBuilder: AbstractResponseBuilder[R]) {
 
   type SvcBody[IN] = Body[IN] with Mandatory[Request, IN]
   type AsOut[IN, OUT] = (IN => OUT)
@@ -37,6 +37,10 @@ class NuAutoFilters[R](responseBuilder: AbstractResponseBuilder[R]) {
       .map(l => HttpResponse(successStatus).withContent(l))
   }
 
+  /**
+    * Filter to provide auto-marshalling of case class instances for input and output to the service
+    * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
+    */
   def AutoInOut[IN, OUT](body: SvcBody[IN], successStatus: Status = Status.Ok)
                         (implicit toOut: AsOut[OUT, R]): Filter[Request, Response, IN, OUT]
   = AutoIn(body).andThen(Filter.mk[IN, Response, IN, OUT] { (req, svc) =>
