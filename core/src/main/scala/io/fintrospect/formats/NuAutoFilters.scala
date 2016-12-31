@@ -12,9 +12,6 @@ class NuAutoFilters[R](responseBuilder: AbstractResponseBuilder[R]) {
 
   import responseBuilder._
 
-  private def toResponse[OUT](status: Status, toOut: AsOut[OUT, R]): (OUT) => Response =
-    (t: OUT) => HttpResponse(status).withContent(toOut(t)).build()
-
   /**
     * Filter to provide auto-marshalling of input case class instances for scenarios where an object is the service input.
     * HTTP OK is returned by default in the auto-marshalled response (overridable).
@@ -34,11 +31,19 @@ class NuAutoFilters[R](responseBuilder: AbstractResponseBuilder[R]) {
     */
   def AutoOut[OUT](successStatus: Status = Status.Ok)
                   (implicit toOut: AsOut[OUT, R]): Filter[Request, Response, Request, OUT]
-  = Filter.mk[Request, Response, Request, OUT] { (req, svc) => svc(req).map(toResponse(successStatus, toOut)) }
+  = Filter.mk[Request, Response, Request, OUT] { (req, svc) =>
+    svc(req)
+      .map(toOut)
+      .map(l => HttpResponse(successStatus).withContent(l))
+  }
 
   def AutoInOut[IN, OUT](body: SvcBody[IN], successStatus: Status = Status.Ok)
                         (implicit toOut: AsOut[OUT, R]): Filter[Request, Response, IN, OUT]
-  = AutoIn(body).andThen(Filter.mk[IN, Response, IN, OUT] { (req, svc) => svc(req).map(toResponse(successStatus, toOut)) })
+  = AutoIn(body).andThen(Filter.mk[IN, Response, IN, OUT] { (req, svc) =>
+    svc(req)
+      .map(toOut)
+      .map(l => HttpResponse(successStatus).withContent(l))
+  })
 
 
   /**
@@ -58,7 +63,10 @@ class NuAutoFilters[R](responseBuilder: AbstractResponseBuilder[R]) {
     Filter.mk[IN, Response, IN, Option[OUT]] {
       (req, svc) =>
         svc(req)
-          .map(_.map(toResponse(successStatus, toOut))
-            .getOrElse(HttpResponse(Status.NotFound).build()))
+          .map(
+            _.map(toOut)
+              .map(l => HttpResponse(successStatus).withContent(l))
+              .getOrElse(HttpResponse(Status.NotFound)))
+          .map(_.build())
     }
 }
