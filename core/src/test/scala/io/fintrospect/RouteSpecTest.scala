@@ -124,8 +124,8 @@ class RouteSpecTest extends FunSpec with Matchers {
         date.from(received).contains(LocalDate.of(2000, 1, 1)) &&
         request.uri == received.uri &&
         body.from(received) == <xml/>
-      ) Ok("")
-      else BadRequest("")
+      ) HttpResponse(Status.Ok)
+      else HttpResponse(Status.BadRequest)
     }
 
     def checkProxyRoute(urlParts: String, fn: (UnboundRoute0 => UnboundRoute)): Unit = {
@@ -161,7 +161,7 @@ class RouteSpecTest extends FunSpec with Matchers {
     }
 
     it("fails on missing param") {
-      val request = Request("")
+      val request = Request()
       request.contentString = "{}"
       spec <--? request shouldBe ExtractionFailed(Missing(param))
     }

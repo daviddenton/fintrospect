@@ -5,7 +5,7 @@ import java.util.Base64
 
 import com.google.common.net.HttpHeaders
 import com.twitter.finagle.Filter
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 import io.fintrospect.ContentType.fromAcceptHeaders
 import io.fintrospect.configuration.{Authority, Credentials}
@@ -40,7 +40,7 @@ object RequestFilters {
         .filter(acceptable =>
           !acceptable.exists(contentTypes.contains) && !acceptable.contains(ContentTypes.WILDCARD)
         )
-        .map(_ => NotAcceptable("").toFuture)
+        .map(_ => HttpResponse(Status.NotAcceptable).toFuture)
         .getOrElse(svc(req))
     }
   }
