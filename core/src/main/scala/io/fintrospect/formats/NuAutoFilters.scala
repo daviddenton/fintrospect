@@ -5,14 +5,14 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.parameters.{Body, Mandatory}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 
-class NuAutoFilters[T](responseBuilder: AbstractResponseBuilder[T]) {
+class NuAutoFilters[J](responseBuilder: AbstractResponseBuilder[J]) {
 
   type SvcBody[IN] = Body[IN] with Mandatory[Request, IN]
   type AsOut[IN, OUT] = (IN => OUT)
 
   import responseBuilder._
 
-  private def toResponse[OUT](status: Status, toOut: AsOut[OUT, T]): (OUT) => Response =
+  private def toResponse[OUT](status: Status, toOut: AsOut[OUT, J]): (OUT) => Response =
     (t: OUT) => HttpResponse(status).withContent(toOut(t)).build()
 
   /**
@@ -33,11 +33,11 @@ class NuAutoFilters[T](responseBuilder: AbstractResponseBuilder[T]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable).
     */
   def AutoOut[OUT](successStatus: Status = Status.Ok)
-                  (implicit toOut: AsOut[OUT, T]): Filter[Request, Response, Request, OUT]
+                  (implicit toOut: AsOut[OUT, J]): Filter[Request, Response, Request, OUT]
   = Filter.mk[Request, Response, Request, OUT] { (req, svc) => svc(req).map(toResponse(successStatus, toOut)) }
 
   def AutoInOut[IN, OUT](body: SvcBody[IN], successStatus: Status = Status.Ok)
-                        (implicit toOut: AsOut[OUT, T]): Filter[Request, Response, IN, OUT]
+                        (implicit toOut: AsOut[OUT, J]): Filter[Request, Response, IN, OUT]
   = AutoIn(body).andThen(Filter.mk[IN, Response, IN, OUT] { (req, svc) => svc(req).map(toResponse(successStatus, toOut)) })
 
 
@@ -46,7 +46,7 @@ class NuAutoFilters[T](responseBuilder: AbstractResponseBuilder[T]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def AutoInOptionalOut[IN, OUT](body: SvcBody[IN], successStatus: Status = Status.Ok)
-                                (implicit toOut: AsOut[OUT, T]): Filter[Request, Response, IN, Option[OUT]]
+                                (implicit toOut: AsOut[OUT, J]): Filter[Request, Response, IN, Option[OUT]]
   = AutoIn(body).andThen(AutoOptionalOut(successStatus)(toOut))
 
   /**
@@ -54,7 +54,7 @@ class NuAutoFilters[T](responseBuilder: AbstractResponseBuilder[T]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def AutoOptionalOut[IN, OUT](successStatus: Status = Status.Ok)
-                              (implicit toOut: AsOut[OUT, T]): Filter[IN, Response, IN, Option[OUT]] =
+                              (implicit toOut: AsOut[OUT, J]): Filter[IN, Response, IN, Option[OUT]] =
     Filter.mk[IN, Response, IN, Option[OUT]] {
       (req, svc) =>
         svc(req)

@@ -24,7 +24,7 @@ object helpers {
 }
 
 
-class PlayFilterTest extends AutoFiltersSpec(Play.Filters) {
+class PlayFiltersTest extends AutoFiltersSpec(Play.Filters) {
 
   override def toString(l: Letter): String = compact(Play.JsonFormat.encode(l)(helpers.Writes))
 
