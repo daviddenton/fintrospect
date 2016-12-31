@@ -1,6 +1,7 @@
 package io.fintrospect.formats
 
 import com.twitter.finagle.http.{Request, Status}
+import com.twitter.io.{Buf, Bufs}
 import io.fintrospect.parameters.{Body, BodySpec, Query}
 import org.json4s.MappingException
 
@@ -10,13 +11,11 @@ abstract class Json4sFiltersSpec[D](json4sLibrary: Json4sLibrary[D]) extends Aut
 
   import json4sLibrary.JsonFormat._
 
-  override def toString(l: Letter): String = compact(encode(l))
+  override def toBuf(l: Letter) = Bufs.utf8Buf(compact(encode(l)))
 
-  override def fromString(s: String): Letter = decode[Letter](parse(s))
+  override def fromBuf(s: Buf): Letter = decode[Letter](parse(Bufs.asUtf8String(s)))
 
   override def bodySpec: BodySpec[Letter] = json4sLibrary.bodySpec[Letter]()
-
-  private def mf[T](implicit mf: Manifest[T]) = mf
 
   override def toOut() = json4sLibrary.Filters.tToToOut[Letter]
 }

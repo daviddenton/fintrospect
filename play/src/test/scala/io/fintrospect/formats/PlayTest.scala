@@ -1,6 +1,7 @@
 package io.fintrospect.formats
 
 import com.twitter.finagle.http.Request
+import com.twitter.io.{Buf, Bufs}
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.Play.JsonFormat._
 import io.fintrospect.formats.Play._
@@ -26,9 +27,9 @@ object helpers {
 
 class PlayFiltersTest extends AutoFiltersSpec(Play.Filters) {
 
-  override def toString(l: Letter): String = compact(Play.JsonFormat.encode(l)(helpers.Writes))
+  override def toBuf(l: Letter) = Bufs.utf8Buf(compact(Play.JsonFormat.encode(l)(helpers.Writes)))
 
-  override def fromString(s: String): Letter = decode[Letter](parse(s))(helpers.Reads)
+  override def fromBuf(s: Buf): Letter = decode[Letter](parse(Bufs.asUtf8String(s)))(helpers.Reads)
 
   override def bodySpec: BodySpec[Letter] = Play.bodySpec[Letter]()(helpers.Reads, helpers.Writes)
 

@@ -3,6 +3,7 @@ package io.fintrospect.formats
 import argonaut.Argonaut.{casecodec1, casecodec3}
 import argonaut.CodecJson
 import com.twitter.finagle.http.{Request, Status}
+import com.twitter.io.{Buf, Bufs}
 import io.fintrospect.formats.Argonaut.JsonFormat.{compact, decode, encode, parse, _}
 import io.fintrospect.formats.Argonaut._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
@@ -16,9 +17,9 @@ class ArgonautFiltersTest extends AutoFiltersSpec(Argonaut.Filters) {
 
   implicit def LetterCodec: CodecJson[Letter] = casecodec3(Letter.apply, Letter.unapply)("to", "from", "message")
 
-  override def toString(l: Letter): String = compact(encode(l))
+  override def toBuf(l: Letter): Buf = Bufs.utf8Buf(compact(encode(l)))
 
-  override def fromString(s: String): Letter = decode[Letter](parse(s))
+  override def fromBuf(s: Buf): Letter = decode[Letter](parse(Bufs.asUtf8String(s)))
 
   override def bodySpec: BodySpec[Letter] = Argonaut.bodySpec[Letter]()
 

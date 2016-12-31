@@ -2,6 +2,7 @@ package io.fintrospect.formats
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.io.Buf
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.parameters.{Body, BodySpec}
@@ -19,15 +20,15 @@ abstract class AutoFiltersSpec[J](val f: NuAutoFilters[J]) extends FunSpec with 
 
   private def request = {
     val request = Request()
-    request.contentString = toString(aLetter)
+    request.content = toBuf(aLetter)
     request
   }
 
-  def toString(l: Letter): String
+  def toBuf(l: Letter): Buf
 
   def toOut(): f.AsOut[Letter, J]
 
-  def fromString(s: String): Letter
+  def fromBuf(s: Buf): Letter
 
   def bodySpec: BodySpec[Letter]
 
@@ -36,13 +37,13 @@ abstract class AutoFiltersSpec[J](val f: NuAutoFilters[J]) extends FunSpec with 
     describe("AutoIn") {
       val svc = f.AutoIn(Body(bodySpec)).andThen(Service.mk { in: Letter => {
         val r = Response()
-        r.contentString = toString(in)
+        r.content = toBuf(in)
         Future(r)
       }
       })
 
       it("takes the object from the request") {
-        fromString(result(svc(request)).contentString) shouldBe aLetter
+        fromBuf(result(svc(request)).content) shouldBe aLetter
       }
 
       it("rejects illegal content with a BadRequest") {
@@ -57,7 +58,7 @@ abstract class AutoFiltersSpec[J](val f: NuAutoFilters[J]) extends FunSpec with 
         val svc = f.AutoOut[Letter](Status.Created)(toOut()).andThen(Service.mk { in: Request => Future.value(aLetter) })
         val response = result(svc(Request()))
         response.status shouldBe Status.Created
-        fromString(response.contentString) shouldBe aLetter
+        fromBuf(response.content) shouldBe aLetter
       }
     }
 
@@ -67,7 +68,7 @@ abstract class AutoFiltersSpec[J](val f: NuAutoFilters[J]) extends FunSpec with 
           .andThen(Service.mk { in: Letter => Future.value(in) })
         val response = result(svc(request))
         response.status shouldBe Status.Created
-        fromString(response.contentString) shouldBe aLetter
+        fromBuf(response.content) shouldBe aLetter
       }
     }
 
@@ -77,7 +78,7 @@ abstract class AutoFiltersSpec[J](val f: NuAutoFilters[J]) extends FunSpec with 
         val svc = filter.andThen(Service.mk[Letter, Option[Letter]] { in => Future.value(Option(in)) })
         val response = result(svc(request))
         response.status shouldBe Status.Ok
-        fromString(response.contentString) shouldBe aLetter
+        fromBuf(response.content) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
@@ -93,7 +94,7 @@ abstract class AutoFiltersSpec[J](val f: NuAutoFilters[J]) extends FunSpec with 
 
         val response = result(svc(Request()))
         response.status shouldBe Status.Created
-        fromString(response.contentString) shouldBe aLetter
+        fromBuf(response.content) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
