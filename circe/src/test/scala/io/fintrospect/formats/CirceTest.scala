@@ -1,6 +1,7 @@
 package io.fintrospect.formats
 
 import com.twitter.finagle.http.{Request, Status}
+import com.twitter.io.{Buf, Bufs}
 import io.circe.generic.auto._
 import io.fintrospect.formats.Circe.JsonFormat._
 import io.fintrospect.formats.Circe._
@@ -13,8 +14,8 @@ class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
 class CirceFiltersTest extends AutoFiltersSpec(Circe.Filters) {
 
-  override def toString(l: Letter): String = encode(l).noSpaces
-  override def fromString(s: String): Letter = decode[Letter](parse(s))
+  override def toBuf(l: Letter) = Bufs.utf8Buf(encode(l).noSpaces)
+  override def fromBuf(s: Buf): Letter = decode[Letter](parse(Bufs.asUtf8String(s)))
   override def bodySpec: BodySpec[Letter] = Circe.bodySpec[Letter]()
   override def toOut() = Circe.Filters.tToToOut[Letter]
 }

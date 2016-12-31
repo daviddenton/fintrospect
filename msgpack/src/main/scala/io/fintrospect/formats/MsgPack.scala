@@ -14,6 +14,14 @@ import io.fintrospect.parameters.{Body, BodySpec}
 object MsgPack {
 
   /**
+    * Auto-marshalling filters that can be used to create Services which take and return domain objects
+    * instead of HTTP responses
+    */
+  object Filters2 extends NuAutoFilters[MsgPackMsg](ResponseBuilder) {
+    implicit def tToToOut[T]: AsOut[T, MsgPackMsg] = MsgPackMsg(_)
+  }
+
+  /**
     * Auto-marshalling filters which can be used to create Services which take and return MsgPackMsg objects
     * instead of HTTP responses
     */

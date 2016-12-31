@@ -3,16 +3,24 @@ package io.fintrospect.formats
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.io.Buf.ByteArray.Shared.extract
+import com.twitter.io.{Buf, Bufs}
 import com.twitter.util.Await.result
 import com.twitter.util.Future
 import io.fintrospect.formats.MsgPack.Filters._
 import io.fintrospect.formats.MsgPack.ResponseBuilder._
 import io.fintrospect.formats.MsgPack.bodySpec
-import io.fintrospect.parameters.Body
+import io.fintrospect.parameters.{Body, BodySpec}
 import org.scalatest.{FunSpec, Matchers}
 
 import scala.language.reflectiveCalls
 
+//class MsgPackFilters2Test extends AutoFiltersSpec(MsgPack.Filters2) {
+//
+//  override def toBuf(l: Letter): String = Bufs.asUtf8String(MsgPackMsg(l).toBuf)
+//  override def fromBuf(s: Buf): Letter = MsgPackMsg.f
+//  override def bodySpec: BodySpec[Letter] = Circe.bodySpec[Letter]()
+//  override def toOut() = Circe.Filters.tToToOut[Letter]
+//}
 class MsgPackFiltersTest extends FunSpec with Matchers {
 
   describe("MsgPack.Filters") {
