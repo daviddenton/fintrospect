@@ -12,12 +12,12 @@ import scala.language.reflectiveCalls
 
 class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
-class CirceFiltersTest extends AutoFiltersSpec(Circe.Filters) {
+class CirceAutoTest extends AutoFiltersSpec(Circe.Auto) {
 
   override def toBuf(l: Letter) = Bufs.utf8Buf(encode(l).noSpaces)
   override def fromBuf(s: Buf): Letter = decode[Letter](parse(Bufs.asUtf8String(s)))
   override def bodySpec: BodySpec[Letter] = Circe.bodySpec[Letter]()
-  override def transform() = Circe.Filters.tToToOut[Letter]
+  override def transform() = Circe.Auto.tToToOut[Letter]
 }
 
 class CirceJsonFormatTest extends JsonFormatSpec(Circe) {

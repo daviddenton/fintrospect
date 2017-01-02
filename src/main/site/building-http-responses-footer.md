@@ -41,7 +41,7 @@ case class ReversedEmailAddress(sserdda: String)
 val domainSvc = Service.mk[EmailAddress, ReversedEmailAddress] { 
     email => Future.value(ReversedEmailAddress(email.address.reverse)) 
 }
-val httpSvc: Service[Request, Response] = Circe.Filters.AutoInOut(domainSvc)    
+val httpSvc: Service[Request, Response] = Circe.Auto.InOut(domainSvc)    
 ```
 
 <a class="next" href="http://fintrospect.io/cross-field-validation"><button type="button" class="btn btn-sm btn-default">next: cross field validation</button></a>

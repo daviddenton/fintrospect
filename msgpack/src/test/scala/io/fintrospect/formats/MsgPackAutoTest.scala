@@ -5,7 +5,7 @@ import io.fintrospect.parameters.BodySpec
 
 import scala.language.reflectiveCalls
 
-class MsgPackFiltersTest extends AutoFiltersSpec(MsgPack.Filters) {
+class MsgPackAutoTest extends AutoFiltersSpec(MsgPack.Auto) {
 
   override def toBuf(l: Letter) = MsgPackMsg(l).toBuf
 
@@ -13,5 +13,5 @@ class MsgPackFiltersTest extends AutoFiltersSpec(MsgPack.Filters) {
 
   override def bodySpec: BodySpec[Letter] = MsgPack.bodySpec[Letter]()
 
-  override def transform() = MsgPack.Filters.tToToOut[Letter]
+  override def transform() = MsgPack.Auto.tToToOut[Letter]
 }

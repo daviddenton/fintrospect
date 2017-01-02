@@ -7,7 +7,7 @@ import com.twitter.finagle.http.Status.Ok
 import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.Circe.Filters._
+import io.fintrospect.formats.Circe.Auto._
 import io.fintrospect.formats.Circe.responseSpec
 
 /**
@@ -19,7 +19,7 @@ class UserList(emails: Emails) {
 
   val route = RouteSpec("list the known users on this server")
     .returning(responseSpec(Ok -> "all users who have sent or received a mail", EmailAddress("you@github.com")))
-    .at(Get) / "user" bindTo AutoOut[Set[EmailAddress]]().andThen(list)
+    .at(Get) / "user" bindTo Out(list)
 }
 
 

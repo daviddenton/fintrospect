@@ -8,7 +8,7 @@ import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.Circe
-import io.fintrospect.formats.Circe.Filters._
+import io.fintrospect.formats.Circe.Auto._
 import io.fintrospect.formats.Circe.responseSpec
 import io.fintrospect.parameters.{Body, Path}
 
@@ -21,15 +21,13 @@ class AddMessage(emails: Emails) {
   private val email = Body(Circe.bodySpec[Email](Option("email")), exampleEmail)
 
   private def addEmail(address: EmailAddress): Service[Request, Response] =
-    AutoInOut[Email, Seq[Email]](email).andThen(
-      Service.mk {
-        newEmail: Email => {
-          // validate that the receiver is as passed as the one in the URL
-          if (address == newEmail.to) emails.add(newEmail)
-          Future(emails.forUser(newEmail.to))
-        }
+    InOut(email, Service.mk {
+      newEmail: Email => {
+        // validate that the receiver is as passed as the one in the URL
+        if (address == newEmail.to) emails.add(newEmail)
+        Future(emails.forUser(newEmail.to))
       }
-    )
+    })
 
   val route = RouteSpec("add an email and return the new inbox contents for the receiver")
     .body(email)

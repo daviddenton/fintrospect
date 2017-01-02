@@ -7,6 +7,7 @@ import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.parameters.{Body, BodySpec}
 import org.scalatest.{FunSpec, Matchers}
+
 case class StreetAddress(address: String)
 
 case class Letter(to: StreetAddress, from: StreetAddress, message: String)
@@ -14,7 +15,7 @@ case class Letter(to: StreetAddress, from: StreetAddress, message: String)
 case class LetterOpt(to: StreetAddress, from: StreetAddress, message: Option[String])
 
 
-abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Matchers {
+abstract class AutoFiltersSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
   val aLetter = Letter(StreetAddress("my house"), StreetAddress("your house"), "hi there")
 
   private def request = {
@@ -34,7 +35,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
   describe("Auto filters") {
 
     describe("AutoIn") {
-      val svc = f.AutoIn(Body(bodySpec)).andThen(Service.mk { in: Letter => {
+      val svc = f.In(Body(bodySpec), Service.mk { in: Letter => {
         val r = Response()
         r.content = toBuf(in)
         Future(r)
@@ -54,7 +55,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
 
     describe("AutoOut") {
       it("takes the object from the request") {
-        val svc = f.AutoOut(Status.Created)(transform()).andThen(Service.mk { in: Request => Future(aLetter) })
+        val svc = f.Out(Service.mk { in: Request => Future(aLetter) }, Status.Created)(transform())
         val response = result(svc(Request()))
         response.status shouldBe Status.Created
         fromBuf(response.content) shouldBe aLetter
@@ -63,8 +64,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
 
     describe("AutoInOut") {
       it("returns Ok") {
-        val svc = f.AutoInOut(Body(bodySpec), Status.Created)(transform())
-          .andThen(Service.mk { in: Letter => Future(in) })
+        val svc = f.InOut(Body(bodySpec), Service.mk { in: Letter => Future(in) }, Status.Created)(transform())
         val response = result(svc(request))
         response.status shouldBe Status.Created
         fromBuf(response.content) shouldBe aLetter
@@ -72,23 +72,22 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
     }
 
     describe("AutoInOptionalOut") {
-      val filter = f.AutoInOptionalOut(Body(bodySpec))(transform())
       it("returns Ok when present") {
-        val svc = filter.andThen(Service.mk[Letter, Option[Letter]] { in => Future(Option(in)) })
+        val svc = f.InOptionalOut(Body(bodySpec), Service.mk[Letter, Option[Letter]] { in => Future(Option(in)) })(transform())
         val response = result(svc(request))
         response.status shouldBe Status.Ok
         fromBuf(response.content) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
-        val svc = filter.andThen(Service.mk[Letter, Option[Letter]] { in => Future(None) })
+        val svc = f.InOptionalOut(Body(bodySpec), Service.mk[Letter, Option[Letter]] { in => Future(None) })(transform())
         result(svc(request)).status shouldBe Status.NotFound
       }
     }
 
     describe("AutoOptionalOut") {
       it("returns Ok when present") {
-        val svc = f.AutoOptionalOut(Status.Created)(transform()).andThen(Service.mk[Request, Option[Letter]] { in => Future(Option(aLetter)) })
+        val svc = f.OptionalOut(Service.mk[Request, Option[Letter]] { in => Future(Option(aLetter)) }, Status.Created)(transform())
 
         val response = result(svc(Request()))
         response.status shouldBe Status.Created
@@ -96,7 +95,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
       }
 
       it("returns NotFound when missing present") {
-        val svc = f.AutoOptionalOut(Status.Created)(transform()).andThen(Service.mk[Request, Option[Letter]] { _ => Future(None) })
+        val svc = f.OptionalOut(Service.mk[Request, Option[Letter]] { _ => Future(None) }, Status.Created)(transform())
         result(svc(request)).status shouldBe Status.NotFound
       }
     }

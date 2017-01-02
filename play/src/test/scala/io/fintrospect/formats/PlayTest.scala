@@ -25,7 +25,7 @@ object helpers {
 }
 
 
-class PlayFiltersTest extends AutoFiltersSpec(Play.Filters) {
+class PlayAutoTest extends AutoFiltersSpec(Play.Auto) {
 
   override def toBuf(l: Letter) = Bufs.utf8Buf(compact(Play.JsonFormat.encode(l)(helpers.Writes)))
 
@@ -33,7 +33,7 @@ class PlayFiltersTest extends AutoFiltersSpec(Play.Filters) {
 
   override def bodySpec: BodySpec[Letter] = Play.bodySpec[Letter]()(helpers.Reads, helpers.Writes)
 
-  override def transform() = Play.Filters.tToToOut[Letter](helpers.Writes)
+  override def transform() = Play.Auto.tToToOut[Letter](helpers.Writes)
 }
 
 class PlayJsonResponseBuilderTest extends JsonResponseBuilderSpec(Play)
