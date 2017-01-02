@@ -60,7 +60,7 @@ abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
   import JsonFormat._
 
   object Auto extends Auto(ResponseBuilder) {
-    implicit def tToToOut[T] = (t: T) => JsonFormat.encode[T](t)
+    implicit def tToJValue[T]: (T) => JValue = (t: T) => JsonFormat.encode[T](t)
   }
 
   /**

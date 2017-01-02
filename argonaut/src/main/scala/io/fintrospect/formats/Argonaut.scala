@@ -20,7 +20,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
     * instead of HTTP responses
     */
   object Auto extends Auto[Json](ResponseBuilder) {
-    implicit def tToToOut[T](implicit e: EncodeJson[T]): Transform[T, Json] = (t: T) => e(t)
+    implicit def tToJson[T](implicit e: EncodeJson[T]): Transform[T, Json] = (t: T) => e(t)
   }
 
 

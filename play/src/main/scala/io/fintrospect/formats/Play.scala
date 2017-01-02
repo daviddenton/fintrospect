@@ -20,7 +20,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     * instead of HTTP responses
     */
   object Auto extends Auto[JsValue](ResponseBuilder) {
-    implicit def tToToOut[T](implicit db: Writes[T]): Transform[T, JsValue] = (t: T) => JsonFormat.encode[T](t)
+    implicit def tToJsValue[T](implicit db: Writes[T]): Transform[T, JsValue] = (t: T) => JsonFormat.encode[T](t)
   }
 
   object JsonFormat extends JsonFormat[JsValue, JsValue] {
