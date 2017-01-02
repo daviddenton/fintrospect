@@ -90,8 +90,7 @@ abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
   * Native Json4S support (application/json content type) - uses BigDecimal for decimal
   */
 object Json4s extends Json4sLibrary[Document] {
-  val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, true)
-
+  object JsonFormat extends Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, true)
 }
 
 /**
@@ -99,7 +98,7 @@ object Json4s extends Json4sLibrary[Document] {
   */
 object Json4sDoubleMode extends Json4sLibrary[Document] {
 
-  val JsonFormat = new Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, false)
+  object JsonFormat extends Json4sFormat(org.json4s.native.JsonMethods, org.json4s.native.Serialization, false)
 }
 
 /**
@@ -107,7 +106,7 @@ object Json4sDoubleMode extends Json4sLibrary[Document] {
   */
 object Json4sJackson extends Json4sLibrary[JValue] {
 
-  val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, true)
+  object JsonFormat extends Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, true)
 }
 
 /**
@@ -115,5 +114,5 @@ object Json4sJackson extends Json4sLibrary[JValue] {
   */
 object Json4sJacksonDoubleMode extends Json4sLibrary[JValue] {
 
-  val JsonFormat = new Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, false)
+  object JsonFormat extends Json4sFormat(org.json4s.jackson.JsonMethods, org.json4s.jackson.Serialization, false)
 }
