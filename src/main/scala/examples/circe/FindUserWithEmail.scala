@@ -18,7 +18,7 @@ class FindUserWithEmail(emails: Emails) {
 
   private def findByEmail(email: EmailAddress) = {
     val lookupUserByEmail: Service[Request, Option[EmailAddress]] =
-      Service.mk { _: Request => Future.value(emails.users().find(_.address == email.address)) }
+      Service.mk { _: Request => Future(emails.users().find(_.address == email.address)) }
 
     AutoOptionalOut[Request, EmailAddress]().andThen(lookupUserByEmail)
   }

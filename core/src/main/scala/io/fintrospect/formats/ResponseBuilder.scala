@@ -93,7 +93,7 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
     response
   }
 
-  def toFuture: Future[Response] = Future.value(build())
+  def toFuture: Future[Response] = Future(build())
 }
 
 /**
@@ -109,6 +109,6 @@ object ResponseBuilder {
 
   implicit def responseBuilderToFuture(builder: ResponseBuilder[_]): Future[Response] = builder.toFuture
 
-  implicit def responseToFuture(response: Response): Future[Response] = Future.value(response)
+  implicit def responseToFuture(response: Response): Future[Response] = Future(response)
 }
 

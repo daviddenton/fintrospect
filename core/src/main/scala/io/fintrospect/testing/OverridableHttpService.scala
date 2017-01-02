@@ -24,7 +24,7 @@ class OverridableHttpService[T](rawSvc: Service[Request, Response]) {
 
   private val possibleError = new SimpleFilter[Request, Response] {
     override def apply(request: Request, service: Service[Request, Response]) = overrideStatus
-      .map(s => Future.value(Response(s)))
+      .map(s => Future(Response(s)))
       .getOrElse(service(request))
   }
 

@@ -18,7 +18,7 @@ class SecurityTest extends FunSpec with Matchers {
 
     it("valid API key is granted access and result carried through") {
       val (status, content) =
-        result(ApiKey(param, (i: Int) => Future.value(true)).filter(Request(paramName -> "1"), next)
+        result(ApiKey(param, (i: Int) => Future(true)).filter(Request(paramName -> "1"), next)
           .map(statusAndContentFrom))
 
       status should be(Status.Ok)
@@ -27,7 +27,7 @@ class SecurityTest extends FunSpec with Matchers {
 
     it("missing API key is unauthorized") {
       val (status, content) =
-        result(ApiKey(param, (i: Int) => Future.value(true)).filter(Request(), next)
+        result(ApiKey(param, (i: Int) => Future(true)).filter(Request(), next)
           .map(statusAndContentFrom))
 
       status should be(Status.Unauthorized)
@@ -36,7 +36,7 @@ class SecurityTest extends FunSpec with Matchers {
 
     it("bad API key is unauthorized") {
       val (status, content) =
-        result(ApiKey(param, (i: Int) => Future.value(true)).filter(Request(paramName -> "notAnInt"), next)
+        result(ApiKey(param, (i: Int) => Future(true)).filter(Request(paramName -> "notAnInt"), next)
           .map(statusAndContentFrom))
 
       status should be(Status.Unauthorized)
@@ -45,7 +45,7 @@ class SecurityTest extends FunSpec with Matchers {
 
     it("unknown API key is unauthorized") {
       val (status, content) =
-        result(ApiKey(param, (i: Int) => Future.value(false)).filter(Request(paramName -> "1"), next)
+        result(ApiKey(param, (i: Int) => Future(false)).filter(Request(paramName -> "1"), next)
           .map(statusAndContentFrom))
 
       status should be(Status.Unauthorized)

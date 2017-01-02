@@ -12,7 +12,7 @@ import org.scalatest.{BeforeAndAfterEach, FunSpec, Matchers}
 class TestHttpServerTest extends FunSpec with Matchers with BeforeAndAfterEach {
   val originalStatus = Conflict
 
-  private val server = new TestHttpServer(9888, RouteSpec().at(Get) bindTo Service.mk { r: Request => Future.value(Response(originalStatus)) })
+  private val server = new TestHttpServer(9888, RouteSpec().at(Get) bindTo Service.mk { r: Request => Future(Response(originalStatus)) })
 
   override def beforeEach() = {
     Await.result(server.start())

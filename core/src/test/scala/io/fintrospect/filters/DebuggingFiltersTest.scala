@@ -10,7 +10,7 @@ class DebuggingFiltersTest extends FunSpec with Matchers {
   describe("Debugging") {
     it("PrintRequestAndResponse") {
       Await.result(DebuggingFilters.PrintRequestAndResponse.andThen(Service.mk {
-        (_: Request) => Future.value(Response())
+        (_: Request) => Future(Response())
       })(Request("/?bob=bill")))
     }
   }

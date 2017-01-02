@@ -26,7 +26,7 @@ class AddMessage(emails: Emails) {
         newEmail: Email => {
           // validate that the receiver is as passed as the one in the URL
           if (address == newEmail.to) emails.add(newEmail)
-          Future.value(emails.forUser(newEmail.to))
+          Future(emails.forUser(newEmail.to))
         }
       }
     )
