@@ -7,7 +7,7 @@ import org.json4s.MappingException
 
 import scala.language.reflectiveCalls
 
-abstract class Json4sFiltersSpec[D](json4sLibrary: Json4sLibrary[D]) extends AutoFiltersSpec(json4sLibrary.Filters) {
+abstract class Json4sFiltersSpec[D](json4sLibrary: Json4sLibrary[D]) extends AutoFiltersSpec(json4sLibrary.Auto) {
 
   import json4sLibrary.JsonFormat._
 
@@ -17,16 +17,16 @@ abstract class Json4sFiltersSpec[D](json4sLibrary: Json4sLibrary[D]) extends Aut
 
   override def bodySpec: BodySpec[Letter] = json4sLibrary.bodySpec[Letter]()
 
-  override def transform() = json4sLibrary.Filters.tToToOut[Letter]
+  override def transform() = json4sLibrary.Auto.tToToOut[Letter]
 }
 
-class Json4sNativeFiltersTest extends Json4sFiltersSpec(Json4s)
+class Json4SNativeAutoTest extends Json4sFiltersSpec(Json4s)
 
-class Json4sJacksonFiltersTest extends Json4sFiltersSpec(Json4sJackson)
+class Json4SJacksonAutoTest extends Json4sFiltersSpec(Json4sJackson)
 
-class Json4sNativeDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sDoubleMode)
+class Json4SNativeDoubleModeAutoTest extends Json4sFiltersSpec(Json4sDoubleMode)
 
-class Json4sJacksonDoubleModeFiltersTest extends Json4sFiltersSpec(Json4sJacksonDoubleMode)
+class Json4SJacksonDoubleModeAutoTest extends Json4sFiltersSpec(Json4sJacksonDoubleMode)
 
 abstract class RoundtripEncodeDecodeSpec[T](jsonLibrary: Json4sLibrary[T]) extends JsonFormatSpec(jsonLibrary) {
 

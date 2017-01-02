@@ -18,7 +18,7 @@ object Xml {
     * Auto-marshalling filters which can be used to create Services which take and return Elem objects
     * instead of HTTP responses
     */
-  object Filters {
+  object Auto {
 
     import ResponseBuilder._
 
@@ -28,27 +28,27 @@ object Xml {
     private val body = Body.xml(None)
     private def toResponse(successStatus: Status = Status.Ok) = (out: Elem) => HttpResponse(successStatus).withContent(out)
 
-    def AutoIn(): Filter[Request, Response, Elem, Response] = Filter.mk[Request, Response, Elem, Response] {
+    def In(svc: Service[Elem, Response]): Service[Request, Response] = Filter.mk[Request, Response, Elem, Response] {
       (req, svc) =>
         body <--? req match {
           case Extracted(in) => svc(in.get)
           case ExtractionFailed(_) => HttpResponse(Status.BadRequest)
         }
-    }
+    }.andThen(svc)
 
-    def AutoInOut(successStatus: Status = Status.Ok): Filter[Request, Response, Elem, Elem] =
-      AutoIn().andThen(AutoOut[Elem](successStatus))
+    def InOut(svc: Service[Elem, Elem], successStatus: Status = Status.Ok): Service[Request, Response] =
+      In(AutoOut[Elem](svc, successStatus))
 
-    def AutoInOptionalOut(successStatus: Status = Status.Ok): Filter[Request, Response, Elem, Option[Elem]]
-    = AutoIn().andThen(AutoOptionalOut[Elem](successStatus))
+    def InOptionalOut(svc: Service[Elem, Option[Elem]], successStatus: Status = Status.Ok): Service[Request, Response]
+    = In(OptionalOut(svc, successStatus))
 
-    def AutoOut[IN](successStatus: Status = Status.Ok): Filter[IN, Response, IN, Elem]
-    = Filter.mk[IN, Response, IN, Elem] { (req, svc) => svc(req).map(t => toResponse(successStatus)(t).build()) }
+    def AutoOut[IN](svc: Service[IN, Elem], successStatus: Status = Status.Ok): Service[IN, Response]
+    = Filter.mk[IN, Response, IN, Elem] { (req, svc) => svc(req).map(t => toResponse(successStatus)(t).build()) }.andThen(svc)
 
-    def AutoOptionalOut[IN](successStatus: Status = Status.Ok): Filter[IN, Response, IN, Option[Elem]]
+    def OptionalOut[IN](svc: Service[IN, Option[Elem]], successStatus: Status = Status.Ok): Service[IN, Response]
     = Filter.mk[IN, Response, IN, Option[Elem]] {
       (req, svc) => svc(req).map(_.map(toResponse(successStatus)).getOrElse(HttpResponse(Status.NotFound)).build())
-    }
+    }.andThen(svc)
   }
 
   object ResponseBuilder extends AbstractResponseBuilder[Elem] {

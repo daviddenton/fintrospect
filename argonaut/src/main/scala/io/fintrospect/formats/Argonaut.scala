@@ -19,7 +19,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
     * Auto-marshalling filters that can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends AutoFilters[Json](ResponseBuilder) {
+  object Auto extends Auto[Json](ResponseBuilder) {
     implicit def tToToOut[T](implicit e: EncodeJson[T]): Transform[T, Json] = (t: T) => e(t)
   }
 

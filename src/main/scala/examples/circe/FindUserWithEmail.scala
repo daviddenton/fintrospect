@@ -7,7 +7,7 @@ import com.twitter.finagle.http.Status.{NotFound, Ok}
 import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.Circe.Filters._
+import io.fintrospect.formats.Circe.Auto._
 import io.fintrospect.parameters.Path
 
 /**
@@ -20,7 +20,7 @@ class FindUserWithEmail(emails: Emails) {
     val lookupUserByEmail: Service[Request, Option[EmailAddress]] =
       Service.mk { _: Request => Future(emails.users().find(_.address == email.address)) }
 
-    AutoOptionalOut[Request, EmailAddress]().andThen(lookupUserByEmail)
+    OptionalOut(lookupUserByEmail)
   }
 
   val route = RouteSpec("Get the user for the particular email address")

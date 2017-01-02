@@ -15,7 +15,7 @@ object MsgPack {
     * Auto-marshalling filters that can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
-  object Filters extends AutoFilters[MsgPackMsg](ResponseBuilder) {
+  object Auto extends Auto[MsgPackMsg](ResponseBuilder) {
     implicit def tToToOut[T]: Transform[T, MsgPackMsg] = MsgPackMsg(_)
   }
 
