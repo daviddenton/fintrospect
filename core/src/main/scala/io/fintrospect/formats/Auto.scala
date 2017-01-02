@@ -13,7 +13,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
   import responseBuilder._
 
   /**
-    * Filter to provide auto-marshalling of input case class instances for scenarios where an object is the service input.
+    * Service wrapper to provide auto-marshalling of input case class instances for scenarios where an object is the service input.
     * HTTP OK is returned by default in the auto-marshalled response (overridable).
     */
   def In[IN](body: SvcBody[IN], svc: Service[IN, Response]): Service[Request, Response] =
@@ -26,7 +26,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     }.andThen(svc)
 
   /**
-    * Filter to provide auto-marshalling of output case class instances for scenarios where an object is service output.
+    * Service wrapper to provide auto-marshalling of output case class instances for scenarios where an object is service output.
     * HTTP OK is returned by default in the auto-marshalled response (overridable).
     */
   def Out[OUT](svc: Service[Request, OUT], successStatus: Status = Status.Ok)
@@ -38,7 +38,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
   }.andThen(svc)
 
   /**
-    * Filter to provide auto-marshalling of case class instances for input and output to the service
+    * Service wrapper to provide auto-marshalling of case class instances for input and output to the service
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def InOut[IN, OUT](body: SvcBody[IN], svc: Service[IN, OUT], successStatus: Status = Status.Ok)
@@ -51,7 +51,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
 
 
   /**
-    * Filter to provide auto-marshalling of case class instances for scenarios where an object may not be returned from the service
+    * Service wrapper to provide auto-marshalling of case class instances for scenarios where an object may not be returned from the service
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def InOptionalOut[IN, OUT](body: SvcBody[IN], svc: Service[IN, Option[OUT]], successStatus: Status = Status.Ok)
@@ -59,7 +59,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
   = In(body, OptionalOut(svc, successStatus)(transform))
 
   /**
-    * Filter to provide auto-marshalling of output case class instances for scenarios where an object may not be returned from the service
+    * Service wrapper to provide auto-marshalling of output case class instances for scenarios where an object may not be returned from the service
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def OptionalOut[IN, OUT](svc: Service[IN, Option[OUT]], successStatus: Status = Status.Ok)
