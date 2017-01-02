@@ -45,7 +45,7 @@ class StrictContentTypeNegotiationTest extends FunSpec with Matchers {
   }
 
   private def serviceForType(contentType: ContentType): (ContentType, Service[Request, Response]) =
-    contentType -> Service.mk[Request, Response] { r => Future.value(ResponseBuilder.HttpResponse(contentType).build()) }
+    contentType -> Service.mk[Request, Response] { r => Future(ResponseBuilder.HttpResponse(contentType).build()) }
 
 
   private def requestWithAcceptHeaders(headers: String*): Request = {

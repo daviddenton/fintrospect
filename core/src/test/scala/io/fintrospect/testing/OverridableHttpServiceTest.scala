@@ -10,7 +10,7 @@ class OverridableHttpServiceTest extends FunSpec with Matchers {
 
   val originalStatus = Conflict
 
-  val overridableHttpService = new OverridableHttpService[Request](Service.mk { r: Request => Future.value(Response(originalStatus)) })
+  val overridableHttpService = new OverridableHttpService[Request](Service.mk { r: Request => Future(Response(originalStatus)) })
   it("will serve routes that are passed to it") {
     statusShouldBe(originalStatus)
   }

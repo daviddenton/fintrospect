@@ -56,7 +56,7 @@ class RouteModule[RQ, RS] private(basePath: Path,
   private def validationFilter(route: ServerRoute[RQ, RS]) = Filter.mk[Request, Response, Request, Response] {
     (request, svc) =>
       route.routeSpec <--? request match {
-        case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
+        case ExtractionFailed(invalid) => Future(moduleRenderer.badRequest(invalid))
         case _ => svc(request)
       }
   }
@@ -94,11 +94,11 @@ class RouteModule[RQ, RS] private(basePath: Path,
 
   private def withDefault(otherRoutes: ServiceBinding): ServiceBinding = {
     val descriptionRoute = new UnboundRoute0(RouteSpec("Description route"), Get, descriptionRoutePath) bindTo {
-      Service.mk { _: Request => Future.value(moduleRenderer.description(basePath, security, routes)) }
+      Service.mk { _: Request => Future(moduleRenderer.description(basePath, security, routes)) }
     }
 
     val fallback: ServiceBinding = {
-      case _ => Service.mk { request: Request => Future.value(moduleRenderer.notFound(request)) }
+      case _ => Service.mk { request: Request => Future(moduleRenderer.notFound(request)) }
     }
 
     val totalPf = otherRoutes.orElse(descriptionRoute.toPf(identify(descriptionRoute), basePath)).orElse(fallback)

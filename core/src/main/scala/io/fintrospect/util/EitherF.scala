@@ -23,7 +23,7 @@ class EitherF[L, R] private(f: Future[Either[L, R]]) {
     */
   def mapF[Ra](next: R => Future[Ra]): EitherF[L, Ra] = new EitherF(f.flatMap {
     case Right(value) => next(value).map(Right(_))
-    case Left(e) => Future.value(Left(e))
+    case Left(e) => Future(Left(e))
   })
 
   /**
@@ -39,7 +39,7 @@ class EitherF[L, R] private(f: Future[Either[L, R]]) {
     */
   def flatMapF[Ra](next: R => Future[Either[L, Ra]]): EitherF[L, Ra] = new EitherF[L, Ra](f.flatMap {
     case Right(v) => next(v)
-    case Left(e) => Future.value(Left(e))
+    case Left(e) => Future(Left(e))
   })
 
   /**
@@ -50,10 +50,10 @@ class EitherF[L, R] private(f: Future[Either[L, R]]) {
 }
 
 object EitherF {
-  def eitherF[L, R](a: R): EitherF[L, R] = new EitherF[L, R](Future.value(Right(a)))
+  def eitherF[L, R](a: R): EitherF[L, R] = new EitherF[L, R](Future(Right(a)))
 
   def eitherF[L, R](a: Future[R]): EitherF[L, R] = new EitherF[L, R](a.map(Right(_)))
 
-  def eitherF[L, R](next: => Either[L, R]): EitherF[L, R] = new EitherF[L, R](Future.value(next))
+  def eitherF[L, R](next: => Either[L, R]): EitherF[L, R] = new EitherF[L, R](Future(next))
 }
 

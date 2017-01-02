@@ -4,7 +4,6 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.io.Buf
 import io.fintrospect.ContentTypes
-import io.fintrospect.formats.Xml.ResponseBuilder.HttpResponse
 import io.fintrospect.parameters.{Body, Mandatory}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 
@@ -26,8 +25,10 @@ object Xml {
     type ToResponse[L] = (L) => ResponseBuilder[_]
     type ToBody[BODY] = () => Body[BODY]
 
-    def AutoIn[IN](body: Body[IN] with Mandatory[Request, IN]): Filter[Request, Response, IN, Response]
-    = Filter.mk[Request, Response, IN, Response] {
+    private val body = Body.xml(None)
+    private def toResponse(successStatus: Status = Status.Ok) = (out: Elem) => HttpResponse(successStatus).withContent(out)
+
+    def AutoIn(): Filter[Request, Response, Elem, Response] = Filter.mk[Request, Response, Elem, Response] {
       (req, svc) =>
         body <--? req match {
           case Extracted(in) => svc(in.get)
@@ -35,15 +36,14 @@ object Xml {
         }
     }
 
-    def AutoInOut(svc: Service[Elem, Elem], successStatus: Status = Status.Ok): Service[Request, Response] =
-      AutoIn(Body.xml(None)).andThen(AutoOut[Elem](successStatus)).andThen(svc)
+    def AutoInOut(successStatus: Status = Status.Ok): Filter[Request, Response, Elem, Elem] =
+      AutoIn().andThen(AutoOut[Elem](successStatus))
 
-    private def toResponse(successStatus: Status = Status.Ok) = (out: Elem) => HttpResponse(successStatus).withContent(out)
+    def AutoInOptionalOut(successStatus: Status = Status.Ok): Filter[Request, Response, Elem, Option[Elem]]
+    = AutoIn().andThen(AutoOptionalOut[Elem](successStatus))
 
-    def AutoInOptionalOut(svc: Service[Elem, Option[Elem]], successStatus: Status = Status.Ok)
-    : Service[Request, Response] = AutoIn[Elem](Body.xml(None)).andThen(AutoOptionalOut[Elem](successStatus)).andThen(svc)
-
-    def AutoOut[IN](successStatus: Status = Status.Ok): Filter[IN, Response, IN, Elem] = Filter.mk[IN, Response, IN, Elem] { (req, svc) => svc(req).map(t => toResponse(successStatus)(t).build()) }
+    def AutoOut[IN](successStatus: Status = Status.Ok): Filter[IN, Response, IN, Elem]
+    = Filter.mk[IN, Response, IN, Elem] { (req, svc) => svc(req).map(t => toResponse(successStatus)(t).build()) }
 
     def AutoOptionalOut[IN](successStatus: Status = Status.Ok): Filter[IN, Response, IN, Option[Elem]]
     = Filter.mk[IN, Response, IN, Option[Elem]] {

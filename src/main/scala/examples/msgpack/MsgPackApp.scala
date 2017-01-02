@@ -38,7 +38,7 @@ object MsgPackApp extends App {
     .consuming(APPLICATION_X_MSGPACK)
     .producing(APPLICATION_X_MSGPACK)
     .at(Post) / "reply" bindTo Filters.AutoInOut[StreetAddress, Letter](Body(bodySpec[StreetAddress]())).andThen(Service.mk { in: StreetAddress =>
-    Future.value(Letter(StreetAddress("2 Bob St"), in, "hi fools!"))
+    Future(Letter(StreetAddress("2 Bob St"), in, "hi fools!"))
   })
 
   val module = RouteModule(Root, SimpleJson()).withRoute(viewLetterRoute).withRoute(replyToLetter)
