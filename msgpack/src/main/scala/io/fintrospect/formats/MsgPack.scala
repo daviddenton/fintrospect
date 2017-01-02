@@ -16,7 +16,7 @@ object MsgPack {
     * instead of HTTP responses
     */
   object Auto extends Auto[MsgPackMsg](ResponseBuilder) {
-    implicit def tToToOut[T]: Transform[T, MsgPackMsg] = MsgPackMsg(_)
+    implicit def tToMsgPackMsg[T]: Transform[T, MsgPackMsg] = MsgPackMsg(_)
   }
 
   /**

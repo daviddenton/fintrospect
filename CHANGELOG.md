@@ -14,6 +14,7 @@ been replaced with explicit methods on `ResponseBuilder` objects for each status
 To fix: 
 1. Replace `Status.Ok("content").withHeader(etc)` type calls with `ResponseBuilder.Ok("content").withHeader(etc)` 
 2. Replace `<format>.ResponseBuilder.implicits._` import with `<format>.ResponseBuilder._`. This import also brings in the various conversions for the `ResponseBuilderMagnet`.
+- (Small) Breaking: rework of Auto conversion for format objects. `<format>.Filters.AutoXXX` has become `<format>.Auto.XXX`.
 
 ## 13.18.0
 - (Small) Breaking: Tidying up of `Body` API for clarity. Bodies should only be instantiated using a method from `Body`, be it `Body.<format>()` or  `Body(<format>.bodySpec())` for custom types.

@@ -11,7 +11,7 @@ import io.fintrospect.parameters.{Body, BodySpec, Query}
 
 import scala.language.reflectiveCalls
 
-class ArgonautAutoTest extends AutoFiltersSpec(Argonaut.Auto) {
+class ArgonautAutoTest extends AutoSpec(Argonaut.Auto) {
 
   implicit def StreetAddressCodec: CodecJson[StreetAddress] = casecodec1(StreetAddress.apply, StreetAddress.unapply)("address")
 
@@ -23,7 +23,7 @@ class ArgonautAutoTest extends AutoFiltersSpec(Argonaut.Auto) {
 
   override def bodySpec: BodySpec[Letter] = Argonaut.bodySpec[Letter]()
 
-  override def transform() = Argonaut.Auto.tToToOut[Letter]
+  override def transform() = Argonaut.Auto.tToJson[Letter]
 }
 
 class ArgonautJsonResponseBuilderTest extends JsonResponseBuilderSpec(Argonaut)

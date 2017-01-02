@@ -15,7 +15,7 @@ case class Letter(to: StreetAddress, from: StreetAddress, message: String)
 case class LetterOpt(to: StreetAddress, from: StreetAddress, message: Option[String])
 
 
-abstract class AutoFiltersSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
+abstract class AutoSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
   val aLetter = Letter(StreetAddress("my house"), StreetAddress("your house"), "hi there")
 
   private def request = {
