@@ -20,7 +20,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     * instead of HTTP responses
     */
   object Filters extends AutoFilters[JsValue](ResponseBuilder) {
-    implicit def tToToOut[T](implicit db: Writes[T]): AsOut[T, JsValue] = (t: T) => JsonFormat.encode[T](t)
+    implicit def tToToOut[T](implicit db: Writes[T]): Transform[T, JsValue] = (t: T) => JsonFormat.encode[T](t)
   }
 
   object JsonFormat extends JsonFormat[JsValue, JsValue] {

@@ -23,7 +23,7 @@ class ArgonautFiltersTest extends AutoFiltersSpec(Argonaut.Filters) {
 
   override def bodySpec: BodySpec[Letter] = Argonaut.bodySpec[Letter]()
 
-  override def toOut() = Argonaut.Filters.tToToOut[Letter]
+  override def transform() = Argonaut.Filters.tToToOut[Letter]
 }
 
 class ArgonautJsonResponseBuilderTest extends JsonResponseBuilderSpec(Argonaut)

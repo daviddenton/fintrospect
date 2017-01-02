@@ -19,7 +19,7 @@ object Circe extends JsonLibrary[Json, Json] {
     * instead of HTTP responses
     */
   object Filters extends AutoFilters[Json](ResponseBuilder) {
-    implicit def tToToOut[T](implicit e: Encoder[T]): AsOut[T, Json] = (t: T) => e(t)
+    implicit def tToToOut[T](implicit e: Encoder[T]): Transform[T, Json] = (t: T) => e(t)
   }
 
   object JsonFormat extends JsonFormat[Json, Json] {

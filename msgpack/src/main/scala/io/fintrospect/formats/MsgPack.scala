@@ -16,7 +16,7 @@ object MsgPack {
     * instead of HTTP responses
     */
   object Filters extends AutoFilters[MsgPackMsg](ResponseBuilder) {
-    implicit def tToToOut[T]: AsOut[T, MsgPackMsg] = MsgPackMsg(_)
+    implicit def tToToOut[T]: Transform[T, MsgPackMsg] = MsgPackMsg(_)
   }
 
   /**
