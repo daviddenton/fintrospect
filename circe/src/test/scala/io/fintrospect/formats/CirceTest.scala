@@ -17,7 +17,7 @@ class CirceFiltersTest extends AutoFiltersSpec(Circe.Filters) {
   override def toBuf(l: Letter) = Bufs.utf8Buf(encode(l).noSpaces)
   override def fromBuf(s: Buf): Letter = decode[Letter](parse(Bufs.asUtf8String(s)))
   override def bodySpec: BodySpec[Letter] = Circe.bodySpec[Letter]()
-  override def toOut() = Circe.Filters.tToToOut[Letter]
+  override def transform() = Circe.Filters.tToToOut[Letter]
 }
 
 class CirceJsonFormatTest extends JsonFormatSpec(Circe) {

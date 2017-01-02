@@ -5,7 +5,6 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.io.Buf
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
-import io.fintrospect.formats.Xml.ResponseBuilder._
 import io.fintrospect.parameters.{Body, BodySpec}
 import org.scalatest.{FunSpec, Matchers}
 case class StreetAddress(address: String)
@@ -26,7 +25,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
 
   def toBuf(l: Letter): Buf
 
-  def toOut(): f.AsOut[Letter, J]
+  def transform(): f.Transform[Letter, J]
 
   def fromBuf(s: Buf): Letter
 
@@ -55,7 +54,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
 
     describe("AutoOut") {
       it("takes the object from the request") {
-        val svc = f.AutoOut(Status.Created)(toOut()).andThen(Service.mk { in: Request => Future(aLetter) })
+        val svc = f.AutoOut(Status.Created)(transform()).andThen(Service.mk { in: Request => Future(aLetter) })
         val response = result(svc(Request()))
         response.status shouldBe Status.Created
         fromBuf(response.content) shouldBe aLetter
@@ -64,7 +63,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
 
     describe("AutoInOut") {
       it("returns Ok") {
-        val svc = f.AutoInOut(Body(bodySpec), Status.Created)(toOut())
+        val svc = f.AutoInOut(Body(bodySpec), Status.Created)(transform())
           .andThen(Service.mk { in: Letter => Future(in) })
         val response = result(svc(request))
         response.status shouldBe Status.Created
@@ -73,7 +72,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
     }
 
     describe("AutoInOptionalOut") {
-      val filter = f.AutoInOptionalOut(Body(bodySpec))(toOut())
+      val filter = f.AutoInOptionalOut(Body(bodySpec))(transform())
       it("returns Ok when present") {
         val svc = filter.andThen(Service.mk[Letter, Option[Letter]] { in => Future(Option(in)) })
         val response = result(svc(request))
@@ -89,7 +88,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
 
     describe("AutoOptionalOut") {
       it("returns Ok when present") {
-        val svc = f.AutoOptionalOut(Status.Created)(toOut()).andThen(Service.mk[Request, Option[Letter]] { in => Future(Option(aLetter)) })
+        val svc = f.AutoOptionalOut(Status.Created)(transform()).andThen(Service.mk[Request, Option[Letter]] { in => Future(Option(aLetter)) })
 
         val response = result(svc(Request()))
         response.status shouldBe Status.Created
@@ -97,7 +96,7 @@ abstract class AutoFiltersSpec[J](val f: AutoFilters[J]) extends FunSpec with Ma
       }
 
       it("returns NotFound when missing present") {
-        val svc = f.AutoOptionalOut(Status.Created)(toOut()).andThen(Service.mk[Request, Option[Letter]] { _ => Future(None) })
+        val svc = f.AutoOptionalOut(Status.Created)(transform()).andThen(Service.mk[Request, Option[Letter]] { _ => Future(None) })
         result(svc(request)).status shouldBe Status.NotFound
       }
     }

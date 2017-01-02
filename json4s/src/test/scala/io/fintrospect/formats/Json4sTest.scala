@@ -17,7 +17,7 @@ abstract class Json4sFiltersSpec[D](json4sLibrary: Json4sLibrary[D]) extends Aut
 
   override def bodySpec: BodySpec[Letter] = json4sLibrary.bodySpec[Letter]()
 
-  override def toOut() = json4sLibrary.Filters.tToToOut[Letter]
+  override def transform() = json4sLibrary.Filters.tToToOut[Letter]
 }
 
 class Json4sNativeFiltersTest extends Json4sFiltersSpec(Json4s)

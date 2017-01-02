@@ -13,5 +13,5 @@ class MsgPackFiltersTest extends AutoFiltersSpec(MsgPack.Filters) {
 
   override def bodySpec: BodySpec[Letter] = MsgPack.bodySpec[Letter]()
 
-  override def toOut() = MsgPack.Filters.tToToOut[Letter]
+  override def transform() = MsgPack.Filters.tToToOut[Letter]
 }

@@ -33,7 +33,7 @@ class PlayFiltersTest extends AutoFiltersSpec(Play.Filters) {
 
   override def bodySpec: BodySpec[Letter] = Play.bodySpec[Letter]()(helpers.Reads, helpers.Writes)
 
-  override def toOut() = Play.Filters.tToToOut[Letter](helpers.Writes)
+  override def transform() = Play.Filters.tToToOut[Letter](helpers.Writes)
 }
 
 class PlayJsonResponseBuilderTest extends JsonResponseBuilderSpec(Play)
