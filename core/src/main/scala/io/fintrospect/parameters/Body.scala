@@ -25,6 +25,11 @@ object Body {
   /**
     * Create a custom body type for the request. Encapsulates the means to insert/retrieve into the request
     */
+  def apply2[T](bodySpec: BodySpec[T]): UniBody[T] = new UniBody[T](bodySpec, None)
+
+  /**
+    * Create a custom body type for the request. Encapsulates the means to insert/retrieve into the request
+    */
   def apply[T](bodySpec: BodySpec[T], example: T = null): UniBody[T] = new UniBody[T](bodySpec, Option(example))
 
   /**

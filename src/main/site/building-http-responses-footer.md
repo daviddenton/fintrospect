@@ -35,6 +35,8 @@ the `Circe.Filters.AutoInOut` filter converts the `Service[Request, Response]` t
 the case class objects in and out of the request/response. The returned status code in the `Response` is 200, but this is overridable:
 ```
 import io.circe.generic.auto._
+import io.fintrospect.formats.Circe
+import io.fintrospect.formats.Circe.Auto._
 
 case class ReversedEmailAddress(sserdda: String)
 

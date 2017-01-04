@@ -1,12 +1,15 @@
 package io.fintrospect.formats
 
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.Request
 import com.twitter.io.{Buf, Bufs}
+import com.twitter.util.Future
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.Play.JsonFormat._
 import io.fintrospect.formats.Play._
 import io.fintrospect.parameters.{Body, BodySpec, Query}
 import play.api.libs.json._
+import Play.Auto._
 
 import scala.language.reflectiveCalls
 
@@ -26,14 +29,21 @@ object helpers {
 
 
 class PlayAutoTest extends AutoSpec(Play.Auto) {
+  import helpers._
 
-  override def toBuf(l: Letter) = Bufs.utf8Buf(compact(Play.JsonFormat.encode(l)(helpers.Writes)))
+  describe("API") {
+    it("can find implicits") {
+      Play.Auto.InOut[Letter, Letter](Service.mk { in: Letter => Future(in) })
+    }
+  }
 
-  override def fromBuf(s: Buf): Letter = decode[Letter](parse(Bufs.asUtf8String(s)))(helpers.Reads)
+  override def toBuf(l: Letter) = Bufs.utf8Buf(compact(Play.JsonFormat.encode(l)(Writes)))
+
+  override def fromBuf(s: Buf): Letter = decode[Letter](parse(Bufs.asUtf8String(s)))(Reads)
 
   override def bodySpec: BodySpec[Letter] = Play.bodySpec[Letter]()(helpers.Reads, helpers.Writes)
 
-  override def transform() = Play.Auto.tToJsValue[Letter](helpers.Writes)
+  override def transform() = Play.Auto.tToJsValue[Letter](Writes)
 }
 
 class PlayJsonResponseBuilderTest extends JsonResponseBuilderSpec(Play)

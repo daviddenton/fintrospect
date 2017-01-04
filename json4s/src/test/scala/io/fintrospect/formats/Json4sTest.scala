@@ -1,7 +1,9 @@
 package io.fintrospect.formats
 
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.io.{Buf, Bufs}
+import com.twitter.util.Future
 import io.fintrospect.parameters.{Body, BodySpec, Query}
 import org.json4s.MappingException
 
@@ -10,6 +12,13 @@ import scala.language.reflectiveCalls
 abstract class Json4sAutoSpec[D](json4sLibrary: Json4sLibrary[D]) extends AutoSpec(json4sLibrary.Auto) {
 
   import json4sLibrary.JsonFormat._
+  import json4sLibrary.Auto._
+
+  describe("API") {
+    it("can find implicits") {
+      json4sLibrary.Auto.InOut[Letter, Letter](Service.mk { in: Letter => Future(in) })
+    }
+  }
 
   override def toBuf(l: Letter) = Bufs.utf8Buf(compact(encode(l)))
 

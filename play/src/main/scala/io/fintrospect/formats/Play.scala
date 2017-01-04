@@ -2,13 +2,12 @@ package io.fintrospect.formats
 
 import java.math.BigInteger
 
-import com.twitter.finagle.http.{Request, Response, Status}
-import com.twitter.finagle.{Filter, Service}
+import com.twitter.finagle.http.Status
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.formats.Play.JsonFormat.encode
-import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
-import play.api.libs.json.{Json, _}
+import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec, UniBody}
+import play.api.libs.json.{Json, Reads, _}
 
 /**
   * Play JSON support (application/json content type)
@@ -20,6 +19,8 @@ object Play extends JsonLibrary[JsValue, JsValue] {
     * instead of HTTP responses
     */
   object Auto extends Auto[JsValue](ResponseBuilder) {
+    implicit def tToBody[T](implicit r: Reads[T], w: Writes[T]): UniBody[T] = Body.apply2(Play.bodySpec[T]()(r, w))
+
     implicit def tToJsValue[T](implicit db: Writes[T]): Transform[T, JsValue] = (t: T) => JsonFormat.encode[T](t)
   }
 

@@ -4,7 +4,7 @@ import java.math.BigInteger
 
 import com.twitter.finagle.http.Status
 import io.fintrospect.ResponseSpec
-import io.fintrospect.parameters.{BodySpec, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec, UniBody}
 import org.json4s.Extraction.decompose
 import org.json4s.native.Document
 import org.json4s.{Formats, JValue, JsonMethods, NoTypeHints, Serialization, _}
@@ -44,15 +44,6 @@ class Json4sFormat[+T](jsonMethods: JsonMethods[T],
                (implicit mf: Manifest[R]): R = in.extract[R](formats, mf)
 }
 
-/**
-  * Auto-marshalling filters that can be used to create Services which take and return domain objects
-  * instead of HTTP responses
-  */
-abstract class Json4SAuto[D](json4sFormat: Json4sFormat[D], builder: AbstractResponseBuilder[JValue]) extends Auto[JValue](builder) {
-
-  implicit def tToToOut[T]() = (t: T) => json4sFormat.encode[T](t)
-}
-
 abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
 
   val JsonFormat: Json4sFormat[D]
@@ -60,6 +51,8 @@ abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
   import JsonFormat._
 
   object Auto extends Auto(ResponseBuilder) {
+    implicit def tToBody[T](implicit mf: Manifest[T]): UniBody[T] = Body.apply2(bodySpec[T]())
+
     implicit def tToJValue[T]: (T) => JValue = (t: T) => JsonFormat.encode[T](t)
   }
 

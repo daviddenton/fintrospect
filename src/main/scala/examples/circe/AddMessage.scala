@@ -2,8 +2,7 @@ package examples.circe
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Post
-import com.twitter.finagle.http.Status.Ok
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 import io.circe.generic.auto._
 import io.fintrospect.RouteSpec
@@ -21,7 +20,7 @@ class AddMessage(emails: Emails) {
   private val email = Body(Circe.bodySpec[Email](Option("email")), exampleEmail)
 
   private def addEmail(address: EmailAddress): Service[Request, Response] =
-    InOut(email, Service.mk {
+    InOut(Service.mk {
       newEmail: Email => {
         // validate that the receiver is as passed as the one in the URL
         if (address == newEmail.to) emails.add(newEmail)
@@ -31,8 +30,6 @@ class AddMessage(emails: Emails) {
 
   val route = RouteSpec("add an email and return the new inbox contents for the receiver")
     .body(email)
-    .returning(responseSpec(Ok -> "new list of emails for the 'to' user", Seq(exampleEmail)))
+    .returning(responseSpec(Status.Ok -> "new list of emails for the 'to' user", Seq(exampleEmail)))
     .at(Post) / "email" / Path(EmailAddress.spec) bindTo addEmail
 }
-
-

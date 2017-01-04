@@ -4,11 +4,10 @@ import java.math.BigInteger
 
 import argonaut.Argonaut._
 import argonaut.{DecodeJson, EncodeJson, Json}
-import com.twitter.finagle.http.{Request, Response, Status}
-import com.twitter.finagle.{Filter, Service}
+import com.twitter.finagle.http.Status
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
+import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec, UniBody}
 
 /**
   * Argonaut JSON support (application/json content type)
@@ -20,6 +19,8 @@ object Argonaut extends JsonLibrary[Json, Json] {
     * instead of HTTP responses
     */
   object Auto extends Auto[Json](ResponseBuilder) {
+    implicit def tToBody[T](implicit e: EncodeJson[T], d: DecodeJson[T]): UniBody[T] = Body.apply2(bodySpec[T]())
+
     implicit def tToJson[T](implicit e: EncodeJson[T]): Transform[T, Json] = (t: T) => e(t)
   }
 

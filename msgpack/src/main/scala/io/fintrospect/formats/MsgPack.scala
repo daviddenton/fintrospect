@@ -4,7 +4,7 @@ import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
 import io.fintrospect.formats.MsgPack.Format.{decode, encode}
-import io.fintrospect.parameters.BodySpec
+import io.fintrospect.parameters.{Body, BodySpec, UniBody}
 
 /**
   * MsgPack support (application/x-msgpack content type)
@@ -16,6 +16,8 @@ object MsgPack {
     * instead of HTTP responses
     */
   object Auto extends Auto[MsgPackMsg](ResponseBuilder) {
+    implicit def tToBody[T](implicit mf: Manifest[T]): UniBody[T] = Body.apply2(bodySpec[T]())
+
     implicit def tToMsgPackMsg[T]: Transform[T, MsgPackMsg] = MsgPackMsg(_)
   }
 

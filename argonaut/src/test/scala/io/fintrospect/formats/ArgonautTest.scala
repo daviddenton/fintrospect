@@ -2,8 +2,10 @@ package io.fintrospect.formats
 
 import argonaut.Argonaut.{casecodec1, casecodec3}
 import argonaut.CodecJson
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.io.{Buf, Bufs}
+import com.twitter.util.Future
 import io.fintrospect.formats.Argonaut.JsonFormat.{compact, decode, encode, parse, _}
 import io.fintrospect.formats.Argonaut._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
@@ -16,6 +18,12 @@ class ArgonautAutoTest extends AutoSpec(Argonaut.Auto) {
   implicit def StreetAddressCodec: CodecJson[StreetAddress] = casecodec1(StreetAddress.apply, StreetAddress.unapply)("address")
 
   implicit def LetterCodec: CodecJson[Letter] = casecodec3(Letter.apply, Letter.unapply)("to", "from", "message")
+
+  import Argonaut.Auto._
+
+  it("can find implicits") {
+    Argonaut.Auto.InOut[Letter, Letter](Service.mk { in: Letter => Future(in) })
+  }
 
   override def toBuf(l: Letter): Buf = Bufs.utf8Buf(compact(encode(l)))
 
