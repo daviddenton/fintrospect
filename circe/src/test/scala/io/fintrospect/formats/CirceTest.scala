@@ -1,8 +1,11 @@
 package io.fintrospect.formats
 
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.io.{Buf, Bufs}
+import com.twitter.util.Future
 import io.circe.generic.auto._
+import io.fintrospect.formats.Circe.Auto._
 import io.fintrospect.formats.Circe.JsonFormat._
 import io.fintrospect.formats.Circe._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
@@ -14,9 +17,19 @@ class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 
 class CirceAutoTest extends AutoSpec(Circe.Auto) {
 
+  describe("API") {
+    it("can find implicits") {
+      Circe.Auto.InOut[Letter, Letter](Service.mk { in: Letter => Future(in) })
+    }
+  }
+
+
   override def toBuf(l: Letter) = Bufs.utf8Buf(encode(l).noSpaces)
+
   override def fromBuf(s: Buf): Letter = decode[Letter](parse(Bufs.asUtf8String(s)))
+
   override def bodySpec: BodySpec[Letter] = Circe.bodySpec[Letter]()
+
   override def transform() = Circe.Auto.tToJson[Letter]
 }
 

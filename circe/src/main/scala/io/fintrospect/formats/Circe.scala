@@ -7,7 +7,7 @@ import io.circe.{Decoder, Encoder, Json}
 import io.fintrospect.ResponseSpec
 import io.fintrospect.formats.Circe.JsonFormat.encode
 import io.fintrospect.formats.JsonFormat.{InvalidJson, InvalidJsonForDecoding}
-import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec}
+import io.fintrospect.parameters._
 
 /**
   * Circe JSON support (application/json content type)
@@ -19,6 +19,9 @@ object Circe extends JsonLibrary[Json, Json] {
     * instead of HTTP responses
     */
   object Auto extends Auto[Json](ResponseBuilder) {
+
+    implicit def tToBody[T](implicit e: Encoder[T], d: Decoder[T]): UniBody[T] = Body.apply2(bodySpec[T]())
+
     implicit def tToJson[T](implicit e: Encoder[T]): Transform[T, Json] = (t: T) => e(t)
   }
 
