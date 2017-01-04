@@ -12,7 +12,7 @@ import io.fintrospect.formats.Circe.responseSpec
 import io.fintrospect.parameters.{Body, Path}
 
 /**
-  * This endpoint uses the "Circe.Filters.AutoInOut" Filter to automatically create a HTTP 200 response from some returned case class content.
+  * This endpoint uses the "Circe.Auto.InOut" Filter to automatically create a HTTP 200 response from some returned case class content.
   */
 class AddMessage(emails: Emails) {
   private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", 250)
