@@ -11,7 +11,7 @@ import io.fintrospect.formats.Circe.Auto._
 import io.fintrospect.formats.Circe.responseSpec
 
 /**
-  * This endpoint uses the "Circe.Filters.AutoOut" Filter to automatically create a HTTP 200 response from some returned case class content.
+  * This endpoint uses the "Circe.Auto.Out" Filter to automatically create a HTTP 200 response from some returned case class content.
   */
 class UserList(emails: Emails) {
 
