@@ -15,7 +15,7 @@ import io.fintrospect.parameters.{Body, BodySpec, ParameterSpec, UniBody}
 object Argonaut extends JsonLibrary[Json, Json] {
 
   /**
-    * Auto-marshalling filters that can be used to create Services which take and return domain objects
+    * Auto-marshalling Service wrappers that can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
   object Auto extends Auto[Json](ResponseBuilder) {

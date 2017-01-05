@@ -15,7 +15,7 @@ import play.api.libs.json.{Json, Reads, _}
 object Play extends JsonLibrary[JsValue, JsValue] {
 
   /**
-    * Auto-marshalling filters that can be used to create Services which take and return domain objects
+    * Auto-marshalling Service wrappers that can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
   object Auto extends Auto[JsValue](ResponseBuilder) {
