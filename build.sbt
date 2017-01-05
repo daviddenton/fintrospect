@@ -113,7 +113,7 @@ lazy val msgpack = project
   .settings(description := "MsgPack library support for Fintrospect")
   .dependsOn(core % "compile->test")
   .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % json4sVersion,
-    "org.velvia" %% "msgpack4s" % "0.5.2"))
+    "org.velvia" %% "msgpack4s" % "0.6.0"))
 
 // Templating libraries
 lazy val handlebars = project
