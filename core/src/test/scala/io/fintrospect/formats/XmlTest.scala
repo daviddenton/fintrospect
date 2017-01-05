@@ -1,84 +1,28 @@
 package io.fintrospect.formats
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Request, Status}
-import com.twitter.util.Await.result
-import com.twitter.util.{Await, Future}
-import io.fintrospect.formats.Xml.Auto._
-import io.fintrospect.formats.Xml.ResponseBuilder._
-import org.scalatest.{FunSpec, Matchers}
+import com.twitter.io.{Buf, Bufs}
+import io.fintrospect.parameters.BodySpec
 
 import scala.xml.{Elem, XML}
 
-class XmlAutoTest extends FunSpec with Matchers {
+class XmlAutoTest extends AutoSpec(Xml.Auto) {
+  override def toBuf(l: Letter): Buf = Bufs.utf8Buf(transform()(l).toString())
 
-  describe("Xml.Filters") {
+  override def transform(): f.Transform[Letter, Elem] = (letter: Letter) => <letter>
+    <from>{letter.from.address}</from>
+    <to>{letter.to.address}</to>
+    <message>{letter.message}</message>
+  </letter>
 
-    val request = Request()
-    request.contentString = <xml></xml>.toString()
+  override def fromBuf(s: Buf): Letter = from(XML.loadString(Bufs.asUtf8String(s)))
 
-    describe("AutoInOut") {
-      val svc = InOut(Service.mk { in: Elem => Future(in) }, Status.Created)
+  private def from(x: Elem) =  Letter(
+    StreetAddress((x \ "to").head.text),
+    StreetAddress((x \ "from").head.text),
+    (x \ "message").head.text
+  )
 
-      it("returns Ok") {
-        val response = result(svc(request))
-        response.status shouldBe Status.Created
-        XML.loadString(response.contentString) shouldBe <xml></xml>
-      }
-    }
-
-    describe("AutoInOptionalOut") {
-      it("returns Ok when present") {
-        val svc = InOptionalOut(Service.mk[Elem, Option[Elem]] { in => Future(Option(in)) })
-
-        val response = result(svc(request))
-        response.status shouldBe Status.Ok
-        XML.loadString(response.contentString) shouldBe <xml></xml>
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = InOptionalOut(Service.mk[Elem, Option[Elem]] { _ => Future(None) })
-        result(svc(request)).status shouldBe Status.NotFound
-      }
-    }
-
-    describe("AutoIn") {
-      val svc = In(Service.mk { in: Elem => Ok(in) })
-      it("takes the object from the request") {
-        XML.loadString(result(svc(request)).contentString) shouldBe <xml></xml>
-      }
-
-      it("rejects illegal content with a BadRequest") {
-        val request = Request()
-        request.contentString = "not xml"
-        Await.result(svc(request)).status shouldBe Status.BadRequest
-      }
-    }
-
-    describe("AutoOut") {
-      it("takes the object from the request") {
-        val svc = AutoOut(Service.mk { in: Elem => Future(in) }, Status.Created)
-        val response = result(svc(<xml></xml>))
-        response.status shouldBe Status.Created
-        XML.loadString(response.contentString) shouldBe <xml></xml>
-      }
-    }
-
-    describe("AutoOptionalOut") {
-      it("returns Ok when present") {
-        val svc = OptionalOut(Service.mk[Elem, Option[Elem]] { in => Future(Option(in)) }, Status.Created)
-
-        val response = result(svc(<xml></xml>))
-        response.status shouldBe Status.Created
-        XML.loadString(response.contentString) shouldBe <xml></xml>
-      }
-
-      it("returns NotFound when missing present") {
-        val svc = OptionalOut(Service.mk[Elem, Option[Elem]] { in => Future(None) }, Status.Created)
-        result(svc(<xml></xml>)).status shouldBe Status.NotFound
-      }
-    }
-  }
+  override def bodySpec: BodySpec[Letter] = BodySpec.xml(None).map[Letter](from(_))
 }
 
 class XmlResponseBuilderTest extends ResponseBuilderSpec(Xml.ResponseBuilder) {
