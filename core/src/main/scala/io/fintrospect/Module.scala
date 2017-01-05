@@ -24,7 +24,7 @@ object Module {
     */
   def toService(binding: ServiceBinding, responseBuilder: AbstractResponseBuilder[_] = Argo.ResponseBuilder): Service[Request, Response] = {
     val notFoundPf: ServiceBinding = {
-      case _ => Service.mk { _ => Future.value(JsonErrorResponseRenderer.notFound()) }
+      case _ => Service.mk { _ => Future(JsonErrorResponseRenderer.notFound()) }
     }
 
     Service.mk { request => (binding orElse notFoundPf) ((request.method, Path(request.path)))(request) }

@@ -5,12 +5,11 @@ import java.util.Base64
 
 import com.google.common.net.HttpHeaders
 import com.twitter.finagle.Filter
-import com.twitter.finagle.http.Status.NotAcceptable
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 import io.fintrospect.ContentType.fromAcceptHeaders
 import io.fintrospect.configuration.{Authority, Credentials}
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
@@ -41,7 +40,7 @@ object RequestFilters {
         .filter(acceptable =>
           !acceptable.exists(contentTypes.contains) && !acceptable.contains(ContentTypes.WILDCARD)
         )
-        .map(_ => NotAcceptable().toFuture)
+        .map(_ => HttpResponse(Status.NotAcceptable).toFuture)
         .getOrElse(svc(req))
     }
   }
@@ -103,8 +102,8 @@ object RequestFilters {
     (req, svc) => {
       extractable <--? req match {
         case Extracted(Some(x)) => svc(x)
-        case Extracted(None) => Future.value(moduleRenderer.badRequest(Nil))
-        case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
+        case Extracted(None) => Future(moduleRenderer.badRequest(Nil))
+        case ExtractionFailed(invalid) => Future(moduleRenderer.badRequest(invalid))
       }
     }
   }

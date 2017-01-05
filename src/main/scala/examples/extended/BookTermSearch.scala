@@ -4,12 +4,11 @@ import java.lang.Integer.{MAX_VALUE, MIN_VALUE}
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status.Ok
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.Argo.JsonFormat.array
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits.statusToResponseBuilderConfig
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Query
 
 class BookTermSearch(books: Books) {
@@ -19,7 +18,7 @@ class BookTermSearch(books: Books) {
 
   val route = RouteSpec("search for book by title fragment")
     .taking(titleTerms)
-    .returning(Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
+    .returning(Status.Ok -> "we found some books", array(Book("a book", "authorName", 99).toJson))
     .producing(APPLICATION_JSON)
     .at(Get) / "titleSearch" bindTo search
 }

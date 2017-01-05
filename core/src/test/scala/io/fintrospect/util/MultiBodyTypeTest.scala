@@ -13,7 +13,7 @@ import org.scalatest.{FunSpec, Matchers}
 class MultiBodyTypeTest extends FunSpec with Matchers {
 
   val xmlBody = Body.xml(None)
-  val xmlAccepting = MultiBodyType(xmlBody -> Service.mk { req: Request => Future.value(Response(Ok)) })
+  val xmlAccepting = MultiBodyType(xmlBody -> Service.mk { req: Request => Future(Response(Ok)) })
 
   describe("MultiBodyType") {
     it("on no match, reject with 415") {

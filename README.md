@@ -61,8 +61,8 @@ This example is quite contrived (and almost all the code is optional) but shows 
 example response object, which will be broken down to provide the JSON model for the Swagger documentation. 
 
 ```scala
-// implicit conversion from Status -> ResponseBuilder pulled in here
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
+// Response building methods and implicit conversion from ResponseBuilder -> Future[Response] pulled in here
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.formats.Argo.JsonFormat.array
 
 class BookSearch(books: Books) {
@@ -74,7 +74,7 @@ class BookSearch(books: Books) {
   private def search() = Service.mk[Request, Response] { 
     request => {
       val requestForm = form.from(request)
-      Status.Ok(array(
+      Ok(array(
         books.search(
             minPages.from(requestForm).getOrElse(MIN_VALUE), 
             maxPages.from(request).getOrElse(MAX_VALUE),

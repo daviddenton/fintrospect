@@ -35,6 +35,37 @@ object Tutorials {
   css.combine(javascript)
   ready(Http.serve("localhost:9000", StaticModule(Root / "javascript", Directory("/myproject/js")).toService))
 
-  //  Architectural cookbook
+
+
+  /*  Architectural cookbook
+
+    finagle
+      concepts
+        Future
+        Service
+        Filter
+
+      simple proxy server
+
+    clients
+
+    handling JSON
+    XML
+    HTML
+    automarshalling
+
+    security
+    streaming
+    validation
+
+    web
+      templating
+      static content
+      forms
+        standard
+        multipart
+
+   */
+
 
 }

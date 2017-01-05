@@ -7,8 +7,8 @@ import com.twitter.util.Future
   */
 class GreetingDatabase {
   def lookupGreeting(age: Age, name: Name): Future[Option[String]] = {
-    if (age.value > 60) Future.value(Option("Greetings"))
-    else if (age.value < 25) Future.value(Option("Yo!"))
-    else Future.value(None)
+    if (age.value > 60) Future(Option("Greetings"))
+    else if (age.value < 25) Future(Option("Yo!"))
+    else Future(None)
   }
 }

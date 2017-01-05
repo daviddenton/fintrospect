@@ -1,14 +1,12 @@
 The simplest (least concise) way to invoke an auto-marshalling (ie. typesafe) ResponseBuilder is along the lines of:
 ```
-val responseNoImplicits: Future[Response] = ResponseBuilder.toFuture(
-Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashings of wonderful</xml>)
-)
+Xml.ResponseBuilder.HttpResponse(Status.Ok).withContent(<xml>lashings and lashings of wonderful</xml>).toFuture
 ```
-... although with tiny bit of implicit magic to convert the `Status` object to a `ResponseBuilder` and then convert the `ResponseBuilder` to 
+... although with tiny bit of implicit magic, we can use custom status methods on the builders and then convert the `ResponseBuilder` to 
 a `Future[Response]`, you can reduce this to the rather more concise:
 ```
-import io.fintrospect.formats.Xml.ResponseBuilder.implicits._
-val responseViaImplicits: Future[Response] = Status.Ok(<xml>lashings and lashings of wonderful</xml>)
+import io.fintrospect.formats.Xml.ResponseBuilder._
+val responseViaImplicits: Future[Response] = Ok(<xml>lashings and lashings of wonderful</xml>)
 ```
 
 These ResponseBuilders also support `AsyncStream[T]`, so you can build services which can stream responses in a typesafe way.
@@ -23,7 +21,7 @@ methods present on the relevant Fintrospect `JsonFormat` format instance (e.g. `
 case class EmailAddress(address: String)
 
 import io.circe.generic.auto._
-import io.fintrospect.formats.Circe.ResponseBuilder.implicits._
+import io.fintrospect.formats.Circe.ResponseBuilder._
 
 Status.Ok(Circe.JsonFormat.encode(EmailAddress("dev@fintrospect.io")
 ```
@@ -37,13 +35,15 @@ the `Circe.Filters.AutoInOut` filter converts the `Service[Request, Response]` t
 the case class objects in and out of the request/response. The returned status code in the `Response` is 200, but this is overridable:
 ```
 import io.circe.generic.auto._
+import io.fintrospect.formats.Circe
+import io.fintrospect.formats.Circe.Auto._
 
 case class ReversedEmailAddress(sserdda: String)
 
 val domainSvc = Service.mk[EmailAddress, ReversedEmailAddress] { 
     email => Future.value(ReversedEmailAddress(email.address.reverse)) 
 }
-val httpSvc: Service[Request, Response] = Circe.Filters.AutoInOut(domainSvc)    
+val httpSvc: Service[Request, Response] = Circe.Auto.InOut(domainSvc)    
 ```
 
 <a class="next" href="http://fintrospect.io/cross-field-validation"><button type="button" class="btn btn-sm btn-default">next: cross field validation</button></a>

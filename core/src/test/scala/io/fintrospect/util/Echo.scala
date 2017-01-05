@@ -1,11 +1,10 @@
 package io.fintrospect.util
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.fintrospect.formats.Argo.JsonFormat.{obj, string}
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits.statusToResponseBuilderConfig
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.util.HttpRequestResponseUtil.headersFrom
 
 case class Echo(parts: String*) extends Service[Request, Response] {

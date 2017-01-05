@@ -1,14 +1,13 @@
 package presentation._5
 
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Http, Service}
 import io.fintrospect.formats.Argo.JsonFormat.array
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits.{responseBuilderToResponse, statusToResponseBuilderConfig}
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Query
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 import io.fintrospect.{ResponseSpec, RouteModule, RouteSpec}
@@ -29,7 +28,7 @@ class SearchRoute(books: RemoteBooks) {
 
   val route = RouteSpec("search books")
     .taking(titlePartParam)
-    .returning(ResponseSpec.json(Ok -> "search results", array(Book("1984").toJson)))
+    .returning(ResponseSpec.json(Status.Ok -> "search results", array(Book("1984").toJson)))
     .at(Get) / "search" bindTo search
 }
 

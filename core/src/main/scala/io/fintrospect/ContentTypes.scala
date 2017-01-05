@@ -18,7 +18,7 @@ object ContentType {
   def fromAcceptHeaders(msg: Message): Option[Set[ContentType]] =
     accept.from(msg)
       .map(_.flatMap(
-        value => value.split(Array(',', ' ', ';'))
+        _.split(Array(',', ' ', ';'))
           .map(_.toLowerCase)
           .filter(_.matches(".+\\/.+"))
           .map(ContentType(_))

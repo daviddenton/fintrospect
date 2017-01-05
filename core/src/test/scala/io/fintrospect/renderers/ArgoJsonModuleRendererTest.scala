@@ -26,7 +26,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
       val customBody = Body.json(Option("the body of the message"), obj("anObject" -> obj("notAStringField" -> number(123))))
 
       val module = RouteModule(Root / "basepath", renderer)
-        .securedBy(ApiKey(Header.required.string("the_api_key"), (_: String) => Future.value(true)))
+        .securedBy(ApiKey(Header.required.string("the_api_key"), (_: String) => Future(true)))
         .withRoute(
           RouteSpec("summary of this route", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)

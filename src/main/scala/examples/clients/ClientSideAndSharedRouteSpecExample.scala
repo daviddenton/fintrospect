@@ -3,12 +3,11 @@ package examples.clients
 import java.time.LocalDate
 
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Await
 import io.fintrospect.RouteSpec
-import io.fintrospect.formats.PlainText.ResponseBuilder.implicits.{responseBuilderToFuture, statusToResponseBuilderConfig}
+import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters._
 import io.fintrospect.testing.TestHttpServer
 import io.fintrospect.util.HttpRequestResponseUtil.{headersFrom, statusAndContentFrom}

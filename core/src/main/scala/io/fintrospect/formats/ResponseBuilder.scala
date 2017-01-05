@@ -26,11 +26,11 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
                          exceptionFormat: Throwable => T,
                          contentType: ContentType) {
 
-  private var response = Response()
+  private[formats] var response = Response()
 
-  def withError(e: Throwable) = withContent(exceptionFormat(e))
+  def withError(e: Throwable): ResponseBuilder[T] = withContent(exceptionFormat(e))
 
-  def withErrorMessage(e: String) = withContent(errorFormat(e))
+  def withErrorMessage(e: String): ResponseBuilder[T] = withContent(errorFormat(e))
 
   def withCode(status: Status): ResponseBuilder[T] = {
     response.setStatusCode(status.code)
@@ -93,7 +93,7 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
     response
   }
 
-  def toFuture: Future[Response] = Future.value(build())
+  def toFuture: Future[Response] = Future(build())
 }
 
 /**
@@ -105,8 +105,10 @@ object ResponseBuilder {
 
   def HttpResponse(contentType: ContentType): ResponseBuilder[_] = new ResponseBuilder[HIDDEN](s => Utf8(s.value), HIDDEN, e => HIDDEN(e.getMessage), contentType)
 
+  implicit def responseBuilderToResponse(builder: ResponseBuilder[_]): Response = builder.build()
+
   implicit def responseBuilderToFuture(builder: ResponseBuilder[_]): Future[Response] = builder.toFuture
 
-  implicit def responseToFuture(response: Response): Future[Response] = Future.value(response)
+  implicit def responseToFuture(response: Response): Future[Response] = Future(response)
 }
 
