@@ -1,7 +1,6 @@
 package examples.msgpack
 
 import com.twitter.finagle.http.Method.{Get, Post}
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.filter.Cors.HttpFilter
 import com.twitter.finagle.http.path.Root
@@ -9,8 +8,11 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.ContentTypes.APPLICATION_X_MSGPACK
-import io.fintrospect.formats.MsgPack.ResponseBuilder.implicits._
+import io.fintrospect.formats.MsgPack.Auto._
+import io.fintrospect.formats.MsgPack.ResponseBuilder._
+import io.fintrospect.formats.MsgPack.{Auto, bodySpec}
 import io.fintrospect.formats.{MsgPack, MsgPackMsg}
+import io.fintrospect.parameters.Body
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{RouteModule, RouteSpec}
 
@@ -35,9 +37,9 @@ object MsgPackApp extends App {
   val replyToLetter = RouteSpec("send your address and we'll send you back a letter!")
     .consuming(APPLICATION_X_MSGPACK)
     .producing(APPLICATION_X_MSGPACK)
-    .at(Post) / "reply" bindTo MsgPack.Filters.AutoInOutFilter[StreetAddress, Letter]().andThen(Service.mk { in: StreetAddress =>
-    Future.value(Letter(StreetAddress("2 Bob St"), in, "hi fools!"))
-  })
+    .at(Post) / "reply" bindTo Auto.InOut[StreetAddress, Letter](Service.mk { in: StreetAddress =>
+    Future(Letter(StreetAddress("2 Bob St"), in, "hi fools!"))
+  })(Body(bodySpec[StreetAddress]()), MsgPack.Auto.tToMsgPackMsg)
 
   val module = RouteModule(Root, SimpleJson()).withRoute(viewLetterRoute).withRoute(replyToLetter)
 

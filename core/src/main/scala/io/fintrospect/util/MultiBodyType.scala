@@ -1,11 +1,10 @@
 package io.fintrospect.util
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.Status.UnsupportedMediaType
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits._
+import io.fintrospect.formats.Argo.ResponseBuilder._
 import io.fintrospect.parameters.Body
 import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
@@ -20,7 +19,7 @@ object MultiBodyType {
     val supportedContentTypes = Map(services.map(bs => ContentType(bs._1.contentType.value.toLowerCase) -> bs): _*)
 
     def validateAndRespond(request: Request, body: SupportedContentType) = body._1.extract(request) match {
-      case ExtractionFailed(invalid) => Future.value(moduleRenderer.badRequest(invalid))
+      case ExtractionFailed(invalid) => Future(moduleRenderer.badRequest(invalid))
       case _ => body._2(request)
     }
 

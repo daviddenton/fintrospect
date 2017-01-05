@@ -3,10 +3,9 @@ package examples.validation
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Status.{BadRequest, Ok}
 import com.twitter.finagle.http.path.Root
 import com.twitter.util.Await.result
-import io.fintrospect.formats.PlainText.ResponseBuilder.implicits._
+import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters.Query
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.util.{Extracted, ExtractionFailed, Extractor}
@@ -63,7 +62,7 @@ object CrossFieldValidation extends App {
     req: Request => {
       acceptableClassSize <--? req match {
         case Extracted(Some(clazz)) => Ok(clazz.toString)
-        case Extracted(None) => BadRequest()
+        case Extracted(None) => BadRequest("no content!")
         case ExtractionFailed(sp) => BadRequest(sp.mkString(", "))
       }
     }

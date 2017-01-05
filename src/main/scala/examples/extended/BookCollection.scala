@@ -2,12 +2,11 @@ package examples.extended
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.ContentTypes.APPLICATION_JSON
 import io.fintrospect.RouteSpec
 import io.fintrospect.formats.Argo.JsonFormat.array
-import io.fintrospect.formats.Argo.ResponseBuilder.implicits.statusToResponseBuilderConfig
+import io.fintrospect.formats.Argo.ResponseBuilder._
 
 
 class BookCollection(books: Books) {

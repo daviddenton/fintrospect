@@ -31,6 +31,6 @@ class HeapDump(processIdentifier: String = "", clock: Clock = Clock.systemUTC())
       .withHeaders("Content-disposition" -> ("inline; filename=\"" + dumpFileName + ".hprof\""))
       .withContent(Readers.newFileReader(dumpFile)).build()
 
-    Future.value(response).ensure(dumpFile.delete())
+    Future(response).ensure(dumpFile.delete())
   }
 }

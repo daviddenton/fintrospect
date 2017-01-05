@@ -27,7 +27,7 @@ class ResponseFiltersTest extends FunSpec with Matchers {
           req => Extracted(Some(message))
         }
 
-        val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
+        val response = result(filter(Request(), Service.mk { message => Future(Response()) }))
 
         response match {
           case Extracted(Some(s)) => s shouldBe message
@@ -39,7 +39,7 @@ class ResponseFiltersTest extends FunSpec with Matchers {
         val filter = ResponseFilters.ExtractingResponse {
           req => Extracted(None)
         }
-        val response = result(filter(Request(), Service.mk { message => Future.value(Response()) }))
+        val response = result(filter(Request(), Service.mk { message => Future(Response()) }))
 
         response match {
           case Extracted(None) =>
@@ -60,7 +60,7 @@ class ResponseFiltersTest extends FunSpec with Matchers {
       val clock = fixed()
 
       it("works") {
-        val response = result(AddDate(clock)(Request(), Service.mk { req: Request => Future.value(Response()) }))
+        val response = result(AddDate(clock)(Request(), Service.mk { req: Request => Future(Response()) }))
         headerOf("Date")(response) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
       }
     }
@@ -73,7 +73,7 @@ class ResponseFiltersTest extends FunSpec with Matchers {
 
         val response = Response()
 
-        result(filter(Request(), Service.mk { req => Future.value(response) })) shouldBe response
+        result(filter(Request(), Service.mk { req => Future(response) })) shouldBe response
 
         called shouldBe("GET.UNMAPPED.2xx.200", ofSeconds(1))
       }
@@ -88,7 +88,7 @@ class ResponseFiltersTest extends FunSpec with Matchers {
 
         request.headerMap(Headers.IDENTIFY_SVC_HEADER) = "GET:/path/dir/someFile.html"
 
-        result(filter(request, Service.mk { req => Future.value(response) })) shouldBe response
+        result(filter(request, Service.mk { req => Future(response) })) shouldBe response
 
         called shouldBe("GET._path_dir_someFile_html.2xx.200", ofSeconds(1))
       }
@@ -102,7 +102,7 @@ class ResponseFiltersTest extends FunSpec with Matchers {
         var resp: Option[Response] = None
         val f = ResponseFilters.Tap { r => resp = Some(r) }
           .andThen(Service.mk { r: Request =>
-            Future.value(response)
+            Future(response)
           })
         Await.result(f(request)) shouldBe response
         resp shouldBe Some(response)
