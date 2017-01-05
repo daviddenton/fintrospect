@@ -12,7 +12,7 @@ import io.fintrospect.parameters.{Body, BodySpec, UniBody}
 object MsgPack {
 
   /**
-    * Auto-marshalling filters that can be used to create Services which take and return domain objects
+    * Auto-marshalling Service wrappers that can be used to create Services which take and return domain objects
     * instead of HTTP responses
     */
   object Auto extends Auto[MsgPackMsg](ResponseBuilder) {
