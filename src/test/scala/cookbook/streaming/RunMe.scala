@@ -29,9 +29,7 @@ object RunMe extends App {
 
   val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo count
 
-  val module: RouteModule[Request, Response] =
-    RouteModule(Root)
-      .withRoute(route)
+  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }
