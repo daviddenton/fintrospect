@@ -1,6 +1,5 @@
 package cookbook.streaming
 
-import com.twitter.util.JavaTimer
 
 object RunMe extends App {
 
@@ -10,7 +9,7 @@ object RunMe extends App {
   import com.twitter.finagle.http.{Request, Response}
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
-  import com.twitter.util.{Duration, Future}
+  import com.twitter.util.{Duration, Future, JavaTimer}
   import io.fintrospect.formats.Xml.ResponseBuilder._
   import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
 
