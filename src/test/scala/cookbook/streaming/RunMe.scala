@@ -27,8 +27,7 @@ object RunMe extends App {
       )
   }
 
-  val route: ServerRoute[Request, Response] = RouteSpec()
-    .at(Get) bindTo count
+  val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo count
 
   val module: RouteModule[Request, Response] =
     RouteModule(Root)
