@@ -19,7 +19,8 @@ object Argonaut extends JsonLibrary[Json, Json] {
     * instead of HTTP responses
     */
   object Auto extends Auto[Json](ResponseBuilder) {
-    implicit def tToBody[T](implicit e: EncodeJson[T], d: DecodeJson[T]): UniBody[T] = Body.apply2(bodySpec[T]())
+
+    implicit def tToBody[T](implicit e: EncodeJson[T], d: DecodeJson[T]): UniBody[T] = Body(bodySpec[T]())
 
     implicit def tToJson[T](implicit e: EncodeJson[T]): Transform[T, Json] = (t: T) => e(t)
   }
