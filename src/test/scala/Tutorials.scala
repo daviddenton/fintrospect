@@ -61,9 +61,6 @@ object Tutorials {
     web
       templating
       static content
-      forms
-        standard
-        multipart
 
    */
 

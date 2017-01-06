@@ -9,9 +9,13 @@ import com.twitter.io.Buf
 import com.twitter.io.Bufs.ownedBuf
 
 sealed trait MultiPartFile {
-  def toFileElement(name: String): FileElement
+  val filename: String
 
-  def isEmpty(): Boolean
+  def length: Long
+
+  private[parameters] def toFileElement(name: String): FileElement
+
+  def isEmpty: Boolean
 }
 
 object MultiPartFile {
@@ -25,9 +29,11 @@ object MultiPartFile {
   * This is a multipart form file element that is under the max memory limit, and thus has been kept
   */
 case class InMemoryMultiPartFile(filename: String, content: Buf, contentType: Option[String] = None) extends MultiPartFile {
-  override def toFileElement(name: String): FileElement = FileElement(name, content, contentType, Some(filename))
+  override private[parameters] def toFileElement(name: String): FileElement = FileElement(name, content, contentType, Some(filename))
 
-  override def isEmpty(): Boolean = content.isEmpty
+  override def isEmpty: Boolean = content.isEmpty
+
+  override def length: Long = content.length
 }
 
 /**
@@ -35,9 +41,11 @@ case class InMemoryMultiPartFile(filename: String, content: Buf, contentType: Op
   */
 case class OnDiskMultiPartFile(filename: String, content: File, contentType: Option[String] = None) extends MultiPartFile {
 
-  override def toFileElement(name: String): FileElement = FileElement(name, toBuffer, contentType, Some(filename))
+  override private[parameters] def toFileElement(name: String): FileElement = FileElement(name, toBuffer, contentType, Some(filename))
 
-  override def isEmpty(): Boolean = content.length() == 0
+  override def length: Long = content.length()
+
+  override def isEmpty: Boolean = content.length() == 0
 
   private def toBuffer = {
     val channel = new RandomAccessFile(content, "r").getChannel
