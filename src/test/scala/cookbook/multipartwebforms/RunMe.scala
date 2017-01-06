@@ -1,6 +1,5 @@
-package cookbook.webforms
+package cookbook.multipartwebforms
 
-import com.twitter.util.Future
 
 object RunMe extends App {
 
@@ -9,13 +8,16 @@ object RunMe extends App {
   import com.twitter.finagle.http.{Request, Response}
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
+  import com.twitter.util.Future
   import io.fintrospect.formats.PlainText.ResponseBuilder._
-  import io.fintrospect.parameters.{Body, Form, FormField}
+  import io.fintrospect.parameters.{Body, Form, FormField, MultiPartFile}
   import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
 
-  val nameField = FormField.required.string("name")
-  val ageField = FormField.optional.int("age")
-  val form = Body.webForm(nameField -> "everyone has a name!", ageField -> "age is an int!")
+  import scala.language.reflectiveCalls
+
+  val usernameField = FormField.required.string("user")
+  val fileField = FormField.required.file("data")
+  val form = Body.multiPartWebForm(usernameField -> "everyone has a name!", fileField -> "file is required!")
 
   val svc: Service[Request, Response] = Service.mk[Request, Response] {
     req => {
@@ -30,9 +32,9 @@ object RunMe extends App {
   }
 
   def successMessage(postedForm: Form): Future[Response] = {
-    val name: String = nameField <-- postedForm
-    val age: Option[Int] = ageField <-- postedForm
-    Ok(s"$name is ${age.map(_.toString).getOrElse("too old to admit it")}")
+    val name: String = usernameField <-- postedForm
+    val data: MultiPartFile = fileField <-- postedForm
+    Ok(s"$name posted ${data.filename} which is ${data.length}" + " bytes")
   }
 
   val route: ServerRoute[Request, Response] = RouteSpec()
