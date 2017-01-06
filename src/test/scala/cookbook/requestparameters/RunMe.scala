@@ -14,10 +14,8 @@ object RunMe extends App {
   import scala.language.reflectiveCalls
 
   val operator = Header.optional(ParameterSpec.string("operator").map {
-    case "*" => (i: Int, j: Int) => i * j
     case "-" => (i: Int, j: Int) => i - j
     case "+" => (i: Int, j: Int) => i + j
-    case "/" => (i: Int, j: Int) => i / j
   })
 
   val values = Query.required.*.int("value")
