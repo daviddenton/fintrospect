@@ -11,7 +11,7 @@ The main API is very stable, but expect some amount of breaking changes around m
 - Upgrade to various dependency versions, including `finagle-http 6.41.0`.
 - Breaking: remodel/repackage of `ResponseBuilder` instantiation for custom formats. This only affects API users if using implicit conversion of `Status` objects to `ResponseBuilder`. This conversion has
 been replaced with explicit methods on `ResponseBuilder` objects for each status code, along with a `ResponseBuilderMagnet` to convert the various input content types (such as String, JSON, Buf, etc) - see below:
-To fix: 
+Simple to fix, but different enough to warrant a new version number: 
 1. Replace `Status.Ok("content").withHeader(etc)` type calls with `ResponseBuilder.Ok("content").withHeader(etc)` 
 2. Replace `<format>.ResponseBuilder.implicits._` import with `<format>.ResponseBuilder._`. This import also brings in the various conversions for the `ResponseBuilderMagnet`.
 - (Small) Breaking: rework of Auto conversion for format objects. `<format>.Filters.AutoXXX` has become `<format>.Auto.XXX`.
