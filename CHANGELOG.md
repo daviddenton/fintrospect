@@ -7,9 +7,9 @@ The main API is very stable, but expect some amount of breaking changes around m
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 13.20.0 (uncut)
+## 14.0.0
 - Upgrade to various dependency versions, including `finagle-http 6.41.0`.
-- (Small) Breaking: remodel/repackage of `ResponseBuilder` instantiation for custom formats. This only affects API users if using implicit conversion of `Status` objects to `ResponseBuilder`. This conversion has
+- Breaking: remodel/repackage of `ResponseBuilder` instantiation for custom formats. This only affects API users if using implicit conversion of `Status` objects to `ResponseBuilder`. This conversion has
 been replaced with explicit methods on `ResponseBuilder` objects for each status code, along with a `ResponseBuilderMagnet` to convert the various input content types (such as String, JSON, Buf, etc) - see below:
 To fix: 
 1. Replace `Status.Ok("content").withHeader(etc)` type calls with `ResponseBuilder.Ok("content").withHeader(etc)` 
