@@ -20,7 +20,7 @@ object Circe extends JsonLibrary[Json, Json] {
     */
   object Auto extends Auto[Json](ResponseBuilder) {
 
-    implicit def tToBody[T](implicit e: Encoder[T], d: Decoder[T]): UniBody[T] = Body.apply2(bodySpec[T]())
+    implicit def tToBody[T](implicit e: Encoder[T], d: Decoder[T]): UniBody[T] = Body(bodySpec[T]())
 
     implicit def tToJson[T](implicit e: Encoder[T]): Transform[T, Json] = (t: T) => e(t)
   }

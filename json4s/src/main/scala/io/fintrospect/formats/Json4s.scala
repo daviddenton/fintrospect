@@ -51,7 +51,7 @@ abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
   import JsonFormat._
 
   object Auto extends Auto(ResponseBuilder) {
-    implicit def tToBody[T](implicit mf: Manifest[T]): UniBody[T] = Body.apply2(bodySpec[T]())
+    implicit def tToBody[T](implicit mf: Manifest[T]): UniBody[T] = Body(bodySpec[T]())
 
     implicit def tToJValue[T]: (T) => JValue = (t: T) => JsonFormat.encode[T](t)
   }
