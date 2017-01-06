@@ -50,7 +50,6 @@ object Tutorials {
     clients
 
     handling JSON
-    XML
     HTML
     automarshalling
 
