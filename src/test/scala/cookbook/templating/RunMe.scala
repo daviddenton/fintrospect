@@ -1,7 +1,11 @@
 package cookbook.templating
 
+import io.fintrospect.templating.View
+
 // fintrospect-core
 // fintrospect-mustache
+case class MyView(name: String, age: Int) extends View
+
 object RunMe extends App {
 
   import com.twitter.finagle.http.Method.Get
@@ -14,12 +18,10 @@ object RunMe extends App {
   import io.fintrospect.templating.{MustacheTemplates, RenderView, View}
   import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
 
-  case class MyView(name: String, age: Int) extends View
-
   def showAgeIn30(name: String, age: Int): Service[Request, Response] = {
     val svc = Service.mk[Request, View] { req => MyView(name, age + 30) }
 
-    new RenderView(Html.ResponseBuilder, MustacheTemplates.HotReload("src/main/resources")).andThen(svc)
+    new RenderView(Html.ResponseBuilder, MustacheTemplates.CachingClasspath(".")).andThen(svc)
   }
 
   val route: ServerRoute[Request, Response] = RouteSpec()
@@ -29,3 +31,4 @@ object RunMe extends App {
 
   ready(Http.serve(":9999", module.toService))
 }
+//curl -v http://localhost:9999/david/100

@@ -25,7 +25,7 @@ object RunMe extends App {
     (req: Request) => {
       val components: Seq[Int] = values <-- req
       val op = operator <-- req
-      Ok(s"the answer is ${components.fold(1)(op.getOrElse(_ + _))}" + " !")
+      Ok(s"the answer is ${components.fold(0)(op.getOrElse(_ + _))}" + " !")
     }
   }
 
@@ -38,3 +38,5 @@ object RunMe extends App {
 
   ready(Http.serve(":9999", module.toService))
 }
+
+//curl -v -H"operator: +" http://localhost:9999?value=10&value=20&value=70

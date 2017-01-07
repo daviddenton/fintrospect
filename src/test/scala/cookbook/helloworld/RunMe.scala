@@ -19,3 +19,5 @@ object RunMe extends App {
 
   ready(Http.serve(":9999", module.toService))
 }
+
+// curl -v http://localhost:9999/david
