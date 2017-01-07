@@ -40,6 +40,8 @@ object Play extends JsonLibrary[JsValue, JsValue] {
 
     override def number(value: Int) = JsNumber(value)
 
+    override def number(value: Double) = JsNumber(value)
+
     override def number(value: BigDecimal) = JsNumber(value.bigDecimal)
 
     override def number(value: Long) = JsNumber(value)

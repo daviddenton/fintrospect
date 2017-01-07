@@ -65,6 +65,11 @@ trait JsonFormat[ROOT_NODETYPE <: NODETYPE, NODETYPE] {
   /**
     * Create a JSON number node
     */
+  def number(value: Double): NODETYPE
+
+  /**
+    * Create a JSON number node
+    */
   def number(value: BigDecimal): NODETYPE
 
   /**

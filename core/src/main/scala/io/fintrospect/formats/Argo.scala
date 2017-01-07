@@ -29,6 +29,8 @@ object Argo extends JsonLibrary[JsonRootNode, JsonNode] {
 
     override def number(value: Int) = JsonNodeFactories.number(value)
 
+    override def number(value: Double) = JsonNodeFactories.number(BigDecimal(value).bigDecimal)
+
     override def number(value: BigDecimal) = JsonNodeFactories.number(value.bigDecimal)
 
     override def number(value: Long) = JsonNodeFactories.number(value)

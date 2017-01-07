@@ -29,6 +29,8 @@ class Json4sFormat[+T](jsonMethods: JsonMethods[T],
 
   override def number(value: Int): JValue = JInt(value)
 
+  override def number(value: Double) = JDouble(value)
+
   override def number(value: BigDecimal): JValue = JDecimal(value)
 
   override def number(value: Long): JValue = JInt(value)

@@ -10,21 +10,36 @@ object RunMe extends App {
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
   import com.twitter.util.{Duration, Future, JavaTimer}
-  import io.fintrospect.formats.Xml.ResponseBuilder._
+  import io.circe.Json
+  import io.fintrospect.formats.Circe.JsonFormat._
+  import io.fintrospect.formats.Circe.ResponseBuilder._
   import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+
+  import scala.xml.Elem
 
   val timer = new JavaTimer()
 
   def ints(i: Int): AsyncStream[Int] =
     i +:: AsyncStream.fromFuture(Future.sleep(Duration.fromSeconds(1))(timer)).flatMap(_ => ints(i + 1))
 
+  def xmlStream: AsyncStream[Elem] = {
+
+    def toElem(i: Int) =
+      <xml>
+        {i}
+      </xml>
+
+    ints(0).map(toElem)
+  }
+
+  def jsonStream: AsyncStream[Json] = {
+    def toElem(i: Int) = obj("number" -> number(i))
+
+    ints(0).map(toElem)
+  }
+
   val count: Service[Request, Response] = Service.mk[Request, Response] {
-    req =>
-      Ok(ints(0).map(i =>
-        <xml>
-          {i}
-        </xml>)
-      )
+    req => Ok(jsonStream)
   }
 
   val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo count

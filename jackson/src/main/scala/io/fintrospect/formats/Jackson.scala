@@ -49,6 +49,8 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
 
     override def number(value: Int) = new IntNode(value)
 
+    override def number(value: Double) = new DoubleNode(value)
+
     override def number(value: BigDecimal) = new DecimalNode(value.bigDecimal)
 
     override def number(value: Long) = new LongNode(value)
