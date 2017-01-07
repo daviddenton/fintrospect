@@ -4,12 +4,15 @@ package cookbook.streaming
 object RunMe extends App {
 
   import com.twitter.concurrent.AsyncStream
+  import com.twitter.concurrent.AsyncStream.fromFuture
   import com.twitter.finagle.http.Method.Get
   import com.twitter.finagle.http.path.Root
   import com.twitter.finagle.http.{Request, Response}
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
-  import com.twitter.util.{Duration, Future, JavaTimer}
+  import com.twitter.util.Duration.fromSeconds
+  import com.twitter.util.Future.sleep
+  import com.twitter.util.JavaTimer
   import io.circe.Json
   import io.fintrospect.formats.Circe.JsonFormat._
   import io.fintrospect.formats.Circe.ResponseBuilder._
@@ -17,7 +20,7 @@ object RunMe extends App {
 
   val timer = new JavaTimer()
 
-  def ints(i: Int): AsyncStream[Int] = i +:: AsyncStream.fromFuture(Future.sleep(Duration.fromSeconds(1))(timer)).flatMap(_ => ints(i + 1))
+  def ints(i: Int): AsyncStream[Int] = i +:: fromFuture(sleep(fromSeconds(1))(timer)).flatMap(_ => ints(i + 1))
 
   def jsonStream: AsyncStream[Json] = ints(0).map(i => obj("number" -> number(i)))
 
