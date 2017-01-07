@@ -11,6 +11,8 @@ import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.{RouteModule, RouteSpec}
 
+case class User(name: String)
+
 /**
   * OAuth controlled app using finagle-oath2. Use the "access_token" of "token" to gain access to the services.
   * This example shows how you can vary the input of the request to the service endpoints by altering the type

@@ -49,8 +49,6 @@ object Tutorials {
 
     clients
 
-    handling JSON
-
     security
     validation
    */

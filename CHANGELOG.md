@@ -10,6 +10,7 @@ The main API is very stable, but expect some amount of breaking changes around m
 ## 14.1.0 (uncut)
 - Added missing `number()` method for Double on JSON format objects
 - Bugfix #32 - `Circe` displaying ints as decimal when using `JsonFormat.number()`
+- (Small) breaking: Replaced function with `Service[T: Boolean]` in `ApiKey`
 
 ## 14.0.0
 - Upgrade to various dependency versions, including `finagle-http 6.41.0`.

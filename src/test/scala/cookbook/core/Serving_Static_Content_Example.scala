@@ -15,4 +15,4 @@ object Serving_Static_Content_Example extends App {
   ready(Http.serve(":9999", module.toService))
 }
 
-//curl http://localhost:9999/package.json
+//curl -v http://localhost:9999/package.json
