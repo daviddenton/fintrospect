@@ -44,3 +44,5 @@ object RunMe extends App {
 
   ready(Http.serve(":9999", module.toService))
 }
+//curl -v -H"Content-Type: application/x-www-form-urlencoded" -XPOST http://localhost:9999/ --data '&age=asd'
+//curl -v -H"Content-Type: application/x-www-form-urlencoded" -XPOST http://localhost:9999/ --data 'name=david&age=12'

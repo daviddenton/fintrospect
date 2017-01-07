@@ -14,3 +14,5 @@ object RunMe extends App {
 
   ready(Http.serve(":9999", module.toService))
 }
+
+//curl http://localhost:9999/package.json
