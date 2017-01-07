@@ -1,5 +1,6 @@
 package io.fintrospect.renderers
 
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.{Get, Post}
 import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Status}
@@ -26,7 +27,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
       val customBody = Body.json(Option("the body of the message"), obj("anObject" -> obj("notAStringField" -> number(123))))
 
       val module = RouteModule(Root / "basepath", renderer)
-        .securedBy(ApiKey(Header.required.string("the_api_key"), (_: String) => Future(true)))
+        .securedBy(ApiKey(Header.required.string("the_api_key"), Service.const(Future(true))))
         .withRoute(
           RouteSpec("summary of this route", "some rambling description of what this thing actually does")
             .producing(APPLICATION_JSON)

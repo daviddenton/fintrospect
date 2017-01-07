@@ -1,13 +1,12 @@
-package examples.oauth
+package cookbook.core
 
 import java.util.Date
 
 import com.twitter.finagle.oauth2.{AccessToken, AuthInfo, DataHandler}
 import com.twitter.util.Future
 
-/**
-  * Extremely contrived OAuth access control mechanism.
-  */
+case class User(name: String)
+
 class UserDataHandler extends DataHandler[User] {
 
   private val knownUser = User("admin")
@@ -44,3 +43,30 @@ class UserDataHandler extends DataHandler[User] {
 
   private def accessToken() = AccessToken("token", Option("refresh"), Option("Scope"), Option(1000), new Date())
 }
+
+object Security_OAuth_Example extends App {
+
+  import com.twitter.finagle.http.Method.Get
+  import com.twitter.finagle.http.path.Root
+  import com.twitter.finagle.http.{Request, Response}
+  import com.twitter.finagle.oauth2.OAuthErrorInJson
+  import com.twitter.finagle.{Http, OAuth2Filter, OAuth2Request, Service}
+  import com.twitter.util.Await.ready
+  import io.fintrospect.formats.PlainText.ResponseBuilder.Ok
+  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+
+  val protectedSvc: Service[OAuth2Request[User], Response] = Service.mk {
+    rq: OAuth2Request[User] => Ok(rq.authInfo.user.name)
+  }
+
+  val authFilter = new OAuth2Filter(new UserDataHandler) with OAuthErrorInJson
+
+  val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo authFilter.andThen(protectedSvc)
+
+  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+
+  ready(Http.serve(":9999", module.toService))
+}
+
+//curl -v http://localhost:9999/
+//curl -v -H"access_token: secret" http://localhost:9999/
