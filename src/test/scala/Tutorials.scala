@@ -50,9 +50,6 @@ object Tutorials {
     clients
 
     handling JSON
-    building JSON
-    HTML
-    automarshalling
 
     security
     validation
