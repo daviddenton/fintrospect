@@ -14,14 +14,14 @@ object RunMe extends App {
 
   case class Model(name: String, age: Int) extends View
 
-  def showAge(name: String, age: Int): Service[Request, Response] = {
+  def showAgeIn30(name: String, age: Int): Service[Request, Response] = {
     val svc = Service.mk[Request, View] { req => Model(name, age + 30) }
 
     new RenderView(Html.ResponseBuilder, MustacheTemplates.HotReload("src/main/resources")).andThen(svc)
   }
 
   val route: ServerRoute[Request, Response] = RouteSpec()
-    .at(Get) / Path.string("name") / Path.int("age") bindTo showAge
+    .at(Get) / Path.string("name") / Path.int("age") bindTo showAgeIn30
 
   val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
 

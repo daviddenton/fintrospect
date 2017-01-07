@@ -18,7 +18,7 @@ object RunMe extends App {
   val fileField = FormField.required.file("data")
   val form = Body.multiPartForm(usernameField, fileField)
 
-  val svc = Service.mk[Request, Response] {
+  val svc: Service[Request, Response] = Service.mk[Request, Response] {
     req => {
       val postedForm = form <-- req
       val name: String = usernameField <-- postedForm

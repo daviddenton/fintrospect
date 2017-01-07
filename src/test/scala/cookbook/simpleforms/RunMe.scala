@@ -15,7 +15,7 @@ object RunMe extends App {
   val ageField = FormField.optional.int("age")
   val form = Body.form(nameField, ageField)
 
-  val svc = Service.mk[Request, Response] {
+  val svc: Service[Request, Response] = Service.mk[Request, Response] {
     req => {
       val formInstance = form <-- req
       val name: String = nameField <-- formInstance
