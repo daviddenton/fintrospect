@@ -54,7 +54,6 @@ object Tutorials {
     automarshalling
 
     security
-    streaming
     validation
 
     web

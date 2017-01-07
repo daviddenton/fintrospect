@@ -11,9 +11,7 @@ object RunMe extends App {
   import io.fintrospect.parameters.Path
   import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
 
-  def sayHello(name: String): Service[Request, Response] = Service.mk[Request, Response] {
-    req => Ok(s"hello $name!")
-  }
+  def sayHello(name: String): Service[Request, Response] = Service.mk[Request, Response] { req => Ok(s"hello $name!") }
 
   val route: ServerRoute[Request, Response] = RouteSpec().at(Get) / Path.string("name") bindTo sayHello
   val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
