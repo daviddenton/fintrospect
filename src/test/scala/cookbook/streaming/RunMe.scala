@@ -15,28 +15,11 @@ object RunMe extends App {
   import io.fintrospect.formats.Circe.ResponseBuilder._
   import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
 
-  import scala.xml.Elem
-
   val timer = new JavaTimer()
 
-  def ints(i: Int): AsyncStream[Int] =
-    i +:: AsyncStream.fromFuture(Future.sleep(Duration.fromSeconds(1))(timer)).flatMap(_ => ints(i + 1))
+  def ints(i: Int): AsyncStream[Int] = i +:: AsyncStream.fromFuture(Future.sleep(Duration.fromSeconds(1))(timer)).flatMap(_ => ints(i + 1))
 
-  def xmlStream: AsyncStream[Elem] = {
-
-    def toElem(i: Int) =
-      <xml>
-        {i}
-      </xml>
-
-    ints(0).map(toElem)
-  }
-
-  def jsonStream: AsyncStream[Json] = {
-    def toElem(i: Int) = obj("number" -> number(i))
-
-    ints(0).map(toElem)
-  }
+  def jsonStream: AsyncStream[Json] = ints(0).map(i => obj("number" -> number(i)))
 
   val count: Service[Request, Response] = Service.mk[Request, Response] {
     req => Ok(jsonStream)
