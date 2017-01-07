@@ -1,7 +1,7 @@
-package cookbook.helloworld
+package cookbook.core
 
 // fintrospect-core
-object RunMe extends App {
+object HelloWorld_Example extends App {
 
   import com.twitter.finagle.http.Method.Get
   import com.twitter.finagle.http.path.Root

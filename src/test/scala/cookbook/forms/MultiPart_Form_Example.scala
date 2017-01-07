@@ -1,7 +1,7 @@
-package cookbook.multipartforms
+package cookbook.forms
 
 // fintrospect-core
-object RunMe extends App {
+object MultiPart_Form_Example extends App {
 
   import com.twitter.finagle.http.Method.Post
   import com.twitter.finagle.http.path.Root

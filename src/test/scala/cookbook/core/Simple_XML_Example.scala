@@ -1,7 +1,7 @@
-package cookbook.xml
+package cookbook.core
 
 // fintrospect-core
-object RunMe extends App {
+object Simple_XML_Example extends App {
 
   import com.twitter.finagle.http.Method.Post
   import com.twitter.finagle.http.path.Root

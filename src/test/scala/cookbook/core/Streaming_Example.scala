@@ -1,7 +1,7 @@
-package cookbook.streaming
+package cookbook.core
 
 // fintrospect-core
-object RunMe extends App {
+object Streaming_Example extends App {
 
   import argo.jdom.JsonRootNode
   import com.twitter.concurrent.AsyncStream
