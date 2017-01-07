@@ -1,9 +1,7 @@
-package cookbook.webforms
-
-import com.twitter.util.Future
+package cookbook.forms
 
 // fintrospect-core
-object RunMe extends App {
+object Simple_Form_Example extends App {
 
   import com.twitter.finagle.http.Method.Post
   import com.twitter.finagle.http.path.Root
@@ -11,29 +9,20 @@ object RunMe extends App {
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
   import io.fintrospect.formats.PlainText.ResponseBuilder._
-  import io.fintrospect.parameters.{Body, Form, FormField}
+  import io.fintrospect.parameters.{Body, FormField}
   import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
 
   val nameField = FormField.required.string("name")
   val ageField = FormField.optional.int("age")
-  val form = Body.webForm(nameField -> "everyone has a name!", ageField -> "age is an int!")
+  val form = Body.form(nameField, ageField)
 
   val svc: Service[Request, Response] = Service.mk[Request, Response] {
     req => {
-      val postedForm: Form = form <-- req
-      if (postedForm.isValid) successMessage(postedForm) else failureMessage(postedForm)
+      val formInstance = form <-- req
+      val name: String = nameField <-- formInstance
+      val age: Option[Int] = ageField <-- formInstance
+      Ok(s"$name is ${age.map(_.toString).getOrElse("too old to admit it")}")
     }
-  }
-
-  def failureMessage(postedForm: Form): Future[Response] = {
-    val errorString = postedForm.errors.map(e => e.param.name + ": " + e.reason).mkString("\n")
-    BadRequest("errors were: " + errorString)
-  }
-
-  def successMessage(postedForm: Form): Future[Response] = {
-    val name: String = nameField <-- postedForm
-    val age: Option[Int] = ageField <-- postedForm
-    Ok(s"$name is ${age.map(_.toString).getOrElse("too old to admit it")}")
   }
 
   val route: ServerRoute[Request, Response] = RouteSpec()

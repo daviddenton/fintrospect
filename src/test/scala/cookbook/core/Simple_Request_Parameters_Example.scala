@@ -1,7 +1,7 @@
-package cookbook.requestparameters
+package cookbook.core
 
 // fintrospect-core
-object RunMe extends App {
+object Simple_Request_Parameters_Example extends App {
 
   import com.twitter.finagle.http.Method.Get
   import com.twitter.finagle.http.path.Root

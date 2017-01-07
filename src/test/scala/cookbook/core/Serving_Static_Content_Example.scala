@@ -1,9 +1,9 @@
-package cookbook.staticcontent
+package cookbook.core
 
 import io.fintrospect.ResourceLoader
 
 // fintrospect-core
-object RunMe extends App {
+object Serving_Static_Content_Example extends App {
 
   import com.twitter.finagle.Http
   import com.twitter.finagle.http.path.Root
