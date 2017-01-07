@@ -11,7 +11,7 @@ abstract class JsonFormatSpec[X <: Y, Y](val jsonLib: JsonLibrary[X, Y]) extends
 
   val format = jsonLib.JsonFormat
 
-  val expectedJson = """{"string":"hello","object":{"field1":"aString"},"int":1,"long":2,"double":1.2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
+  val expectedJson = """{"string":"hello","object":{"field1":"aString"},"int":10,"long":2,"double":1.2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
 
   val expected = format.obj("field" -> format.string("value"))
 
@@ -20,7 +20,7 @@ abstract class JsonFormatSpec[X <: Y, Y](val jsonLib: JsonLibrary[X, Y]) extends
       format.compact(format.objSym(
         'string -> format.string("hello"),
         'object -> format.obj("field1" -> format.string("aString")),
-        'int -> format.number(1),
+        'int -> format.number(10),
         'long -> format.number(2L),
         'double -> format.number(1.2),
         'decimal -> format.number(BigDecimal(1.2)),
