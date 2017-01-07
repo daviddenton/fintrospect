@@ -2,6 +2,7 @@ package cookbook.webforms
 
 import com.twitter.util.Future
 
+// fintrospect-core
 object RunMe extends App {
 
   import com.twitter.finagle.http.Method.Post

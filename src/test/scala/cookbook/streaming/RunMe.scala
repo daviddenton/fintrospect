@@ -1,8 +1,9 @@
 package cookbook.streaming
 
-
+// fintrospect-core
 object RunMe extends App {
 
+  import argo.jdom.JsonRootNode
   import com.twitter.concurrent.AsyncStream
   import com.twitter.finagle.http.Method.Get
   import com.twitter.finagle.http.path.Root
@@ -12,16 +13,15 @@ object RunMe extends App {
   import com.twitter.util.Duration.fromSeconds
   import com.twitter.util.Future.sleep
   import com.twitter.util.JavaTimer
-  import io.circe.Json
-  import io.fintrospect.formats.Circe.JsonFormat._
-  import io.fintrospect.formats.Circe.ResponseBuilder._
+  import io.fintrospect.formats.Argo.JsonFormat._
+  import io.fintrospect.formats.Argo.ResponseBuilder._
   import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
 
   val timer = new JavaTimer()
 
   def ints(i: Int): AsyncStream[Int] = i +:: AsyncStream.fromFuture(sleep(fromSeconds(1))(timer)).flatMap(_ => ints(i + 1))
 
-  def jsonStream: AsyncStream[Json] = ints(0).map(i => obj("number" -> number(i)))
+  def jsonStream: AsyncStream[JsonRootNode] = ints(0).map(i => obj("number" -> number(i)))
 
   val count: Service[Request, Response] = Service.mk[Request, Response] { req => Ok(jsonStream) }
 

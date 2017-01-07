@@ -1,5 +1,6 @@
 package cookbook.helloworld
 
+// fintrospect-core
 object RunMe extends App {
 
   import com.twitter.finagle.http.Method.Get
