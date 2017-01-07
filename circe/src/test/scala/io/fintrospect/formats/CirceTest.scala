@@ -87,5 +87,5 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe) {
       (param <-- Request("?name=" + encode(aLetter))) shouldBe aLetter
     }
   }
-  override val expectedJson: String = """{"string":"hello","object":{"field1":"aString"},"int":1.0,"long":2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
+  override val expectedJson: String = """{"string":"hello","object":{"field1":"aString"},"int":1,"long":2,"double":1.2,"decimal":1.2,"bigInt":12344,"bool":true,"null":null,"array":["world",true]}"""
 }

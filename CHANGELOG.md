@@ -7,6 +7,10 @@ The main API is very stable, but expect some amount of breaking changes around m
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.1.0 (uncut)
+- Added missing `number()` method for Double on JSON format objects
+- Bugfix #32 - `Circe` displaying ints as decimal when using `JsonFormat.number()`
+
 ## 14.0.0
 - Upgrade to various dependency versions, including `finagle-http 6.41.0`.
 - Breaking: remodel/repackage of `ResponseBuilder` instantiation for custom formats. This only affects API users if using implicit conversion of `Status` objects to `ResponseBuilder`. This conversion has

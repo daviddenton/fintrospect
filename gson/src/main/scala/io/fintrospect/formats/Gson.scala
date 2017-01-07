@@ -30,6 +30,8 @@ object Gson extends JsonLibrary[JsonElement, JsonElement] {
 
     override def number(value: Int) = new JsonPrimitive(value)
 
+    override def number(value: Double) = new JsonPrimitive(value)
+
     override def number(value: BigDecimal) = new JsonPrimitive(value)
 
     override def number(value: Long) = new JsonPrimitive(value)

@@ -26,6 +26,8 @@ object Spray extends JsonLibrary[JsValue, JsValue] {
 
     override def number(value: Int) = value.toJson
 
+    override def number(value: Double) = value.toJson
+
     override def number(value: BigDecimal) = value.toJson
 
     override def number(value: Long) = value.toJson

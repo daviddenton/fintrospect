@@ -42,13 +42,15 @@ object Circe extends JsonLibrary[Json, Json] {
 
     override def string(value: String) = Json.fromString(value)
 
-    override def number(value: Int) = Json.fromDoubleOrNull(value)
+    override def number(value: Int) = Json.fromBigInt(value)
+
+    override def number(value: Double) = Json.fromDoubleOrString(value)
 
     override def number(value: BigDecimal) = Json.fromBigDecimal(value.doubleValue())
 
     override def number(value: Long) = Json.fromLong(value)
 
-    override def number(value: BigInteger) = Json.fromLong(value.intValue())
+    override def number(value: BigInteger) = Json.fromBigInt(value)
 
     override def boolean(value: Boolean) = Json.fromBoolean(value)
 
