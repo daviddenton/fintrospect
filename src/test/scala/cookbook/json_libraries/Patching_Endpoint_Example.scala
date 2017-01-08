@@ -18,7 +18,7 @@ object Patching_Endpoint_Example extends App {
   import io.fintrospect.formats.Circe.JsonFormat._
   import io.fintrospect.formats.Circe.ResponseBuilder._
   import io.fintrospect.parameters.Path
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   import scala.collection.mutable
 
@@ -42,7 +42,7 @@ object Patching_Endpoint_Example extends App {
     .body(patchBody)
     .at(Post) / Path.int("id") bindTo updateAge
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

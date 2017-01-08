@@ -1,5 +1,6 @@
 package cookbook.core
 
+
 // fintrospect-core
 object HelloWorld_Example extends App {
 
@@ -10,12 +11,12 @@ object HelloWorld_Example extends App {
   import com.twitter.util.Await.ready
   import io.fintrospect.formats.PlainText.ResponseBuilder._
   import io.fintrospect.parameters.Path
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   def sayHello(name: String): Service[Request, Response] = Service.mk[Request, Response] { req => Ok(s"hello $name!") }
 
   val route: ServerRoute[Request, Response] = RouteSpec().at(Get) / Path.string("name") bindTo sayHello
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

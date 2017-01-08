@@ -10,7 +10,7 @@ object Simple_XML_Example extends App {
   import com.twitter.util.Await.ready
   import io.fintrospect.formats.Xml.ResponseBuilder._
   import io.fintrospect.parameters.Body
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   import scala.xml.Elem
 
@@ -33,8 +33,9 @@ object Simple_XML_Example extends App {
     .body(document)
     .at(Post) bindTo analyse
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }
+
 //curl -v -XPOST http://localhost:9999/ --data '<person name="david" age="100"/>'

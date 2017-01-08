@@ -17,28 +17,18 @@ object RouteModule {
   type ModifyPath = Path => Path
 
   /**
-    * Create a module using the given base-path without any Module API Rendering.
-    */
-  def apply(basePath: Path): RouteModule[Request, Response] = apply(basePath, new ModuleRenderer {
-    override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = Response(NotFound)
-
-    override def badRequest(badParameters: Seq[ExtractionError]): Response = Response(BadRequest)
-
-    override def notFound(request: Request): Response = Response(NotFound)
-  })
-
-  /**
     * Create a module using the given base-path, renderer.
     */
-  def apply(basePath: Path, moduleRenderer: ModuleRenderer): RouteModule[Request, Response] = {
+  def apply(basePath: Path, moduleRenderer: ModuleRenderer = ModuleRenderer.Default): RouteModule[Request, Response] =
     new RouteModule[Request, Response](basePath, moduleRenderer, identity, Nil, NoSecurity, Filter.identity)
-  }
 
   /**
     * Create a module using the given base-path, renderer and module filter (to be applied to all matching requests to
     * this module APART from the documentation route).
     */
-  def apply[RQ, RS](basePath: Path, moduleRenderer: ModuleRenderer, moduleFilter: Filter[Request, Response, RQ, RS]): RouteModule[RQ, RS] = {
+  def apply[RQ, RS](basePath: Path,
+                    moduleRenderer: ModuleRenderer,
+                    moduleFilter: Filter[Request, Response, RQ, RS]): RouteModule[RQ, RS] = {
     new RouteModule[RQ, RS](basePath, moduleRenderer, identity, Nil, NoSecurity, moduleFilter)
   }
 }

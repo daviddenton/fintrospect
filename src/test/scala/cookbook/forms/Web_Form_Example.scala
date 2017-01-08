@@ -1,7 +1,5 @@
 package cookbook.forms
 
-import com.twitter.util.Future
-
 // fintrospect-core
 object Web_Form_Example extends App {
 
@@ -10,13 +8,14 @@ object Web_Form_Example extends App {
   import com.twitter.finagle.http.{Request, Response}
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
+  import com.twitter.util.Future
   import io.fintrospect.formats.PlainText.ResponseBuilder._
   import io.fintrospect.parameters.{Body, Form, FormField}
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   val nameField = FormField.required.string("name")
   val ageField = FormField.optional.int("age")
-  val form = Body.webForm(nameField -> "everyone has a name!", ageField -> "age is an int!")
+  val form: Body[Form] = Body.webForm(nameField -> "everyone has a name!", ageField -> "age is an int!")
 
   val svc: Service[Request, Response] = Service.mk[Request, Response] {
     req => {
@@ -40,9 +39,10 @@ object Web_Form_Example extends App {
     .body(form)
     .at(Post) bindTo svc
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }
+
 //curl -v -H"Content-Type: application/x-www-form-urlencoded" -XPOST http://localhost:9999/ --data '&age=asd'
 //curl -v -H"Content-Type: application/x-www-form-urlencoded" -XPOST http://localhost:9999/ --data 'name=david&age=12'

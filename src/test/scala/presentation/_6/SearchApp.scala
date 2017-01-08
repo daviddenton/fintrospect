@@ -55,7 +55,7 @@ class BookAvailable(books: RemoteBooks) {
 
 
 class SearchApp {
-  private val apiInfo = ApiInfo("search some books", "1.0", Option("an api for searching our book collection"))
+  private val apiInfo = ApiInfo("search some books", "1.0", "an api for searching our book collection")
 
   val service = RouteModule(Root, Swagger2dot0Json(apiInfo))
     .withRoute(new SearchRoute(new RemoteBooks).route)

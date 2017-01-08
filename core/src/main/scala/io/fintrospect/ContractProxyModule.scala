@@ -27,7 +27,7 @@ trait ContractEndpoint {
   */
 object ContractProxyModule {
   def apply[T <: Contract](name: String, service: Service[Request, Response], contract: T, rootPath: Path = Root, description: String = null)(implicit tag: TypeTag[T]): RouteModule[Request, Response] = {
-    val descriptionOption = if (description == null) Option(s"Proxy services for $name API") else Option(description)
+    val descriptionOption = Option(description).getOrElse(s"Proxy services for $name API")
     val routes = universe.typeOf[T].members
       .filter(_.isModule)
       .map(_.asModule)
