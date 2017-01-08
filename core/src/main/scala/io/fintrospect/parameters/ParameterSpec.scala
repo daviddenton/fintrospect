@@ -32,11 +32,11 @@ case class ParameterSpec[T](name: String,
   /**
     * Uni-directional map functions for this ParameterSpec type. Use this to implement custom Parameter types
     */
-  def map[O](in: T => O) = ParameterSpec[O](name, description, paramType, s => in(deserialize(s)))
+  def map[O](in: T => O): ParameterSpec[O] = ParameterSpec[O](name, description, paramType, s => in(deserialize(s)))
 }
 
 /**
-  * Predefined ParameterSpec instances for common types
+  * Predefined ParameterSpec instances for common types. These are mappable to custom types, so start with these.
   */
 object ParameterSpec {
 
