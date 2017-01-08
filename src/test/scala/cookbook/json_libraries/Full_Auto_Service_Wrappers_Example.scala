@@ -17,7 +17,7 @@ object Full_Auto_Marshalling_Example extends App {
   import io.fintrospect.formats.Circe
   import io.fintrospect.formats.Circe.Auto._
   import io.fintrospect.parameters.Body
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   val insultMe: Service[Profile, Profile] = Service.mk[Profile, Profile] {
     inProfile => Future(inProfile.copy(name = inProfile.name + " Smells"))
@@ -27,7 +27,7 @@ object Full_Auto_Marshalling_Example extends App {
     .body(Body(Circe.bodySpec[Profile]()))
     .at(Post) bindTo InOut(insultMe)
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

@@ -1,5 +1,6 @@
 package cookbook.forms
 
+
 // fintrospect-core
 object MultiPart_Form_Example extends App {
 
@@ -9,18 +10,18 @@ object MultiPart_Form_Example extends App {
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
   import io.fintrospect.formats.PlainText.ResponseBuilder._
-  import io.fintrospect.parameters.{Body, FormField, MultiPartFile}
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.parameters.{Body, Form, FormField, MultiPartFile}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   import scala.language.reflectiveCalls
 
   val usernameField = FormField.required.string("user")
   val fileField = FormField.required.file("data")
-  val form = Body.multiPartForm(usernameField, fileField)
+  val form: Body[Form] = Body.multiPartForm(usernameField, fileField)
 
   val svc: Service[Request, Response] = Service.mk[Request, Response] {
     req => {
-      val postedForm = form <-- req
+      val postedForm: Form = form <-- req
       val name: String = usernameField <-- postedForm
       val data: MultiPartFile = fileField <-- postedForm
       Ok(s"$name posted ${data.filename} which is ${data.length}" + " bytes")
@@ -31,7 +32,7 @@ object MultiPart_Form_Example extends App {
     .body(form)
     .at(Post) bindTo svc
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

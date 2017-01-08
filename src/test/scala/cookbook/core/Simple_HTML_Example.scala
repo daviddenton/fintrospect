@@ -10,7 +10,7 @@ object Simple_HTML_Example extends App {
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
   import io.fintrospect.formats.Html.ResponseBuilder._
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   val serve: Service[Request, Response] = Service.mk[Request, Response] {
     req => {
@@ -28,7 +28,7 @@ object Simple_HTML_Example extends App {
   val route: ServerRoute[Request, Response] = RouteSpec()
     .at(Get) bindTo serve
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

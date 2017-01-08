@@ -2,7 +2,7 @@ package cookbook.templating
 
 // fintrospect-core
 // fintrospect-handlebars
-case class HandlebarsView(name: String, age: Int) extends  io.fintrospect.templating.View
+case class HandlebarsView(name: String, age: Int) extends io.fintrospect.templating.View
 
 object Handlebars_Example extends App {
 
@@ -14,7 +14,7 @@ object Handlebars_Example extends App {
   import io.fintrospect.formats.Html
   import io.fintrospect.parameters.Path
   import io.fintrospect.templating.{HandlebarsTemplates, RenderView, View}
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   def showAgeIn30(name: String, age: Int): Service[Request, Response] = {
     val svc = Service.mk[Request, View] { req => MustacheView(name, age + 30) }
@@ -25,7 +25,7 @@ object Handlebars_Example extends App {
   val route: ServerRoute[Request, Response] = RouteSpec()
     .at(Get) / Path.string("name") / Path.int("age") bindTo showAgeIn30
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

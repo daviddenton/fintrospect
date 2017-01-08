@@ -91,7 +91,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   }
 
   private def render(apiInfo: ApiInfo): JsonNode =
-    obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(apiInfo.description.getOrElse("")))
+    obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(Option(apiInfo.description).getOrElse("")))
 
   override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = {
     val pathsAndDefinitions = routes

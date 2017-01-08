@@ -16,7 +16,7 @@ object Semi_Auto_Marshalling_Example extends App {
   import io.fintrospect.formats.Circe.JsonFormat._
   import io.fintrospect.formats.Circe.ResponseBuilder._
   import io.fintrospect.parameters.Body
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   val personBody = Body(Circe.bodySpec[Person]())
 
@@ -30,7 +30,7 @@ object Semi_Auto_Marshalling_Example extends App {
     .body(personBody)
     .at(Post) bindTo insultMe
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

@@ -50,20 +50,21 @@ object Security_OAuth_Example extends App {
   import com.twitter.finagle.http.path.Root
   import com.twitter.finagle.http.{Request, Response}
   import com.twitter.finagle.oauth2.OAuthErrorInJson
-  import com.twitter.finagle.{Http, OAuth2Filter, OAuth2Request, Service}
+  import com.twitter.finagle.{Filter, Http, OAuth2Filter, OAuth2Request, Service}
   import com.twitter.util.Await.ready
   import io.fintrospect.formats.PlainText.ResponseBuilder.Ok
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   val protectedSvc: Service[OAuth2Request[User], Response] = Service.mk {
     rq: OAuth2Request[User] => Ok(rq.authInfo.user.name)
   }
 
-  val authFilter = new OAuth2Filter(new UserDataHandler) with OAuthErrorInJson
+  val authFilter: Filter[Request, Response, OAuth2Request[User], Response] =
+    new OAuth2Filter(new UserDataHandler) with OAuthErrorInJson
 
   val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo authFilter.andThen(protectedSvc)
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

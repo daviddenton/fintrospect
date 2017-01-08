@@ -16,7 +16,7 @@ object Simple_JSON_Example extends App {
   import io.fintrospect.formats.Argo.JsonFormat._
   import io.fintrospect.formats.Argo.ResponseBuilder._
   import io.fintrospect.parameters.Body
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   val json = Body.json(None, null, Argo)
 
@@ -33,7 +33,7 @@ object Simple_JSON_Example extends App {
     .body(json)
     .at(Post) bindTo echo
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

@@ -15,7 +15,7 @@ object Streaming_Response_Example extends App {
   import com.twitter.util.JavaTimer
   import io.fintrospect.formats.Argo.JsonFormat._
   import io.fintrospect.formats.Argo.ResponseBuilder._
-  import io.fintrospect.{RouteModule, RouteSpec, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   val timer = new JavaTimer()
 
@@ -27,8 +27,9 @@ object Streaming_Response_Example extends App {
 
   val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo count
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }
+
 //curl --raw http://localhost:9999/

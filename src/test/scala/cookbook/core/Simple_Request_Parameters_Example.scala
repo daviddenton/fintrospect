@@ -10,7 +10,7 @@ object Simple_Request_Parameters_Example extends App {
   import com.twitter.util.Await.ready
   import io.fintrospect.formats.PlainText.ResponseBuilder._
   import io.fintrospect.parameters.{Header, ParameterSpec, Query}
-  import io.fintrospect.{RouteModule, RouteSpec}
+  import io.fintrospect.{Module, RouteModule, RouteSpec}
 
   import scala.language.reflectiveCalls
 
@@ -34,7 +34,7 @@ object Simple_Request_Parameters_Example extends App {
     .taking(values)
     .at(Get) bindTo calculate
 
-  val module: RouteModule[Request, Response] = RouteModule(Root).withRoute(route)
+  val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }
