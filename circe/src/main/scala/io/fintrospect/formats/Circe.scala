@@ -75,7 +75,7 @@ object Circe extends JsonLibrary[Json, Json] {
     * Useful for PATCH/PUT requests, where only fields to be modified are sent to the server. Note that this Body only
     * supports inbound messages.
     */
-  def patchBody[R](description: Option[String] = None, example: R = null)
+  def patchBody[R](description: String = null, example: R = null)
                   (implicit e: Encoder[R], d: Decoder[R => R]): Body[R => R] = Body[R => R](
     BodySpec.json(description, this).map(j => JsonFormat.decode[R => R](j),
       (u: R => R) => encode(u(example))), Option(example).map(_ => (r: R) => example).orNull)
@@ -83,7 +83,7 @@ object Circe extends JsonLibrary[Json, Json] {
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
-  def bodySpec[R](description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
+  def bodySpec[R](description: String = null)(implicit e: Encoder[R], d: Decoder[R]) =
     BodySpec.json(description, this).map(j => JsonFormat.decode[R](j), (u: R) => encode(u))
 
   /**

@@ -57,19 +57,19 @@ class BodySpecTest extends FunSpec with Matchers {
     val expected = Buf.ByteArray("test".getBytes: _*)
 
     it("retrieves a valid value") {
-      Try(BodySpec.binary(None, ContentType("application/exe")).deserialize(expected)) shouldBe Success(expected)
+      Try(BodySpec.binary("executable", ContentType("application/exe")).deserialize(expected)) shouldBe Success(expected)
     }
 
     it("does not retrieve an invalid value") {
-      Try(BodySpec.binary(None, ContentType("application/exe")).deserialize(Buf.Empty)).isFailure shouldBe true
+      Try(BodySpec.binary("executable", ContentType("application/exe")).deserialize(Buf.Empty)).isFailure shouldBe true
     }
 
     it("does not retrieve an null value") {
-      Try(BodySpec.binary(None, ContentType("application/exe")).deserialize(null)).isFailure shouldBe true
+      Try(BodySpec.binary("executable", ContentType("application/exe")).deserialize(null)).isFailure shouldBe true
     }
 
     it("serializes correctly") {
-      BodySpec.binary(None, ContentType("application/exe")).serialize(expected) shouldBe expected
+      BodySpec.binary("executable", ContentType("application/exe")).serialize(expected) shouldBe expected
     }
   }
 
@@ -97,11 +97,11 @@ class BodySpecTest extends FunSpec with Matchers {
     case class IClass(value: String)
 
     it("can map with just read") {
-      BodySpec.string(None).map(IClass).deserialize(Buf.Utf8("123")) shouldBe IClass("123")
+      BodySpec.string().map(IClass).deserialize(Buf.Utf8("123")) shouldBe IClass("123")
     }
 
     it("can map with read and show") {
-      BodySpec.string(None).map[IClass](IClass, (i: IClass) => i.value + i.value).serialize(IClass("100")) shouldBe Buf.Utf8("100100")
+      BodySpec.string().map[IClass](IClass, (i: IClass) => i.value + i.value).serialize(IClass("100")) shouldBe Buf.Utf8("100100")
     }
   }
 }

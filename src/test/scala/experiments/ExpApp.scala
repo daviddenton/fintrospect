@@ -20,7 +20,7 @@ object ExpApp extends App {
 
   private val pathAndParams = Contract()
     .taking(Query.required.string("a"))
-    .body(Body.xml(Option("xmlBody")))
+    .body(Body.xml("xmlBody"))
     .at(Get) / FPath.string("a") / FPath.boolean("a")
 
   def svc(c: String, b: Boolean, params: (String, Elem, Request)) = Future[Response] {

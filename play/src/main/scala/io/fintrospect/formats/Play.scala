@@ -75,6 +75,6 @@ object Play extends JsonLibrary[JsValue, JsValue] {
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
-  def bodySpec[R](description: Option[String] = None)(implicit reads: Reads[R], writes: Writes[R]): BodySpec[R] =
+  def bodySpec[R](description: String = null)(implicit reads: Reads[R], writes: Writes[R]): BodySpec[R] =
     BodySpec.json(description, Play).map(j => JsonFormat.decode[R](j), (u: R) => encode(u))
 }

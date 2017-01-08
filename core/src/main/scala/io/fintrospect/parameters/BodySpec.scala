@@ -33,15 +33,15 @@ case class BodySpec[T](description: Option[String], contentType: ContentType, pa
 }
 
 object BodySpec {
-  def string(description: Option[String] = None, contentType: ContentType = TEXT_PLAIN): BodySpec[String] =
-    BodySpec[String](description, contentType, StringParamType, b => new String(extract(b)))
+  def string(description: String = null, contentType: ContentType = TEXT_PLAIN): BodySpec[String] =
+    BodySpec[String](Option(description), contentType, StringParamType, b => new String(extract(b)))
 
-  def json[T](description: Option[String] = None, jsonLib: JsonLibrary[T, _] = Argo): BodySpec[T] =
-    BodySpec[T](description, APPLICATION_JSON, ObjectParamType, b => jsonLib.JsonFormat.parse(new String(extract(b))), t => Buf.Utf8(jsonLib.JsonFormat.compact(t)))
+  def json[T](description: String = null, jsonLib: JsonLibrary[T, _] = Argo): BodySpec[T] =
+    BodySpec[T](Option(description), APPLICATION_JSON, ObjectParamType, b => jsonLib.JsonFormat.parse(new String(extract(b))), t => Buf.Utf8(jsonLib.JsonFormat.compact(t)))
 
-  def xml(description: Option[String] = None): BodySpec[Elem] = string(description, APPLICATION_XML).map(XML.loadString, _.toString())
+  def xml(description: String = null): BodySpec[Elem] = string(description, APPLICATION_XML).map(XML.loadString, _.toString())
 
-  def binary(description: Option[String] = None, contentType: ContentType): BodySpec[Buf] = BodySpec(description, contentType, FileParamType,
+  def binary(description: String = null, contentType: ContentType): BodySpec[Buf] = BodySpec(Option(description), contentType, FileParamType,
     b => {
       require(b.length > 0)
       b

@@ -1,6 +1,5 @@
 package examples.strictcontenttypes
 
-import argo.jdom.JsonRootNode
 import com.twitter.finagle.http.Method.Post
 import com.twitter.finagle.http.Request
 import com.twitter.finagle.http.filter.Cors
@@ -18,14 +17,14 @@ import io.fintrospect.{RouteModule, RouteSpec}
   */
 object MutiBodyTypeRoute extends App {
 
-  private val json = Body.json[JsonRootNode](Option("json body"))
+  private val json = Body.json("json body")
 
   private val echoJson = Service.mk { (rq: Request) =>
     import io.fintrospect.formats.Argo.ResponseBuilder._
     Ok(json <-- rq)
   }
 
-  private val xml = Body.xml(Option("xml body"))
+  private val xml = Body.xml("xml body")
 
   private val echoXml = Service.mk { (rq: Request) =>
     import io.fintrospect.formats.Xml.ResponseBuilder._

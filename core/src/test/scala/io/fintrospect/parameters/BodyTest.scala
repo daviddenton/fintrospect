@@ -22,7 +22,7 @@ class BodyTest extends FunSpec with Matchers {
 
   describe("body") {
 
-    val body = Body.json(Option("description"), obj("field" -> string("value")))
+    val body = Body.json("description", obj("field" -> string("value")))
 
     it("should retrieve the body value from the request") {
       val bodyJson = obj("field" -> string("value"))
@@ -172,7 +172,7 @@ class BodyTest extends FunSpec with Matchers {
   describe("json") {
     it("should serialize and deserialize into the request") {
 
-      val jsonBody = Body.json[JsonRootNode](None)
+      val jsonBody = Body.json[JsonRootNode]()
       val inputJson = obj("bob" -> string("builder"))
       val bindings = jsonBody --> inputJson
 
@@ -189,7 +189,7 @@ class BodyTest extends FunSpec with Matchers {
       val inputJson = obj("bob" -> string("builder"))
       inRequest.setContentString(pretty(inputJson))
 
-      val bindings = Body.json(None) <-> inRequest
+      val bindings = Body.json() <-> inRequest
       val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
       Argo.JsonFormat.parse(outRequest.contentString) shouldBe inputJson
     }
@@ -198,7 +198,7 @@ class BodyTest extends FunSpec with Matchers {
   describe("xml") {
     it("should serialize and deserialize into the request") {
 
-      val xmlBody = Body.xml(None)
+      val xmlBody = Body.xml()
       val inputXml = <field>value</field>
       val bindings = xmlBody --> inputXml
 
@@ -214,7 +214,7 @@ class BodyTest extends FunSpec with Matchers {
       val inRequest = Request()
       val inputXml = <field>value</field>
       inRequest.setContentString(inputXml.toString())
-      val bindings = Body.xml(None) <-> inRequest
+      val bindings = Body.xml() <-> inRequest
       val outRequest = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
       XML.loadString(outRequest.contentString) shouldBe inputXml
     }
@@ -222,7 +222,7 @@ class BodyTest extends FunSpec with Matchers {
 
   describe("binary") {
     val contentType = ContentType("app/exe")
-    val binaryBody = Body.binary(None, contentType)
+    val binaryBody = Body.binary("exe", contentType)
     val input = Buf.ByteArray("test".getBytes: _*)
 
     it("should serialize and deserialize into the request") {

@@ -18,7 +18,7 @@ class ResponseSpec private[fintrospect](statusAndDescription: (Status, String), 
 
 object ResponseSpec {
   def json[T](statusAndDescription: (Status, String), example: T, jsonLib: JsonLibrary[T, _] = Argo): ResponseSpec =
-    ResponseSpec(statusAndDescription, example, BodySpec.json(None, jsonLib))
+    ResponseSpec(statusAndDescription, example, BodySpec.json(null, jsonLib))
 
   def xml(statusAndDescription: (Status, String), example: Elem): ResponseSpec =
     ResponseSpec(statusAndDescription, example, BodySpec.xml())

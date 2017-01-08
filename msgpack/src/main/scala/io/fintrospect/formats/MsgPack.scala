@@ -33,7 +33,7 @@ object MsgPack {
   /**
     * Convenience body spec method
     */
-  def bodySpec[T](description: Option[String] = None)(implicit mf: Manifest[T]): BodySpec[T] =
+  def bodySpec[T](description: String = null)(implicit mf: Manifest[T]): BodySpec[T] =
     BodySpec.binary(description, APPLICATION_X_MSGPACK).map(buf => decode(buf), m => encode(m))
 
   object ResponseBuilder extends AbstractResponseBuilder[MsgPackMsg] {

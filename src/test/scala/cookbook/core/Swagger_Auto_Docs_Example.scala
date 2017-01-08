@@ -3,14 +3,15 @@ package cookbook.core
 // fintrospect-core
 object Swagger_Auto_Docs_Example extends App {
 
-  import com.twitter.finagle.http.Method.Get
+  import com.twitter.finagle.http.Method.Post
   import com.twitter.finagle.http.path.Root
   import com.twitter.finagle.http.{Request, Response}
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
   import com.twitter.util.Future
+  import io.fintrospect.formats.Argo.JsonFormat._
   import io.fintrospect.formats.PlainText.ResponseBuilder._
-  import io.fintrospect.parameters.{Path, Query}
+  import io.fintrospect.parameters.{Body, Header, Path, Query}
   import io.fintrospect.renderers.ModuleRenderer
   import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
   import io.fintrospect.{ApiKey, Module, RouteModule, RouteSpec, ServerRoute}
@@ -19,7 +20,11 @@ object Swagger_Auto_Docs_Example extends App {
 
   val securityFilter: Service[String, Boolean] = Service.mk[String, Boolean] { r => Future(r == "secret") }
 
-  val route: ServerRoute[Request, Response] = RouteSpec().at(Get) / Path.string("name") bindTo svc1
+  val route: ServerRoute[Request, Response] = RouteSpec("a short summary", "a longer description")
+    .taking(Query.optional.string("firstName"))
+    .taking(Header.optional.localDate("birthdate"))
+    .body(Body.json("family description", array(obj("name" -> string("Jane")), obj("name" -> string("Jim")))))
+    .at(Post) / Path.string("name") bindTo svc1
   val swagger2dot0Json: ModuleRenderer = Swagger2dot0Json(
     ApiInfo("My App", "1.0", "This is an extended description of the API's functions")
   )

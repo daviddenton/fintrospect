@@ -9,7 +9,7 @@ import io.fintrospect.{ResponseSpec, RouteSpec}
 class BookAdd(books: Books) {
   private val exampleBook = Book("the title", "the author", 666)
   private val bookExistsResponse = Conflict("Book with that ISBN exists")
-  private val jsonBody = Body.json(Option("book content"), exampleBook.toJson)
+  private val jsonBody = Body.json("book content", exampleBook.toJson)
 
   private def addBook(isbn: String) = Service.mk[Request, Response] {
     request =>

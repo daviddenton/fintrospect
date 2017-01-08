@@ -117,7 +117,7 @@ class RouteSpecTest extends FunSpec with Matchers {
     val query = Query.required.string("query")
     val date = Header.optional.localDate("date")
     val gender = Path.string("gender")
-    val body = Body.xml(None)
+    val body = Body.xml()
 
     val expectedRequest = Service.mk[Request, Response] { received =>
       if (query.from(received) == "bob" &&
@@ -150,7 +150,7 @@ class RouteSpecTest extends FunSpec with Matchers {
 
   describe("retrieval from a pre-extracted request") {
     val param = Query.required.string("bob")
-    val body = Body.json(Some("body"))
+    val body = Body.json()
 
     val spec = RouteSpec().taking(param).body(body)
 
