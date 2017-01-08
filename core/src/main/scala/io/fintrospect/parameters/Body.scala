@@ -35,17 +35,17 @@ object Body {
   /**
     * JSON format HTTP message body. Defaults to Argo JSON format, but this can be overridden by passing an alternative JsonFormat
     */
-  def json[T](description: Option[String], example: T = null, jsonLib: JsonLibrary[T, _] = Argo): UniBody[T] = Body(BodySpec.json(description, jsonLib), example)
+  def json[T](description: String = null, example: T = null, jsonLib: JsonLibrary[T, _] = Argo): UniBody[T] = Body(BodySpec.json(description, jsonLib), example)
 
   /**
     * Binary HTTP body, with custom ContentType
     */
-  def binary(description: Option[String], contentType: ContentType): UniBody[Buf] = Body(BodySpec.binary(description, contentType), null)
+  def binary(description: String = null, contentType: ContentType): UniBody[Buf] = Body(BodySpec.binary(description, contentType), null)
 
   /**
     * Native Scala XML format HTTP message body.
     */
-  def xml(description: Option[String], example: Elem = null): UniBody[Elem] = Body(BodySpec.xml(description), example)
+  def xml(description: String = null, example: Elem = null): UniBody[Elem] = Body(BodySpec.xml(description), example)
 
   /**
     * HTML encoded form HTTP message body which will fail to deserialize if a single field is missing/invalid. Use this

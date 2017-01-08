@@ -12,13 +12,12 @@ object Simple_JSON_Example extends App {
   import com.twitter.finagle.http.{Request, Response}
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
-  import io.fintrospect.formats.Argo
   import io.fintrospect.formats.Argo.JsonFormat._
   import io.fintrospect.formats.Argo.ResponseBuilder._
   import io.fintrospect.parameters.Body
   import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
-  val json = Body.json(None, null, Argo)
+  val json = Body.json()
 
   val echo: Service[Request, Response] = Service.mk[Request, Response] { req =>
     val requestJson: JsonRootNode = json <-- req

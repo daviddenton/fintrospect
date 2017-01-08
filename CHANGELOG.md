@@ -11,7 +11,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Added missing `number()` method for Double on JSON format objects
 - Bugfix #32 - `Circe` displaying ints as decimal when using `JsonFormat.number()`
 - (Small) breaking: Replaced function with `Service[T: Boolean]` in `ApiKey`
-- (Small) breaking: `ApiInfo` description field is now a nullable `String` instead of a nullable `Option[String]`. To fix, unwrap the option :)
+- (Small) breaking: `Body`, `BodySpec`, `ParameterSpec`, `ApiInfo` API tidying - description fields now a nullable `String` instead of a nullable `Option[String]`. To fix, unwrap the option :)
 
 ## 14.0.0
 - Upgrade to various dependency versions, including `finagle-http 6.41.0`.

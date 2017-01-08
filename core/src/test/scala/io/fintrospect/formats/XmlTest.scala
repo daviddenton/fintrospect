@@ -22,7 +22,7 @@ class XmlAutoTest extends AutoSpec(Xml.Auto) {
     (x \ "message").head.text
   )
 
-  override def bodySpec: BodySpec[Letter] = BodySpec.xml(None).map[Letter](from(_))
+  override def bodySpec: BodySpec[Letter] = BodySpec.xml().map[Letter](from(_))
 }
 
 class XmlResponseBuilderTest extends ResponseBuilderSpec(Xml.ResponseBuilder) {

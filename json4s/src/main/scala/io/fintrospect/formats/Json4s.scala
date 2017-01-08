@@ -61,7 +61,7 @@ abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
-  def bodySpec[R](description: Option[String] = None, formats: Formats = serialization.formats(NoTypeHints))
+  def bodySpec[R](description: String = null, formats: Formats = serialization.formats(NoTypeHints))
                  (implicit mf: Manifest[R]) =
     BodySpec.json(description, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u))
 

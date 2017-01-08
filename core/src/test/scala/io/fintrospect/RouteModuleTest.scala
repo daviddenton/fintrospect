@@ -169,7 +169,7 @@ class RouteModuleTest extends FunSpec with Matchers {
     }
 
     describe("when a valid path does not contain required JSON body") {
-      val d = RouteSpec().body(Body.json(None, Argo.JsonFormat.obj()))
+      val d = RouteSpec().body(Body.json("some description", Argo.JsonFormat.obj()))
       val service = RouteModule(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 
       it("it returns a 400 when the required body is missing") {
@@ -185,7 +185,7 @@ class RouteModuleTest extends FunSpec with Matchers {
     }
 
     describe("when a valid path does not contain required custom body") {
-      val body = Body(BodySpec.string(None, ContentTypes.TEXT_PLAIN).map(_.toInt, (i: Int) => i.toString), example = 1)
+      val body = Body(BodySpec.string("some description", ContentTypes.TEXT_PLAIN).map(_.toInt, (i: Int) => i.toString), example = 1)
       val d = RouteSpec().body(body)
       val service = RouteModule(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 

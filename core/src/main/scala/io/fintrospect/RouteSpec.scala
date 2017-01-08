@@ -1,6 +1,7 @@
 package io.fintrospect
 
 import com.twitter.finagle.http.{Method, Request, Response, Status}
+import io.fintrospect.RouteSpec.QueryOrHeader
 import io.fintrospect.formats.{Argo, JsonLibrary}
 import io.fintrospect.parameters._
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
@@ -13,7 +14,7 @@ case class RouteSpec private(summary: String,
                              produces: Set[ContentType],
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
-                             requestParams: Seq[Parameter with Extractor[Request, _] with Rebindable[Request, _, Binding]],
+                             requestParams: Seq[QueryOrHeader[_]],
                              responses: Seq[ResponseSpec]) {
 
   private[fintrospect] def <--?(request: Request): Extraction[Request] = {
@@ -35,14 +36,9 @@ case class RouteSpec private(summary: String,
   def producing(contentTypes: ContentType*): RouteSpec = copy(produces = produces ++ contentTypes)
 
   /**
-    * Register a header parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
+    * Register a header/query parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
     */
-  def taking(rp: HeaderParameter[_] with Extractor[Request, _]): RouteSpec = copy(requestParams = rp +: requestParams)
-
-  /**
-    * Register a query parameter. Mandatory parameters are checked for each request, and a 400 returned if any are missing.
-    */
-  def taking(rp: QueryParameter[_] with Extractor[Request, _]): RouteSpec = copy(requestParams = rp +: requestParams)
+  def taking(rp: QueryOrHeader[_]): RouteSpec = copy(requestParams = rp +: requestParams)
 
   /**
     * Register the expected content of the body.
@@ -78,6 +74,8 @@ case class RouteSpec private(summary: String,
 }
 
 object RouteSpec {
+  type QueryOrHeader[T] = Parameter with Extractor[Request, _] with Rebindable[Request, _, Binding]
+
   def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
     RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil)
 }

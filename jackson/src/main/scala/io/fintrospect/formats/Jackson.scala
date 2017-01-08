@@ -71,7 +71,7 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
-  def bodySpec[R](description: Option[String] = None)(implicit mf: Manifest[R]) =
+  def bodySpec[R](description: String = null)(implicit mf: Manifest[R]) =
     BodySpec.json(description, this).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u))
 
   /**

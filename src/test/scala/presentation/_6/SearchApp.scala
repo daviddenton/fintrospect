@@ -33,7 +33,7 @@ class SearchRoute(books: RemoteBooks) {
 }
 
 class BookAvailable(books: RemoteBooks) {
-  private val bodySpec = BodySpec.json(Option("a book")).map(Book.fromJson, (b: Book) => b.toJson)
+  private val bodySpec = BodySpec.json("a book").map(Book.fromJson, (b: Book) => b.toJson)
   private val body = Body(bodySpec, Book("1984"))
 
   def availability() = Service.mk[Request, Response] {
