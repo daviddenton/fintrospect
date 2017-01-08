@@ -96,7 +96,7 @@ object Circe extends JsonLibrary[Json, Json] {
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
-  def parameterSpec[R](name: String, description: Option[String] = None)(implicit e: Encoder[R], d: Decoder[R]) =
-    ParameterSpec.json(name, description.orNull, this).map(j => JsonFormat.decode[R](j), (u: R) => encode(u))
+  def parameterSpec[R](name: String, description: String = null)(implicit e: Encoder[R], d: Decoder[R]) =
+    ParameterSpec.json(name, description, this).map(j => JsonFormat.decode[R](j), (u: R) => encode(u))
 
 }

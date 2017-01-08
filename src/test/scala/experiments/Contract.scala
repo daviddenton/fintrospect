@@ -6,7 +6,7 @@ import io.fintrospect.ContentType
 import io.fintrospect.parameters.Body
 
 object Contract {
-  def apply(summary: String = "<unknown>", description: Option[String] = None) = Contract0(Terms(summary, description))
+  def apply(summary: String = "<unknown>", description: String = null) = Contract0(Terms(summary, Option(description)))
 }
 
 abstract class Contract(rps: RqParam[_]*) {

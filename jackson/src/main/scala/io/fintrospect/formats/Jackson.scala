@@ -83,6 +83,6 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
-  def parameterSpec[R](name: String, description: Option[String] = None)(implicit mf: Manifest[R]) =
-    ParameterSpec.json(name, description.orNull, this).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u))
+  def parameterSpec[R](name: String, description: String = null)(implicit mf: Manifest[R]) =
+    ParameterSpec.json(name, description, this).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u))
 }
