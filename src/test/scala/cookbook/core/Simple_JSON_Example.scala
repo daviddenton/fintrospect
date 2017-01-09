@@ -28,9 +28,7 @@ object Simple_JSON_Example extends App {
     Ok(responseJson)
   }
 
-  val route: ServerRoute[Request, Response] = RouteSpec()
-    .body(json)
-    .at(Post) bindTo echo
+  val route: ServerRoute[Request, Response] = RouteSpec().body(json).at(Post) bindTo echo
 
   val module: Module = RouteModule(Root).withRoute(route)
 
