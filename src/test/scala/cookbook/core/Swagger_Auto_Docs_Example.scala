@@ -20,7 +20,6 @@ object Swagger_Auto_Docs_Example extends App {
   import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
   import io.fintrospect.{ApiKey, Module, RouteModule, RouteSpec, ServerRoute}
 
-
   def buildResponse(id: Int, sent: JsonRootNode) = obj("id" -> number(id), "sent" -> sent)
 
   val exampleBody: JsonRootNode = array(obj("lastName" -> string("Jane")), obj("name" -> string("Jim")))

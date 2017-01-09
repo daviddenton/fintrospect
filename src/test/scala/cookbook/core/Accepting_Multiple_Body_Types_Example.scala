@@ -17,16 +17,16 @@ object Accepting_Multiple_Body_Types_Example extends App {
 
   val json: Body[JsonRootNode] = Body.json()
 
-  val echoJson: Service[Request, Response] = Service.mk { (rq: Request) =>
+  val echoJson: Service[Request, Response] = Service.mk[Request, Response] { req =>
     import io.fintrospect.formats.Argo.ResponseBuilder._
-    Ok(json <-- rq)
+    Ok(json <-- req)
   }
 
   val xml: Body[Elem] = Body.xml()
 
-  val echoXml: Service[Request, Response] = Service.mk { (rq: Request) =>
+  val echoXml: Service[Request, Response] = Service.mk[Request, Response] { req =>
     import io.fintrospect.formats.Xml.ResponseBuilder._
-    Ok(xml <-- rq)
+    Ok(xml <-- req)
   }
 
   val route: ServerRoute[Request, Response] = RouteSpec("echo posted content in either JSON or XML")

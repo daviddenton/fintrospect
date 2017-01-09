@@ -55,8 +55,8 @@ object Security_OAuth_Example extends App {
   import io.fintrospect.formats.PlainText.ResponseBuilder.Ok
   import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
-  val protectedSvc: Service[OAuth2Request[User], Response] = Service.mk {
-    rq: OAuth2Request[User] => Ok(rq.authInfo.user.name)
+  val protectedSvc: Service[OAuth2Request[User], Response] = Service.mk[OAuth2Request[User], Response] {
+    req  => Ok(req.authInfo.user.name)
   }
 
   val authFilter: Filter[Request, Response, OAuth2Request[User], Response] =

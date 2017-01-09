@@ -20,7 +20,7 @@ object Building_Fake_Servers_Example extends App {
   }
 
   def startFakeServer(): ListeningServer = {
-    def sayHello(name: String): Service[Request, Response] = Service.mk { req: Request => Ok(s"hello $name!") }
+    def sayHello(name: String): Service[Request, Response] = Service.mk[Request, Response] { req => Ok(s"hello $name!") }
 
     val route: ServerRoute[Request, Response] = RouteSpec().at(Get) / Contract.name bindTo sayHello
 
