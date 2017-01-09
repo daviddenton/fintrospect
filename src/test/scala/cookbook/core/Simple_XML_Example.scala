@@ -14,7 +14,7 @@ object Simple_XML_Example extends App {
 
   import scala.xml.Elem
 
-  val document = Body.xml()
+  val document: Body[Elem] = Body.xml()
 
   val analyse: Service[Request, Response] = Service.mk[Request, Response] {
     req => {

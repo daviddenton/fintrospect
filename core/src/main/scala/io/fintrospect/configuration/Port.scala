@@ -5,6 +5,9 @@ case class Port(value: Int) extends AnyVal {
 }
 
 object Port {
+  val _80 = Port(80)
+  val _443 = Port(443)
+
   def apply(value: String): Port = Port(value.toInt)
 }
 
