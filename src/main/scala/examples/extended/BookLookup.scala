@@ -10,8 +10,8 @@ import io.fintrospect.parameters.Path
 
 class BookLookup(books: Books) {
 
-  private def lookupByIsbn(isbn: String) = Service.mk[Request, Response] {
-    request =>
+  private def lookupByIsbn(isbn: String) = Service.mk {
+    request: Request =>
       books.lookup(isbn) match {
         case Some(book) => Ok(book.toJson)
         case _ => NotFound("No book found with isbn")
