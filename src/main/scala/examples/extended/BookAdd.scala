@@ -11,8 +11,8 @@ class BookAdd(books: Books) {
   private val bookExistsResponse = Conflict("Book with that ISBN exists")
   private val jsonBody = Body.json("book content", exampleBook.toJson)
 
-  private def addBook(isbn: String) = Service.mk[Request, Response] {
-    request =>
+  private def addBook(isbn: String) = Service.mk {
+    request: Request =>
       books.lookup(isbn) match {
         case Some(_) => bookExistsResponse
         case None => {
