@@ -8,12 +8,10 @@ object Combining_Modules_Example extends App {
   import com.twitter.finagle.http.{Request, Response}
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
-  import com.twitter.util.Future
   import io.fintrospect.formats.PlainText.ResponseBuilder._
-  import io.fintrospect.parameters.Query
-  import io.fintrospect.{ApiKey, Module, RouteModule, RouteSpec, Security, ServerRoute}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
-  val identify: Service[Request, Response] = Service.mk[Request, Response] { req => Ok(req.uri) }
+  val identify: Service[Request, Response] = Service.mk { req: Request => Ok(req.uri) }
 
   val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo identify
   val childModule: Module = RouteModule(Root / "child").withRoute(route)

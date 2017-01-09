@@ -1,8 +1,5 @@
 package cookbook.core
 
-import io.fintrospect.ServerRoute
-import io.fintrospect.parameters.Header.Optional
-import io.fintrospect.parameters.Query.MandatorySeq
 
 // fintrospect-core
 object Simple_Request_Parameters_Example extends App {
@@ -13,8 +10,10 @@ object Simple_Request_Parameters_Example extends App {
   import com.twitter.finagle.{Http, Service}
   import com.twitter.util.Await.ready
   import io.fintrospect.formats.PlainText.ResponseBuilder._
+  import io.fintrospect.parameters.Header.Optional
+  import io.fintrospect.parameters.Query.MandatorySeq
   import io.fintrospect.parameters.{Header, ParameterSpec, Query}
-  import io.fintrospect.{Module, RouteModule, RouteSpec}
+  import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
   import scala.language.reflectiveCalls
 
@@ -27,8 +26,8 @@ object Simple_Request_Parameters_Example extends App {
 
   val values: MandatorySeq[Int] = Query.required.*.int("value")
 
-  val calculate: Service[Request, Response] = Service.mk {
-    (req: Request) => {
+  val calculate: Service[Request, Response] = Service.mk[Request, Response] {
+    req => {
       val components: Seq[Int] = values <-- req
       val op = operator <-- req
       Ok(s"the answer is ${components.fold(0)(op.getOrElse(_ + _))}" + " !")
