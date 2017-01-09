@@ -15,7 +15,7 @@ import io.fintrospect.{RouteModule, RouteSpec}
 /**
   * Shows how to add routes which can accept multiple body types (based on the Content-Type header)
   */
-object MutiBodyTypeRoute extends App {
+object MultiBodyTypeRoute extends App {
 
   private val json = Body.json("json body")
 
