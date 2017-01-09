@@ -30,7 +30,6 @@ object Tutorials {
     finagle filter
     finagle proxy server
 
-    fake servers
     contracts
     testing
     validation
