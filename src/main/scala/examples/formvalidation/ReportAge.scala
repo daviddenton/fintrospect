@@ -36,16 +36,16 @@ class ReportAge(greetingDatabase: GreetingDatabase) extends ServerRoutes[Request
       // Future-based operations that finagle uses.
       eitherF {
         if (postedForm.isValid) Right(postedForm) else Left("form has errors")
-      }.flatMap {
-        form => Right((NameAndAgeForm.fields.age <-- form, NameAndAgeForm.fields.name <-- form))
-      }.flatMapF {
-        case (age, name) =>
-          greetingDatabase
-            .lookupGreeting(age, name)
-            .map(greeting => greeting
-              .map(g => Right((age, name, g)))
-              .getOrElse(Left("No idea how to greet you")))
-      } matchF {
+      }
+        .map(form => (NameAndAgeForm.fields.age <-- form, NameAndAgeForm.fields.name <-- form))
+        .flatMapF {
+          case (age, name) =>
+            greetingDatabase
+              .lookupGreeting(age, name)
+              .map(greeting => greeting
+                .map(g => Right((age, name, g)))
+                .getOrElse(Left("No idea how to greet you")))
+        } matchF {
         case Right((age, name, greeting)) => DisplayUserAge(greeting, name, age)
         case Left(error) => NameAndAgeForm(NAMES, postedForm, Option(error))
       }
