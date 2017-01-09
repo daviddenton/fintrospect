@@ -18,8 +18,7 @@ object Simple_Typesafe_HTTP_Clients_Example extends App {
   val http: Service[Request, Response] = AddHost(authority).andThen(Http.newService(authority.toString))
 
   val id = Path.int("pokemonId")
-  val client: RouteClient = RouteSpec()
-    .at(Get) / "api" / "v2" / "pokemon" / id / "" bindToClient http
+  val client: RouteClient = RouteSpec().at(Get) / "api" / "v2" / "pokemon" / id / "" bindToClient http
 
   println(Await.result(client(id --> 40)).contentString)
 }

@@ -29,9 +29,7 @@ object Simple_XML_Example extends App {
     }
   }
 
-  val route: ServerRoute[Request, Response] = RouteSpec()
-    .body(document)
-    .at(Post) bindTo analyse
+  val route: ServerRoute[Request, Response] = RouteSpec().body(document).at(Post) bindTo analyse
 
   val module: Module = RouteModule(Root).withRoute(route)
 

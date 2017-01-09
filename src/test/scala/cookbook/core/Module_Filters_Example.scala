@@ -28,8 +28,7 @@ object Module_Filters_Example extends App {
       }
   }
 
-  val module: Module = RouteModule(Root, ModuleRenderer.Default, timingFilter)
-    .withRoute(route)
+  val module: Module = RouteModule(Root, ModuleRenderer.Default, timingFilter).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

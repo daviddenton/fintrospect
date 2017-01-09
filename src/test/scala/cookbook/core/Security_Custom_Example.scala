@@ -21,9 +21,7 @@ object Security_Custom_Example extends App {
   val securityFilter: Service[String, Boolean] = Service.mk[String, Boolean] { r => Future(r == "secret") }
   val apiKey: Security = ApiKey(Query.required.string("token"), securityFilter)
 
-  val module: Module = RouteModule(Root)
-    .securedBy(apiKey)
-    .withRoute(route)
+  val module: Module = RouteModule(Root).securedBy(apiKey).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
 }

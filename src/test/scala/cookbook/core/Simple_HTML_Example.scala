@@ -25,8 +25,7 @@ object Simple_HTML_Example extends App {
     }
   }
 
-  val route: ServerRoute[Request, Response] = RouteSpec()
-    .at(Get) bindTo serve
+  val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo serve
 
   val module: Module = RouteModule(Root).withRoute(route)
 

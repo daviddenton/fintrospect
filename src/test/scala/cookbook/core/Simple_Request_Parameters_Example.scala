@@ -1,5 +1,6 @@
 package cookbook.core
 
+import io.fintrospect.ServerRoute
 import io.fintrospect.parameters.Header.Optional
 import io.fintrospect.parameters.Query.MandatorySeq
 
@@ -34,10 +35,7 @@ object Simple_Request_Parameters_Example extends App {
     }
   }
 
-  val route = RouteSpec()
-    .taking(operator)
-    .taking(values)
-    .at(Get) bindTo calculate
+  val route: ServerRoute[Request, Response] = RouteSpec().taking(operator).taking(values).at(Get) bindTo calculate
 
   val module: Module = RouteModule(Root).withRoute(route)
 
