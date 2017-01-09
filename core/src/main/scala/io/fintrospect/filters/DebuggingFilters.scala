@@ -15,7 +15,7 @@ object DebuggingFilters {
       println(Seq(s"***** REQUEST: ${req.method}: ${req.uri} *****",
         "Headers: " + req.headerMap,
         "Params: " + req.params,
-        s"Content (${req.contentString.length}b):" + req.contentString
+        s"Content (${req.length}b):" + req.contentString
       ).mkString("\n"))
   }
 
@@ -26,7 +26,7 @@ object DebuggingFilters {
     response: Response =>
       println(Seq(s"***** RESPONSE ${response.status.code} *****",
         "Headers: " + response.headerMap,
-        s"Content (${response.contentString.length}b):" + response.contentString
+        s"Content (${response.length}b):" + response.contentString
       ).mkString("\n"))
   }.andThen(ResponseFilters.TapFailure {
     t: Throwable =>

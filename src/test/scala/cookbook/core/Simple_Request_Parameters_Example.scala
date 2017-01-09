@@ -1,5 +1,8 @@
 package cookbook.core
 
+import io.fintrospect.parameters.Header.Optional
+import io.fintrospect.parameters.Query.MandatorySeq
+
 // fintrospect-core
 object Simple_Request_Parameters_Example extends App {
 
@@ -19,9 +22,9 @@ object Simple_Request_Parameters_Example extends App {
     case "+" => (i: Int, j: Int) => i + j
   }
 
-  val operator = Header.optional(operatorSpec)
+  val operator: Optional[(Int, Int) => Int] = Header.optional(operatorSpec)
 
-  val values = Query.required.*.int("value")
+  val values: MandatorySeq[Int] = Query.required.*.int("value")
 
   val calculate: Service[Request, Response] = Service.mk {
     (req: Request) => {
