@@ -16,15 +16,16 @@ object Swagger_Auto_Docs_Example extends App {
   import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
   import io.fintrospect.{ApiKey, Module, RouteModule, RouteSpec, ServerRoute}
 
-  def svc1(name: String): Service[Request, Response] = Service.mk[Request, Response] { req => Ok(s"hello $name!") }
+  def svc1(id: Int): Service[Request, Response] = Service.mk[Request, Response] { req => Ok(s"hello $id!") }
 
   val securityFilter: Service[String, Boolean] = Service.mk[String, Boolean] { r => Future(r == "secret") }
 
   val route: ServerRoute[Request, Response] = RouteSpec("a short summary", "a longer description")
-    .taking(Query.optional.string("firstName"))
-    .taking(Header.optional.localDate("birthdate"))
-    .body(Body.json("family description", array(obj("name" -> string("Jane")), obj("name" -> string("Jim")))))
-    .at(Post) / Path.string("name") bindTo svc1
+    .taking(Query.required.string("firstName", "this is your firstname"))
+    .taking(Header.optional.localDate("birthdate", "format yyyy-mm-dd"))
+    .body(Body.json("family description", array(obj("lastName" -> string("Jane")), obj("name" -> string("Jim")))))
+    .at(Post) / Path.int("id", "custom identifier for this request") bindTo svc1
+
   val swagger2dot0Json: ModuleRenderer = Swagger2dot0Json(
     ApiInfo("My App", "1.0", "This is an extended description of the API's functions")
   )
