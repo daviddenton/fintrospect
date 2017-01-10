@@ -1,6 +1,6 @@
 package cookbook.core
 
-
+// fintrospect-core
 object Serving_Multiple_Content_Types_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

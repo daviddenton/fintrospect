@@ -44,6 +44,7 @@ class UserDataHandler extends DataHandler[User] {
   private def accessToken() = AccessToken("token", Option("refresh"), Option("Scope"), Option(1000), new Date())
 }
 
+// fintrospect-core
 object Security_OAuth_Example extends App {
 
   import com.twitter.finagle.http.Method.Get
