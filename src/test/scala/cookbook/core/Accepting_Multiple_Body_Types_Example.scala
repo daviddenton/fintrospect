@@ -1,6 +1,6 @@
 package cookbook.core
 
-
+// fintrospect-core
 object Accepting_Multiple_Body_Types_Example extends App {
 
   import argo.jdom.JsonRootNode
