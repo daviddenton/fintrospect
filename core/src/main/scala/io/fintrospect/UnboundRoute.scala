@@ -62,7 +62,7 @@ class UnboundRoute0(val routeSpec: RouteSpec, val method: Method, val pathFn: Mo
     }
   }
 
-  def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo(proxyFor(this, service))
+  override def bindToProxy(service: Service[Request, Response]): ServerRoute[Request, Response] = bindTo(proxyFor(this, service))
 
   override def bindToClient(service: Service[Request, Response]) = clientFor(this, service)
 }
