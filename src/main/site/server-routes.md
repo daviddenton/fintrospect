@@ -22,7 +22,7 @@ def findEmployeesOnHoliday(departmentId: Integer) = Service.mk[Request, Response
     val includeManagementFlag: Option[Boolean] = includeManagement <-- request
     val response = Response(Ok)
     val baseMsg = s"Everyone from department $departmentId was at work on $holidayDates"
-    response.contentString = baseMsg + (if (includeManagementFlag.getOrElse(false)) "" else ", even the management") Future.value(response)
+    response.contentString = baseMsg + (if (includeManagementFlag.getOrElse(false)) "" else ", even the management") Future(response)
 }
 
 val route = ServerRoute[Request, Response] = 
@@ -36,7 +36,7 @@ val route = ServerRoute[Request, Response] =
 A Module is a collection of ```ServerRoute``` that share a common URL context, which is built up from the ```Root``` object. Add the 
 routes and then convert into a standard Finagle Service object which is then attached in the normal way to an HTTP server.
 ```
-def listEmployees(): Service[Request, Response] = Service.mk(req => Future.value(Response()))
+def listEmployees(): Service[Request, Response] = Service.mk(req => Future(Response()))
 
 Http.serve(":8080",
   RouteModule(Root / "employee")
@@ -74,7 +74,7 @@ all requests will be passed. An ```ApiKey``` implementation is bundled with the 
 response code when a request does not pass authentication.
 ```
 RouteModule(Root / "employee")
-.securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future.value(key == "extremelySecretThing")))
+.securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future(key == "extremelySecretThing")))
 ```
 
 <a class="next" href="http://fintrospect.io/client-routes"><button type="button" class="btn btn-sm btn-default">next: client routes</button></a>
