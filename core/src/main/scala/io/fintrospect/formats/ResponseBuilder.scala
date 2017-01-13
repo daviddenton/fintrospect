@@ -105,8 +105,8 @@ object ResponseBuilder {
   /**
     * Convenience method to create an HTTP Redirect to the passed location. Defaults to HTTP status 302 (overridable)
     */
-  def RedirectTo(newLocation: String, status: Status = Status.Found): Response = {
-    val response = Response()
+  def RedirectTo(newLocation: String, status: Status = Status.SeeOther): Response = {
+    val response = Response(status)
     response.location = newLocation
     response
   }

@@ -41,7 +41,7 @@ import io.fintrospect.formats.Circe.Auto._
 case class ReversedEmailAddress(sserdda: String)
 
 val domainSvc = Service.mk[EmailAddress, ReversedEmailAddress] { 
-    email => Future.value(ReversedEmailAddress(email.address.reverse)) 
+    email => Future(ReversedEmailAddress(email.address.reverse)) 
 }
 val httpSvc: Service[Request, Response] = Circe.Auto.InOut(domainSvc)    
 ```

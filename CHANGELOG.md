@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.2.0
+- Added `RenderView.Redirect` to allow redirection of responses from a route that would otherwise generate a `View`
+
 ## 14.1.0
 - Added missing `number()` method for Double on JSON format objects
 - Bugfix #32 - `Circe` displaying ints as decimal when using `JsonFormat.number()`

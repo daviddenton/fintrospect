@@ -5,7 +5,7 @@ Provided trait ```TestingFintrospectRoute``` can be used to unit test your route
 ```
 object EchoRoute {
   val route = RouteSpec().at(Method.Get) / Path.string("message") bindTo( (message: String) => Service.mk {
-    req: Request => Future.value(PlainText.ResponseBuilder.OK(message))
+    req: Request => Future(PlainText.ResponseBuilder.OK(message))
   })
 }
 
@@ -28,7 +28,7 @@ especially well if you are utilising custom serialisation formats (such as one o
 absolutely no marshalling code required to send back objects over the wire from your stub.
 
 ```
-val route = RouteSpec().at(Get) / "myRoute" bindTo(() => Service.mk {r => Future.value(Response(Status.Ok))})
+val route = RouteSpec().at(Get) / "myRoute" bindTo(() => Service.mk {r => Future(Response(Status.Ok))})
 new TestHttpServer(9999, route).start()
 ```
 

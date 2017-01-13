@@ -111,4 +111,10 @@ class ResponseBuilderTest extends FunSpec {
     response.headerMap("authorization") shouldBe "Authorization: Basic"
   }
 
+  it("can create Redirects via the convenience method") {
+    val response = ResponseBuilder.RedirectTo("newLocation", Status.BadGateway)
+    response.status shouldBe Status.BadGateway
+    response.headerMap("Location") shouldBe "newLocation"
+  }
+
 }
