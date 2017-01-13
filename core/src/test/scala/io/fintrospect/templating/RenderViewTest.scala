@@ -5,10 +5,10 @@ import com.twitter.finagle.http.{Request, Status}
 import com.twitter.io.{Buf, Bufs}
 import com.twitter.util.Await.result
 import io.fintrospect.formats.Html
-import io.fintrospect.templating.RenderView.Redirect
+import io.fintrospect.templating.View.Redirect
 import org.scalatest.{FunSpec, Matchers}
 
-class RenderViewText extends FunSpec with Matchers {
+class RenderViewTest extends FunSpec with Matchers {
 
   describe("RenderView") {
     val renderView = new RenderView(Html.ResponseBuilder, new TemplateRenderer() {
