@@ -3,6 +3,7 @@ package io.fintrospect.formats
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets.UTF_8
 
+import com.google.common.net.HttpHeaders
 import com.twitter.concurrent.AsyncStream
 import com.twitter.finagle.http.{Cookie, Response, Status}
 import com.twitter.io.Buf.Utf8
@@ -100,6 +101,15 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
   * Generic ResponseBuilder support
   */
 object ResponseBuilder {
+
+  /**
+    * Convenience method to create an HTTP Redirect to the passed location. Defaults to HTTP status 302 (overridable)
+    */
+  def RedirectTo(newLocation: String, status: Status = Status.Found): Response = {
+    val response = Response()
+    response.location = newLocation
+    response
+  }
 
   private case class HIDDEN(value: String)
 
