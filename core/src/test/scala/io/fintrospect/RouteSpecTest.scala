@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method.Get
-import com.twitter.finagle.http.path.Root
+import com.twitter.finagle.http.path.{Root, Path => FPath}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
@@ -147,6 +147,34 @@ class RouteSpecTest extends FunSpec with Matchers {
       checkProxyRoute("/male/1/2/3/4/5/6", _ / gender / "1" / "2" / "3" / "4" / "5" / "6")
     }
   }
+
+  describe("create reverse router") {
+
+    it("0 elements") {
+      RouteSpec().at(Get).reverseRouter(Root / "prefix")().toString shouldBe "/prefix/"
+    }
+
+    it("prefix only") {
+      val router = RouteSpec().at(Get) / "hello" reverseRouter (Root / "prefix")
+      router().toString shouldBe "/prefix/hello/"
+    }
+
+    it("1 element") {
+      val router = RouteSpec().at(Get) / "hello" / Path.int("first") reverseRouter (Root / "prefix")
+      router(1).toString shouldBe "/prefix/hello/1"
+    }
+
+    it("2 elements") {
+      val router = RouteSpec().at(Get) / "hello" / Path.int("first") / Path.boolean("first") reverseRouter (Root / "prefix")
+      router(1, false).toString shouldBe "/prefix/hello/1/false"
+    }
+
+    it("3 elements") {
+      val router = RouteSpec().at(Get) / "hello" / Path.int("first") / Path.boolean("first") / Path.boolean("second") reverseRouter (Root / "prefix")
+      router(1, false, true).toString shouldBe "/prefix/hello/1/false/true"
+    }
+  }
+
 
   describe("retrieval from a pre-extracted request") {
     val param = Query.required.string("bob")
