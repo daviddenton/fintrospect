@@ -65,16 +65,12 @@ paginate = 10
     url  = "/api"
 
 [[params.menu]]
-    name = "blog"
-    url  = "/blog"
-
-[[params.menu]]
     name = "faq"
     url  = "/faq"
 
 [[params.menu]]
     name = "contact"
-    url  = "/contact    "
+    url  = "/contact"
 
 [[params.menu]]
     name = "twitter"
