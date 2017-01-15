@@ -21,7 +21,14 @@
                 <ul class="nav navbar-nav navbar-right">
                     {{ range .Site.Params.menu }}
                     <li class="dropdown">
-                        <a href="{{ .url }}">{{ .name }}</a>
+                        <a href="{{ .url }}">
+                            {{ if isset . "name" }}
+                            {{ .name }}
+                            {{ end }}
+                            {{ if isset . "img" }}
+                            <img src="{{ .img }}"/>
+                            {{ end }}
+                        </a>
                     </li>
                     {{ end }}
                 </ul>
@@ -33,10 +40,8 @@
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search">
                         <span class="input-group-btn">
-
-                    <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
-
-                </span>
+                            <button type="submit" class="btn btn-template-main"><i class="fa fa-search"></i></button>
+                        </span>
                     </div>
                 </form>
 

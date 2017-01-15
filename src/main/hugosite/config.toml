@@ -12,10 +12,6 @@ googleAnalytics = ""
     logo = "img/logo.png"
 
 [[params.menu]]
-    name = "home"
-    url  = "/"
-
-[[params.menu]]
     name = "cookbook"
     url  = "/cookbook"
 
@@ -24,12 +20,20 @@ googleAnalytics = ""
     url  = "/api"
 
 [[params.menu]]
-    name = "twitter"
-    url  = "https://twitter.com/fintrospectdev"
+    img = "/img/github-20px.png"
+    url  = "https://github.com/daviddenton/fintrospect"
 
 [[params.menu]]
-    name = "github"
-    url  = "https://github.com/daviddenton/fintrospect"
+    img = "https://api.bintray.com/packages/fintrospect/maven/fintrospect-core/images/download.svg"
+    url  = "https://bintray.com/fintrospect/maven/fintrospect-core/_latestVersion"
+
+[[params.menu]]
+    img = "https://travis-ci.org/daviddenton/fintrospect.svg?branch=master"
+    url  = "https://travis-ci.org/daviddenton/fintrospect"
+
+[[params.menu]]
+    img = "https://coveralls.io/repos/daviddenton/fintrospect/badge.svg?branch=master"
+    url  = "https://coveralls.io/github/daviddenton/fintrospect?branch=master"
 
 [params.testimonials]
     title = "Testimonials"
