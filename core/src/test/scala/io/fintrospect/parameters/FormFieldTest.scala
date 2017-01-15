@@ -107,7 +107,7 @@ class FormFieldTest extends FunSpec with Matchers {
     }
 
     describe("multi-string with empty-is-ok validation turned off") {
-      val field = FormField.required.*.string(paramName, validation = StringValidations.EmptyIsInvalid)
+      val field = FormField.required.*.string(paramName)
 
       it("validates value from form field") {
         field.extract(new Form(Map(paramName -> Seq("123", "456")))) shouldBe Extracted(Some(Seq("123", "456")))

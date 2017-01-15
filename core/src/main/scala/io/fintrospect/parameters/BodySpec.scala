@@ -33,8 +33,8 @@ case class BodySpec[T](description: Option[String], contentType: ContentType, pa
 }
 
 object BodySpec {
-  def string(description: String = null, contentType: ContentType = TEXT_PLAIN): BodySpec[String] =
-    BodySpec[String](Option(description), contentType, StringParamType, b => new String(extract(b)))
+  def string(description: String = null, contentType: ContentType = TEXT_PLAIN, validation: StringValidations.Rule = StringValidations.EmptyIsInvalid): BodySpec[String] =
+    BodySpec[String](Option(description), contentType, StringParamType, b => validation(new String(extract(b))))
 
   def json[T](description: String = null, jsonLib: JsonLibrary[T, _] = Argo): BodySpec[T] =
     BodySpec[T](Option(description), APPLICATION_JSON, ObjectParamType, b => jsonLib.JsonFormat.parse(new String(extract(b))), t => Buf.Utf8(jsonLib.JsonFormat.compact(t)))

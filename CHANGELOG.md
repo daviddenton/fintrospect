@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.3.0 (uncut)
+- Behaviour: Changed default string `ParameterSpec` and `Body` validation so that empty strings are NOT valid. This should only affect untyped string fields in forms or queries, as custom deserialising logic would otherwise catch. 
+
 ## 14.2.0
 - Added `RenderView.Redirect` to allow redirection of responses from a route that would otherwise generate a `View`
 

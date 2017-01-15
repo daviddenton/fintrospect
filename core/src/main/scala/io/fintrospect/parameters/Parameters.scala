@@ -75,7 +75,7 @@ trait Parameters[P[_], R[_]] {
     * @param validation  validation mode for String values
     * @return a parameter for retrieving a String value from the request
     */
-  def string(name: String, description: String = null, validation: StringValidations.Rule = StringValidations.EmptyIsValid): P[String] with R[String] = apply(ParameterSpec.string(name, description, validation))
+  def string(name: String, description: String = null, validation: StringValidations.Rule = StringValidations.EmptyIsInvalid): P[String] with R[String] = apply(ParameterSpec.string(name, description, validation))
 
   /**
     * Create a UUID parameter
