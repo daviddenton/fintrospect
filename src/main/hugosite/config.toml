@@ -1,5 +1,5 @@
 baseurl = "http://fintrospect.io"
-title = "Fintrospect"
+title = "fintrospect"
 theme = "hugo-universal-theme"
 languageCode = "en-us"
 googleAnalytics = ""
@@ -31,19 +31,11 @@ googleAnalytics = ""
     name = "github"
     url  = "https://github.com/daviddenton/fintrospect"
 
-[params.carousel]
-    enable = true
-
-[params.features]
-    enable = true
-
 [params.testimonials]
-    enable = true
     title = "Testimonials"
     subtitle = "We have worked with many clients and we always like to hear they come out from the cooperation happy and satisfied. Have a look what our clients said about us."
 
 [params.see_more]
-    enable = true
     icon = "fa fa-file-code-o"
     title = "Do you want to see more?"
     subtitle = "We have prepared for you more than 40 different HTML pages, including 5 variations of homepage."
@@ -51,12 +43,5 @@ googleAnalytics = ""
     link_text = "Check other homepages"
 
 [params.clients]
-    enable = true
     title = "Our Clients"
     subtitle = ""
-
-[params.recent_posts]
-    enable = true
-    title = "From our blog"
-    subtitle = "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo."
-

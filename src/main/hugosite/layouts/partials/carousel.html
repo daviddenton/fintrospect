@@ -1,5 +1,3 @@
-{{ if isset .Site.Params "carousel" }}
-{{ if .Site.Params.carousel.enable }}
 {{ if gt (len .Site.Data.carousel) 0 }}
 <section>
     <div class="home-carousel">
@@ -24,6 +22,4 @@
         </div>
     </div>
 </section>
-{{ end }}
-{{ end }}
 {{ end }}
