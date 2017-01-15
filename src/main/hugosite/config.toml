@@ -4,29 +4,14 @@ theme = "hugo-universal-theme"
 languageCode = "en-us"
 googleAnalytics = ""
 
-# Define the number of posts per page
 paginate = 10
 
 [params]
     viewMorePostLink = "/blog/"
     author = "fintrospect"
 
-    # Style options: default (light-blue), blue, green, marsala, pink, red, turquoise, violet
     style = "blue"
 
-    # Since this template is static, the contact form uses www.formspree.io as a
-    # proxy. The form makes a POST request to their servers to send the actual
-    # email. Visitors can send up to a 1000 emails each month for free.
-    #
-    # What you need to do for the setup?
-    #
-    # - set your email address under 'email' below
-    # - upload the generated site to your server
-    # - send a dummy email yourself to confirm your account
-    # - click the confirm link in the email from www.formspree.io
-    # - you're done. Happy mailing!
-    #
-    # Enable the contact form by entering your Formspree.io email
     email = "your@email.com"
 
     about_us = "<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>"
@@ -49,12 +34,8 @@ paginate = 10
     blog = "/blog/:year/:month/:day/:filename/"
 
 [[params.menu]]
-    name = "Home"
+    name = "home"
     url  = "/"
-
-[[params.menu]]
-    name = "guide"
-    url  = "/guide"
 
 [[params.menu]]
     name = "cookbook"
@@ -80,7 +61,6 @@ paginate = 10
     name = "github"
     url  = "https://github.com/daviddenton/fintrospect"
 
-# Enable and disable widgets for the right sidebar
 [params.widgets]
     categories = true
     tags = true
