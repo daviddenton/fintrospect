@@ -22,30 +22,56 @@ class BodyTest extends FunSpec with Matchers {
 
   describe("body") {
 
-    val body = Body.json("description", obj("field" -> string("value")))
+    describe("json") {
+      val body = Body.json("description", obj("field" -> string("value")))
+
+      it("should retrieve the body value from the request") {
+        val bodyJson = obj("field" -> string("value"))
+        val request = Request("/")
+        request.write(pretty(bodyJson))
+        body.extract(request) shouldBe Extracted(Some(bodyJson))
+        body <-- request shouldBe bodyJson
+      }
+
+      it("should retrieve the body value from the pre-extracted Request") {
+        val bodyJson = obj("field" -> string("value"))
+        val request = Request("/")
+        body.extract(ExtractedRouteRequest(request, Map(body -> Extracted(Some(bodyJson))))) shouldBe Extracted(Some(bodyJson))
+      }
+
+      it("validation when missing") {
+        body.extract(Request()) shouldBe ExtractionFailed(body.iterator.toSeq.map(p => Invalid(p)))
+      }
+    }
+  }
+
+  describe("string") {
+    val body = Body.string("description", ContentType("sometype"))
 
     it("should retrieve the body value from the request") {
-      val bodyJson = obj("field" -> string("value"))
       val request = Request("/")
-      request.write(pretty(bodyJson))
-      body.extract(request) shouldBe Extracted(Some(bodyJson))
-      body <-- request shouldBe bodyJson
+      request.write("hello")
+      body.extract(request) shouldBe Extracted(Some("hello"))
+      body <-- request shouldBe "hello"
     }
 
     it("should retrieve the body value from the pre-extracted Request") {
-      val bodyJson = obj("field" -> string("value"))
       val request = Request("/")
-      body.extract(ExtractedRouteRequest(request, Map(body -> Extracted(Some(bodyJson))))) shouldBe Extracted(Some(bodyJson))
+      body.extract(ExtractedRouteRequest(request, Map(body -> Extracted(Some("hello"))))) shouldBe Extracted(Some("hello"))
     }
 
-    it("validation when missing") {
+    it("defaults to empty is invalid") {
       body.extract(Request()) shouldBe ExtractionFailed(body.iterator.toSeq.map(p => Invalid(p)))
+    }
+
+    it("can override to empty is valid") {
+      Body.string("description", ContentType("sometype"), StringValidations.EmptyIsValid).extract(Request()) shouldBe Extracted(Some(""))
     }
   }
 
   describe("form") {
     it("handles empty fields") {
-      val string = FormField.required.string("aString")
+      val string = FormField.required.string("aString", null, StringValidations.EmptyIsValid)
       val formBody = Body.form(string)
       val inputForm = Form(string --> "")
       val bindings = formBody --> inputForm

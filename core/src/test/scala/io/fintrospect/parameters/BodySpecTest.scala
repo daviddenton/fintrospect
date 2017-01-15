@@ -73,6 +73,22 @@ class BodySpecTest extends FunSpec with Matchers {
     }
   }
 
+  describe("string") {
+    val bodySpec = BodySpec.string()
+
+    it("does not retrieve an null value") {
+      Try(bodySpec.deserialize(null)).isFailure shouldBe true
+    }
+
+    it("does not retrieve an empty value") {
+      Try(bodySpec.deserialize(Buf.Utf8(""))).isFailure shouldBe true
+    }
+
+    it("can override validation so empty is OK") {
+      Try(BodySpec.string(validation = StringValidations.EmptyIsValid).deserialize(Buf.Utf8(""))) shouldBe Success("")
+    }
+  }
+
   describe("custom") {
     val bodySpec = BodySpec[MyCustomType](None, ContentTypes.TEXT_PLAIN, StringParamType, b => MyCustomType(new String(extract(b)).toInt), ct => Buf.Utf8(ct.value.toString))
 
@@ -82,6 +98,10 @@ class BodySpecTest extends FunSpec with Matchers {
 
     it("does not retrieve an invalid value") {
       Try(bodySpec.deserialize(Buf.Utf8("notAnInt"))).isFailure shouldBe true
+    }
+
+    it("does not retrieve an empty value") {
+      Try(bodySpec.deserialize(Buf.Utf8(""))).isFailure shouldBe true
     }
 
     it("does not retrieve an null value") {

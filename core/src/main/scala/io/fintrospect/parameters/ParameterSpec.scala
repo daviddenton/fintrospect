@@ -48,7 +48,7 @@ object ParameterSpec {
 
   def boolean(name: String, description: String = null) = ParameterSpec[Boolean](name, Option(description), BooleanParamType, _.toBoolean, _.toString)
 
-  def string(name: String, description: String = null, validation: StringValidations.Rule = StringValidations.EmptyIsValid) = ParameterSpec[String](name, Option(description), StringParamType, validation, _.toString)
+  def string(name: String, description: String = null, validation: StringValidations.Rule = StringValidations.EmptyIsInvalid) = ParameterSpec[String](name, Option(description), StringParamType, validation, _.toString)
 
   def uuid(name: String, description: String = null) = string(name, description).map(UUID.fromString)
 

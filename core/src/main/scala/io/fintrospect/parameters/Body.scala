@@ -33,6 +33,11 @@ object Body {
   def apply[T](bodySpec: BodySpec[T], example: T): UniBody[T] = new UniBody[T](bodySpec, Option(example))
 
   /**
+    * String HTTP message body. Defaults to empty is invalid, but this can be overridden.
+    */
+  def string[T](description: String = null, contentType: ContentType, validation: StringValidations.Rule = StringValidations.EmptyIsInvalid): UniBody[String] = Body(BodySpec.string(description, contentType, validation))
+
+  /**
     * JSON format HTTP message body. Defaults to Argo JSON format, but this can be overridden by passing an alternative JsonFormat
     */
   def json[T](description: String = null, example: T = null, jsonLib: JsonLibrary[T, _] = Argo): UniBody[T] = Body(BodySpec.json(description, jsonLib), example)
