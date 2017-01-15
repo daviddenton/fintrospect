@@ -4,34 +4,12 @@ theme = "hugo-universal-theme"
 languageCode = "en-us"
 googleAnalytics = ""
 
-paginate = 10
-
 [params]
-    viewMorePostLink = "/blog/"
     author = "fintrospect"
-
     style = "blue"
-
-    email = "your@email.com"
-
-    about_us = "<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>"
     copyright = "Copyright (c) 2015 - 2016, YourCompany; all rights reserved."
-    date_format = "2006-01-02"
+    date_format = "2100-01-01"
     logo = "img/logo.png"
-    address = """<p><strong>Universal Ltd.</strong>
-        <br>13/25 New Avenue
-        <br>Newtown upon River
-        <br>45Y 73J
-        <br>England
-        <br>
-        <strong>Great Britain</strong>
-      </p>
-      """
-    latitude = "-12.043333"
-    longitude = "-77.028333"
-
-[Permalinks]
-    blog = "/blog/:year/:month/:day/:filename/"
 
 [[params.menu]]
     name = "home"
@@ -46,25 +24,12 @@ paginate = 10
     url  = "/api"
 
 [[params.menu]]
-    name = "faq"
-    url  = "/faq"
-
-[[params.menu]]
-    name = "contact"
-    url  = "/contact"
-
-[[params.menu]]
     name = "twitter"
     url  = "https://twitter.com/fintrospectdev"
 
 [[params.menu]]
     name = "github"
     url  = "https://github.com/daviddenton/fintrospect"
-
-[params.widgets]
-    categories = true
-    tags = true
-    search = true
 
 [params.carousel]
     enable = true
