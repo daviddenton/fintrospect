@@ -9,6 +9,8 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## 14.3.0 (uncut)
 - Behaviour: Changed default string `ParameterSpec` and `Body` validation so that empty strings are NOT valid. This should only affect untyped string fields in forms or queries, as custom deserialising logic would otherwise catch. 
+This should be the default behaviour, as forms always send empty text values anyway, and it doesn't make sense to marshall empty values into another type. Behaviour is overridable on a case-by-case basis by passing 
+`StringValidations.EmptyIsValid` when defining the Parameter/Body/Field.
 
 ## 14.2.0
 - Added `RenderView.Redirect` to allow redirection of responses from a route that would otherwise generate a `View`
