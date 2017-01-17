@@ -3,6 +3,7 @@ lazy val baseSettings = Seq(
   organization := "io.fintrospect",
   version := "14.3.0",
   scalaVersion := "2.12.0",
+  crossScalaVersions := Seq("2.12.0", "2.11.8"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   resolvers += "JCenter" at "https://jcenter.bintray.com",
   scalacOptions := Seq(
@@ -11,12 +12,6 @@ lazy val baseSettings = Seq(
     "-language:existentials",
     "-language:higherKinds",
     "-language:implicitConversions",
-    //    "-unchecked",
-    //    "-Yno-adapted-args",
-    //    "-Ywarn-dead-code",
-    //    "-Ywarn-numeric-widen",
-    //    "-Xfuture",
-    //    "-Xlint"
     "-feature"
   ),
   pomExtra :=
