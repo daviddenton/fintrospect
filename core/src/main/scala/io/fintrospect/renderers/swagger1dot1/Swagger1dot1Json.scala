@@ -10,8 +10,6 @@ import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 import io.fintrospect.util.ExtractionError
 import io.fintrospect.{Security, ServerRoute}
 
-import scala.collection.JavaConversions._
-
 /**
   * ModuleRenderer that provides basic Swagger v1.1 support. No support for bodies or schemas.
   */
@@ -45,11 +43,10 @@ class Swagger1dot1Json extends ModuleRenderer {
   }
 
   override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = {
-    val api = routes
+    Ok(obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(routes
       .groupBy(_.describeFor(basePath))
       .map { case (path, routesForPath) => obj("path" -> string(path), "operations" -> array(routesForPath.map(render(_)._2))) }
-
-    Ok(obj("swaggerVersion" -> string("1.1"), "resourcePath" -> string("/"), "apis" -> array(asJavaIterable(api))))
+      .toSeq: _*)))
   }
 
   override def badRequest(badParameters: Seq[ExtractionError]): Response = JsonErrorResponseRenderer.badRequest(badParameters)
