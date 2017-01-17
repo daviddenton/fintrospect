@@ -57,7 +57,13 @@ object FormField {
 
   type OptionalFileSeq = OptionalParameter[Form, Seq[MultiPartFile], FormFileBinding]
 
-  val required = new Parameters[FormField, Mandatory] with MultiParameters[MultiFormField, MandatorySeq] {
+  trait WithFile[T] {
+    def file(name: String, description: String = null): T
+  }
+
+  val required = new Parameters[FormField, Mandatory]
+    with WithFile[MandatoryFile]
+    with MultiParameters[MultiFormField, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T]) = new SingleParameter(spec, FormFieldExtractAndRebind) with FormField[T] with Mandatory[T]
 
     def file(name: String, description: String = null) =
@@ -68,7 +74,9 @@ object FormField {
 
     override def * = multi
 
-    override val multi = new Parameters[MultiFormField, MandatorySeq] {
+    override val multi = new Parameters[MultiFormField, MandatorySeq]
+      with WithFile[MultiFile with MandatoryFileSeq] {
+
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with MandatorySeq[T]
 
       def file(name: String, description: String = null) =
@@ -79,7 +87,10 @@ object FormField {
     }
   }
 
-  val optional = new Parameters[FormField, Optional] with MultiParameters[MultiFormField, OptionalSeq] {
+  val optional = new Parameters[FormField, Optional]
+    with WithFile[OptionalFile]
+    with MultiParameters[MultiFormField, OptionalSeq] {
+
     override def apply[T](spec: ParameterSpec[T]) = new SingleParameter(spec, FormFieldExtractAndRebind) with FormField[T] with Optional[T]
 
     def file(name: String, description: String = null) =
@@ -89,7 +100,8 @@ object FormField {
 
     override def * = multi
 
-    override val multi = new Parameters[MultiFormField, OptionalSeq] {
+    override val multi = new Parameters[MultiFormField, OptionalSeq]
+      with WithFile[MultiFile with OptionalFileSeq] {
       override def apply[T](spec: ParameterSpec[T]) = new MultiFormField(spec) with OptionalSeq[T]
 
       def file(inName: String, inDescription: String = null) =
