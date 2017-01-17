@@ -7,7 +7,7 @@ import io.fintrospect.parameters._
 import io.fintrospect.renderers.util.JsonToJsonSchema.IllegalSchemaException
 import org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object JsonToJsonSchema {
 
@@ -46,13 +46,13 @@ class JsonToJsonSchema() {
   }
 
   private def arraySchema(input: Schema): Schema = {
-    val Schema(node, modelDefinitions) = input.node.getElements.to[Seq].headOption.map(n => toSchema(Schema(n, input.definitions))).getOrElse(throw
+    val Schema(node, modelDefinitions) = input.node.getElements.asScala.headOption.map(n => toSchema(Schema(n, input.definitions))).getOrElse(throw
       new IllegalSchemaException("Cannot use an empty list to generate a schema!"))
     Schema(obj("type" -> string("array"), "items" -> node), modelDefinitions)
   }
 
   private def objectSchema(input: Schema): Schema = {
-    val (nodeFields, subDefinitions) = input.node.getFieldList.foldLeft((Seq[Field](), input.definitions)) {
+    val (nodeFields, subDefinitions) = input.node.getFieldList.asScala.foldLeft((Seq[Field](), input.definitions)) {
       case ((memoFields, memoDefinitions), nextField) =>
         val next = toSchema(Schema(nextField.getValue, memoDefinitions))
         ((nextField.getName.getText -> next.node) +: memoFields, next.definitions)

@@ -6,7 +6,7 @@ import java.lang.reflect.{Field, Method}
 import com.github.mustachejava.Iteration
 import com.github.mustachejava.reflect.ReflectionObjectHandler
 
-import scala.collection.JavaConversions.mapAsJavaMap
+import scala.collection.JavaConverters.mapAsJavaMap
 import scala.reflect.ClassTag
 import scala.runtime.BoxedUnit
 
