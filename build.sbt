@@ -121,7 +121,7 @@ lazy val handlebars = project
   .settings(moduleName := "fintrospect-handlebars")
   .settings(description := "Handlebars templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.gilt" %% "handlebars-scala" % "2.1.1" exclude("org.slf4j", "slf4j-simple"))
+  .settings(libraryDependencies += "io.github.daviddenton" %% "handlebars-scala-fork" % "2.2.6" exclude("org.slf4j", "slf4j-simple"))
 
 lazy val mustache = project
   .settings(baseSettings)

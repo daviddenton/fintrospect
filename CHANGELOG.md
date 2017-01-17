@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.4.0 (uncut)
+- Release for Scala 2.12.0
+
 ## 14.3.0
 - Behaviour: Changed default string `ParameterSpec` and `Body` validation so that empty strings are NOT valid. This should only affect untyped string fields in forms or queries, as custom deserialising logic would otherwise catch. 
 This should be the default behaviour, as forms always send empty text values anyway, and it doesn't make sense to marshall empty values into another type. Behaviour is overridable on a case-by-case basis by passing 
