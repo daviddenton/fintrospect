@@ -7,7 +7,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 14.4.0 (uncut)
+## 14.4.0
 - Release for Scala 2.12.0
 
 ## 14.3.0
