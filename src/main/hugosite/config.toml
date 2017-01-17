@@ -1,0 +1,51 @@
+baseurl = "http://fintrospect.io"
+title = "fintrospect"
+theme = "hugo-universal-theme"
+languageCode = "en-us"
+googleAnalytics = ""
+
+[params]
+    author = "fintrospect"
+    style = "blue"
+    copyright = "Copyright (c) 2015 - 2016, YourCompany; all rights reserved."
+    date_format = "2100-01-01"
+    logo = "img/logo.png"
+
+[[params.menu]]
+    name = "cookbook"
+    url  = "/cookbook"
+
+[[params.menu]]
+    name = "api"
+    url  = "/api"
+
+[[params.menu]]
+    img = "/img/github-20px.png"
+    url  = "https://github.com/daviddenton/fintrospect"
+
+[[params.menu]]
+    img = "https://api.bintray.com/packages/fintrospect/maven/fintrospect-core/images/download.svg"
+    url  = "https://bintray.com/fintrospect/maven/fintrospect-core/_latestVersion"
+
+[[params.menu]]
+    img = "https://travis-ci.org/daviddenton/fintrospect.svg?branch=master"
+    url  = "https://travis-ci.org/daviddenton/fintrospect"
+
+[[params.menu]]
+    img = "https://coveralls.io/repos/daviddenton/fintrospect/badge.svg?branch=master"
+    url  = "https://coveralls.io/github/daviddenton/fintrospect?branch=master"
+
+[params.testimonials]
+    title = "Testimonials"
+    subtitle = "We have worked with many clients and we always like to hear they come out from the cooperation happy and satisfied. Have a look what our clients said about us."
+
+[params.see_more]
+    icon = "fa fa-file-code-o"
+    title = "Do you want to see more?"
+    subtitle = "We have prepared for you more than 40 different HTML pages, including 5 variations of homepage."
+    link_url = "#"
+    link_text = "Check other homepages"
+
+[params.clients]
+    title = "Our Clients"
+    subtitle = ""
