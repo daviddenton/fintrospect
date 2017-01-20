@@ -23,7 +23,8 @@ import scala.language.implicitConversions
   * @param contentType     the content type to return in all responses
   * @tparam T The custom format object type
   */
-class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
+class ResponseBuilder[T](toFormat: T => Buf,
+                         errorFormat: String => T,
                          exceptionFormat: Throwable => T,
                          contentType: ContentType) {
 
@@ -33,12 +34,17 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
 
   def withErrorMessage(e: String): ResponseBuilder[T] = withContent(errorFormat(e))
 
+  def withContent(content: T): ResponseBuilder[T] = withContent(toFormat(content))
+
+  def withContent(buf: Buf): ResponseBuilder[T] = {
+    response.content = buf
+    this
+  }
+
   def withCode(status: Status): ResponseBuilder[T] = {
     response.setStatusCode(status.code)
     this
   }
-
-  def withContent(content: T): ResponseBuilder[T] = withContent(toFormat(content))
 
   def withContent(content: String): ResponseBuilder[T] = {
     response.setContentString(content)
@@ -49,11 +55,6 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
     val newResponse = Response(response.version, response.status, reader)
     response.headerMap.foreach(kv => newResponse.headerMap.add(kv._1, kv._2))
     response = newResponse
-    this
-  }
-
-  def withContent(buf: Buf): ResponseBuilder[T] = {
-    response.content = buf
     this
   }
 
@@ -89,12 +90,12 @@ class ResponseBuilder[T](toFormat: T => Buf, errorFormat: String => T,
     this
   }
 
+  def toFuture: Future[Response] = Future(build())
+
   def build(): Response = {
     response.setContentType(contentType.value)
     response
   }
-
-  def toFuture: Future[Response] = Future(build())
 }
 
 /**
@@ -111,9 +112,9 @@ object ResponseBuilder {
     response
   }
 
-  private case class HIDDEN(value: String)
-
   def HttpResponse(contentType: ContentType): ResponseBuilder[_] = new ResponseBuilder[HIDDEN](s => Utf8(s.value), HIDDEN, e => HIDDEN(e.getMessage), contentType)
+
+  private case class HIDDEN(value: String)
 
   implicit def responseBuilderToResponse(builder: ResponseBuilder[_]): Response = builder.build()
 
