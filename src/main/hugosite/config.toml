@@ -12,6 +12,10 @@ googleAnalytics = ""
     logo = "img/logo.png"
 
 [[params.menu]]
+    name = "installation"
+    url  = "/installation"
+
+[[params.menu]]
     name = "cookbook"
     url  = "/cookbook"
 
