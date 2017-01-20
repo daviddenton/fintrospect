@@ -1,6 +1,5 @@
 baseurl = "http://fintrospect.io"
 title = "fintrospect"
-theme = "hugo-universal-theme"
 languageCode = "en-us"
 googleAnalytics = ""
 
