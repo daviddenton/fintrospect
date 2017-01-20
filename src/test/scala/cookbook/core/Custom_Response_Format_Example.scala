@@ -25,7 +25,6 @@ object Custom_Response_Format_Example extends App {
 
   import Csv.ResponseBuilder._
 
-
   val service: Service[Request, Response] = Service.mk { _: Request => Ok(List("this", "is", "comma", "separated", "hello", "world")) }
 
   val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo service
