@@ -1,0 +1,45 @@
+{{ if gt (len .Site.Data.libraries) 0 }}
+<section class="bar background-gray no-mb">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading text-center">
+                    <h2>Library support</h2>
+                </div>
+
+                <p class="lead">messaging libraries:</p>
+
+                <ul class="owl-carousel customers">
+                    {{ range .Site.Data.libraries.messaging }}
+                    <li class="item" title="{{ .name }}">
+                        {{ if .url }}
+                          <a href="{{ .url }}" target="_blank">
+                            <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
+                          </a>
+                        {{ else }}
+                          <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
+                        {{ end }}
+                    </li>
+                    {{ end }}
+                </ul>
+
+                <p class="lead">templating engines:</p>
+
+                <ul class="owl-carousel customers">
+                    {{ range .Site.Data.libraries.templating }}
+                    <li class="item" title="{{ .name }}">
+                        {{ if .url }}
+                          <a href="{{ .url }}" target="_blank">
+                            <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
+                          </a>
+                        {{ else }}
+                          <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
+                        {{ end }}
+                    </li>
+                    {{ end }}
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{{ end }}

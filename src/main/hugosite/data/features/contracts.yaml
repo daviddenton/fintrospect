@@ -1,4 +1,4 @@
 weight: 4
 name: "uniform"
-icon: "fa fa-handshake"
-description: "reuse the same contract to define both incoming or outgoing Finagle HTTP services. This also allows extremely low effort fake servers to be created"
+icon: "fa fa-handshake-o"
+description: "Reuse the same contract to define both incoming or outgoing Finagle HTTP services. This also allows extremely low effort fake servers to be created"
