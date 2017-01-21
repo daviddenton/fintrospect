@@ -1,5 +1,6 @@
 +++
-title = "recipe: accepting multi body types"
+title = "accepting multi body types"
+menu = "accepting multi body types"
 sidebar = "true"
 +++
 

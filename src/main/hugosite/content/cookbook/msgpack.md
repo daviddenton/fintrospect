@@ -1,5 +1,5 @@
 +++
-title = "recipe: msgpack"
+title = "msgpack"
 sidebar = "true"
 +++
 

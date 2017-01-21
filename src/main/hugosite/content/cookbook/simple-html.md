@@ -1,5 +1,5 @@
 +++
-title = "recipe: html"
+title = "html"
 sidebar = "true"
 +++
 

@@ -1,5 +1,5 @@
 +++
-title = "recipe: full auto service wrappers"
+title = "full auto service wrappers"
 sidebar = "true"
 +++
 

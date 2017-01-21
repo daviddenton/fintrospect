@@ -1,5 +1,5 @@
 +++
-title = "recipe: streaming responses"
+title = "streaming responses"
 sidebar = "true"
 +++
 

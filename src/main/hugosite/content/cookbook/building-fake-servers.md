@@ -1,5 +1,5 @@
 +++
-title = "recipe: building fake servers"
+title = "building fake servers"
 sidebar = "true"
 +++
 

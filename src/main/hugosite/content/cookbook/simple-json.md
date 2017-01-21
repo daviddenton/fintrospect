@@ -1,5 +1,5 @@
 +++
-title = "recipe: json"
+title = "json"
 sidebar = "true"
 +++
 

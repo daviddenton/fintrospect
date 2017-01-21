@@ -1,5 +1,5 @@
 +++
-title = "recipe: simple request parameters"
+title = "simple request parameters"
 sidebar = "true"
 +++
 

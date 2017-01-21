@@ -11,16 +11,20 @@ googleAnalytics = ""
     logo = "img/logo.png"
 
 [[params.menu]]
-    name = "installation"
-    url  = "/installation"
+    name = "overview"
+    url  = "/overview"
+
+[[params.menu]]
+    name = "get it"
+    url  = "/get-it"
+
+[[params.menu]]
+    name = "guide"
+    url  = "/guide"
 
 [[params.menu]]
     name = "cookbook"
     url  = "/cookbook"
-
-[[params.menu]]
-    name = "changelog"
-    url  = "/changelog"
 
 [[params.menu]]
     name = "api"

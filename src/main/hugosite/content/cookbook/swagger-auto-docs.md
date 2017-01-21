@@ -1,5 +1,5 @@
 +++
-title = "recipe: auto-documentation with swagger"
+title = "auto-documentation with swagger"
 sidebar = "true"
 +++
 

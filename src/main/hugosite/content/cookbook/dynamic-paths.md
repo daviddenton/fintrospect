@@ -1,5 +1,5 @@
 +++
-title = "recipe: dynamic path elements"
+title = "dynamic path elements"
 sidebar = "true"
 +++
 
