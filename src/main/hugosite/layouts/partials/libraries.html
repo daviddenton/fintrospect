@@ -12,12 +12,12 @@
                 <ul class="owl-carousel customers">
                     {{ range .Site.Data.libraries.messaging }}
                     <li class="item" title="{{ .name }}">
-                        {{ if .url }}
-                          <a href="{{ .url }}" target="_blank">
+                        {{ if .image }}
+                        <a href="{{ .url }}" target="_blank">
                             <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
-                          </a>
+                        </a>
                         {{ else }}
-                          <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
+                        <h3>{{ .name}}</h3>
                         {{ end }}
                     </li>
                     {{ end }}
@@ -28,12 +28,12 @@
                 <ul class="owl-carousel customers">
                     {{ range .Site.Data.libraries.templating }}
                     <li class="item" title="{{ .name }}">
-                        {{ if .url }}
+                        {{ if .image }}
                           <a href="{{ .url }}" target="_blank">
                             <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
                           </a>
                         {{ else }}
-                          <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
+                            {{ .name}}
                         {{ end }}
                     </li>
                     {{ end }}
