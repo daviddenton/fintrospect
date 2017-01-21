@@ -1,4 +1,4 @@
-weight: 4
-name: "uniform"
+weight: 5
+name: "typesafe contracts"
 icon: "fa fa-handshake-o"
-description: "Reuse the same contract to define both incoming or outgoing Finagle HTTP services. This also allows extremely low effort fake servers to be created"
+description: "Define and reuse self-validating, type-safe HTTP contracts for both clients and servers."

@@ -1,4 +1,4 @@
 weight: 1
-name: "no magic"
+name: "sane api"
 icon: "fa fa-magic"
-description: "Simple, declarative, consistent API"
+description: "Simple. Declarative. Consistent. Extensible. Absolutely no magic."
