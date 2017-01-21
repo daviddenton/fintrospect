@@ -1,4 +1,0 @@
-weight: 5
-name: "templating"
-icon: "fa fa-lightbulb-o"
-description: "Template ```View``` support (with Hot-Reloading) for building responses with <a href=\"http://mustache.github.io/\">Mustache</a> or <a href=\"http://handlebarsjs.com\">Handlebars</a>"

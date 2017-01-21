@@ -1,4 +1,4 @@
 weight: 4
-name: "web"
+name: "web & templating"
 icon: "fa fa-code"
-description: "Serve static content from the classpath or a directory"
+description: "Static content support, with Templating from Mustache and Handlebars"

@@ -1,0 +1,4 @@
+weight: 5
+name: "performance"
+icon: "fa fa-fighter-jet"
+description: "Leverages Twitter Finagle as an engine. Easily outpaces Play, Akka-HTTP and HTTP4S."

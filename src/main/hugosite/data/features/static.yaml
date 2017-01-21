@@ -1,4 +1,0 @@
-weight: 6
-name: "static content & templating"
-icon: "fa fa-lightbulb-o"
-description: "Serve static content from the classpath or a directory"

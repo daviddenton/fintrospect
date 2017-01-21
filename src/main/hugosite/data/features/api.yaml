@@ -1,0 +1,4 @@
+weight: 1
+name: "no magic"
+icon: "fa fa-magic"
+description: "Simple, declarative, consistent API"
