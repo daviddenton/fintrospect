@@ -1,4 +1,3 @@
 name: "jackson"
 type: "json"
-image: "img/clients/customer-1.png"
-url: "http://www.customer1.com"
+url: "https://github.com/FasterXML/jackson"
