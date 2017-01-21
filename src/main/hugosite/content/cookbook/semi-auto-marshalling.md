@@ -1,5 +1,5 @@
 +++
-title = "recipe: semi-auto body marshalling"
+title = "semi-auto body marshalling"
 sidebar = "true"
 +++
 

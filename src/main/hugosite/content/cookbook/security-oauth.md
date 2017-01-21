@@ -1,5 +1,5 @@
 +++
-title = "recipe: oauth security"
+title = "oauth security"
 sidebar = "true"
 +++
 

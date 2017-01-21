@@ -1,5 +1,5 @@
 +++
-title = "recipe: serving static content"
+title = "serving static content"
 sidebar = "true"
 +++
 

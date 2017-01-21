@@ -1,5 +1,5 @@
 +++
-title = "recipe: module filters"
+title = "module filters"
 sidebar = "true"
 +++
 

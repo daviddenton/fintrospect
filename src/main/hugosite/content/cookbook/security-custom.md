@@ -1,5 +1,5 @@
 +++
-title = "recipe: custom security"
+title = "custom security"
 sidebar = "true"
 +++
 

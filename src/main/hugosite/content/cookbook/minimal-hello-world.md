@@ -1,6 +1,8 @@
 +++
-title = "recipe: minimal hello world"
+title = "minimal hello world"
 sidebar = "true"
+weight = 0
+
 +++
 
 hello

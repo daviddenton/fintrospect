@@ -1,5 +1,5 @@
 +++
-title = "recipe: web forms"
+title = "web forms"
 sidebar = "true"
 +++
 

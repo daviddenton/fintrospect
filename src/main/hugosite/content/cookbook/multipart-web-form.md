@@ -1,5 +1,5 @@
 +++
-title = "recipe: multipart web forms"
+title = "multipart web forms"
 sidebar = "true"
 +++
 

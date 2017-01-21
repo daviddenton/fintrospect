@@ -1,5 +1,5 @@
 +++
-title = "recipe: forms"
+title = "forms"
 sidebar = "true"
 +++
 

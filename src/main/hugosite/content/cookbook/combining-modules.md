@@ -1,5 +1,5 @@
 +++
-title = "recipe: combining modules"
+title = "combining modules"
 sidebar = "true"
 +++
 

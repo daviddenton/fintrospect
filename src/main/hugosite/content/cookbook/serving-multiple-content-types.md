@@ -1,5 +1,5 @@
 +++
-title = "recipe: serving multiple content types"
+title = "serving multiple content types"
 sidebar = "true"
 +++
 

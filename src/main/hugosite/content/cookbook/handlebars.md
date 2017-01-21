@@ -1,5 +1,5 @@
 +++
-title = "recipe: handlebars"
+title = "handlebars"
 sidebar = "true"
 +++
 

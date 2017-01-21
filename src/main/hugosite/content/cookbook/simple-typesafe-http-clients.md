@@ -1,5 +1,5 @@
 +++
-title = "recipe: typesafe http clients"
+title = "typesafe http clients"
 sidebar = "true"
 +++
 

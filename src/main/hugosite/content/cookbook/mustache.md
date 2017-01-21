@@ -1,5 +1,5 @@
 +++
-title = "recipe: mustache"
+title = "mustache"
 sidebar = "true"
 +++
 

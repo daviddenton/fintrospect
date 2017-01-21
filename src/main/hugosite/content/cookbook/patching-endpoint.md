@@ -1,5 +1,5 @@
 +++
-title = "recipe: patching endpoint"
+title = "patching endpoint"
 sidebar = "true"
 +++
 
