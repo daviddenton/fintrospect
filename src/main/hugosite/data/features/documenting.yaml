@@ -1,0 +1,4 @@
+weight: 3
+name: "auto documenting"
+icon: "fa fa-file-text-o"
+description: "runtime generation of endpoint documentation such as Swagger JSON or web sitemap XML."
