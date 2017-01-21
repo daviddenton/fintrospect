@@ -1,4 +1,4 @@
-weight: 5
+weight: 4
 name: "typesafe contracts"
 icon: "fa fa-handshake-o"
-description: "Define and reuse self-validating, type-safe HTTP contracts for both clients and servers."
+description: "Define and reuse self-validating, typesafe HTTP contracts for both clients and servers."

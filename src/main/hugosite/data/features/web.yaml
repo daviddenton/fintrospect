@@ -1,4 +1,4 @@
-weight: 4
+weight: 8
 name: "web & static assets"
 icon: "fa fa-file-code-o"
 description: "Support for (feedback supporting) standard and multi-part forms. Serve static assets."

@@ -14,11 +14,16 @@
                     <li class="item" title="{{ .name }}">
                         {{ if .image }}
                         <a href="{{ .url }}" target="_blank">
-                            <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
+                            <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive"/>
                         </a>
                         {{ else }}
-                        <h3>{{ .name}}</h3>
+                        <h3>{{ .name}}</h3><h5>({{ .type }})</h5>
                         {{ end }}
+                        <ul>
+                            {{ range .features }}
+                            <li>{{ . }}</li>
+                            {{ end }}
+                        </ul>
                     </li>
                     {{ end }}
                 </ul>
@@ -29,11 +34,11 @@
                     {{ range .Site.Data.libraries.templating }}
                     <li class="item" title="{{ .name }}">
                         {{ if .image }}
-                          <a href="{{ .url }}" target="_blank">
-                            <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" />
-                          </a>
+                        <a href="{{ .url }}" target="_blank">
+                            <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive"/>
+                        </a>
                         {{ else }}
-                            {{ .name}}
+                        {{ .name}}
                         {{ end }}
                     </li>
                     {{ end }}
