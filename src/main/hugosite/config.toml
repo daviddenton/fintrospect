@@ -19,6 +19,10 @@ googleAnalytics = ""
     url  = "/cookbook"
 
 [[params.menu]]
+    name = "changelog"
+    url  = "/changelog"
+
+[[params.menu]]
     name = "api"
     url  = "/api"
 

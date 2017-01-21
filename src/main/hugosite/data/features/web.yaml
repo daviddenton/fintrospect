@@ -1,0 +1,4 @@
+weight: 4
+name: "web"
+icon: "fa fa-code"
+description: "Serve static content from the classpath or a directory"
