@@ -1,4 +1,4 @@
 weight: 4
-name: "web & templating"
-icon: "fa fa-code"
-description: "Static content support, with Templating from Mustache and Handlebars"
+name: "web & static assets"
+icon: "fa fa-file-code-o"
+description: "Support for (feedback supporting) standard and multi-part forms. Serve static assets."

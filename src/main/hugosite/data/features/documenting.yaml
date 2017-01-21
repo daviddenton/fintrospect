@@ -1,4 +1,4 @@
-weight: 4
+weight: 6
 name: "self documenting apis"
 icon: "fa fa-file-text-o"
-description: "Runtime generation of endpoint documentation such as Swagger JSON or web sitemap XML."
+description: "Runtime generation of API documentation in Swagger/OpenAPI format."

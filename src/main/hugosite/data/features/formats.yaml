@@ -1,4 +1,0 @@
-weight: 2
-name: "multi-format"
-icon: "fa fa-handshake-o"
-description: "Core supports in JSON and XML support. Optional modules for most popular JSON libraries"
