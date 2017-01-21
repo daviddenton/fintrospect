@@ -94,7 +94,7 @@ function sliderHomepage () {
 function sliders () {
   if ($('.owl-carousel').length) {
     $('.customers').owlCarousel({
-      items: 8,
+      items: 5,
       itemsDesktopSmall: [990, 4],
       itemsTablet: [768, 2],
       itemsMobile: [480, 1]

@@ -1,4 +1,4 @@
-weight: 3
+weight: 4
 name: "performance"
 icon: "fa fa-fighter-jet"
-description: "Leverages Twitter Finagle for super-fast, scalable performance. Easily outpaces Play, Akka-HTTP and HTTP4S."
+description: "Leverages Finagle for super-fast, scalable performance. Easily outpaces Play, Akka-HTTP and HTTP4S."
