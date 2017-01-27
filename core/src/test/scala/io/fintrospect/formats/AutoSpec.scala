@@ -40,7 +40,7 @@ abstract class AutoSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
         r.content = toBuf(in)
         Future(r)
       }
-      })(Body(bodySpec))
+      })(Body(bodySpec, ""))
 
       it("takes the object from the request") {
         fromBuf(result(svc(request)).content) shouldBe aLetter

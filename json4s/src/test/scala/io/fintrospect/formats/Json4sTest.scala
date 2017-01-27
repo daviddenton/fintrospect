@@ -11,8 +11,8 @@ import scala.language.reflectiveCalls
 
 abstract class Json4sAutoSpec[D](json4sLibrary: Json4sLibrary[D]) extends AutoSpec(json4sLibrary.Auto) {
 
-  import json4sLibrary.JsonFormat._
   import json4sLibrary.Auto._
+  import json4sLibrary.JsonFormat._
 
   describe("API") {
     it("can find implicits") {
@@ -60,7 +60,7 @@ class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s) {
   }
 
   it("param spec decodes content") {
-    val param = Query.required(Json4s.parameterSpec[Letter]("name"))
+    val param = Query.required(Json4s.parameterSpec[Letter](), "name")
     (param <-- Request("?name=" + Json4s.JsonFormat.compact(Json4s.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
 
@@ -77,7 +77,7 @@ class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4
   }
 
   it("param spec decodes content") {
-    val param = Query.required(Json4sDoubleMode.parameterSpec[Letter]("name"))
+    val param = Query.required(Json4sDoubleMode.parameterSpec[Letter](), "name")
     (param <-- Request("?name=" + Json4sDoubleMode.JsonFormat.compact(Json4sDoubleMode.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
 
@@ -94,7 +94,7 @@ class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJack
   }
 
   it("param spec decodes content") {
-    val param = Query.required(Json4sJackson.parameterSpec[Letter]("name"))
+    val param = Query.required(Json4sJackson.parameterSpec[Letter](), "name")
     (param <-- Request("?name=" + Json4sJackson.JsonFormat.compact(Json4sJackson.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
 
@@ -112,7 +112,7 @@ class Json4sJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json
   }
 
   it("param spec decodes content") {
-    val param = Query.required(Json4sJacksonDoubleMode.parameterSpec[Letter]("name"))
+    val param = Query.required(Json4sJacksonDoubleMode.parameterSpec[Letter](), "name")
     (param <-- Request("?name=" + Json4sJacksonDoubleMode.JsonFormat.compact(Json4sJacksonDoubleMode.JsonFormat.encode(aLetter)))) shouldBe aLetter
   }
 

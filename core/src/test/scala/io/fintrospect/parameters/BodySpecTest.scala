@@ -57,19 +57,19 @@ class BodySpecTest extends FunSpec with Matchers {
     val expected = Buf.ByteArray("test".getBytes: _*)
 
     it("retrieves a valid value") {
-      Try(BodySpec.binary("executable", ContentType("application/exe")).deserialize(expected)) shouldBe Success(expected)
+      Try(BodySpec.binary(ContentType("application/exe")).deserialize(expected)) shouldBe Success(expected)
     }
 
     it("does not retrieve an invalid value") {
-      Try(BodySpec.binary("executable", ContentType("application/exe")).deserialize(Buf.Empty)).isFailure shouldBe true
+      Try(BodySpec.binary(ContentType("application/exe")).deserialize(Buf.Empty)).isFailure shouldBe true
     }
 
     it("does not retrieve an null value") {
-      Try(BodySpec.binary("executable", ContentType("application/exe")).deserialize(null)).isFailure shouldBe true
+      Try(BodySpec.binary(ContentType("application/exe")).deserialize(null)).isFailure shouldBe true
     }
 
     it("serializes correctly") {
-      BodySpec.binary("executable", ContentType("application/exe")).serialize(expected) shouldBe expected
+      BodySpec.binary(ContentType("application/exe")).serialize(expected) shouldBe expected
     }
   }
 
@@ -90,7 +90,7 @@ class BodySpecTest extends FunSpec with Matchers {
   }
 
   describe("custom") {
-    val bodySpec = BodySpec[MyCustomType](None, ContentTypes.TEXT_PLAIN, StringParamType, b => MyCustomType(new String(extract(b)).toInt), ct => Buf.Utf8(ct.value.toString))
+    val bodySpec = BodySpec[MyCustomType](ContentTypes.TEXT_PLAIN, StringParamType, b => MyCustomType(new String(extract(b)).toInt), ct => Buf.Utf8(ct.value.toString))
 
     it("retrieves a valid value") {
       Try(bodySpec.deserialize(Buf.Utf8("123"))) shouldBe Success(MyCustomType(123))

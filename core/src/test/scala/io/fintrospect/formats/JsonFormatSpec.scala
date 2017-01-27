@@ -42,19 +42,19 @@ abstract class JsonFormatSpec[X <: Y, Y](val jsonLib: JsonLibrary[X, Y]) extends
     describe("ParameterSpec json") {
       describe(getClass.getName + " Json") {
         it("retrieves a valid value") {
-          Try(ParameterSpec.json(paramName, "", jsonLib).deserialize(format.compact(expected))) shouldBe Success(expected)
+          Try(ParameterSpec.json(jsonLib).deserialize(format.compact(expected))) shouldBe Success(expected)
         }
 
         it("does not retrieve an invalid value") {
-          Try(ParameterSpec.json(paramName, "", jsonLib).deserialize("notJson")).isFailure shouldBe true
+          Try(ParameterSpec.json(jsonLib).deserialize("notJson")).isFailure shouldBe true
         }
 
         it("does not retrieve an null value") {
-          Try(ParameterSpec.json(paramName, "", jsonLib).deserialize(null)).isFailure shouldBe true
+          Try(ParameterSpec.json(jsonLib).deserialize(null)).isFailure shouldBe true
         }
 
         it("serializes correctly") {
-          ParameterSpec.json(paramName, "", jsonLib).serialize(expected) shouldBe """{"field":"value"}"""
+          ParameterSpec.json(jsonLib).serialize(expected) shouldBe """{"field":"value"}"""
         }
       }
     }

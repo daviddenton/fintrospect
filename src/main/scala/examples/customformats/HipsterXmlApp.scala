@@ -20,13 +20,13 @@ object HipsterXmlApp extends App {
 
   def aService(hipsterBeardStyle: HipsterBeardStyle): Service[Request, Response] = Service.mk((rq) => Ok(hipsterBeardStyle.name))
 
-  val xmlAsABody = BodySpec.string("An XML document", ContentTypes.APPLICATION_XML).map(s => HipsterXmlFormat(s), (x: HipsterXmlFormat) => x.value)
-  val xmlAsAParam = ParameterSpec.string("anXmlParameter", "An XML document").map(i => HipsterXmlFormat(i), (e: HipsterXmlFormat) => e.value)
+  val xmlAsABody = BodySpec.string(ContentTypes.APPLICATION_XML).map(s => HipsterXmlFormat(s), (x: HipsterXmlFormat) => x.value)
+  val xmlAsAParam = ParameterSpec.string().map(i => HipsterXmlFormat(i), (e: HipsterXmlFormat) => e.value)
 
   val route = RouteSpec("an xml endpoint")
-    .taking(Header.optional(xmlAsAParam))
+    .taking(Header.optional(xmlAsAParam, "An XML document"))
     .body(Body(xmlAsABody))
-    .at(Get) / "view" / Path(HipsterBeardStyle) bindTo aService
+    .at(Get) / "view" / Path(HipsterBeardStyle, "anXmlParameter", "An XML document") bindTo aService
 
   val module = RouteModule(Root / "xml", HipsterXmlModuleRenderer).withRoute(route)
 

@@ -7,5 +7,5 @@ case class Email(to: EmailAddress, from: EmailAddress, subject: String, bytes: I
 case class EmailAddress(address: String)
 
 object EmailAddress {
-  val spec = ParameterSpec.string("address", "user email").map(i => EmailAddress(i), (e: EmailAddress) => e.address)
+  val spec = ParameterSpec.string().map(i => EmailAddress(i), (e: EmailAddress) => e.address)
 }

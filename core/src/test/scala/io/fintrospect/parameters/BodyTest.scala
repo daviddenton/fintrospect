@@ -46,7 +46,7 @@ class BodyTest extends FunSpec with Matchers {
   }
 
   describe("string") {
-    val body = Body.string("description", ContentType("sometype"))
+    val body = Body.string(ContentType("sometype"))
 
     it("should retrieve the body value from the request") {
       val request = Request("/")
@@ -65,7 +65,7 @@ class BodyTest extends FunSpec with Matchers {
     }
 
     it("can override to empty is valid") {
-      Body.string("description", ContentType("sometype"), StringValidations.EmptyIsValid).extract(Request()) shouldBe Extracted(Some(""))
+      Body.string(ContentType("sometype"), "", StringValidations.EmptyIsValid).extract(Request()) shouldBe Extracted(Some(""))
     }
   }
 
@@ -248,7 +248,7 @@ class BodyTest extends FunSpec with Matchers {
 
   describe("binary") {
     val contentType = ContentType("app/exe")
-    val binaryBody = Body.binary("exe", contentType)
+    val binaryBody = Body.binary(contentType)
     val input = Buf.ByteArray("test".getBytes: _*)
 
     it("should serialize and deserialize into the request") {

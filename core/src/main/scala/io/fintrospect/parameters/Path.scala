@@ -15,7 +15,7 @@ object Path extends Parameters[PathParameter, PathBindable] {
     * A special path segment that is defined, but has no intrinsic value other than for route matching. Useful when embedded
     * between 2 other path parameters. eg. /myRoute/{id}/aFixedPart/{subId}
     */
-  def fixed(name: String) = new PathParameter[String](ParameterSpec.string(name, null), true) with PathBindable[String] {
+  def fixed(name: String) = new PathParameter[String](name, null, ParameterSpec.string(), true) with PathBindable[String] {
 
     override val required = true
 
@@ -35,7 +35,7 @@ object Path extends Parameters[PathParameter, PathBindable] {
     * @tparam T the type of the parameter
     * @return a parameter for retrieving a value of type [T] from the request
     */
-  def apply[T](spec: ParameterSpec[T]) = new PathParameter[T](spec, false) with PathBindable[T] {
+  def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new PathParameter[T](name, description, spec, false) with PathBindable[T] {
 
     override val required = true
 

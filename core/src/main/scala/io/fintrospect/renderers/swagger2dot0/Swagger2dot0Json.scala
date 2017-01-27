@@ -36,7 +36,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     obj(
       "in" -> string(parameter.where),
       "name" -> string(parameter.name),
-      "description" -> parameter.description.map(string).getOrElse(nullNode()),
+      "description" -> Option(parameter.description).map(string).getOrElse(nullNode()),
       "required" -> boolean(parameter.required),
       schema.map("schema" -> _.node).getOrElse("type" -> string(parameter.paramType.name))
     )
