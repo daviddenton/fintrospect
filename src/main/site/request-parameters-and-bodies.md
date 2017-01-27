@@ -57,18 +57,11 @@ An example for a simple domain case class Birthday:
 ```
 case class Birthday(value: LocalDate)
 
-object Birthday {
-    def from(s: String) = Birthday(LocalDate.parse(s))
-}
+val birthdayAsAQueryParam = Query.required(ParameterSpec.localDate().map(Birthday(_), (b:Birthday) => b.value), "DOB")
 
-// 
-val birthdayAsAQueryParam = Query.required(ParameterSpec[Birthday]("DOB", None, StringParamType, Birthday.from, _.toString))
-
-/* Or, more simply, we can use map() on an existing ParameterSpec - this will handle the validation */
-
-val birthdayAsAQueryParam = Query.required(ParameterSpec.localDate("DOB").map(Birthday(_), (b:Birthday) => b.value))
-
-val birthdayAsABody = Body(BodySpec[Birthday](Option("DOB"), ContentTypes.TEXT_PLAIN, Birthday.from, _.toString))
+val birthdayAsABody = Body(BodySpec.string(ContentTypes.TEXT_PLAIN)
+                             .map(s => Birthday(LocalDate.parse(s)), (b:Birthday) => b.value.toString),
+                              "DOB")
 ```
 
 #### usage of JSON libraries
