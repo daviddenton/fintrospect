@@ -7,10 +7,11 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 14.6.0 (uncut)
+## 14.6.0
 - (Small) Breaking: Reworking of custom `ParameterSpec` and `BodySpec`. The "name" and "description" fields have been moved out of the spec and onto the Body/Query/Header/FormField instance. 
 This means that you can reuse the same custom type for multiple parameters using the same instance of the `Spec` (ie. you don't have to parameterize the creation of the spec). Example fix:
 `Query.required(ParameterSpec.string("name", "description"))` --> `Query.required(ParameterSpec.string, "name", "description")`
+- Upgrade to various dependency versions, including `circe-0.7.0`.
 
 ## 14.5.0
 - Release for Scala 2.12.0 and 2.11.0 (don't ask - bintray/maven problems
