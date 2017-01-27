@@ -61,9 +61,9 @@ abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
-  def bodySpec[R](description: String = null, formats: Formats = serialization.formats(NoTypeHints))
+  def bodySpec[R](formats: Formats = serialization.formats(NoTypeHints))
                  (implicit mf: Manifest[R]) =
-    BodySpec.json(description, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u))
+    BodySpec.json(this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
@@ -75,9 +75,9 @@ abstract class Json4sLibrary[D] extends JsonLibrary[JValue, JValue] {
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
-  def parameterSpec[R](name: String, description: String = null, formats: Formats = serialization.formats(NoTypeHints))
+  def parameterSpec[R](formats: Formats = serialization.formats(NoTypeHints))
                       (implicit mf: Manifest[R]) =
-    ParameterSpec.json(name, description, this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u))
+    ParameterSpec.json(this).map(j => decode[R](j, formats)(mf), (u: R) => encode(u))
 
 }
 

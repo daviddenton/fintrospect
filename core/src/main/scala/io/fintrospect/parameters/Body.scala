@@ -25,32 +25,32 @@ object Body {
   /**
     * Create a custom body type for the request. Encapsulates the means to insert/retrieve into the request
     */
-  def apply[T](bodySpec: BodySpec[T]): UniBody[T] = new UniBody[T](bodySpec, None)
+  def apply[T](bodySpec: BodySpec[T], description: String = null): UniBody[T] = new UniBody[T](description, bodySpec, None)
 
   /**
     * Create a custom body type for the request. Encapsulates the means to insert/retrieve into the request
     */
-  def apply[T](bodySpec: BodySpec[T], example: T): UniBody[T] = new UniBody[T](bodySpec, Option(example))
+  def apply[T](bodySpec: BodySpec[T], description: String, example: T): UniBody[T] = new UniBody[T](description, bodySpec, Option(example))
 
   /**
     * String HTTP message body. Defaults to empty is invalid, but this can be overridden.
     */
-  def string[T](description: String = null, contentType: ContentType, validation: StringValidations.Rule = StringValidations.EmptyIsInvalid): UniBody[String] = Body(BodySpec.string(description, contentType, validation))
+  def string[T](contentType: ContentType, description: String = null, validation: StringValidations.Rule = StringValidations.EmptyIsInvalid): UniBody[String] = Body(BodySpec.string(contentType, validation), description)
 
   /**
     * JSON format HTTP message body. Defaults to Argo JSON format, but this can be overridden by passing an alternative JsonFormat
     */
-  def json[T](description: String = null, example: T = null, jsonLib: JsonLibrary[T, _] = Argo): UniBody[T] = Body(BodySpec.json(description, jsonLib), example)
+  def json[T](description: String = null, example: T = null, jsonLib: JsonLibrary[T, _] = Argo): UniBody[T] = Body(BodySpec.json(jsonLib), description, example)
 
   /**
     * Binary HTTP body, with custom ContentType
     */
-  def binary(description: String = null, contentType: ContentType): UniBody[Buf] = Body(BodySpec.binary(description, contentType), null)
+  def binary(contentType: ContentType, description: String = null): UniBody[Buf] = Body(BodySpec.binary(contentType), description, null)
 
   /**
     * Native Scala XML format HTTP message body.
     */
-  def xml(description: String = null, example: Elem = null): UniBody[Elem] = Body(BodySpec.xml(description), example)
+  def xml(description: String = null, example: Elem = null): UniBody[Elem] = Body(BodySpec.xml(), description, example)
 
   /**
     * HTML encoded form HTTP message body which will fail to deserialize if a single field is missing/invalid. Use this

@@ -185,7 +185,7 @@ class RouteModuleTest extends FunSpec with Matchers {
     }
 
     describe("when a valid path does not contain required custom body") {
-      val body = Body(BodySpec.string("some description", ContentTypes.TEXT_PLAIN).map(_.toInt, (i: Int) => i.toString), example = 1)
+      val body = Body(BodySpec.string(ContentTypes.TEXT_PLAIN).map(_.toInt, (i: Int) => i.toString), "", example = 1)
       val d = RouteSpec().body(body)
       val service = RouteModule(Root).withRoute(d.at(Get) / "svc" bindTo AService(Nil)).toService
 

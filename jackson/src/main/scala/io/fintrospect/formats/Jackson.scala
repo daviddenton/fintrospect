@@ -71,8 +71,8 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
   /**
     * Convenience method for creating BodySpecs that just use straight JSON encoding/decoding logic
     */
-  def bodySpec[R](description: String = null)(implicit mf: Manifest[R]) =
-    BodySpec.json(description, this).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u))
+  def bodySpec[R]()(implicit mf: Manifest[R]) =
+    BodySpec.json(this).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u))
 
   /**
     * Convenience method for creating ResponseSpecs that just use straight JSON encoding/decoding logic for examples
@@ -83,6 +83,6 @@ object Jackson extends JsonLibrary[JsonNode, JsonNode] {
   /**
     * Convenience method for creating ParameterSpecs that just use straight JSON encoding/decoding logic
     */
-  def parameterSpec[R](name: String, description: String = null)(implicit mf: Manifest[R]) =
-    ParameterSpec.json(name, description, this).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u))
+  def parameterSpec[R]()(implicit mf: Manifest[R]) =
+    ParameterSpec.json(this).map(j => JsonFormat.decode[R](j), (u: R) => JsonFormat.encode(u))
 }

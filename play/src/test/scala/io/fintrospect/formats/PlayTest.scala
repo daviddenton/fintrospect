@@ -5,11 +5,11 @@ import com.twitter.finagle.http.Request
 import com.twitter.io.{Buf, Bufs}
 import com.twitter.util.Future
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
+import io.fintrospect.formats.Play.Auto._
 import io.fintrospect.formats.Play.JsonFormat._
 import io.fintrospect.formats.Play._
 import io.fintrospect.parameters.{Body, BodySpec, Query}
 import play.api.libs.json._
-import Play.Auto._
 
 import scala.language.reflectiveCalls
 
@@ -29,6 +29,7 @@ object helpers {
 
 
 class PlayAutoTest extends AutoSpec(Play.Auto) {
+
   import helpers._
 
   describe("API") {
@@ -67,7 +68,7 @@ class PlayJsonFormatTest extends JsonFormatSpec(Play) {
     }
 
     it("param spec decodes content") {
-      val param = Query.required(parameterSpec[Letter]("name")(helpers.Reads, helpers.Writes))
+      val param = Query.required(parameterSpec[Letter]()(helpers.Reads, helpers.Writes), "name")
       (param <-- Request("?name=" + encode(aLetter)(helpers.Writes))) shouldBe aLetter
     }
   }

@@ -65,7 +65,7 @@ object Name {
     Name(value)
   }
 
-  val specAndMessage = ParameterSpec.string("name").map(Name.validate) -> "Names must start with capital letter"
+  val specAndMessage = ParameterSpec.string().map(Name.validate) -> "Names must start with capital letter"
 }
 
 case class Age private(value: Int)
@@ -76,7 +76,7 @@ object Age {
     Age(value)
   }
 
-  val specAndMessage = ParameterSpec.int("age").map(Age.validate) -> "Must be an adult"
+  val specAndMessage = ParameterSpec.int().map(Age.validate) -> "Must be an adult"
 }
 
 
@@ -86,8 +86,8 @@ case class NameAndAgeForm(names: Seq[String], values: Map[String, String], error
 object NameAndAgeForm {
 
   object fields {
-    val name = FormField.required(Name.specAndMessage._1)
-    val age = FormField.required(Age.specAndMessage._1)
+    val name = FormField.required(Name.specAndMessage._1, "name", "age")
+    val age = FormField.required(Age.specAndMessage._1, "age", "age")
   }
 
   val form = Body.webForm(

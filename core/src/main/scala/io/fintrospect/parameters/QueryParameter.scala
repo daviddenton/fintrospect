@@ -17,6 +17,7 @@ object QueryExtractAndRebind extends ParameterExtractAndBind[Request, String, Qu
     Option(new QueryStringDecoder(request.uri).getParameters.get(parameter.name)).map(_.asScala.toSeq)
 }
 
-abstract class MultiQueryParameter[T](spec: ParameterSpec[T])
-  extends MultiParameter(spec, QueryExtractAndRebind) with QueryParameter[Seq[T]] {
+abstract class MultiQueryParameter[T](name: String,
+                                      description: String, spec: ParameterSpec[T])
+  extends MultiParameter(name, description, spec, QueryExtractAndRebind) with QueryParameter[Seq[T]] {
 }

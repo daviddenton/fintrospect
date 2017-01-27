@@ -22,15 +22,15 @@ object EmailAddress {
 
   private def emailTo(email: EmailAddress): String = email.value
 
-  val spec = ParameterSpec.string("theEmailAddress", "a valid email address").map(emailFrom, emailTo)
+  val spec = ParameterSpec.string().map(emailFrom, emailTo)
 }
 
 object CustomParameters extends App {
 
   // Reuse the spec in different parts of the request
-  val optionalEmailQueryParameter = Query.optional(EmailAddress.spec)
-  val requiredEmailHeader = Header.required(EmailAddress.spec)
-  val requiredEmailPathSegment = Path(EmailAddress.spec)
+  val optionalEmailQueryParameter = Query.optional(EmailAddress.spec, "anEmail", "a valid email address")
+  val requiredEmailHeader = Header.required(EmailAddress.spec, "anotherEmail", "a valid email address")
+  val requiredEmailPathSegment = Path(EmailAddress.spec, "anEmailPath", "a valid email address")
 
   println("missing email: " + (optionalEmailQueryParameter <-- Request("/")))
   println("valid email: " + (optionalEmailQueryParameter <-- Request("/", "theEmailAddress" -> "myemail@somedomain.com")))

@@ -11,7 +11,6 @@ import scala.xml.{Elem, XML}
 /**
   * Spec required to marshall a body of a custom type
   *
-  * @param description Description to be used in the documentation
   * @param contentType The HTTP content type header value
   * @param paramType How the body is represented when documenting APIs.
   * @param deserialize function to take the input string from the request and attempt to construct a deserialized instance. Exceptions are
@@ -19,29 +18,29 @@ import scala.xml.{Elem, XML}
   * @param serialize   function to take the input type and serialize it to a string to be represented in the request
   * @tparam T the type of the deserialised body
   */
-case class BodySpec[T](description: Option[String], contentType: ContentType, paramType: ParamType, deserialize: Buf => T, serialize: T => Buf = (s: T) => Buf.Utf8(s.toString)) {
+case class BodySpec[T](contentType: ContentType, paramType: ParamType, deserialize: Buf => T, serialize: T => Buf = (s: T) => Buf.Utf8(s.toString)) {
 
   /**
     * Bi-directional map functions for this ParameterSpec type. Use this to implement custom Parameter types
     */
-  def map[O](in: T => O, out: O => T): BodySpec[O] = BodySpec[O](description, contentType, paramType, s => in(deserialize(s)), b => serialize(out(b)))
+  def map[O](in: T => O, out: O => T): BodySpec[O] = BodySpec[O](contentType, paramType, s => in(deserialize(s)), b => serialize(out(b)))
 
   /**
     * Uni-directional map functions for this BodySpec type. Use this to implement custom Body types
     */
-  def map[O](in: T => O) = BodySpec[O](description, contentType, paramType, s => in(deserialize(s)))
+  def map[O](in: T => O) = BodySpec[O](contentType, paramType, s => in(deserialize(s)))
 }
 
 object BodySpec {
-  def string(description: String = null, contentType: ContentType = TEXT_PLAIN, validation: StringValidations.Rule = StringValidations.EmptyIsInvalid): BodySpec[String] =
-    BodySpec[String](Option(description), contentType, StringParamType, b => validation(new String(extract(b))))
+  def string(contentType: ContentType = TEXT_PLAIN, validation: StringValidations.Rule = StringValidations.EmptyIsInvalid): BodySpec[String] =
+    BodySpec[String](contentType, StringParamType, b => validation(new String(extract(b))))
 
-  def json[T](description: String = null, jsonLib: JsonLibrary[T, _] = Argo): BodySpec[T] =
-    BodySpec[T](Option(description), APPLICATION_JSON, ObjectParamType, b => jsonLib.JsonFormat.parse(new String(extract(b))), t => Buf.Utf8(jsonLib.JsonFormat.compact(t)))
+  def json[T](jsonLib: JsonLibrary[T, _] = Argo): BodySpec[T] =
+    BodySpec[T](APPLICATION_JSON, ObjectParamType, b => jsonLib.JsonFormat.parse(new String(extract(b))), t => Buf.Utf8(jsonLib.JsonFormat.compact(t)))
 
-  def xml(description: String = null): BodySpec[Elem] = string(description, APPLICATION_XML).map(XML.loadString, _.toString())
+  def xml(): BodySpec[Elem] = string(APPLICATION_XML).map(XML.loadString, _.toString())
 
-  def binary(description: String = null, contentType: ContentType): BodySpec[Buf] = BodySpec(Option(description), contentType, FileParamType,
+  def binary(contentType: ContentType): BodySpec[Buf] = BodySpec(contentType, FileParamType,
     b => {
       require(b.length > 0)
       b

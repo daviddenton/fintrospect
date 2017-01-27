@@ -34,7 +34,7 @@ class JacksonJsonFormatTest extends JsonFormatSpec(Jackson) {
     }
 
     it("param spec decodes content") {
-      val param = Query.required(parameterSpec[Letter]("name"))
+      val param = Query.required( parameterSpec[Letter](), "name")
       (param <-- Request("?name=" + encode(aLetter))) shouldBe aLetter
     }
   }

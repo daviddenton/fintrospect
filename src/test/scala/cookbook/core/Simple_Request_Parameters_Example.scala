@@ -17,12 +17,12 @@ object Simple_Request_Parameters_Example extends App {
 
   import scala.language.reflectiveCalls
 
-  val operatorSpec: ParameterSpec[(Int, Int) => Int] = ParameterSpec.string("operator").map {
+  val operatorSpec: ParameterSpec[(Int, Int) => Int] = ParameterSpec.string().map {
     case "-" => (i: Int, j: Int) => i - j
     case "+" => (i: Int, j: Int) => i + j
   }
 
-  val operator: Optional[(Int, Int) => Int] = Header.optional(operatorSpec)
+  val operator: Optional[(Int, Int) => Int] = Header.optional(operatorSpec, "operator", "+ or -")
 
   val values: MandatorySeq[Int] = Query.required.*.int("value")
 

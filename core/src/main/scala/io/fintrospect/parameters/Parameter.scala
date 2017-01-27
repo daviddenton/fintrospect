@@ -12,7 +12,7 @@ import scala.util.{Failure, Success, Try}
 trait Parameter {
   val required: Boolean
   val name: String
-  val description: Option[String]
+  val description: String
   val where: String
   val paramType: ParamType
 
@@ -52,11 +52,9 @@ trait MandatoryParameter[From, T, Bnd <: Binding] extends Mandatory[From, T]
   override def <->(from: From): Iterable[Bnd] = this --> (this <-- from)
 }
 
-abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
+abstract class SingleParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends Parameter with Bindable[T, B] {
 
-  override val name = spec.name
-  override val description = spec.description
   override val paramType = spec.paramType
 
   override def -->(value: T) = Seq(eab.newBinding(this, spec.serialize(value)))
@@ -67,10 +65,8 @@ abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], ea
   }
 }
 
-abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
+abstract class MultiParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends Parameter with Bindable[Seq[T], B] {
-  override val name = spec.name
-  override val description = spec.description
   override val paramType = spec.paramType
 
   override def -->(value: Seq[T]) = value.map(v => eab.newBinding(this, spec.serialize(v)))
