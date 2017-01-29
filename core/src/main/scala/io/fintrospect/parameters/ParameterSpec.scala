@@ -21,6 +21,12 @@ import scala.xml.{Elem, XML}
 case class ParameterSpec[T](paramType: ParamType,
                             deserialize: String => T,
                             serialize: T => String = (s: T) => s.toString) {
+
+  def as[L <: Product](implicit mf: Manifest[L]): ParameterSpec[L] = {
+    val ctr = mf.runtimeClass.getConstructors.iterator.next()
+    map((l: T) => ctr.newInstance(l.asInstanceOf[Object]).asInstanceOf[L])
+  }
+
   /**
     * Bi-directional map functions for this ParameterSpec type. Use this to implement custom Parameter types
     */
