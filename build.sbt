@@ -136,20 +136,12 @@ lazy val mustache = project
   .settings(libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % "0.9.4")
   .settings(libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % "test")
 
-lazy val thymeleaf = project
-  .settings(baseSettings)
-  .settings(moduleName := "fintrospect-thymeleaf")
-  .settings(description := "Thymeleaf templating library support for Fintrospect")
-  .dependsOn(core % "provided")
-  .settings(libraryDependencies += "org.thymeleaf" % "thymeleaf" % "3.0.3.RELEASE")
-  .settings(libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % "test")
-
 // other
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
   .settings(unidocSettings: _*)
   .settings(moduleName := "fintrospect-examples")
-  .aggregate(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache, thymeleaf)
-  .dependsOn(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache, thymeleaf)
+  .aggregate(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
+  .dependsOn(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
   .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.3.0")
   .settings(libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % "test")
