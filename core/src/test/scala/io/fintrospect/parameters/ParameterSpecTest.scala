@@ -209,6 +209,11 @@ class ParameterSpecTest extends FunSpec with Matchers {
   }
 
   describe("custom") {
+    it("retrieves a valid value for custom type") {
+      val spec = ParameterSpec.int().as[MyCustomType]
+      Try(spec.deserialize("123")) shouldBe Success(MyCustomType(123))
+      Try(spec.serialize(MyCustomType(123))) shouldBe Success(123)
+    }
 
     it("retrieves a valid value") {
       Try(MyCustomType.spec.deserialize("123")) shouldBe Success(MyCustomType(123))
