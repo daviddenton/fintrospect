@@ -1,8 +1,11 @@
 package io.fintrospect.parameters
 
+import com.twitter.finagle.http.Status
 import com.twitter.io.Buf
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.formats.Argo.JsonFormat.{obj, string}
+import io.fintrospect.formats.Xml
+import io.fintrospect.util.{Extracted, ExtractionFailed}
 import io.fintrospect.{ContentType, ContentTypes}
 import org.scalatest._
 
@@ -110,6 +113,33 @@ class BodySpecTest extends FunSpec with Matchers {
 
     it("serializes correctly") {
       bodySpec.serialize(MyCustomType(123)) shouldBe Buf.Utf8("123")
+    }
+
+  }
+
+  describe("extraction from a response") {
+    it("when extracts response successfully") {
+      val extractor = Body.xml().responseExtractor
+      extractor <--? Xml.ResponseBuilder.Ok(<xml/>) shouldBe Extracted(Some(<xml/>))
+    }
+
+    it("default predicate is response is NOT NotFound, falls back to empty extraction") {
+      val extractor = Body.xml().responseExtractor
+      extractor <--? Xml.ResponseBuilder.NotFound("who knows") shouldBe Extracted(None)
+    }
+
+    it("when custom predicate fails, fall back to empty extraction") {
+      val extractor = Body.xml().responseExtractor(_.status != Status.Ok)
+      extractor <--? Xml.ResponseBuilder.Ok(<xml/>) shouldBe Extracted(None)
+    }
+
+    it("when extraction fails") {
+      val extractor = Body.xml()
+
+      extractor <--? Xml.ResponseBuilder.Ok("some nonsense") match {
+        case ExtractionFailed(_) =>
+        case _ => fail("extraction not as expected")
+      }
     }
   }
 

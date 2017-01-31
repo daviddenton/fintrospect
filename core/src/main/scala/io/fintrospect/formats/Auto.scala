@@ -15,7 +15,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     * Service wrapper to provide auto-marshalling of input case class instances for scenarios where an object is the service input.
     * HTTP OK is returned by default in the auto-marshalled response (overridable).
     */
-  def In[IN](svc: Service[IN, Response])(implicit body: UniBody[IN]): Service[Request, Response] = {
+  def In[IN](svc: Service[IN, Response])(implicit body: Body[IN]): Service[Request, Response] = {
     Filter.mk[Request, Response, IN, Response] {
       (req, svc) =>
         body <--? req match {
@@ -43,7 +43,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def InOut[IN, OUT](svc: Service[IN, OUT], successStatus: Status = Status.Ok)
-                     (implicit body: UniBody[IN], transform: OUT => R): Service[Request, Response]
+                     (implicit body: Body[IN], transform: OUT => R): Service[Request, Response]
   = In(Filter.mk[IN, Response, IN, OUT] { (req, svc) =>
     svc(req)
       .map(transform)
@@ -55,7 +55,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def InOptionalOut[IN, OUT](svc: Service[IN, Option[OUT]], successStatus: Status = Status.Ok)
-                             (implicit body: UniBody[IN], transform: OUT => R): Service[Request, Response]
+                             (implicit body: Body[IN], transform: OUT => R): Service[Request, Response]
   = In(OptionalOut(svc, successStatus)(transform))(body)
 
  /**

@@ -34,7 +34,7 @@ class UrlEncodedFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]]
   }.mkString("&")
 
 
-  def -->(value: Form): Seq[RequestBinding] =
+  override def -->(value: Form): Seq[RequestBinding] =
     Seq(new RequestBinding(null, req => {
       val contentString = encode(value)
       req.headerMap.add(Names.CONTENT_TYPE, contentType.value)
