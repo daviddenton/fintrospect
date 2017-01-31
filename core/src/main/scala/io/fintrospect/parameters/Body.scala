@@ -5,7 +5,7 @@ import com.twitter.finagle.http.{Message, Response}
 import com.twitter.io.Buf
 import io.fintrospect.ContentType
 import io.fintrospect.formats.{Argo, JsonLibrary}
-import io.fintrospect.util.{Extracted, Extractor}
+import io.fintrospect.util.{Extracted, Extraction, Extractor}
 
 import scala.xml.Elem
 
@@ -18,13 +18,11 @@ trait Body[T] extends Iterable[BodyParameter]
   val contentType: ContentType
 
   /**
-    * Create an Extractor for retrieving the expected object from the response, incl
-    * @param attemptExtract predicate for the response to determine if extraction should be attempted. Defaults to NOT 404
-    * @return extraction result for the body. This will be an Extracted(None) if the predicate failed.
+    * Extract this body from the response, shortcutting 404 codes to produce a Extracted(None). This predicate is overridable.
     */
-  def responseExtractor(implicit attemptExtract: Response => Boolean = _.status != NotFound): Extractor[Response, T] = Extractor.mk[Response, T] {
-    resp => if (attemptExtract(resp)) this <--? resp else Extracted(None)
-  }
+  def <--?(response: Response)(implicit attemptExtract: Response => Boolean = _.status != NotFound): Extraction[T] = Extractor.mk[Response, T] {
+    resp => if (attemptExtract(resp)) this <--? resp.asInstanceOf[Message] else Extracted(None)
+  }.extract(response)
 }
 
 /**

@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.7.0
+- Added custom extraction logic to `Body.<--?` so that if the response code is 404, then extraction is NOT attempted, and a Extracted(None) is returned
+
 ## 14.6.0
 - (Small) Breaking: Reworking of custom `ParameterSpec` and `BodySpec`. The "name" and "description" fields have been moved out of the spec and onto the Body/Query/Header/FormField instance. 
 This means that you can reuse the same custom type for multiple parameters using the same instance of the `Spec` (ie. you don't have to parameterize the creation of the spec). Example fix:

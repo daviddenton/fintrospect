@@ -36,7 +36,7 @@ object Extracting_Upstream_Responses extends App {
 
   def reportOnPokemon(pid: Int) =
     println(
-      result(client(id --> pid).map(nameAndWeight.responseExtractor.<--?)) match {
+      result(client(id --> pid).map(nameAndWeight.<--?)) match {
         case Extracted(Some(pokemon)) => s"i found a pokemon: $pokemon"
         case Extracted(None) => s"there is no pokemon with id $pid"
         case ExtractionFailed(errors) => s"problem extracting response $errors"
@@ -46,5 +46,4 @@ object Extracting_Upstream_Responses extends App {
   reportOnPokemon(1)
   reportOnPokemon(11)
   reportOnPokemon(9999)
-
 }
