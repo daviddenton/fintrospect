@@ -10,7 +10,9 @@ import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
 import io.fintrospect.Headers
 import io.fintrospect.filters.ResponseFilters._
-import io.fintrospect.util.Extracted
+import io.fintrospect.formats.Xml
+import io.fintrospect.parameters.Body
+import io.fintrospect.util.{Extracted, ExtractionFailed}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.TestClocks._
 import org.scalatest.{FunSpec, Matchers}
@@ -19,31 +21,51 @@ class ResponseFiltersTest extends FunSpec with Matchers {
 
   describe("Response") {
 
-    describe("ExtractingResponse") {
+    describe("ExtractingResponse with Function") {
       it("when extracts response object successfully") {
         val message = "hello"
 
-        val filter = ResponseFilters.ExtractingResponse {
-          req => Extracted(Some(message))
-        }
+        val filter = ResponseFilters.ExtractingResponse { _ => Extracted(Some(message)) }
 
-        val response = result(filter(Request(), Service.mk { message => Future(Response()) }))
-
-        response match {
-          case Extracted(Some(s)) => s shouldBe message
-          case _ => fail("did not pass")
-        }
+        result(filter(Request(), Service.mk { message => Future(Response()) })) shouldBe Extracted(Some(message))
       }
 
       it("when extraction fails with no object at all") {
         val filter = ResponseFilters.ExtractingResponse {
-          req => Extracted(None)
+          _ => Extracted(None)
         }
-        val response = result(filter(Request(), Service.mk { message => Future(Response()) }))
+        result(filter(Request(), Service.mk { _ => Future(Response()) })) shouldBe Extracted(None)
+      }
+    }
+
+    describe("ExtractingResponse with Extractor") {
+      it("when extracts response successfully") {
+
+        val filter = ResponseFilters.ExtractingResponse(Body.xml())
+
+        result(filter(Request(), Service.const(Xml.ResponseBuilder.Ok(<xml/>)))) shouldBe Extracted(Some(<xml/>))
+      }
+
+      it("default predicate is NotFound") {
+        val filter = ResponseFilters.ExtractingResponse(Body.xml())
+
+        result(filter(Request(), Service.const(Xml.ResponseBuilder.NotFound("")))) shouldBe Extracted(None)
+      }
+
+      it("when predicate fails") {
+        val filter = ResponseFilters.ExtractingResponse(Body.xml(), _.status != Status.Ok)
+
+        result(filter(Request(), Service.const(Xml.ResponseBuilder.Ok("")))) shouldBe Extracted(None)
+      }
+
+      it("when extraction fails") {
+        val filter = ResponseFilters.ExtractingResponse(Body.xml())
+
+        val response = result(filter(Request(), Service.const(Xml.ResponseBuilder.Ok(""))))
 
         response match {
-          case Extracted(None) =>
-          case _ => fail("did not pass")
+          case ExtractionFailed(_) =>
+          case _ => fail("extraction not as expected")
         }
       }
     }

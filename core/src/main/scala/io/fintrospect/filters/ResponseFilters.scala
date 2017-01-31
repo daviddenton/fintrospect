@@ -4,10 +4,11 @@ import java.time.{Clock, Duration, ZonedDateTime}
 import java.util.TimeZone.getTimeZone
 
 import com.twitter.finagle.Filter
+import com.twitter.finagle.http.Status.NotFound
 import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.Headers
 import io.fintrospect.formats.{AbstractResponseBuilder, Argo}
-import io.fintrospect.util.{Extraction, Extractor}
+import io.fintrospect.util.{Extracted, Extraction, Extractor}
 import org.apache.commons.lang.time.FastDateFormat.getInstance
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.DATE
 
@@ -89,10 +90,13 @@ object ResponseFilters {
     ExtractingResponse(Extractor.mk(fn))
 
   /**
-    * Extracts the output objects and feeds them into the underlying service.
+    * Extracts the output objects and feeds them into the underlying service. Returns an Extracted(None) if
+    * the passed response predicate fails (defaults to non-404)
     */
-  def ExtractingResponse[O](extractable: Extractor[Response, O]): Filter[Request, Extraction[O], Request, Response] =
+  def ExtractingResponse[O](extractor: Extractor[Response, O], attemptExtract: Response => Boolean = _.status != NotFound): Filter[Request, Extraction[O], Request, Response] =
     Filter.mk[Request, Extraction[O], Request, Response] {
-      (req, svc) => svc(req).map(extractable.<--?)
+      (req, svc) =>
+        svc(req)
+          .map(resp => if (attemptExtract(resp)) extractor <--? resp else Extracted(None))
     }
 }
