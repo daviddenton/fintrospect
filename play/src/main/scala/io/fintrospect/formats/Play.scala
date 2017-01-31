@@ -21,7 +21,7 @@ object Play extends JsonLibrary[JsValue, JsValue] {
   object Auto extends Auto[JsValue](ResponseBuilder) {
     implicit def tToBody[T](implicit r: Reads[T], w: Writes[T]): UniBody[T] = Body(Play.bodySpec[T]()(r, w))
 
-    implicit def tToJsValue[T](implicit db: Writes[T]): Transform[T, JsValue] = (t: T) => JsonFormat.encode[T](t)
+    implicit def tToJsValue[T](implicit db: Writes[T]): (T => JsValue) = (t: T) => JsonFormat.encode[T](t)
   }
 
   object JsonFormat extends JsonFormat[JsValue, JsValue] {

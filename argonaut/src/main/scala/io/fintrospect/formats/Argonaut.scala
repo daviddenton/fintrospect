@@ -22,7 +22,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
 
     implicit def tToBody[T](implicit e: EncodeJson[T], d: DecodeJson[T]): UniBody[T] = Body(bodySpec[T]())
 
-    implicit def tToJson[T](implicit e: EncodeJson[T]): Transform[T, Json] = (t: T) => e(t)
+    implicit def tToJson[T](implicit e: EncodeJson[T]): (T => Json) = (t: T) => e(t)
   }
 
 

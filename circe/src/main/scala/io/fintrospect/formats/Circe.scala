@@ -22,7 +22,7 @@ object Circe extends JsonLibrary[Json, Json] {
 
     implicit def tToBody[T](implicit e: Encoder[T], d: Decoder[T]): UniBody[T] = Body(bodySpec[T]())
 
-    implicit def tToJson[T](implicit e: Encoder[T]): Transform[T, Json] = (t: T) => e(t)
+    implicit def tToJson[T](implicit e: Encoder[T]): (T => Json) = (t: T) => e(t)
   }
 
   object JsonFormat extends JsonFormat[Json, Json] {
