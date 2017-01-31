@@ -16,7 +16,7 @@ object MsgPack {
     * instead of HTTP responses
     */
   object Auto extends Auto[MsgPackMsg](ResponseBuilder) {
-    implicit def tToBody[T](implicit mf: Manifest[T]): UniBody[T] = Body(bodySpec[T]())
+    implicit def tToBody[T](implicit mf: Manifest[T]): Body[T] = Body(bodySpec[T]())
 
     implicit def tToMsgPackMsg[T]: (T => MsgPackMsg) = MsgPackMsg(_)
   }
