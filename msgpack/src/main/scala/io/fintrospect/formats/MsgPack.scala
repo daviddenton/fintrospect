@@ -18,7 +18,7 @@ object MsgPack {
   object Auto extends Auto[MsgPackMsg](ResponseBuilder) {
     implicit def tToBody[T](implicit mf: Manifest[T]): UniBody[T] = Body(bodySpec[T]())
 
-    implicit def tToMsgPackMsg[T]: Transform[T, MsgPackMsg] = MsgPackMsg(_)
+    implicit def tToMsgPackMsg[T]: (T => MsgPackMsg) = MsgPackMsg(_)
   }
 
   /**

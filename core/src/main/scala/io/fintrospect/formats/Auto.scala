@@ -8,7 +8,6 @@ import io.fintrospect.util.{Extracted, ExtractionFailed}
 class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
 
   type SvcBody[IN] = Body[IN] with Mandatory[Request, IN]
-  type Transform[IN, OUT] = (IN => OUT)
 
   import responseBuilder._
 
@@ -31,7 +30,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable).
     */
   def Out[OUT](svc: Service[Request, OUT], successStatus: Status = Status.Ok)
-              (implicit transform: Transform[OUT, R]): Service[Request, Response]
+              (implicit transform: (OUT => R)): Service[Request, Response]
   = Filter.mk[Request, Response, Request, OUT] { (req, svc) =>
     svc(req)
       .map(transform)
@@ -44,7 +43,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def InOut[IN, OUT](svc: Service[IN, OUT], successStatus: Status = Status.Ok)
-                     (implicit body: UniBody[IN], transform: Transform[OUT, R]): Service[Request, Response]
+                     (implicit body: UniBody[IN], transform: (OUT => R)): Service[Request, Response]
   = In(Filter.mk[IN, Response, IN, OUT] { (req, svc) =>
     svc(req)
       .map(transform)
@@ -56,7 +55,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def InOptionalOut[IN, OUT](svc: Service[IN, Option[OUT]], successStatus: Status = Status.Ok)
-                             (implicit body: UniBody[IN], transform: Transform[OUT, R]): Service[Request, Response]
+                             (implicit body: UniBody[IN], transform: (OUT => R)): Service[Request, Response]
   = In(OptionalOut(svc, successStatus)(transform))(body)
 
  /**
@@ -64,7 +63,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def OptionalOut[IN, OUT](svc: Service[IN, Option[OUT]], successStatus: Status = Status.Ok)
-                          (implicit transform: Transform[OUT, R]): Service[IN, Response] =
+                          (implicit transform: (OUT => R)): Service[IN, Response] =
     Filter.mk[IN, Response, IN, Option[OUT]] {
       (req, svc) =>
         svc(req)

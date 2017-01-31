@@ -26,7 +26,7 @@ abstract class AutoSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
 
   def toBuf(l: Letter): Buf
 
-  def transform(): f.Transform[Letter, J]
+  def transform(): (Letter => J)
 
   def fromBuf(s: Buf): Letter
 

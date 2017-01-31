@@ -8,7 +8,7 @@ import scala.xml.{Elem, XML}
 class XmlAutoTest extends AutoSpec(Xml.Auto) {
   override def toBuf(l: Letter): Buf = Bufs.utf8Buf(transform()(l).toString())
 
-  override def transform(): f.Transform[Letter, Elem] = (letter: Letter) => <letter>
+  override def transform(): (Letter => Elem) = (letter: Letter) => <letter>
     <from>{letter.from.address}</from>
     <to>{letter.to.address}</to>
     <message>{letter.message}</message>
