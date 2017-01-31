@@ -1,7 +1,5 @@
 package cookbook.core
 
-import io.fintrospect.parameters.UniBody
-
 
 object Extracting_Upstream_Responses extends App {
 
