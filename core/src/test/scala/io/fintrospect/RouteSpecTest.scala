@@ -8,6 +8,7 @@ import com.twitter.finagle.http.path.{Root, Path => FPath}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
+import io.fintrospect.RouteClient.BrokenContract
 import io.fintrospect.formats.Argo.JsonFormat.obj
 import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters._
@@ -34,14 +35,14 @@ class RouteSpecTest extends FunSpec with Matchers {
     val clientWithQueryNameAndMaxAgeAndGender = RouteSpec().taking(query).at(Get) / name / maxAge / gender bindToClient returnsMethodAndUri
 
     describe("invalid parameters are dealt with") {
-      it("missing request parameters throw up") {
-        responseFor(clientWithQueryNameAndMaxAgeAndGender(name --> "bob", maxAge --> 7, gender --> "male")) shouldBe(Status.BadRequest, "Client: Missing required params passed: Mandatory parameter query (string) in query")
+      it("missing request parameters throws up") {
+        intercept[BrokenContract](result(clientWithQueryNameAndMaxAgeAndGender(name --> "bob", maxAge --> 7, gender --> "male"))).getMessage shouldBe "Client: Missing required params passed: Mandatory parameter query (string) in query"
       }
-      it("missing path parameters throw up") {
-        responseFor(clientWithQueryNameAndMaxAgeAndGender(query --> "bob", maxAge --> 7, gender --> "male")) shouldBe(Status.BadRequest, "Client: Missing required params passed: {pathName}")
+      it("missing path parameters throws up") {
+        intercept[BrokenContract](result(clientWithQueryNameAndMaxAgeAndGender(query --> "bob", maxAge --> 7, gender --> "male"))).getMessage shouldBe "Client: Missing required params passed: {pathName}"
       }
-      it("unknown parameters returns bad request") {
-        responseFor(clientWithNoParameters(maxAge.of(7))) shouldBe(Status.BadRequest, "Client: Unknown params passed: {maxAge}")
+      it("unknown parameters throws up") {
+        intercept[BrokenContract](result(clientWithNoParameters(maxAge.of(7)))).getMessage shouldBe "Client: Unknown params passed: {maxAge}"
       }
     }
 
@@ -63,7 +64,7 @@ class RouteSpecTest extends FunSpec with Matchers {
         val field = FormField.required.string("bob")
         val form = Body.form(field)
         val client = RouteSpec().body(form).at(Get) bindToClient returnsBody
-        val response = Await.result(client(form --> Form(field --> "value")))
+        val response = result(client(form --> Form(field --> "value")))
         response.status shouldBe Status.Ok
         response.contentString shouldBe "bob=value"
       }
@@ -133,7 +134,7 @@ class RouteSpecTest extends FunSpec with Matchers {
       val route = fn(RouteSpec().taking(query).taking(date).body(body).at(Get))
 
       val proxyService = RouteModule(Root).withRoute(route bindToProxy expectedRequest).toService
-      Await.result(proxyService(request)).status shouldBe Status.Ok
+      result(proxyService(request)).status shouldBe Status.Ok
     }
 
     it("copies everything into downstream request") {

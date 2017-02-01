@@ -29,14 +29,14 @@ object Building_Fake_Servers_Example extends App {
     Http.serve(":9999", module.toService)
   }
 
-  def buildClient(): RouteClient = {
+  def buildClient(): RouteClient[Response] = {
     val http: Service[Request, Response] = Http.newService("localhost:9999")
     Contract.route bindToClient http
   }
 
   startFakeServer()
 
-  val client: RouteClient = buildClient()
+  val client: RouteClient[Response] = buildClient()
 
   println(Await.result(client(Contract.name --> "David")).contentString)
 }

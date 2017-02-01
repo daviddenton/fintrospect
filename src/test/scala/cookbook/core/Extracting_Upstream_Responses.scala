@@ -1,6 +1,6 @@
 package cookbook.core
 
-
+// fintrospect-core
 object Extracting_Upstream_Responses extends App {
 
   import argo.jdom.JsonNode
@@ -10,8 +10,9 @@ object Extracting_Upstream_Responses extends App {
   import com.twitter.util.Await.result
   import io.fintrospect.configuration.{Authority, Host, Port}
   import io.fintrospect.filters.RequestFilters.AddHost
+  import io.fintrospect.filters.ResponseFilters
   import io.fintrospect.parameters.{Body, BodySpec, Path}
-  import io.fintrospect.util.{Extracted, ExtractionFailed}
+  import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
   import io.fintrospect.{RouteClient, RouteSpec}
 
   case class Pokemon(id: Int, name: String, weight: Int)
@@ -28,15 +29,17 @@ object Extracting_Upstream_Responses extends App {
 
   val id = Path.int("pokemonId")
 
-  val client: RouteClient = RouteSpec().at(Get) / "api" / "v2" / "pokemon" / id / "" bindToClient http
 
   val spec: BodySpec[Pokemon] = BodySpec.json().map(Pokemon.from)
 
   val nameAndWeight: Body[Pokemon] = Body(spec)
 
+  val client: RouteClient[Extraction[Pokemon]] = RouteSpec().at(Get) / "api" / "v2" / "pokemon" / id / "" bindToClient
+    ResponseFilters.ExtractingResponse(nameAndWeight).andThen(http)
+
   def reportOnPokemon(pid: Int) =
     println(
-      result(client(id --> pid).map(nameAndWeight.<--?)) match {
+      result(client(id --> pid)) match {
         case Extracted(Some(pokemon)) => s"i found a pokemon: $pokemon"
         case Extracted(None) => s"there is no pokemon with id $pid"
         case ExtractionFailed(errors) => s"problem extracting response $errors"
