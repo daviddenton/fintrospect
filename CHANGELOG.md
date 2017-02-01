@@ -7,7 +7,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 14.8.0 (uncut)
+## 14.8.0
 - Add support for `Value[T]` types that can be automatically marshalled to/from the request. `ParameterSpec.string().as[MyStringType]`
 - (Small) Breaking. Removed usages and implemenation of `ParameterSpecSupplier`. Use the `Value[T]` trait instead.
 - Change `RouteClient` to be generified on the response type. This means that we can tidy up code for extraction of response bodies. \o/
