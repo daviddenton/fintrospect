@@ -1,9 +1,9 @@
 package io.fintrospect
 
-import com.twitter.finagle.http.{Method, Request, Response}
+import com.twitter.finagle.http.{Method, Request}
 import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
-import io.fintrospect.formats.PlainText.ResponseBuilder._
+import com.twitter.util.Future.exception
 import io.fintrospect.parameters.{Binding, PathBinding, PathParameter}
 
 object RouteClient {
@@ -19,6 +19,7 @@ object RouteClient {
     * function
     */
   class BrokenContract(message: String) extends Exception(message)
+
 }
 
 /**
@@ -30,9 +31,9 @@ object RouteClient {
   * @param pathParams        the path parameters to use
   */
 class RouteClient[Rsp](method: Method,
-                  spec: RouteSpec,
-                  pathParams: Seq[PathParameter[_]],
-                  underlyingService: Service[Request, Rsp]) {
+                       spec: RouteSpec,
+                       pathParams: Seq[PathParameter[_]],
+                       underlyingService: Service[Request, Rsp]) {
 
   private val providedBindings = pathParams.filter(_.isFixed).map(p => new PathBinding(p, p.name))
   private val allPossibleParams = pathParams ++ spec.requestParams ++ spec.body.toSeq.flatMap(_.iterator)
@@ -54,13 +55,9 @@ class RouteClient[Rsp](method: Method,
     val missing = requiredParams.diff(userSuppliedParams)
     val unknown = userSuppliedParams.diff(allPossibleParams)
 
-    if (missing.nonEmpty) {
-      Future.exception(new RouteClient.BrokenContract("Client: Missing required params passed: " + missing.mkString(", ")))
-    } else if (unknown.nonEmpty) {
-      Future.exception(new RouteClient.BrokenContract("Client: Unknown params passed: " + unknown.mkString(", ")))
-    } else {
-      service(buildRequest(suppliedBindings))
-    }
+    if (missing.nonEmpty) exception(new RouteClient.BrokenContract("Client: Missing required params passed: " + missing.mkString(", ")))
+    else if (unknown.nonEmpty) exception(new RouteClient.BrokenContract("Client: Unknown params passed: " + unknown.mkString(", ")))
+    else service(buildRequest(suppliedBindings))
   }
 
   private def buildRequest(suppliedBindings: Seq[Binding]): Request = suppliedBindings
