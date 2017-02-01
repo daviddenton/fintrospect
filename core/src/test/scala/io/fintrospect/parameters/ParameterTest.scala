@@ -13,7 +13,7 @@ class ParameterTest extends FunSpec with Matchers {
     }
 
     it("custom type") {
-      Query.required(MyCustomType.spec, "name") <-- Request("/?name=55") shouldBe MyCustomType(55)
+      Query.required(ParameterSpec.int().as[MyCustomType], "name") <-- Request("/?name=55") shouldBe MyCustomType(55)
     }
   }
 
