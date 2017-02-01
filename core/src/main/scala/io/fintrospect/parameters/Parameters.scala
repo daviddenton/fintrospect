@@ -25,18 +25,6 @@ trait Parameters[P[_], R[_]] {
   def apply[T](spec: ParameterSpec[T], name: String, description: String = null): P[T] with R[T]
 
   /**
-    * Create a parameter of a custom type using the spec supplied by the Supplier
-    *
-    * @param parameterSpecSupplier provides a parameter spec
-    * @tparam T the type of the parameter
-    * @return a parameter for retrieving a value of type [T] from the request
-    */
-  def apply[T](parameterSpecSupplier: ParameterSpecSupplier[T],
-               name: String,
-               description: String
-              ): P[T] with R[T] = apply(parameterSpecSupplier.spec ,name, description)
-
-  /**
     * Create a LocalDate parameter which is constrained by the format YYYY-MM-DD
     *
     * @param name        the name of the parameter (for use in description endpoints)

@@ -8,6 +8,8 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
 ## 14.8.0 (uncut)
+- Add support for `Value[T]` types that can be automatically marshalled to/from the request. `ParameterSpec.string().as[MyStringType]`
+- (Small) Breaking. Removed usages and implemenation of `ParameterSpecSupplier`. Use the `Value[T]` trait instead.
 - Change `RouteClient` to be generified on the response type. This means that we can tidy up code for extraction of response bodies. \o/
 
 ## 14.7.0
@@ -16,7 +18,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 ## 14.6.0
 - (Small) Breaking: Reworking of custom `ParameterSpec` and `BodySpec`. The "name" and "description" fields have been moved out of the spec and onto the Body/Query/Header/FormField instance. 
 This means that you can reuse the same custom type for multiple parameters using the same instance of the `Spec` (ie. you don't have to parameterize the creation of the spec). Example fix:
-`Query.required(ParameterSpec.string("name", "description"))` --> `Query.required(ParameterSpec.string, "name", "description")`
+`Query.required(ParameterSpec.string("name", "description"))` --> `Query.required(ParameterSpec.string(), "name", "description")`
 - Upgrade to various dependency versions, including `circe-0.7.0`.
 
 ## 14.5.0

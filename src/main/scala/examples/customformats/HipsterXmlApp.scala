@@ -18,15 +18,16 @@ import scala.language.reflectiveCalls
   */
 object HipsterXmlApp extends App {
 
-  def aService(hipsterBeardStyle: HipsterBeardStyle): Service[Request, Response] = Service.mk((rq) => Ok(hipsterBeardStyle.name))
+  def aService(hipsterBeardStyle: HipsterBeardStyle): Service[Request, Response] = Service.mk((rq) => Ok(hipsterBeardStyle.value))
 
   val xmlAsABody = BodySpec.string(ContentTypes.APPLICATION_XML).map(s => HipsterXmlFormat(s), (x: HipsterXmlFormat) => x.value)
   val xmlAsAParam = ParameterSpec.string().map(i => HipsterXmlFormat(i), (e: HipsterXmlFormat) => e.value)
+  val xmlAsPath = Path(ParameterSpec.string().as[HipsterBeardStyle], "anXmlParameter", "An XML document")
 
   val route = RouteSpec("an xml endpoint")
     .taking(Header.optional(xmlAsAParam, "An XML document"))
     .body(Body(xmlAsABody))
-    .at(Get) / "view" / Path(HipsterBeardStyle, "anXmlParameter", "An XML document") bindTo aService
+    .at(Get) / "view" / xmlAsPath bindTo aService
 
   val module = RouteModule(Root / "xml", HipsterXmlModuleRenderer).withRoute(route)
 
