@@ -209,21 +209,34 @@ class ParameterSpecTest extends FunSpec with Matchers {
   }
 
   describe("custom") {
+    val spec = ParameterSpec.int().as[MyCustomType]
+
+    it("converts custom types using 'as'") {
+      Try(spec.deserialize("123")) shouldBe Success(MyCustomType(123))
+      Try(spec.serialize(MyCustomType(123))) shouldBe Success("123")
+    }
 
     it("retrieves a valid value") {
-      Try(MyCustomType.spec.deserialize("123")) shouldBe Success(MyCustomType(123))
+      Try(spec.deserialize("123")) shouldBe Success(MyCustomType(123))
     }
 
     it("does not retrieve an invalid value") {
-      Try(MyCustomType.spec.deserialize("notAnInt")).isFailure shouldBe true
+      Try(spec.deserialize("notAnInt")).isFailure shouldBe true
     }
 
     it("does not retrieve an null value") {
-      Try(MyCustomType.spec.deserialize(null)).isFailure shouldBe true
+      Try(spec.deserialize(null)).isFailure shouldBe true
     }
 
     it("serializes correctly") {
-      MyCustomType.spec.serialize(MyCustomType(123)) shouldBe "123"
+      spec.serialize(MyCustomType(123)) shouldBe "123"
+    }
+
+    it("illegal conversion throws up at runtime (there is no type check for the internal value type available)") {
+      val spec = ParameterSpec.boolean().as[MyCustomType]
+
+      intercept[IllegalArgumentException](spec.deserialize("true")).getMessage shouldBe "argument type mismatch"
+      intercept[ClassCastException](spec.serialize(MyCustomType(123))).getMessage shouldBe "java.lang.Integer cannot be cast to java.lang.Boolean"
     }
   }
 
