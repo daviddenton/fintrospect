@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.{Response, Status}
-import com.twitter.io.Buf
+import com.twitter.io.{Buf, Bufs}
 import com.twitter.io.Buf.ByteArray.Shared.extract
 import io.fintrospect.formats.Argo.JsonFormat.{obj, string}
 import io.fintrospect.formats.Xml
@@ -10,6 +10,7 @@ import io.fintrospect.{ContentType, ContentTypes}
 import org.scalatest._
 
 import scala.util.{Success, Try}
+import scala.xml.Elem
 
 class BodySpecTest extends FunSpec with Matchers {
 
@@ -140,6 +141,32 @@ class BodySpecTest extends FunSpec with Matchers {
     }
   }
 
+  describe("using as[Value] to auto-map parameters to a value type") {
+
+    val spec = BodySpec.xml().as[MyXmlValue]
+
+    it("converts custom types using 'as'") {
+      spec.deserialize(Bufs.utf8Buf("<xml>123</xml>")) shouldBe MyXmlValue(<xml>123</xml>)
+      spec.serialize(MyXmlValue(<xml>123</xml>)) shouldBe Buf.Utf8("<xml>123</xml>")
+    }
+
+    it("retrieves a valid value") {
+      spec.deserialize(Bufs.utf8Buf("<xml>123</xml>")) shouldBe MyXmlValue(<xml>123</xml>)
+    }
+
+    it("does not retrieve an invalid value") {
+      Try(spec.deserialize(Bufs.utf8Buf("notXml"))).isFailure shouldBe true
+    }
+
+    it("does not retrieve an null value") {
+      Try(spec.deserialize(null)).isFailure shouldBe true
+    }
+
+    it("serializes correctly") {
+      spec.serialize(MyXmlValue(<xml>123</xml>)) shouldBe Buf.Utf8("<xml>123</xml>")
+    }
+  }
+
   describe("Map to another BodySpec") {
     case class IClass(value: String)
 
@@ -152,3 +179,6 @@ class BodySpecTest extends FunSpec with Matchers {
     }
   }
 }
+
+case class MyXmlValue(value: Elem) extends AnyVal with Value[Elem]
+

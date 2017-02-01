@@ -21,6 +21,15 @@ import scala.xml.{Elem, XML}
 case class BodySpec[T](contentType: ContentType, paramType: ParamType, deserialize: Buf => T, serialize: T => Buf = (s: T) => Buf.Utf8(s.toString)) {
 
   /**
+    * Convenience method to avoid boilerplate using map() with a AnyVal case-classes (which can be tagged with Value[T])
+    * @tparam ValueType - the value type of the case class AnyVal
+    */
+  def as[ValueType <: Value[T]](implicit mf: Manifest[ValueType]): BodySpec[ValueType] = {
+    val ctr = mf.runtimeClass.getConstructors.iterator.next()
+    map((t: T) => { ctr.newInstance(t.asInstanceOf[Object]).asInstanceOf[ValueType]}, (wrapper: ValueType) => wrapper.value)
+  }
+
+  /**
     * Bi-directional map functions for this ParameterSpec type. Use this to implement custom Parameter types
     */
   def map[O](in: T => O, out: O => T): BodySpec[O] = BodySpec[O](contentType, paramType, s => in(deserialize(s)), b => serialize(out(b)))

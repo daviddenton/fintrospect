@@ -23,19 +23,12 @@ case class ParameterSpec[T](paramType: ParamType,
                             serialize: T => String = (s: T) => s.toString) {
 
   /**
-    * Convenience method for avoiding using map() with AnyVal case-classes. Due to the Scala type system,
-    * this method provides no compile-time safety as to if the signatures are compatible (ie. it won't complain at
-    * ParameterSpec.int().as[MyStringAnyVal]. However, obviously a runtime exception will be generated, since this method
-    * use reflection to get the value of the underlying case-class value
-    * @tparam Wrapper - the value type of the case class AnyVal
+    * Convenience method to avoid boilerplate using map() with a AnyVal case-classes (which can be tagged with Value[T])
+    * @tparam ValueType - the value type of the case class AnyVal
     */
-  def as[Wrapper <: AnyVal with Product](implicit mf: Manifest[Wrapper]): ParameterSpec[Wrapper] = {
+  def as[ValueType <: Value[T]](implicit mf: Manifest[ValueType]): ParameterSpec[ValueType] = {
     val ctr = mf.runtimeClass.getConstructors.iterator.next()
-    val field = mf.runtimeClass.getDeclaredFields.iterator.next()
-    field.setAccessible(true)
-    map((t: T) => { ctr.newInstance(t.asInstanceOf[Object]).asInstanceOf[Wrapper]},
-      (wrapper: Wrapper) => field.get(wrapper).asInstanceOf[T]
-    )
+    map((t: T) => { ctr.newInstance(t.asInstanceOf[Object]).asInstanceOf[ValueType]}, (wrapper: ValueType) => wrapper.value)
   }
 
   /**
