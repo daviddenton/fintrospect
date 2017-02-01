@@ -25,7 +25,8 @@ case class ParameterSpec[T](paramType: ParamType,
   /**
     * Convenience method for avoiding using map() with AnyVal case-classes. Due to the Scala type system,
     * this method provides no compile-time safety as to if the signatures are compatible (ie. it won't complain at
-    * ParameterSpec.int().as[MyStringAnyVal]. However, obviously a runtime exception will be generated.
+    * ParameterSpec.int().as[MyStringAnyVal]. However, obviously a runtime exception will be generated, since this method
+    * use reflection to get the value of the underlying case-class value
     * @tparam Wrapper - the value type of the case class AnyVal
     */
   def as[Wrapper <: AnyVal with Product](implicit mf: Manifest[Wrapper]): ParameterSpec[Wrapper] = {
