@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.8.0 (uncut)
+- Change `RouteClient` to be generified on the response type. This means that we can tidy up code for extraction of response bodies. \o/
+
 ## 14.7.0
 - Added custom extraction logic to `Body.<--?` so that if the response code is 404, then extraction is NOT attempted, and a Extracted(None) is returned
 

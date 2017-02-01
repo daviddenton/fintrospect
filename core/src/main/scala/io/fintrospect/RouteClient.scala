@@ -7,12 +7,18 @@ import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters.{Binding, PathBinding, PathParameter}
 
 object RouteClient {
-  private def identify(method: Method, pathParams: Seq[PathParameter[_]]) = Filter.mk[Request, Response, Request, Response] {
+  private def identify[O](method: Method, pathParams: Seq[PathParameter[_]]) = Filter.mk[Request, O, Request, O] {
     (request, svc) => {
       request.headerMap(Headers.IDENTIFY_SVC_HEADER) = method + ":" + pathParams.map(_.toString()).mkString("/")
       svc(request)
     }
   }
+
+  /**
+    * This exception is thrown at runtime when not all of the required parameters have been passed to the RouteClient
+    * function
+    */
+  class BrokenContract(message: String) extends Exception(message)
 }
 
 /**
@@ -23,10 +29,10 @@ object RouteClient {
   * @param underlyingService the underlying service to make the request from
   * @param pathParams        the path parameters to use
   */
-class RouteClient(method: Method,
+class RouteClient[Rsp](method: Method,
                   spec: RouteSpec,
                   pathParams: Seq[PathParameter[_]],
-                  underlyingService: Service[Request, Response]) {
+                  underlyingService: Service[Request, Rsp]) {
 
   private val providedBindings = pathParams.filter(_.isFixed).map(p => new PathBinding(p, p.name))
   private val allPossibleParams = pathParams ++ spec.requestParams ++ spec.body.toSeq.flatMap(_.iterator)
@@ -34,12 +40,13 @@ class RouteClient(method: Method,
   private val service = RouteClient.identify(method, pathParams).andThen(underlyingService)
 
   /**
-    * Make a request to this client route using the passed bindings
+    * Make a request to this client route using the passed bindings. Returns Future.exception[BrokenContract]
+    * at runtime if not all required parameters have been passed.
     *
     * @param userBindings the bindings for this request
     * @return the response Future
     */
-  def apply(userBindings: Iterable[Binding]*): Future[Response] = {
+  def apply(userBindings: Iterable[Binding]*): Future[Rsp] = {
     val suppliedBindings = userBindings.flatten ++ providedBindings
 
     val userSuppliedParams = suppliedBindings.map(_.parameter).filter(_ != null)
@@ -48,9 +55,9 @@ class RouteClient(method: Method,
     val unknown = userSuppliedParams.diff(allPossibleParams)
 
     if (missing.nonEmpty) {
-      BadRequest("Client: Missing required params passed: " + missing.mkString(", "))
+      Future.exception(new RouteClient.BrokenContract("Client: Missing required params passed: " + missing.mkString(", ")))
     } else if (unknown.nonEmpty) {
-      BadRequest("Client: Unknown params passed: " + unknown.mkString(", "))
+      Future.exception(new RouteClient.BrokenContract("Client: Unknown params passed: " + unknown.mkString(", ")))
     } else {
       service(buildRequest(suppliedBindings))
     }
