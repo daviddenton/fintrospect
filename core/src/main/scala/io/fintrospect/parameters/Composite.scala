@@ -15,7 +15,7 @@ trait Composite[T] extends Mandatory[Request, T] with HasParameters
   private val params = mutable.ListBuffer[Parameter]()
 
   /**
-    * Add a parameter to the list of parameters that make up this composite
+    * Add a parameter to the list of parameters that make up this composite.
     */
   protected[Composite] def add[A <: Parameter](a: A): A = {
     params += a

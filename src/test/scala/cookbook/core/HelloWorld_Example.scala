@@ -13,6 +13,7 @@ object HelloWorld_Example extends App {
   val svc: Service[Request, Response] = Service.mk[Request, Response] { req => Ok(s"hello world!") }
 
   val route: ServerRoute[Request, Response] = RouteSpec().at(Get) bindTo svc
+
   val module: Module = RouteModule(Root).withRoute(route)
 
   ready(Http.serve(":9999", module.toService))
