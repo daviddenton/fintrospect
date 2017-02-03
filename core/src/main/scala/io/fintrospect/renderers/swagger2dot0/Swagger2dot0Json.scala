@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect._
 import io.fintrospect.formats.Argo.JsonFormat._
 import io.fintrospect.formats.Argo.ResponseBuilder._
-import io.fintrospect.parameters.Parameter
+import io.fintrospect.parameters.ParameterLike
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 import io.fintrospect.util.ExtractionError
@@ -32,13 +32,16 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     def add(fieldAndDefinitions: FieldAndDefinitions) = FieldsAndDefinitions(fieldAndDefinitions.field +: fields, fieldAndDefinitions.definitions ++ definitions)
   }
 
-  private def render(parameter: Parameter, schema: Option[Schema]): JsonNode =
-    obj(
-      "in" -> string(parameter.where),
-      "name" -> string(parameter.name),
-      "description" -> Option(parameter.description).map(string).getOrElse(nullNode()),
-      "required" -> boolean(parameter.required),
-      schema.map("schema" -> _.node).getOrElse("type" -> string(parameter.paramType.name))
+  private def render(parameters: ParameterLike, schema: Option[Schema]): Iterable[JsonNode] =
+    parameters.map(
+      parameter =>
+        obj(
+          "in" -> string(parameter.where),
+          "name" -> string(parameter.name),
+          "description" -> Option(parameter.description).map(string).getOrElse(nullNode()),
+          "required" -> boolean(parameter.required),
+          schema.map("schema" -> _.node).getOrElse("type" -> string(parameter.paramType.name))
+        )
     )
 
   private def render(basePath: Path, security: Security, route: ServerRoute[_, _]): FieldAndDefinitions = {
@@ -52,7 +55,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     })
 
     val allParams = route.pathParams.flatten ++ route.routeSpec.requestParams
-    val nonBodyParams = allParams.map(render(_, Option.empty))
+    val nonBodyParams = allParams.flatMap(render(_, Option.empty))
 
     val jsonRoute = route.method.toString().toLowerCase -> obj(
       "tags" -> array(string(basePath.toString)),
@@ -60,7 +63,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "description" -> route.routeSpec.description.map(string).getOrElse(nullNode()),
       "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "consumes" -> array(route.routeSpec.consumes.map(m => string(m.value))),
-      "parameters" -> array(nonBodyParams ++ bodyAndSchemaAndRendered.map(_._3)),
+      "parameters" -> array(nonBodyParams ++ bodyAndSchemaAndRendered.flatMap(_._3)),
       "responses" -> obj(responses),
       "supportedContentTypes" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "security" -> array(security match {

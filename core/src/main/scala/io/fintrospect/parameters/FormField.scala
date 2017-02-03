@@ -30,12 +30,16 @@ abstract class SingleFile(val name: String, val description: String)
   extends Parameter with Bindable[MultiPartFile, FormFileBinding] with FormField[MultiPartFile] {
   override val paramType = FileParamType
 
+  override def iterator: Iterator[Parameter] = Seq(this).iterator
+
   override def -->(value: MultiPartFile): Iterable[FormFileBinding] = Seq(new FormFileBinding(this, value))
 }
 
 abstract class MultiFile(val name: String, val description: String)
   extends Parameter with Bindable[Seq[MultiPartFile], FormFileBinding] with FormField[Seq[MultiPartFile]] {
   override val paramType = FileParamType
+
+  override def iterator: Iterator[Parameter] = Seq(this).iterator
 
   override def -->(value: Seq[MultiPartFile]): Iterable[FormFileBinding] = value.map(new FormFileBinding(this, _))
 }

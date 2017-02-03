@@ -5,7 +5,7 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.formats.Argo.JsonFormat._
 import io.fintrospect.formats.Argo.ResponseBuilder._
-import io.fintrospect.parameters.Parameter
+import io.fintrospect.parameters.ParameterLike
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 import io.fintrospect.util.ExtractionError
 import io.fintrospect.{Security, ServerRoute}
@@ -15,18 +15,21 @@ import io.fintrospect.{Security, ServerRoute}
   */
 class Swagger1dot1Json extends ModuleRenderer {
 
-  private def render(parameter: Parameter): JsonNode = obj(
-    "name" -> string(parameter.name),
-    "description" -> Option(parameter.description).map(string).getOrElse(nullNode()),
-    "paramType" -> string(parameter.where),
-    "required" -> boolean(parameter.required),
-    "dataType" -> string(parameter.paramType.name)
+  private def render(parameters: ParameterLike): Iterable[JsonNode] = parameters.map(
+    parameter =>
+      obj(
+        "name" -> string(parameter.name),
+        "description" -> Option(parameter.description).map(string).getOrElse(nullNode()),
+        "paramType" -> string(parameter.where),
+        "required" -> boolean(parameter.required),
+        "dataType" -> string(parameter.paramType.name)
+      )
   )
 
   private def render(route: ServerRoute[_, _]): Field = route.method.toString().toLowerCase -> {
     val allParams =
       route.pathParams.flatten ++
-        route.routeSpec.requestParams ++
+        route.routeSpec.requestParams.flatMap(_.iterator).flatten ++
         route.routeSpec.body.map(_.iterator).getOrElse(Nil)
 
     obj(
@@ -35,7 +38,7 @@ class Swagger1dot1Json extends ModuleRenderer {
       "notes" -> route.routeSpec.description.map(string).getOrElse(nullNode()),
       "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "consumes" -> array(route.routeSpec.consumes.map(m => string(m.value))),
-      "parameters" -> array(allParams.map(render)),
+      "parameters" -> array(allParams.flatMap(render)),
       "errorResponses" -> array(route.routeSpec.responses
         .filter(_.status.code > 399)
         .map(resp => obj("code" -> number(resp.status.code), "reason" -> string(resp.description))))

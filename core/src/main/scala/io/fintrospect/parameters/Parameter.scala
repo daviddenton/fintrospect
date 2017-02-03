@@ -9,7 +9,7 @@ import scala.util.{Failure, Success, Try}
   * A parameter is a name-value pair which can be encoded into an HTTP message. Sub-types
   * represent the various places in which values are encoded (eg. header/form/query/path)
   */
-trait Parameter {
+trait Parameter extends ParameterLike {
   val required: Boolean
   val name: String
   val description: String
@@ -55,6 +55,8 @@ trait MandatoryParameter[From, T, Bnd <: Binding] extends Mandatory[From, T]
 abstract class SingleParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends Parameter with Bindable[T, B] {
 
+  override def iterator: Iterator[Parameter] = Seq(this).iterator
+
   override val paramType = spec.paramType
 
   override def -->(value: T) = Seq(eab.newBinding(this, spec.serialize(value)))
@@ -68,6 +70,8 @@ abstract class SingleParameter[T, From, B <: Binding](val name: String, val desc
 abstract class MultiParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends Parameter with Bindable[Seq[T], B] {
   override val paramType = spec.paramType
+
+  override def iterator: Iterator[Parameter] = Seq(this).iterator
 
   override def -->(value: Seq[T]) = value.map(v => eab.newBinding(this, spec.serialize(v)))
 
