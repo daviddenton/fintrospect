@@ -74,7 +74,7 @@ case class RouteSpec private(summary: String,
 }
 
 object RouteSpec {
-  type QueryOrHeader[T] = ParameterLike with Extractor[Request, _] with Rebindable[Request, _, Binding]
+  type QueryOrHeader[T] = HasParameters with Extractor[Request, _] with Rebindable[Request, _, Binding]
 
   def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
     RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil)
