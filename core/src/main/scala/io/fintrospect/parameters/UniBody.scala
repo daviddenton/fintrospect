@@ -33,6 +33,8 @@ class UniBody[T](inDescription: String, spec: BodySpec[T],
       t
     }))
 
+    override def iterator: Iterator[Parameter] = Seq(this).iterator
+
     override val example = theExample.map(spec.serialize).map(b => new String(Shared.extract(b)))
   }
 

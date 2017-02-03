@@ -36,7 +36,7 @@ class RouteClient[Rsp](method: Method,
                        underlyingService: Service[Request, Rsp]) {
 
   private val providedBindings = pathParams.filter(_.isFixed).map(p => new PathBinding(p, p.name))
-  private val allPossibleParams = pathParams ++ spec.requestParams ++ spec.body.toSeq.flatMap(_.iterator)
+  private val allPossibleParams = pathParams ++ spec.requestParams.flatMap(_.iterator) ++ spec.body.toSeq.flatMap(_.iterator)
   private val requiredParams = allPossibleParams.filter(_.required)
   private val service = RouteClient.identify(method, pathParams).andThen(underlyingService)
 
