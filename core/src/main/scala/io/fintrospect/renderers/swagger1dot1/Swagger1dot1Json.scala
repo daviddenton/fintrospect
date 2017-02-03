@@ -5,7 +5,7 @@ import com.twitter.finagle.http.path.Path
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.formats.Argo.JsonFormat._
 import io.fintrospect.formats.Argo.ResponseBuilder._
-import io.fintrospect.parameters.ParameterLike
+import io.fintrospect.parameters.HasParameters
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 import io.fintrospect.util.ExtractionError
 import io.fintrospect.{Security, ServerRoute}
@@ -15,7 +15,7 @@ import io.fintrospect.{Security, ServerRoute}
   */
 class Swagger1dot1Json extends ModuleRenderer {
 
-  private def render(parameters: ParameterLike): Iterable[JsonNode] = parameters.map(
+  private def render(parameters: HasParameters): Iterable[JsonNode] = parameters.map(
     parameter =>
       obj(
         "name" -> string(parameter.name),
