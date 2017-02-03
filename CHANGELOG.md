@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.9.0 (uncut)
+- Added `Composite`, to add support for objects that are made up of several query or header params.
+
 ## 14.8.0
 - Add support for `Value[T]` types that can be automatically marshalled to/from the request. `ParameterSpec.string().as[MyStringType]`
 - (Small) Breaking. Removed usages and implemenation of `ParameterSpecSupplier`. Use the `Value[T]` trait instead.
