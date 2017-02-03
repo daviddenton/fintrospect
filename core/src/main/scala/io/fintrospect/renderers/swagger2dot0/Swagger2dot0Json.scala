@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect._
 import io.fintrospect.formats.Argo.JsonFormat._
 import io.fintrospect.formats.Argo.ResponseBuilder._
-import io.fintrospect.parameters.ParameterLike
+import io.fintrospect.parameters.HasParameters
 import io.fintrospect.renderers.util.{JsonToJsonSchema, Schema}
 import io.fintrospect.renderers.{JsonErrorResponseRenderer, ModuleRenderer}
 import io.fintrospect.util.ExtractionError
@@ -32,7 +32,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     def add(fieldAndDefinitions: FieldAndDefinitions) = FieldsAndDefinitions(fieldAndDefinitions.field +: fields, fieldAndDefinitions.definitions ++ definitions)
   }
 
-  private def render(parameters: ParameterLike, schema: Option[Schema]): Iterable[JsonNode] =
+  private def render(parameters: HasParameters, schema: Option[Schema]): Iterable[JsonNode] =
     parameters.map(
       parameter =>
         obj(
