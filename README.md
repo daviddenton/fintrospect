@@ -9,7 +9,7 @@
 
 Fintrospect is a library that adds an intelligent HTTP routing layer to the 
 <a href="http://twitter.github.io/finagle/">Finagle</a> RPC framework from Twitter. Via a shared contract, it provides a simple way to 
-implement both server endpoints and HTTP clients which are:
+implement both webservice endpoints and HTTP clients which are:
 
 - ```Type-safe``` : auto-marshalls all request parameters/bodies into the correct types (including primitives + JSON/XML etc...)
 - ```Auto-validating``` : the presence of required and optional request parameters and bodies are checked before entering service-layer code
@@ -47,7 +47,10 @@ libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "14.10.0"
 ```
 
 ## See the code
-See the examples in this repo, or clone the <a href="http://github.com/daviddenton/fintrospect-example-app">full example application repo</a>.
+See the 
+<a href="https://github.com/daviddenton/fintrospect/tree/master/src/main/scala/examples">examples</a> or 
+<a href="https://github.com/daviddenton/fintrospect/tree/master/src/test/scala/cookbook">cookbook</a> in this repo, or clone the 
+<a href="http://github.com/daviddenton/fintrospect-example-app">full example application repo</a>.
 
 ## Learn it
 See the full user guide <a href="http://fintrospect.io/">here</a>, or read on for the tldr; example. :)
