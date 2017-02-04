@@ -31,20 +31,16 @@ object CrossFieldValidation extends App {
   val person: Extractor[Request, Person] = Extractor.mk {
     req: Request =>
       for {
-        gender <- Query.required.string("gender") <--? req
+        gender <- Query.optional.string("gender") <--? req
         exp <- Query.required.int("experience") <--? req
-      } yield {
-        // although we ARE calling get() here on an Option (which is generally bad), we can safely do so here as
-        // the mandatory fields would short-circuit the comprehension if they were missing.
-        Person(gender, exp.get)
-      }
+      } yield Person(gender, exp)
   }
 
   // higher-level extractor: uses other extractors and validation rules
   val acceptableClassSize: Extractor[Request, SchoolClass] = {
 
     // this is a cross-field validation rule, which is basically a predicate and a reason for failure
-    def lessThanYearsExperience(teacher: Option[Person]): Predicate[Int] = number => teacher.exists(_.experience > number)
+    def lessThanYearsExperience(teacher: Person): Predicate[Int] = number => teacher.experience > number
 
     Extractor.mk {
       req: Request =>
@@ -52,7 +48,7 @@ object CrossFieldValidation extends App {
           teacher <- person <--? req
           pupils <- Query.required.int("pupils") <--? (req, "Too many pupils", lessThanYearsExperience(teacher))
         } yield {
-          SchoolClass(pupils.get, teacher.get)
+          SchoolClass(pupils, teacher)
         }
     }
   }
@@ -61,8 +57,7 @@ object CrossFieldValidation extends App {
   val checkClassSize = RouteSpec().at(Get) bindTo Service.mk {
     req: Request => {
       acceptableClassSize <--? req match {
-        case Extracted(Some(clazz)) => Ok(clazz.toString)
-        case Extracted(None) => BadRequest("no content!")
+        case Extracted(clazz) => Ok(clazz.toString)
         case ExtractionFailed(sp) => BadRequest(sp.mkString(", "))
       }
     }

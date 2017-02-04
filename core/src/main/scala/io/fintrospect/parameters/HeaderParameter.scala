@@ -22,7 +22,11 @@ object HeaderExtractAndRebind extends ParameterExtractAndBind[Message, String, R
   }
 }
 
-abstract class MultiHeaderParameter[T](name: String, description: String, spec: ParameterSpec[T])
-  extends MultiParameter(name, description, spec, HeaderExtractAndRebind) with HeaderParameter[Seq[T]] {
+abstract class MultiOptionalHeaderParameter[T](name: String, description: String, spec: ParameterSpec[T])
+  extends MultiOptionalParameter(name, description, spec, HeaderExtractAndRebind) with HeaderParameter[Seq[T]] {
+}
+
+abstract class MultiMandatoryHeaderParameter[T](name: String, description: String, spec: ParameterSpec[T])
+  extends MultiMandatoryParameter(name, description, spec, HeaderExtractAndRebind) with HeaderParameter[Seq[T]] {
 }
 

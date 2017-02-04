@@ -34,7 +34,7 @@ object Extracting_Upstream_Responses extends App {
 
   val nameAndWeight: Body[Pokemon] = Body(spec)
 
-  val client: RouteClient[Extraction[Pokemon]] = RouteSpec().at(Get) / "api" / "v2" / "pokemon" / id / "" bindToClient
+  val client: RouteClient[Extraction[Option[Pokemon]]] = RouteSpec().at(Get) / "api" / "v2" / "pokemon" / id / "" bindToClient
     ResponseFilters.ExtractingResponse(nameAndWeight).andThen(http)
 
   def reportOnPokemon(pid: Int) =

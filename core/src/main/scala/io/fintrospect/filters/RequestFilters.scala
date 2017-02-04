@@ -101,8 +101,7 @@ object RequestFilters {
   Filter[Request, Response, I, Response] = Filter.mk[Request, Response, I, Response] {
     (req, svc) => {
       extractable <--? req match {
-        case Extracted(Some(x)) => svc(x)
-        case Extracted(None) => Future(moduleRenderer.badRequest(Nil))
+        case Extracted(x) => svc(x)
         case ExtractionFailed(invalid) => Future(moduleRenderer.badRequest(invalid))
       }
     }

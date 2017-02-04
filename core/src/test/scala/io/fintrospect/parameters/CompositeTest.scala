@@ -20,13 +20,13 @@ class CompositeTest extends FunSpec with Matchers {
       for {
         foo <- foo <--? req
         bar <- bar <--? req
-      } yield FooBar(foo.get, bar.get)
+      } yield FooBar(foo, bar)
     }
   }
 
   describe("Composite") {
     it("extraction from request succeeds") {
-      FooBar <--? Request("?foo=foo&bar=123") shouldBe Extracted(Some(FooBar("foo", 123)))
+      FooBar <--? Request("?foo=foo&bar=123") shouldBe Extracted(FooBar("foo", 123))
     }
     it("extraction from request for invalid field fails") {
       FooBar <--? Request("?foo=foo") shouldBe ExtractionFailed(ExtractionError.Missing(FooBar.bar))

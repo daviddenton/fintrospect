@@ -19,7 +19,7 @@ class FormFieldTest extends FunSpec with Matchers {
         val field = FormField.required.localDate(paramName)
 
         it("validates value from form field") {
-          field.extract(formWithFieldOf("2015-02-04")) shouldBe Extracted(Some(LocalDate.of(2015, 2, 4)))
+          field.extract(formWithFieldOf("2015-02-04")) shouldBe Extracted(LocalDate.of(2015, 2, 4))
           field <-- formWithFieldOf("2015-02-04") shouldBe LocalDate.of(2015, 2, 4)
         }
 
@@ -44,7 +44,7 @@ class FormFieldTest extends FunSpec with Matchers {
         val data = InMemoryMultiPartFile("file", Buf.Utf8("bob"), None)
 
         it("validates value from form file") {
-          file.extract(formWithFileOf(data)) shouldBe Extracted(Some(data))
+          file.extract(formWithFileOf(data)) shouldBe Extracted(data)
           file <-- formWithFileOf(data) shouldBe data
         }
 
@@ -65,7 +65,7 @@ class FormFieldTest extends FunSpec with Matchers {
         val field = FormField.required.*.localDate(paramName)
 
         it("validates value from form field") {
-          field.extract(formWithFieldOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
+          field.extract(formWithFieldOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
           field <-- formWithFieldOf("2015-02-04", "2015-02-05") shouldBe Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
         }
 
@@ -90,7 +90,7 @@ class FormFieldTest extends FunSpec with Matchers {
         val data2 = InMemoryMultiPartFile("file2", Buf.Utf8("bill"), None)
 
         it("validates value from form file") {
-          file.extract(formWithFileOf(data1, data2)) shouldBe Extracted(Some(Seq(data1, data2)))
+          file.extract(formWithFileOf(data1, data2)) shouldBe Extracted(Seq(data1, data2))
           file <-- formWithFileOf(data1, data2) shouldBe Seq(data1, data2)
         }
 
@@ -110,7 +110,7 @@ class FormFieldTest extends FunSpec with Matchers {
       val field = FormField.required.*.string(paramName)
 
       it("validates value from form field") {
-        field.extract(new Form(Map(paramName -> Seq("123", "456")))) shouldBe Extracted(Some(Seq("123", "456")))
+        field.extract(new Form(Map(paramName -> Seq("123", "456")))) shouldBe Extracted(Seq("123", "456"))
         field <-- new Form(Map(paramName -> Seq("123", "456"))) shouldBe Seq("123", "456")
       }
 

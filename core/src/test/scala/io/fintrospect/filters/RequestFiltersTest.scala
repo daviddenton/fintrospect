@@ -23,7 +23,7 @@ class RequestFiltersTest extends FunSpec with Matchers {
         val message = "hello"
 
         val filter = RequestFilters.ExtractingRequest {
-          req => Extracted(Some(message))
+          req => Extracted(message)
         }
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 
@@ -50,7 +50,7 @@ class RequestFiltersTest extends FunSpec with Matchers {
 
       it("when extraction fails with no object at all then return bad request") {
         val filter = RequestFilters.ExtractingRequest[String] {
-          req => Extracted(None)
+          req => ExtractionFailed(Nil)
         }
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 

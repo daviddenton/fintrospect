@@ -25,13 +25,12 @@ trait Mandatory[-From, T] extends Retrieval[From, T] with Extractor[From, T] {
   val required = true
 
   override def <--(from: From): T = extract(from) match {
-    case Extracted(Some(t)) => t
-    case Extracted(None) => throw new IllegalStateException("Extraction failed: Missing")
+    case Extracted(t) => t
     case _ => throw new IllegalStateException("Extraction failed: Invalid")
   }
 }
 
-trait Optional[-From, T] extends Retrieval[From, Option[T]] with Extractor[From, T] {
+trait Optional[-From, T] extends Retrieval[From, Option[T]] with Extractor[From, Option[T]] {
   val required = false
 
   def <--(from: From): Option[T] = extract(from) match {
