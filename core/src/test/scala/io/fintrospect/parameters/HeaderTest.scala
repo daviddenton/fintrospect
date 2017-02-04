@@ -18,10 +18,10 @@ class HeaderTest extends FunSpec with Matchers {
       val param = Header.required.localDate(paramName)
 
       it("validate value from field") {
-        param.extract(messageWithHeaderValueOf(Option("2015-02-04"))) shouldBe Extracted(Some(LocalDate.of(2015, 2, 4)))
+        param.extract(messageWithHeaderValueOf(Option("2015-02-04"))) shouldBe Extracted(LocalDate.of(2015, 2, 4))
         param <-- messageWithHeaderValueOf(Option("2015-02-04")) shouldBe LocalDate.of(2015, 2, 4)
         val now = LocalDate.now()
-        param.extract(ExtractedRouteRequest(Request(), Map(param -> Extracted(Some(now))))) shouldBe Extracted(Some(now))
+        param.extract(ExtractedRouteRequest(Request(), Map(param -> Extracted(now)))) shouldBe Extracted(now)
       }
 
       it("fails to retrieve invalid value") {

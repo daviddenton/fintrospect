@@ -32,9 +32,9 @@ class ResponseFiltersTest extends FunSpec with Matchers {
 
       it("when extraction fails with no object at all") {
         val filter = ResponseFilters.ExtractingResponse {
-          _ => Extracted("")
+          _ => Extracted("hello")
         }
-        result(filter(Request(), Service.mk { _ => Future(Response()) })) shouldBe Extracted(None)
+        result(filter(Request(), Service.mk { _ => Future(Response()) })) shouldBe Extracted(Some("hello"))
       }
     }
 

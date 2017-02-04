@@ -19,7 +19,7 @@ class QueryTest extends FunSpec with Matchers {
       val param = Query.required.localDate(paramName)
 
       it("retrieves value from field") {
-        param.extract(requestWithValueOf("2015-02-04")) shouldBe Extracted(Some(LocalDate.of(2015, 2, 4)))
+        param.extract(requestWithValueOf("2015-02-04")) shouldBe Extracted(LocalDate.of(2015, 2, 4))
         param <-- requestWithValueOf("2015-02-04") shouldBe LocalDate.of(2015, 2, 4)
         val now = LocalDate.now()
         param.extract(ExtractedRouteRequest(Request(), Map(param -> Extracted(Some(now))))) shouldBe Extracted(Some(now))
@@ -45,7 +45,7 @@ class QueryTest extends FunSpec with Matchers {
 
       it("retrieves value from field") {
         val param = Query.required.multi.localDate(paramName)
-        param.extract(requestWithValueOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
+        param.extract(requestWithValueOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
         param <-- requestWithValueOf("2015-02-04", "2015-02-05") shouldBe Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
