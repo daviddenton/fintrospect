@@ -8,16 +8,9 @@ class ValidatorTest extends FunSpec with Matchers {
   describe("validator") {
     it("all Successful") {
       Validator.mk(
-        Extracted(Some(1)),
-        Extracted(Some(2))
+        Extracted(1),
+        Extracted(2)
       ) { case (first, second) => (first, second) } shouldBe Validated((Some(1), Some(2)))
-    }
-
-    it("all Successful - mix") {
-      Validator.mk(
-        Extracted(Some(1)),
-        Extracted(None)
-      ) { case (first, second) => (first, second) } shouldBe Validated((Some(1), None))
     }
 
     it("collects Errors") {
@@ -30,15 +23,15 @@ class ValidatorTest extends FunSpec with Matchers {
     }
 
     it("can make a validator with tuple types") {
-      Validator.mk(Extracted(Some(1)), Extracted(Some(1))) { case t => }
-      Validator.mk(Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1))) { case t => }
-      Validator.mk(Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1))) { case t => }
-      Validator.mk(Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1))) { case t => }
-      Validator.mk(Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1))) { case t => }
-      Validator.mk(Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1))) { case t => }
-      Validator.mk(Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1))) { case t => }
-      Validator.mk(Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1))) { case t => }
-      Validator.mk(Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1)), Extracted(Some(1))) { case t => }
+      Validator.mk(Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
+      Validator.mk(Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1), Extracted(1)) { case t => }
     }
   }
 }
