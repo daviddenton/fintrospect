@@ -32,7 +32,7 @@ object Extraction {
   * Represents a object which was provided and extracted successfully
   */
 case class Extracted[T](value: T) extends Extraction[T] {
-  def flatMap[O](f: T => Extraction[O]) = f(value)
+  def flatMap[O](f: T => Extraction[O]): Extraction[O] = f(value)
 
   override def map[O](f: T => O) = Extracted(f(value))
 }

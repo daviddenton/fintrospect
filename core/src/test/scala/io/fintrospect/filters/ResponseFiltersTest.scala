@@ -12,9 +12,9 @@ import io.fintrospect.Headers
 import io.fintrospect.filters.ResponseFilters._
 import io.fintrospect.formats.Xml
 import io.fintrospect.parameters.Body
-import io.fintrospect.util.{Extracted, ExtractionFailed}
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.fintrospect.util.TestClocks._
+import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest.{FunSpec, Matchers}
 
 class ResponseFiltersTest extends FunSpec with Matchers {
@@ -25,14 +25,14 @@ class ResponseFiltersTest extends FunSpec with Matchers {
       it("when extracts response object successfully") {
         val message = "hello"
 
-        val filter = ResponseFilters.ExtractingResponse { _ => Extracted(message) }
+        val filter = ResponseFilters.ExtractingResponse { (_: Response) => Extracted(message) }
 
         result(filter(Request(), Service.mk { message => Future(Response()) })) shouldBe Extracted(Some(message))
       }
 
       it("when extraction fails with no object at all") {
         val filter = ResponseFilters.ExtractingResponse {
-          _ => Extracted("hello")
+          (_: Response) => Extracted("hello")
         }
         result(filter(Request(), Service.mk { _ => Future(Response()) })) shouldBe Extracted(Some("hello"))
       }
@@ -82,7 +82,7 @@ class ResponseFiltersTest extends FunSpec with Matchers {
       val clock = fixed()
 
       it("works") {
-        val response = result(AddDate(clock)(Request(), Service.mk { req: Request => Future(Response()) }))
+        val response = result(AddDate[Request](clock)(Request(), Service.mk { req: Request => Future(Response()) }))
         headerOf("Date")(response) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
       }
     }
