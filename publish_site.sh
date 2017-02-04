@@ -10,7 +10,7 @@ cd -
 npm run makeSite
 ./sbt unidoc
 rm -rf /tmp/site/*
-mv target/scala-2.11/unidoc target/www/api
+mv target/scala-2.12/unidoc target/www/api
 mv -f target/www/* /tmp/site
 cd /tmp/site
 git add *
