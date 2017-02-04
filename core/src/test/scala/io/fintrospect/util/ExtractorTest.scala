@@ -50,11 +50,11 @@ class ExtractorTest extends FunSpec with Matchers {
       }
 
       it("successfully extracts when all parameters present") {
-        c <--? Request("/?name1=query1&name2=rwer&name3=12") shouldBe Extracted(Some(Example(Some("query1"), Some("rwer"), 12)))
+        c <--? Request("/?name1=query1&name2=rwer&name3=12") shouldBe Extracted(Example(Some("query1"), Some("rwer"), 12))
       }
 
       it("successfully extracts when only optional parameters missing") {
-        c <--? Request("/?name3=123") shouldBe Extracted(Some(Example(None, None, 123)))
+        c <--? Request("/?name3=123") shouldBe Extracted(Example(None, None, 123))
       }
 
       it("reports error when not all parameters present") {
@@ -120,7 +120,7 @@ class ExtractorTest extends FunSpec with Matchers {
       val missing = Missing(Query.optional.string("bob"))
 
       it("combine") {
-        Extraction.combine(Seq(Extracted(None), Extracted(None))) shouldBe Extracted(None)
+        Extraction.combine(Seq(Extracted(None), Extracted(None))) shouldBe Extracted(())
         Extraction.combine(Seq(Extracted(None), Extracted(Some(1)))) shouldBe Extracted(None)
         Extraction.combine(Seq(Extracted(None), Extracted(Some(1)), ExtractionFailed(missing), ExtractionFailed(invalid))) shouldBe ExtractionFailed(Seq(missing, invalid))
       }
