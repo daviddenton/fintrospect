@@ -46,7 +46,7 @@ class ExtractorTest extends FunSpec with Matchers {
             name3 <- int.extract(request)
             name1 <- Query.optional.string("name1").extract(request)
             name2 <- Query.optional.string("name2").extract(request)
-          } yield Example(name1, name2, name3.get)
+          } yield Example(name1, name2, name3)
       }
 
       it("successfully extracts when all parameters present") {
@@ -76,7 +76,7 @@ class ExtractorTest extends FunSpec with Matchers {
             startDate <- start <--? request
             middleDate <- middle <--? (request, "not after start", (i: LocalDate) => i.isAfter(startDate.get))
             endDate <- end <--? (request, "not after start", e => startDate.forall(s => e.isAfter(s)))
-          } yield Range(startDate.get, middleDate, endDate.get)
+          } yield Range(startDate.get, middleDate, endDate)
         }
       }
 
@@ -92,7 +92,7 @@ class ExtractorTest extends FunSpec with Matchers {
             name3 <- innerInt.extract(request)
             name1 <- Query.optional.string("name1").extract(request)
             name2 <- Query.optional.string("name2").extract(request)
-          } yield Some(Example(name1, name2, name3.get))
+          } yield Some(Example(name1, name2, name3))
       }
 
       val outer = Extractor.mk {
@@ -100,11 +100,11 @@ class ExtractorTest extends FunSpec with Matchers {
           for {
             name4 <- outerInt <--? request
             inner <- inner <--? request
-          } yield WrappedExample(inner.get, name4.get)
+          } yield WrappedExample(inner, name4)
       }
 
       it("success") {
-        outer <--? Request("/?innerInt=123&outerInt=1") shouldBe Extracted(Some(WrappedExample(Some(Example(None, None, 123)), 1)))
+        outer <--? Request("/?innerInt=123&outerInt=1") shouldBe Extracted(WrappedExample(Some(Example(None, None, 123)), 1))
       }
 
       it("inner extract fails reports only inner error") {
@@ -112,18 +112,6 @@ class ExtractorTest extends FunSpec with Matchers {
       }
       it("outer extract fails reports only outer error") {
         outer <--? Request("/?innerInt=123") shouldBe ExtractionFailed(Missing(outerInt))
-      }
-    }
-
-    describe("falling back to default value") {
-      it("Extracted") {
-        Extracted(Some(true)).orDefault(false) shouldBe Extracted(Some(true))
-        Extracted(None).orDefault(true) shouldBe Extracted(Some(true))
-      }
-      it("ExtractionFailed") {
-        val param = Query.required.string("param")
-        ExtractionFailed(Invalid(param)).orDefault(true) shouldBe ExtractionFailed(Invalid(param))
-
       }
     }
 

@@ -16,19 +16,19 @@ object Query {
   type OptionalSeq[T] = OptionalParameter[Request, Seq[T], QueryBinding]
 
 
-  val required = new Parameters[QueryParameter, Mandatory] with MultiParameters[MultiQueryParameter, MandatorySeq] {
-    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleParameter(name, description, spec, QueryExtractAndRebind) with QueryParameter[T] with Mandatory[T]
+  val required = new Parameters[QueryParameter, Mandatory] with MultiParameters[MultiMandatoryQueryParameter, MandatorySeq] {
+    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleMandatoryParameter(name, description, spec, QueryExtractAndRebind) with QueryParameter[T] with Mandatory[T]
 
-    override val multi = new Parameters[MultiQueryParameter, MandatorySeq] {
-      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiQueryParameter(name, description, spec) with MandatorySeq[T]
+    override val multi = new Parameters[MultiMandatoryQueryParameter, MandatorySeq] {
+      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiMandatoryQueryParameter(name, description, spec) with MandatorySeq[T]
     }
   }
 
-  val optional = new Parameters[QueryParameter, Optional] with MultiParameters[MultiQueryParameter, OptionalSeq] {
-    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleParameter(name, description, spec, QueryExtractAndRebind) with QueryParameter[T] with Optional[T]
+  val optional = new Parameters[QueryParameter, Optional] with MultiParameters[MultiOptionalQueryParameter, OptionalSeq] {
+    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleOptionalParameter(name, description, spec, QueryExtractAndRebind) with QueryParameter[T] with Optional[T]
 
-    override val multi = new Parameters[MultiQueryParameter, OptionalSeq] {
-      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiQueryParameter(name, description, spec) with OptionalSeq[T]
+    override val multi = new Parameters[MultiOptionalQueryParameter, OptionalSeq] {
+      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiOptionalQueryParameter(name, description, spec) with OptionalSeq[T]
     }
   }
 }

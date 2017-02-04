@@ -1,7 +1,5 @@
 package io.fintrospect.util
 
-import io.fintrospect.parameters.Parameter
-
 /**
   * Mechanism to extract (or fail to extract) an entity value from a particular 'From' context
   */
@@ -25,22 +23,4 @@ object Extractor {
   def mk[From, T](fn: From => Extraction[T]): Extractor[From, T] = new Extractor[From, T] {
     override def <--?(from: From): Extraction[T] = fn(from)
   }
-}
-
-/**
-  * Mechanism to extract (or fail to extract) a parameter from a particular 'From' context
-  */
-trait ExtractableParameter[-From, +T] extends Parameter with Extractor[From, T] {
-
-  /**
-    * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
-    */
-  def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[T] =
-    <--?(from).flatMap[T](v => if (v.forall(predicate)) Extraction(v) else ExtractionFailed(ExtractionError(this, reason)))
-
-  /**
-    * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
-    * User-friendly synonym for <--?(), which is why the method is final.
-    */
-  final def extract(from: From, reason: String, predicate: T => Boolean): Extraction[T] = <--?(from, reason, predicate)
 }

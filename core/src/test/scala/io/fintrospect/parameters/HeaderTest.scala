@@ -45,7 +45,7 @@ class HeaderTest extends FunSpec with Matchers {
 
       it("retrieves value from field") {
         val param = Header.required.multi.localDate(paramName)
-        param.extract(messageWithValueOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Some(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))))
+        param.extract(messageWithValueOf("2015-02-04", "2015-02-05")) shouldBe Extracted(Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5)))
         param <-- messageWithValueOf("2015-02-04", "2015-02-05") shouldBe Seq(LocalDate.of(2015, 2, 4), LocalDate.of(2015, 2, 5))
       }
 
