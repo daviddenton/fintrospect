@@ -7,7 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
-## 14.10.0 (uncut)
+## 14.10.0
+- BugFix #34 Upgrade to `finagle-http 6.42.0`.
+- Readded Scala 2.12.X support, as #34 is fixed.
 - Reimplemented `Extractors`, so successful extractions are now NOT wrapped in an Option. Optional extractions are now denoted via the type `Extraction[Option[T]]` rather than just `Extraction[T]`.
 
 ## 14.9.0
