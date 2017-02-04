@@ -23,7 +23,7 @@ class ExtractorTest extends FunSpec with Matchers {
           } yield (req, opt)
       }
 
-      ex <--? Request("/") shouldBe Extracted(Some((None, None)))
+      ex <--? Request("/") shouldBe Extracted((None, None))
     }
 
     it("does not short circuit if last parameter in a for comprehension is optional") {
@@ -35,7 +35,7 @@ class ExtractorTest extends FunSpec with Matchers {
           } yield (req, opt)
       }
 
-      ex <--? Request("/?req=123") shouldBe Extracted(Some((Some(123), None)))
+      ex <--? Request("/?req=123") shouldBe Extracted((123, None))
     }
 
     describe("non-embedded extraction") {
@@ -121,7 +121,6 @@ class ExtractorTest extends FunSpec with Matchers {
 
       it("combine") {
         Extraction.combine(Seq(Extracted(None), Extracted(None))) shouldBe Extracted(())
-        Extraction.combine(Seq(Extracted(None), Extracted(Some(1)))) shouldBe Extracted(None)
         Extraction.combine(Seq(Extracted(None), Extracted(Some(1)), ExtractionFailed(missing), ExtractionFailed(invalid))) shouldBe ExtractionFailed(Seq(missing, invalid))
       }
     }
