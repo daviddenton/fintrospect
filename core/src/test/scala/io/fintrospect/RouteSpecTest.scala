@@ -186,7 +186,7 @@ class RouteSpecTest extends FunSpec with Matchers {
     it("succeeds when nothing missing") {
       val request = Request("?bob=bill")
       request.contentString = "{}"
-      spec <--? request shouldBe Extracted(Some(ExtractedRouteRequest(request, Map(param -> Extracted(Option("bill")), body -> Extracted(Option(obj()))))))
+      spec <--? request shouldBe Extracted(ExtractedRouteRequest(request, Map(param -> Extracted("bill"), body -> Extracted(obj()))))
     }
 
     it("fails on missing param") {
