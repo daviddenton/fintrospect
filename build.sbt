@@ -1,9 +1,9 @@
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
-  version := "14.9.0",
+  version := "14.10.0",
   scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.11.8"),
+  crossScalaVersions := Seq("2.12.0", "2.11.8"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   resolvers += "JCenter" at "https://jcenter.bintray.com",
   scalacOptions := Seq(
@@ -33,7 +33,7 @@ lazy val baseSettings = Seq(
   credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
 )
 
-val finagleVersion = "6.41.0"
+val finagleVersion = "6.42.0"
 val json4sVersion = "3.5.0"
 val circeVersion = "0.7.0"
 
