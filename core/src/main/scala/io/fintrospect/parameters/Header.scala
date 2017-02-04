@@ -15,19 +15,19 @@ object Header {
 
   type OptionalSeq[T] = OptionalParameter[Message, Seq[T], RequestBinding]
 
-  val required = new Parameters[HeaderParameter, Mandatory] with MultiParameters[MultiHeaderParameter, MandatorySeq] {
-    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleParameter(name, description, spec, HeaderExtractAndRebind) with HeaderParameter[T] with Mandatory[T]
+  val required = new Parameters[HeaderParameter, Mandatory] with MultiParameters[MultiMandatoryHeaderParameter, MandatorySeq] {
+    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleMandatoryParameter(name, description, spec, HeaderExtractAndRebind) with HeaderParameter[T] with Mandatory[T]
 
-    override val multi = new Parameters[MultiHeaderParameter, MandatorySeq] {
-      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiHeaderParameter(name, description, spec) with MandatorySeq[T]
+    override val multi = new Parameters[MultiMandatoryHeaderParameter, MandatorySeq] {
+      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiMandatoryHeaderParameter(name, description, spec) with MandatorySeq[T]
     }
   }
 
-  val optional = new Parameters[HeaderParameter, Optional] with MultiParameters[MultiHeaderParameter, OptionalSeq] {
-    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleParameter(name, description, spec, HeaderExtractAndRebind) with HeaderParameter[T] with Optional[T]
+  val optional = new Parameters[HeaderParameter, Optional] with MultiParameters[MultiOptionalHeaderParameter, OptionalSeq] {
+    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleOptionalParameter(name, description, spec, HeaderExtractAndRebind) with HeaderParameter[T] with Optional[T]
 
-    override val multi = new Parameters[MultiHeaderParameter, OptionalSeq] {
-      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiHeaderParameter(name, description, spec) with OptionalSeq[T]
+    override val multi = new Parameters[MultiOptionalHeaderParameter, OptionalSeq] {
+      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiOptionalHeaderParameter(name, description, spec) with OptionalSeq[T]
     }
 
   }

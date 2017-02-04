@@ -29,7 +29,7 @@ class BodyTest extends FunSpec with Matchers {
         val bodyJson = obj("field" -> string("value"))
         val request = Request("/")
         request.write(pretty(bodyJson))
-        body.extract(request) shouldBe Extracted(Some(bodyJson))
+        body.extract(request) shouldBe Extracted(bodyJson)
         body <-- request shouldBe bodyJson
       }
 
@@ -51,13 +51,13 @@ class BodyTest extends FunSpec with Matchers {
     it("should retrieve the body value from the request") {
       val request = Request("/")
       request.write("hello")
-      body.extract(request) shouldBe Extracted(Some("hello"))
+      body.extract(request) shouldBe Extracted("hello")
       body <-- request shouldBe "hello"
     }
 
     it("should retrieve the body value from the pre-extracted Request") {
       val request = Request("/")
-      body.extract(ExtractedRouteRequest(request, Map(body -> Extracted(Some("hello"))))) shouldBe Extracted(Some("hello"))
+      body.extract(ExtractedRouteRequest(request, Map(body -> Extracted("hello")))) shouldBe Extracted("hello")
     }
 
     it("defaults to empty is invalid") {
@@ -65,7 +65,7 @@ class BodyTest extends FunSpec with Matchers {
     }
 
     it("can override to empty is valid") {
-      Body.string(ContentType("sometype"), "", StringValidations.EmptyIsValid).extract(Request()) shouldBe Extracted(Some(""))
+      Body.string(ContentType("sometype"), "", StringValidations.EmptyIsValid).extract(Request()) shouldBe Extracted("")
     }
   }
 

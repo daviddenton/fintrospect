@@ -28,7 +28,7 @@ object Composite_Request_Parameters_Example extends App {
       for {
         foo <- fooQ <--? req
         bar <- barQ <--? req
-      } yield FooBar(foo.get, bar.get)
+      } yield FooBar(foo, bar)
     }
   }
 

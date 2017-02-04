@@ -20,7 +20,7 @@ case class RouteSpec private(summary: String,
   private[fintrospect] def <--?(request: Request): Extraction[Request] = {
     val contents = Map[Any, Extraction[_]]((requestParams ++ body).map(r => (r, r <--? request)): _*)
     Extraction.combine(contents.values.toSeq) match {
-      case Extracted(_) => Extracted(Option(ExtractedRouteRequest(request, contents)))
+      case Extracted(_) => Extracted(ExtractedRouteRequest(request, contents))
       case ExtractionFailed(e) => ExtractionFailed(e)
     }
   }

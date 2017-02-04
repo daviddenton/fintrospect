@@ -21,9 +21,14 @@ private object FormFileExtractAndRebind extends ParameterExtractAndBind[Form, Mu
   def valuesFrom(parameter: Parameter, form: Form): Option[Seq[MultiPartFile]] = form.files.get(parameter.name).map(_.toSeq)
 }
 
-abstract class MultiFormField[T](name: String,
+abstract class MultiOptionalFormField[T](name: String,
                                  description: String, spec: ParameterSpec[T])
-  extends MultiParameter(name, description, spec, FormFieldExtractAndRebind) with FormField[Seq[T]] {
+  extends MultiOptionalParameter(name, description, spec, FormFieldExtractAndRebind) with FormField[Seq[T]] {
+}
+
+abstract class MultiMandatoryFormField[T](name: String,
+                                 description: String, spec: ParameterSpec[T])
+  extends MultiMandatoryParameter(name, description, spec, FormFieldExtractAndRebind) with FormField[Seq[T]] {
 }
 
 abstract class SingleFile(val name: String, val description: String)
@@ -68,50 +73,50 @@ object FormField {
 
   val required = new Parameters[FormField, Mandatory]
     with WithFile[MandatoryFile]
-    with MultiParameters[MultiFormField, MandatorySeq] {
-    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleParameter(name, description, spec, FormFieldExtractAndRebind) with FormField[T] with Mandatory[T]
+    with MultiParameters[MultiMandatoryFormField, MandatorySeq] {
+    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleMandatoryParameter(name, description, spec, FormFieldExtractAndRebind) with FormField[T] with Mandatory[T]
 
     def file(name: String, description: String = null) =
       new SingleFile(name, description) with MandatoryFile {
         override def <--?(form: Form): Extraction[MultiPartFile] = form.files.get(name)
-          .map(files => Extracted(files.headOption)).getOrElse(ExtractionFailed(Missing(this)))
+          .map(files => Extracted(files.head)).getOrElse(ExtractionFailed(Missing(this)))
       }
 
     override def * = multi
 
-    override val multi = new Parameters[MultiFormField, MandatorySeq]
+    override val multi = new Parameters[MultiMandatoryFormField, MandatorySeq]
       with WithFile[MultiFile with MandatoryFileSeq] {
 
-      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiFormField(name, description, spec) with MandatorySeq[T]
+      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiMandatoryFormField(name, description, spec) with MandatorySeq[T]
 
       def file(name: String, description: String = null) =
         new MultiFile(name, description) with MandatoryFileSeq {
           override def <--?(form: Form): Extraction[Seq[MultiPartFile]] = form.files.get(name)
-            .map(files => Extracted(Option(files))).getOrElse(ExtractionFailed(Missing(this)))
+            .map(files => Extracted(files)).getOrElse(ExtractionFailed(Missing(this)))
         }
     }
   }
 
   val optional = new Parameters[FormField, Optional]
     with WithFile[OptionalFile]
-    with MultiParameters[MultiFormField, OptionalSeq] {
+    with MultiParameters[MultiOptionalFormField, OptionalSeq] {
 
-    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleParameter(name, description, spec, FormFieldExtractAndRebind) with FormField[T] with Optional[T]
+    override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleOptionalParameter(name, description, spec, FormFieldExtractAndRebind) with FormField[T] with Optional[T]
 
     def file(name: String, description: String = null) =
       new SingleFile(name, description) with OptionalFile {
-        override def <--?(form: Form): Extraction[MultiPartFile] = Extracted(form.files.get(name).flatMap(_.headOption))
+        override def <--?(form: Form): Extraction[Option[MultiPartFile]] = Extracted(form.files.get(name).flatMap(_.headOption))
       }
 
     override def * = multi
 
-    override val multi = new Parameters[MultiFormField, OptionalSeq]
+    override val multi = new Parameters[MultiOptionalFormField, OptionalSeq]
       with WithFile[MultiFile with OptionalFileSeq] {
-      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiFormField(name, description, spec) with OptionalSeq[T]
+      override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiOptionalFormField(name, description, spec) with OptionalSeq[T]
 
       def file(inName: String, description: String = null) =
         new MultiFile(inName, description) with OptionalFileSeq {
-          override def <--?(form: Form): Extraction[Seq[MultiPartFile]] = Extracted(form.files.get(inName).map(_.toSeq))
+          override def <--?(form: Form): Extraction[Option[Seq[MultiPartFile]]] = Extracted(form.files.get(inName).map(_.toSeq))
         }
     }
   }

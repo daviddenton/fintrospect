@@ -19,7 +19,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     Filter.mk[Request, Response, IN, Response] {
       (req, svc) =>
         body <--? req match {
-          case Extracted(in) => svc(in.get)
+          case Extracted(in) => svc(in)
           case ExtractionFailed(_) => HttpResponse(Status.BadRequest)
         }
     }.andThen(svc)
