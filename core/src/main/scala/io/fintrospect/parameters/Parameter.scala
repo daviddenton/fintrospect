@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 import io.fintrospect.util.ExtractionError.{Invalid, Missing}
-import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
+import io.fintrospect.util.{Extracted, Extraction, ExtractionError, ExtractionFailed}
 
 import scala.util.{Failure, Success, Try}
 
@@ -36,9 +36,11 @@ trait OptionalParameter[From, T, Bnd <: Binding] extends Optional[From, T]
   /**
     * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
     */
-  def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[Option[T]] = ???
-
-  //    <--?(from).flatMap[T](v => if (v.forall(predicate)) Extraction(v) else ExtractionFailed(ExtractionError(this, reason)))
+  def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[Option[T]] =
+    <--?(from) match {
+      case Extracted(x) => if(x.forall(predicate)) Extraction(x) else ExtractionFailed(ExtractionError(this, reason))
+      case e => e
+    }
 
   /**
     * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
@@ -60,9 +62,11 @@ trait MandatoryParameter[From, T, Bnd <: Binding] extends Mandatory[From, T]
   /**
     * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
     */
-  def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[T] = ???
-
-  //    <--?(from).flatMap[T](v => if (v.forall(predicate)) Extraction(v) else ExtractionFailed(ExtractionError(this, reason)))
+  def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[T] =
+    <--?(from) match {
+      case Extracted(x) => if(predicate(x)) Extraction(x) else ExtractionFailed(ExtractionError(this, reason))
+      case e => e
+    }
 
   /**
     * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
@@ -122,7 +126,7 @@ abstract class MultiMandatoryParameter[T, From, B <: Binding](val name: String, 
   def <--?(from: From): Extraction[Seq[T]] = from match {
     case req: ExtractedRouteRequest => req.get(this)
     case _ => eab.valuesFrom(this, from)
-      .map(values => Try(values.map(spec.deserialize)) match {
+      .map(xs => Try(xs.map(spec.deserialize)) match {
         case Success(x) => Extracted(x)
         case Failure(_) => ExtractionFailed(Invalid(this))
       }).getOrElse(ExtractionFailed(Missing(this)))
@@ -140,7 +144,7 @@ abstract class MultiOptionalParameter[T, From, B <: Binding](val name: String, v
   def <--?(from: From): Extraction[Option[Seq[T]]] = from match {
     case req: ExtractedRouteRequest => req.get(this)
     case _ => eab.valuesFrom(this, from)
-      .map(x => Try(x.map(spec.deserialize)) match {
+      .map(xs => Try(xs.map(spec.deserialize)) match {
         case Success(x) => Extracted(Some(x))
         case Failure(_) => ExtractionFailed(Invalid(this))
       }).getOrElse(Extracted(None))
