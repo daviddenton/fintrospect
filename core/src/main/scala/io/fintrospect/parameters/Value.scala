@@ -1,6 +1,6 @@
 package io.fintrospect.parameters
 
-trait Value[T] extends Any {
+trait Value[T] {
   self: AnyVal with Product =>
   val value: T
 }
