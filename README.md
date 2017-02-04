@@ -11,11 +11,11 @@ Fintrospect is a library that adds an intelligent HTTP routing layer to the
 <a href="http://twitter.github.io/finagle/">Finagle</a> RPC framework from Twitter. Via a shared contract, it provides a simple way to 
 implement both webservice endpoints and HTTP clients which are:
 
-- ```Type-safe``` : auto-marshalls all request parameters/bodies into the correct types (including primitives + JSON/XML etc...)
-- ```Auto-validating``` : the presence of required and optional request parameters and bodies are checked before entering service-layer code
+- ```Type-safe``` : auto-marshals request parameters/bodies into the correct primitive and custom types.
+- ```Auto-validating``` : enforce the correctness of required/optional request parameters/bodies, generating a BadRequest if the contract is broken.
 - ```Auto-documenting``` : runtime generation of endpoint documentation such as <a href="http://swagger.io/">Swagger</a> JSON or web sitemap XML. 
 Generates <a href="http://json-schema.org/">JSON Schema</a> for example object formats to be included in these API docs.
-- ```Uniform``` : reuse the same contract to define both incoming or outgoing Finagle HTTP services. This also allows extremely low effort fake servers to be created
+- ```Uniform``` : reuse the same contract to define both server endpoints and HTTP clients This also allows extremely low effort fake servers to be created
 
 Additionally, Fintrospect provides a number of mechanisms to leverage these routes:
 
@@ -36,9 +36,10 @@ Additionally, Fintrospect provides a number of mechanisms to leverage these rout
 - Utilities to help you unit-test endpoint services and write HTTP contract tests for remote dependencies 
 
 ## Get it
-Fintrospect is intentionally dependency-lite by design - other than Finagle, the core library itself only has a single non `org.scala` dependency.
+Fintrospect is intentionally dependency-lite by design - other than Finagle, the core library itself only has a single non `org.scala` dependency. 
+No dependency on `Scalaz`, `Cats` or `Shapeless`, so there are no compatibility headaches.
 
-To activate some optional features, additional dependencies may be required - please see <a href="http://fintrospect.io/installation">here</a> for details.
+To activate the extension library features (JSON, templates etc), additional dependencies are required - please see <a href="http://fintrospect.io/installation">here</a> for details.
 
 Add the following lines to ```build.sbt``` - the lib is hosted in Maven Central and JCenter:
 ```scala
@@ -76,12 +77,12 @@ class BookSearch(books: Books) {
 
   private def search() = Service.mk[Request, Response] { 
     request => {
-      val requestForm = form.from(request)
+      val requestForm = form <-- request
       Ok(array(
         books.search(
-            minPages.from(requestForm).getOrElse(MIN_VALUE), 
-            maxPages.from(request).getOrElse(MAX_VALUE),
-            titleTerm.from(requestForm)
+            (minPages <-- requestForm).getOrElse(MIN_VALUE), 
+            (maxPages <-- request).getOrElse(MAX_VALUE),
+            titleTerm <-- requestForm
         ).map(_.toJson)))
     }
   }
@@ -104,8 +105,7 @@ val apiInfo = ApiInfo("Library Example", "1.0", Option("Simple description"))
 val renderer = Swagger2dot0Json(apiInfo) 
 val libraryModule = RouteModule(Root / "library", renderer)
     .withRoute(new BookSearch(new BookRepo()).route)
-val service = Module.toService(libraryModule)
-Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service)) 
+Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(libraryModule.toService)) 
 ```
 
 #### View the generated documentation
