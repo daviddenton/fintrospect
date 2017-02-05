@@ -42,6 +42,24 @@ abstract class MultiFile(name: String, description: String)
   extends ExtractableFile(name, description, identity[Seq[MultiPartFile]], identity[Seq[MultiPartFile]]) {
 }
 
+abstract class SingleMandatoryFile(name: String, description: String = null) extends SingleFile(name, description) {
+  def <--?(form: Form): Extraction[MultiPartFile] = form.files.get(name)
+    .map(files => Extracted(files.head)).getOrElse(ExtractionFailed(Missing(this)))
+}
+
+abstract class SingleOptionalFile(name: String, description: String = null) extends SingleFile(name, description) {
+  def <--?(form: Form): Extraction[Option[MultiPartFile]] = Extracted(form.files.get(name).flatMap(_.headOption))
+}
+
+abstract class MultiMandatoryFile(name: String, description: String = null) extends MultiFile(name, description) {
+  def <--?(form: Form): Extraction[Seq[MultiPartFile]] = form.files.get(name)
+    .map(files => Extracted(files)).getOrElse(ExtractionFailed(Missing(this)))
+}
+
+abstract class MultiOptionalFile(name: String, description: String = null) extends MultiFile(name, description) {
+  def <--?(form: Form): Extraction[Option[Seq[MultiPartFile]]] = Extracted(form.files.get(name).map(_.toSeq))
+}
+
 object FormField {
 
   type Mandatory[T] = MandatoryParameter[Form, T, FormFieldBinding]
@@ -71,11 +89,7 @@ object FormField {
     with MultiParameters[FSeq, MandatorySeq] {
     override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleMandatoryParameter(name, description, spec, FormFieldExtractAndRebind) with FormField[T] with Mandatory[T]
 
-    def file(name: String, description: String = null) =
-      new SingleFile(name, description) with MandatoryFile {
-        override def <--?(form: Form): Extraction[MultiPartFile] = form.files.get(name)
-          .map(files => Extracted(files.head)).getOrElse(ExtractionFailed(Missing(this)))
-      }
+    def file(name: String, description: String = null) = new SingleMandatoryFile(name, description) with MandatoryFile
 
     override def * = multi
 
@@ -84,11 +98,7 @@ object FormField {
 
       override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiMandatoryParameter(name, description, spec, FormFieldExtractAndRebind) with FSeq[T] with MandatorySeq[T]
 
-      def file(name: String, description: String = null) =
-        new MultiFile(name, description) with MandatoryFileSeq {
-          override def <--?(form: Form): Extraction[Seq[MultiPartFile]] = form.files.get(name)
-            .map(files => Extracted(files)).getOrElse(ExtractionFailed(Missing(this)))
-        }
+      def file(name: String, description: String = null) = new MultiMandatoryFile(name, description) with MandatoryFileSeq
     }
   }
 
@@ -98,10 +108,7 @@ object FormField {
 
     override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new SingleOptionalParameter(name, description, spec, FormFieldExtractAndRebind) with FormField[T] with Optional[T]
 
-    def file(name: String, description: String = null) =
-      new SingleFile(name, description) with OptionalFile {
-        override def <--?(form: Form): Extraction[Option[MultiPartFile]] = Extracted(form.files.get(name).flatMap(_.headOption))
-      }
+    def file(name: String, description: String = null) = new SingleOptionalFile(name, description) with OptionalFile
 
     override def * = multi
 
@@ -109,10 +116,7 @@ object FormField {
       with WithFile[MultiFile with OptionalFileSeq] {
       override def apply[T](spec: ParameterSpec[T], name: String, description: String = null) = new MultiOptionalParameter(name, description, spec, FormFieldExtractAndRebind) with FSeq[T] with OptionalSeq[T]
 
-      def file(inName: String, description: String = null) =
-        new MultiFile(inName, description) with OptionalFileSeq {
-          override def <--?(form: Form): Extraction[Option[Seq[MultiPartFile]]] = Extracted(form.files.get(inName).map(_.toSeq))
-        }
+      def file(inName: String, description: String = null) = new MultiOptionalFile(inName, description) with OptionalFileSeq
     }
   }
 }
