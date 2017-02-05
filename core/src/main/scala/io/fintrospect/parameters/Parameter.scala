@@ -97,22 +97,18 @@ abstract class ExtractableParameter[T, From, B <: Binding, O]
 
 }
 
-abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
-  extends ExtractableParameter[T, From, B, T](spec, eab, Seq(_)) with Bindable[T, B] {
-}
-
 abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends ExtractableParameter[T, From, B, Seq[T]](spec, eab, identity) with Bindable[Seq[T], B] {
 }
 
 abstract class SingleMandatoryParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
-  extends SingleParameter[T, From, B](spec, eab) {
+  extends ExtractableParameter[T, From, B, T](spec, eab, Seq(_)) with Bindable[T, B] {
 
   def <--?(from: From): Extraction[T] = extractOrHandle(from, _.head, ExtractionFailed(Missing(this)))
 }
 
 abstract class SingleOptionalParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
-  extends SingleParameter[T, From, B](spec, eab) {
+  extends ExtractableParameter[T, From, B, T](spec, eab, Seq(_)) with Bindable[T, B] {
 
   def <--?(from: From): Extraction[Option[T]] = extractOrHandle(from, _.headOption, Extracted(None))
 }
