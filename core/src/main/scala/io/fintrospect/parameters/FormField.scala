@@ -21,24 +21,24 @@ private object FormFileExtractAndRebind extends ParameterExtractAndBind[Form, Mu
   def valuesFrom(parameter: Parameter, form: Form): Option[Seq[MultiPartFile]] = form.files.get(parameter.name).map(_.toSeq)
 }
 
-abstract class ExtractableFile[Bind](val name: String, val description: String)
+abstract class ExtractableFile[Raw, Bind](val name: String, val description: String,
+                                     bindFn: Bind => Seq[MultiPartFile]
+                                    )
   extends Parameter with Bindable[Bind, FormFileBinding] with FormField[Bind] {
 
   override def iterator: Iterator[Parameter] = Seq(this).iterator
 
   override val paramType = FileParamType
+
+  def -->(value: Bind): Seq[FormFileBinding] = bindFn(value).map(new FormFileBinding(this, _))
 }
 
 abstract class SingleFile(name: String, description: String)
-  extends ExtractableFile[MultiPartFile](name, description) {
-
-  override def -->(value: MultiPartFile): Iterable[FormFileBinding] = Seq(new FormFileBinding(this, value))
+  extends ExtractableFile[MultiPartFile, MultiPartFile](name, description, Seq(_)) {
 }
 
 abstract class MultiFile(name: String, description: String)
-  extends ExtractableFile[Seq[MultiPartFile]](name, description) {
-
-  override def -->(value: Seq[MultiPartFile]): Iterable[FormFileBinding] = value.map(new FormFileBinding(this, _))
+  extends ExtractableFile[MultiPartFile, Seq[MultiPartFile]](name, description, identity[Seq[MultiPartFile]]) {
 }
 
 object FormField {
