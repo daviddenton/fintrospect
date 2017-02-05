@@ -21,9 +21,9 @@ private object FormFileExtractAndRebind extends ParameterExtractAndBind[Form, Mu
   def valuesFrom(parameter: Parameter, form: Form): Option[Seq[MultiPartFile]] = form.files.get(parameter.name).map(_.toSeq)
 }
 
-abstract class ExtractableFile[Raw, Bind, Out](val name: String, val description: String,
+abstract class ExtractableFile[Bind, Out](val name: String, val description: String,
                                                bindFn: Bind => Seq[MultiPartFile],
-                                               tToOut: Seq[Raw] => Out,
+                                               tToOut: Seq[MultiPartFile] => Out,
                                                onMissing: (Parameter => Extraction[Out])
                                               )
   extends Parameter with Bindable[Bind, FormFileBinding] with FormField[Bind] {
@@ -32,29 +32,25 @@ abstract class ExtractableFile[Raw, Bind, Out](val name: String, val description
 
   override val paramType = FileParamType
 
+  def <--?(form: Form): Extraction[Out] = FormFileExtractAndRebind.valuesFrom(this, form).map(xs => Extracted(tToOut(xs))).getOrElse(onMissing(this))
+
   def -->(value: Bind): Seq[FormFileBinding] = bindFn(value).map(new FormFileBinding(this, _))
 }
 
 abstract class SingleMandatoryFile(name: String, description: String = null) extends
-  ExtractableFile(name, description, (t: MultiPartFile) => Seq(t), (ts: Seq[MultiPartFile]) => ts.head, null){
-  def <--?(form: Form): Extraction[MultiPartFile] = form.files.get(name)
-    .map(files => Extracted(files.head)).getOrElse(ExtractionFailed(Missing(this)))
+  ExtractableFile[MultiPartFile, MultiPartFile](name, description, (t: MultiPartFile) => Seq(t), (ts: Seq[MultiPartFile]) => ts.head, p => ExtractionFailed(Missing(p))) {
 }
 
 abstract class SingleOptionalFile(name: String, description: String = null) extends
-  ExtractableFile(name, description, (t: MultiPartFile) => Seq(t), (ts: Seq[MultiPartFile]) => ts.head, null){
-  def <--?(form: Form): Extraction[Option[MultiPartFile]] = Extracted(form.files.get(name).flatMap(_.headOption))
+  ExtractableFile[MultiPartFile, Option[MultiPartFile]](name, description, (t: MultiPartFile) => Seq(t), (ts: Seq[MultiPartFile]) => ts.headOption, p => Extracted(None)) {
 }
 
 abstract class MultiMandatoryFile(name: String, description: String = null) extends
-  ExtractableFile(name, description, identity[Seq[MultiPartFile]], identity[Seq[MultiPartFile]], null){
-  def <--?(form: Form): Extraction[Seq[MultiPartFile]] = form.files.get(name)
-    .map(files => Extracted(files)).getOrElse(ExtractionFailed(Missing(this)))
+  ExtractableFile[Seq[MultiPartFile], Seq[MultiPartFile]](name, description, identity[Seq[MultiPartFile]], identity[Seq[MultiPartFile]], p => ExtractionFailed(Missing(p))) {
 }
 
 abstract class MultiOptionalFile(name: String, description: String = null) extends
-  ExtractableFile(name, description, identity[Seq[MultiPartFile]], identity[Seq[MultiPartFile]], null){
-  def <--?(form: Form): Extraction[Option[Seq[MultiPartFile]]] = Extracted(form.files.get(name).map(_.toSeq))
+  ExtractableFile[Seq[MultiPartFile], Option[Seq[MultiPartFile]]](name, description, identity[Seq[MultiPartFile]], Some(_), p => Extracted(None)) {
 }
 
 object FormField {
