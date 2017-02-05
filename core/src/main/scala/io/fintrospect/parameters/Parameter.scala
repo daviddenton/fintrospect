@@ -96,13 +96,13 @@ abstract class ExtractableParameter[T, From, B <: Binding](spec: ParameterSpec[T
 abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends ExtractableParameter(spec, eab) with Bindable[T, B] {
 
-  override def -->(value: T): Seq[B] = Seq(eab.newBinding(this, spec.serialize(value)))
+  override def -->(value: T): Seq[B] = Seq(value).map(spec.serialize).map(v => eab.newBinding(this, v))
 }
 
 abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends ExtractableParameter(spec, eab) with Bindable[Seq[T], B] {
 
-  override def -->(value: Seq[T]): Seq[B] = value.map(v => eab.newBinding(this, spec.serialize(v)))
+  override def -->(value: Seq[T]): Seq[B] = value.map(spec.serialize).map(v => eab.newBinding(this, v))
 }
 
 abstract class SingleMandatoryParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
