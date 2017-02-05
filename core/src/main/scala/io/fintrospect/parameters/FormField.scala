@@ -41,7 +41,7 @@ abstract class SingleMandatoryFormFile(name: String, description: String = null)
 }
 
 abstract class SingleOptionalFormFile(name: String, description: String = null) extends
-  ExtractableFormFile[MultiPartFile, Option[MultiPartFile]](name, description, Seq(_), _.headOption, p => Extracted(None)) {
+  ExtractableFormFile[MultiPartFile, Option[MultiPartFile]](name, description, Seq(_), _.headOption, _ => Extracted(None)) {
 }
 
 abstract class MultiMandatoryFormFile(name: String, description: String = null) extends
@@ -49,7 +49,7 @@ abstract class MultiMandatoryFormFile(name: String, description: String = null) 
 }
 
 abstract class MultiOptionalFormFile(name: String, description: String = null) extends
-  ExtractableFormFile[Seq[MultiPartFile], Option[Seq[MultiPartFile]]](name, description, identity, Some(_), p => Extracted(None)) {
+  ExtractableFormFile[Seq[MultiPartFile], Option[Seq[MultiPartFile]]](name, description, identity, Some(_), _ => Extracted(None)) {
 }
 
 object FormField {
