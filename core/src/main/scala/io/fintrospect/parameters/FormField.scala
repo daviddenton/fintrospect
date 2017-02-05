@@ -21,9 +21,10 @@ private object FormFileExtractAndRebind extends ParameterExtractAndBind[Form, Mu
   def valuesFrom(parameter: Parameter, form: Form): Option[Seq[MultiPartFile]] = form.files.get(parameter.name).map(_.toSeq)
 }
 
-abstract class ExtractableFile[Raw, Bind](val name: String, val description: String,
-                                     bindFn: Bind => Seq[MultiPartFile]
-                                    )
+abstract class ExtractableFile[Raw, Bind, Out](val name: String, val description: String,
+                                               bindFn: Bind => Seq[MultiPartFile],
+                                               tToOut: Seq[Raw] => Out
+                                              )
   extends Parameter with Bindable[Bind, FormFileBinding] with FormField[Bind] {
 
   override def iterator: Iterator[Parameter] = Seq(this).iterator
@@ -34,11 +35,11 @@ abstract class ExtractableFile[Raw, Bind](val name: String, val description: Str
 }
 
 abstract class SingleFile(name: String, description: String)
-  extends ExtractableFile[MultiPartFile, MultiPartFile](name, description, Seq(_)) {
+  extends ExtractableFile(name, description, (t: MultiPartFile) => Seq(t), (ts: Seq[MultiPartFile]) => ts.head) {
 }
 
 abstract class MultiFile(name: String, description: String)
-  extends ExtractableFile[MultiPartFile, Seq[MultiPartFile]](name, description, identity[Seq[MultiPartFile]]) {
+  extends ExtractableFile(name, description, identity[Seq[MultiPartFile]], identity[Seq[MultiPartFile]]) {
 }
 
 object FormField {
