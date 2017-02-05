@@ -76,7 +76,7 @@ trait MandatoryParameter[From, T, Bnd <: Binding] extends Mandatory[From, T]
 
 }
 
-abstract class SingleMandatoryParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
+abstract class SingleParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends Parameter with Bindable[T, B] {
 
   override def iterator: Iterator[Parameter] = Seq(this).iterator
@@ -84,6 +84,11 @@ abstract class SingleMandatoryParameter[T, From, B <: Binding](val name: String,
   override val paramType = spec.paramType
 
   override def -->(value: T) = Seq(eab.newBinding(this, spec.serialize(value)))
+
+}
+
+abstract class SingleMandatoryParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
+  extends SingleParameter[T, From, B](spec, eab) {
 
   def <--?(from: From): Extraction[T] = from match {
     case req: ExtractedRouteRequest => req.get(this)
@@ -96,13 +101,7 @@ abstract class SingleMandatoryParameter[T, From, B <: Binding](val name: String,
 }
 
 abstract class SingleOptionalParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
-  extends Parameter with Bindable[T, B] {
-
-  override def iterator: Iterator[Parameter] = Seq(this).iterator
-
-  override val paramType = spec.paramType
-
-  override def -->(value: T) = Seq(eab.newBinding(this, spec.serialize(value)))
+  extends SingleParameter[T, From, B](spec, eab) {
 
   def <--?(from: From): Extraction[Option[T]] = from match {
     case req: ExtractedRouteRequest => req.get(this)
@@ -114,14 +113,19 @@ abstract class SingleOptionalParameter[T, From, B <: Binding](val name: String, 
   }
 }
 
-
-abstract class MultiMandatoryParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
+abstract class MultiParameter[T, From, B <: Binding](spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
   extends Parameter with Bindable[Seq[T], B] {
+
   override val paramType = spec.paramType
 
   override def iterator: Iterator[Parameter] = Seq(this).iterator
 
   override def -->(value: Seq[T]) = value.map(v => eab.newBinding(this, spec.serialize(v)))
+
+}
+
+abstract class MultiMandatoryParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
+  extends MultiParameter[T, From, B](spec, eab) {
 
   def <--?(from: From): Extraction[Seq[T]] = from match {
     case req: ExtractedRouteRequest => req.get(this)
@@ -134,12 +138,7 @@ abstract class MultiMandatoryParameter[T, From, B <: Binding](val name: String, 
 }
 
 abstract class MultiOptionalParameter[T, From, B <: Binding](val name: String, val description: String, spec: ParameterSpec[T], eab: ParameterExtractAndBind[From, String, B])
-  extends Parameter with Bindable[Seq[T], B] {
-  override val paramType = spec.paramType
-
-  override def iterator: Iterator[Parameter] = Seq(this).iterator
-
-  override def -->(value: Seq[T]) = value.map(v => eab.newBinding(this, spec.serialize(v)))
+  extends MultiParameter[T, From, B](spec, eab) {
 
   def <--?(from: From): Extraction[Option[Seq[T]]] = from match {
     case req: ExtractedRouteRequest => req.get(this)
