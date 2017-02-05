@@ -1,7 +1,6 @@
 package io.fintrospect.parameters
 
-import io.fintrospect.util.ExtractionError.Missing
-import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
+import io.fintrospect.parameters.FormFile.{MandatoryFile, MandatoryFileSeq, OptionalFile, OptionalFileSeq}
 
 trait FormField[T]
   extends BodyParameter {
@@ -15,43 +14,6 @@ private object FormFieldExtractAndRebind extends ParameterExtractAndBind[Form, S
   def valuesFrom(parameter: Parameter, form: Form): Option[Seq[String]] = form.fields.get(parameter.name).map(_.toSeq)
 }
 
-private object FormFileExtractAndRebind extends ParameterExtractAndBind[Form, MultiPartFile, FormFileBinding] {
-  def newBinding(parameter: Parameter, value: MultiPartFile) = new FormFileBinding(parameter, value)
-
-  def valuesFrom(parameter: Parameter, form: Form): Option[Seq[MultiPartFile]] = form.files.get(parameter.name).map(_.toSeq)
-}
-
-abstract class ExtractableFormFile[Bind, Out](val name: String, val description: String,
-                                              bindFn: Bind => Seq[MultiPartFile],
-                                              tToOut: Seq[MultiPartFile] => Out,
-                                              onMissing: Parameter => Extraction[Out])
-  extends Parameter with Bindable[Bind, FormFileBinding] with FormField[Bind] {
-
-  override def iterator: Iterator[Parameter] = Seq(this).iterator
-
-  override val paramType = FileParamType
-
-  def <--?(form: Form): Extraction[Out] = FormFileExtractAndRebind.valuesFrom(this, form).map(xs => Extracted(tToOut(xs))).getOrElse(onMissing(this))
-
-  def -->(value: Bind): Seq[FormFileBinding] = bindFn(value).map(new FormFileBinding(this, _))
-}
-
-abstract class SingleMandatoryFormFile(name: String, description: String = null) extends
-  ExtractableFormFile[MultiPartFile, MultiPartFile](name, description, Seq(_), _.head, p => ExtractionFailed(Missing(p))) {
-}
-
-abstract class SingleOptionalFormFile(name: String, description: String = null) extends
-  ExtractableFormFile[MultiPartFile, Option[MultiPartFile]](name, description, Seq(_), _.headOption, _ => Extracted(None)) {
-}
-
-abstract class MultiMandatoryFormFile(name: String, description: String = null) extends
-  ExtractableFormFile[Seq[MultiPartFile], Seq[MultiPartFile]](name, description, identity, identity, p => ExtractionFailed(Missing(p))) {
-}
-
-abstract class MultiOptionalFormFile(name: String, description: String = null) extends
-  ExtractableFormFile[Seq[MultiPartFile], Option[Seq[MultiPartFile]]](name, description, identity, Some(_), _ => Extracted(None)) {
-}
-
 object FormField {
 
   type Mandatory[T] = MandatoryParameter[Form, T, FormFieldBinding]
@@ -61,14 +23,6 @@ object FormField {
   type Optional[T] = OptionalParameter[Form, T, FormFieldBinding]
 
   type OptionalSeq[T] = OptionalParameter[Form, Seq[T], FormFieldBinding]
-
-  type MandatoryFile = MandatoryParameter[Form, MultiPartFile, FormFileBinding]
-
-  type MandatoryFileSeq = MandatoryParameter[Form, Seq[MultiPartFile], FormFileBinding]
-
-  type OptionalFile = OptionalParameter[Form, MultiPartFile, FormFileBinding]
-
-  type OptionalFileSeq = OptionalParameter[Form, Seq[MultiPartFile], FormFileBinding]
 
   type FSeq[T] = FormField[Seq[T]]
 
