@@ -54,13 +54,13 @@ abstract class MultiOptionalFormFile(name: String, description: String = null) e
 
 object FormField {
 
-  type Mandatory[T] = MandatoryParameter[Form, T, FormFieldBinding]
+  type Field[A[_, _, _ <: Binding], B] = A[Form, B, FormFieldBinding]
+  type File[A[_, _, _ <: Binding], B] = A[Form, B, FormFileBinding]
 
-  type MandatorySeq[T] = MandatoryParameter[Form, Seq[T], FormFieldBinding]
-
-  type Optional[T] = OptionalParameter[Form, T, FormFieldBinding]
-
-  type OptionalSeq[T] = OptionalParameter[Form, Seq[T], FormFieldBinding]
+  type Mandatory[T] = Field[MandatoryParameter, T]
+  type MandatorySeq[T] = Field[MandatoryParameter, Seq[T]]
+  type Optional[T] = Field[OptionalParameter, T]
+  type OptionalSeq[T] = Field[OptionalParameter, Seq[T]]
 
   type MandatoryFile = MandatoryParameter[Form, MultiPartFile, FormFileBinding]
 
