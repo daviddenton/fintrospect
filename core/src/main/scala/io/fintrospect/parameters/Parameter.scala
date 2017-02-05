@@ -80,7 +80,7 @@ abstract class ExtractableParameter[Raw, Wrapper, Bndg <: Binding, Bind, Out] (s
                                                                    eab: ParameterExtractAndBind[Wrapper, String, Bndg],
                                                                    bindFn: Bind => Seq[Raw],
                                                                    tToOut: Seq[Raw] => Out,
-                                                                   onMissing: (Parameter => Extraction[Out]))
+                                                                   onMissing: Parameter => Extraction[Out])
   extends Parameter with Bindable[Bind, Bndg] {
 
   override def iterator: Iterator[Parameter] = Seq(this).iterator
