@@ -18,15 +18,6 @@ object HeaderExtractAndRebind extends ParameterExtractAndBind[Message, String, R
 
   def valuesFrom(parameter: Parameter, message: Message): Option[Seq[String]] = {
     val headers = message.headerMap.getAll(parameter.name)
-    if (headers.isEmpty) None else Some(headers.toSeq)
+    if (headers.isEmpty) None else Some(headers)
   }
 }
-
-abstract class MultiOptionalHeaderParameter[T](name: String, description: String, spec: ParameterSpec[T])
-  extends MultiOptionalParameter(name, description, spec, HeaderExtractAndRebind) with HeaderParameter[Seq[T]] {
-}
-
-abstract class MultiMandatoryHeaderParameter[T](name: String, description: String, spec: ParameterSpec[T])
-  extends MultiMandatoryParameter(name, description, spec, HeaderExtractAndRebind) with HeaderParameter[Seq[T]] {
-}
-
