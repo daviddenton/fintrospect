@@ -4,13 +4,13 @@ import io.fintrospect.util.ExtractionError.Missing
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
 
 object FormFile {
-  type MandatoryFile = MandatoryParameter[Form, MultiPartFile, FormFileBinding]
+  type Mandatory = MandatoryParameter[Form, MultiPartFile, FormFileBinding]
 
-  type MandatoryFileSeq = MandatoryParameter[Form, Seq[MultiPartFile], FormFileBinding]
+  type MandatorySeq = MandatoryParameter[Form, Seq[MultiPartFile], FormFileBinding]
 
-  type OptionalFile = OptionalParameter[Form, MultiPartFile, FormFileBinding]
+  type Optional = OptionalParameter[Form, MultiPartFile, FormFileBinding]
 
-  type OptionalFileSeq = OptionalParameter[Form, Seq[MultiPartFile], FormFileBinding]
+  type OptionalSeq = OptionalParameter[Form, Seq[MultiPartFile], FormFileBinding]
 }
 
 abstract class ExtractableFormFile[Bind, Out](val name: String, val description: String,
