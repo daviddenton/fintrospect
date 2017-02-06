@@ -9,9 +9,8 @@ import io.fintrospect.ContentTypes.{APPLICATION_XHTML_XML, APPLICATION_XML, WILD
 import io.fintrospect.configuration.{Credentials, Host, Port}
 import io.fintrospect.filters.RequestFilters.{AddHost, BasicAuthorization, StrictAccept}
 import io.fintrospect.formats.PlainText.ResponseBuilder._
-import io.fintrospect.parameters.Query
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
-import io.fintrospect.util.{Extracted, ExtractionFailed, Extractor}
+import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest.{FunSpec, Matchers}
 
 class RequestFiltersTest extends FunSpec with Matchers {
@@ -22,8 +21,8 @@ class RequestFiltersTest extends FunSpec with Matchers {
       it("when extracts request object successfully, passes through to service") {
         val message = "hello"
 
-        val filter = RequestFilters.ExtractBody {
-          _ => Extracted(message)
+        val filter = RequestFilters.ExtractBodyWith {
+          (_: Request) => Extracted(message)
         }
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 
@@ -33,8 +32,8 @@ class RequestFiltersTest extends FunSpec with Matchers {
 
       it("when extract fails normally then return bad request") {
 
-        val filter = RequestFilters.ExtractBody[String] {
-          _ => ExtractionFailed(Nil)
+        val filter = RequestFilters.ExtractBodyWith[String] {
+          (_: Request) => ExtractionFailed(Nil)
         }
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 
@@ -42,8 +41,8 @@ class RequestFiltersTest extends FunSpec with Matchers {
       }
 
       it("when extraction fails with no object at all then return bad request") {
-        val filter = RequestFilters.ExtractBody[String] {
-          req => ExtractionFailed(Nil)
+        val filter = RequestFilters.ExtractBodyWith[String] {
+          (_: Request) => ExtractionFailed(Nil)
         }
         val response = result(filter(Request(), Service.mk { message => Ok(message) }))
 

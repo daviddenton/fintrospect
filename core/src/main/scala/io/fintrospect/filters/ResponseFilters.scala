@@ -83,6 +83,13 @@ object ResponseFilters {
     }
   }
 
+
+  /**
+    * Extracts an object form the Response output object and feeds them into the underlying service.
+    */
+  def ExtractBodyWith[O](fn: Response => Extraction[O]): Filter[Request, Extraction[Option[O]], Request, Response] =
+    ExtractBody(Extractor.mk(fn))
+
   /**
     * Extracts the output objects and feeds them into the underlying service. Returns an Extracted(None) if
     * the passed response predicate fails (defaults to non-404)
