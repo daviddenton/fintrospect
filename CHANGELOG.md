@@ -7,6 +7,10 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.11.0
+- General tidy of Parameter hierarchy. No visible API change
+- Rename of `Request/ResponseFilter` helpers to be "verby". The names are very similar, just more verby! :)
+
 ## 14.10.0
 - BugFix #34 Upgrade to `finagle-http 6.42.0`.
 - Readded Scala 2.12.X support, as #34 is fixed.

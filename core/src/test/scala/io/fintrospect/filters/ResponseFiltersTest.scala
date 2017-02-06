@@ -25,13 +25,13 @@ class ResponseFiltersTest extends FunSpec with Matchers {
       it("when extracts response object successfully") {
         val message = "hello"
 
-        val filter = ResponseFilters.ExtractingResponse { (_: Response) => Extracted(message) }
+        val filter = ResponseFilters.ExtractBody { (_: Response) => Extracted(message) }
 
         result(filter(Request(), Service.mk { message => Future(Response()) })) shouldBe Extracted(Some(message))
       }
 
       it("when extraction fails with no object at all") {
-        val filter = ResponseFilters.ExtractingResponse {
+        val filter = ResponseFilters.ExtractBody {
           (_: Response) => Extracted("hello")
         }
         result(filter(Request(), Service.mk { _ => Future(Response()) })) shouldBe Extracted(Some("hello"))
@@ -41,25 +41,25 @@ class ResponseFiltersTest extends FunSpec with Matchers {
     describe("ExtractingResponse with Extractor") {
       it("when extracts response successfully") {
 
-        val filter = ResponseFilters.ExtractingResponse(Body.xml())
+        val filter = ResponseFilters.ExtractBody(Body.xml())
 
         result(filter(Request(), Service.const(Xml.ResponseBuilder.Ok(<xml/>)))) shouldBe Extracted(Some(<xml/>))
       }
 
       it("default predicate is NotFound") {
-        val filter = ResponseFilters.ExtractingResponse(Body.xml())
+        val filter = ResponseFilters.ExtractBody(Body.xml())
 
         result(filter(Request(), Service.const(Xml.ResponseBuilder.NotFound("")))) shouldBe Extracted(None)
       }
 
       it("when predicate fails") {
-        val filter = ResponseFilters.ExtractingResponse(Body.xml(), _.status != Status.Ok)
+        val filter = ResponseFilters.ExtractBody(Body.xml(), _.status != Status.Ok)
 
         result(filter(Request(), Service.const(Xml.ResponseBuilder.Ok("")))) shouldBe Extracted(None)
       }
 
       it("when extraction fails") {
-        val filter = ResponseFilters.ExtractingResponse(Body.xml())
+        val filter = ResponseFilters.ExtractBody(Body.xml())
 
         val response = result(filter(Request(), Service.const(Xml.ResponseBuilder.Ok(""))))
 
@@ -91,7 +91,7 @@ class ResponseFiltersTest extends FunSpec with Matchers {
       it("for unknown path") {
         var called: (String, Duration) = null
 
-        val filter = ReportingRouteLatency(ticking) { (name: String, duration: Duration) => called = (name, duration) }
+        val filter = ReportRouteLatency(ticking) { (name: String, duration: Duration) => called = (name, duration) }
 
         val response = Response()
 
@@ -103,7 +103,7 @@ class ResponseFiltersTest extends FunSpec with Matchers {
       it("for known path (with Identity header)") {
         var called: (String, Duration) = null
 
-        val filter = ReportingRouteLatency(ticking) { (name: String, duration: Duration) => called = (name, duration) }
+        val filter = ReportRouteLatency(ticking) { (name: String, duration: Duration) => called = (name, duration) }
 
         val request = Request("/")
         val response = Response()

@@ -51,7 +51,7 @@ object ResponseFilters {
     * Report the latency on a particular route to a callback function, passing the "X-Fintrospect-Route-Name" header and response status bucket (e.g. 2xx)
     * for identification. This is useful for logging metrics. Note that the passed function blocks the response from completing.
     */
-  def ReportingRouteLatency(clock: Clock)(recordFn: (String, Duration) => Unit) = Filter.mk[Request, Response, Request, Response] {
+  def ReportRouteLatency(clock: Clock)(recordFn: (String, Duration) => Unit) = Filter.mk[Request, Response, Request, Response] {
     (req, svc) => {
       val start = clock.instant()
 
@@ -84,16 +84,10 @@ object ResponseFilters {
   }
 
   /**
-    * Extracts an object form the Response output object and feeds them into the underlying service.
-    */
-  def ExtractingResponse[O](fn: Response => Extraction[O]): Filter[Request, Extraction[Option[O]], Request, Response] =
-    ExtractingResponse(Extractor.mk(fn))
-
-  /**
     * Extracts the output objects and feeds them into the underlying service. Returns an Extracted(None) if
     * the passed response predicate fails (defaults to non-404)
     */
-  def ExtractingResponse[O](extractor: Extractor[Response, O], attemptExtract: Response => Boolean = _.status != NotFound): Filter[Request, Extraction[Option[O]], Request, Response] =
+  def ExtractBody[O](extractor: Extractor[Response, O], attemptExtract: Response => Boolean = _.status != NotFound): Filter[Request, Extraction[Option[O]], Request, Response] =
     Filter.mk[Request, Extraction[Option[O]], Request, Response] {
       (req, svc) =>
         svc(req)
