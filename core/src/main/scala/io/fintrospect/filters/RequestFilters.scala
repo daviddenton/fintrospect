@@ -89,15 +89,8 @@ object RequestFilters {
   /**
     * Extracts the input objects and feeds them into the underlying service.
     */
-  def ExtractingRequest[I](fn: Request => Extraction[I])
-                          (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
-  Filter[Request, Response, I, Response] = ExtractableRequest(Extractor.mk[Request, I](fn))(moduleRenderer)
-
-  /**
-    * Extracts the input objects and feeds them into the underlying service.
-    */
-  def ExtractableRequest[I](extractable: Extractor[Request, I])
-                           (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
+  def ExtractBody[I](extractable: Extractor[Request, I])
+                    (implicit moduleRenderer: ModuleRenderer = SimpleJson()):
   Filter[Request, Response, I, Response] = Filter.mk[Request, Response, I, Response] {
     (req, svc) => {
       extractable <--? req match {
