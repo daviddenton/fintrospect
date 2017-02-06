@@ -25,13 +25,13 @@ class ResponseFiltersTest extends FunSpec with Matchers {
       it("when extracts response object successfully") {
         val message = "hello"
 
-        val filter = ResponseFilters.ExtractBody { (_: Response) => Extracted(message) }
+        val filter = ResponseFilters.ExtractBodyWith[String] { (_: Response) => Extracted(message) }
 
         result(filter(Request(), Service.mk { message => Future(Response()) })) shouldBe Extracted(Some(message))
       }
 
       it("when extraction fails with no object at all") {
-        val filter = ResponseFilters.ExtractBody {
+        val filter = ResponseFilters.ExtractBodyWith[String] {
           (_: Response) => Extracted("hello")
         }
         result(filter(Request(), Service.mk { _ => Future(Response()) })) shouldBe Extracted(Some("hello"))
