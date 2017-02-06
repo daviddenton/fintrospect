@@ -118,29 +118,6 @@ class BodySpecTest extends FunSpec with Matchers {
 
   }
 
-  describe("extraction from a response") {
-    it("when extracts response successfully") {
-      Body.xml() <--? Xml.ResponseBuilder.Ok(<xml/>) shouldBe Extracted(Some(<xml/>))
-    }
-
-    it("default predicate is response is NOT NotFound, falls back to empty extraction") {
-      Body.xml() <--? Xml.ResponseBuilder.NotFound("who knows") shouldBe Extracted(None)
-    }
-
-    it("when custom predicate fails, fall back to empty extraction") {
-      val extractor = Body.xml()
-      implicit val filter: Response => Boolean = _.status != Status.Ok
-      extractor <--? Xml.ResponseBuilder.Ok(<xml/>) shouldBe Extracted(None)
-    }
-
-    it("when extraction fails") {
-      Body.xml() <--? Xml.ResponseBuilder.Ok("some nonsense") match {
-        case ExtractionFailed(_) =>
-        case _ => fail("extraction not as expected")
-      }
-    }
-  }
-
   describe("using as[Value] to auto-map parameters to a value type") {
 
     val spec = BodySpec.xml().as[MyXmlValue]
