@@ -37,10 +37,7 @@ trait OptionalParameter[From, T, Bnd <: Binding] extends Optional[From, T]
     * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
     */
   def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[Option[T]] =
-    <--?(from) match {
-      case Extracted(x) => if (x.forall(predicate)) Extraction(x) else ExtractionFailed(ExtractionError(this, reason))
-      case e => e
-    }
+    <--?(from).flatMap(x => if (x.forall(predicate)) Extraction(x) else ExtractionFailed(ExtractionError(this, reason)))
 
   /**
     * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
@@ -63,10 +60,7 @@ trait MandatoryParameter[From, T, Bnd <: Binding] extends Mandatory[From, T]
     * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
     */
   def <--?(from: From, reason: String, predicate: T => Boolean): Extraction[T] =
-    <--?(from) match {
-      case Extracted(x) => if (predicate(x)) Extraction(x) else ExtractionFailed(ExtractionError(this, reason))
-      case e => e
-    }
+    <--?(from).flatMap(x => if (predicate(x)) Extraction(x) else ExtractionFailed(ExtractionError(this, reason)))
 
   /**
     * Attempt to manually deserialize from the message object, using a validation predicate and reason for failure.
@@ -76,11 +70,11 @@ trait MandatoryParameter[From, T, Bnd <: Binding] extends Mandatory[From, T]
 
 }
 
-abstract class ExtractableParameter[Raw, Wrapper, Bndg <: Binding, Bind, Out] (spec: ParameterSpec[Raw],
-                                                                   eab: ParameterExtractAndBind[Wrapper, String, Bndg],
-                                                                   bindFn: Bind => Seq[Raw],
-                                                                   tToOut: Seq[Raw] => Out,
-                                                                   onMissing: Parameter => Extraction[Out])
+abstract class ExtractableParameter[Raw, Wrapper, Bndg <: Binding, Bind, Out](spec: ParameterSpec[Raw],
+                                                                              eab: ParameterExtractAndBind[Wrapper, String, Bndg],
+                                                                              bindFn: Bind => Seq[Raw],
+                                                                              tToOut: Seq[Raw] => Out,
+                                                                              onMissing: Parameter => Extraction[Out])
   extends Parameter with Bindable[Bind, Bndg] {
 
   override def iterator: Iterator[Parameter] = Seq(this).iterator
