@@ -8,7 +8,7 @@ import com.twitter.finagle.http.Status.NotFound
 import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.Headers
 import io.fintrospect.formats.{AbstractResponseBuilder, Argo}
-import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
+import io.fintrospect.util.{Extracted, Extraction, Extractor}
 import org.apache.commons.lang.time.FastDateFormat.getInstance
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.DATE
 
@@ -99,10 +99,7 @@ object ResponseFilters {
       (req, svc) =>
         svc(req)
           .map(resp => if (attemptExtract(resp)) {
-            extractor <--? resp match {
-              case Extracted(e) => Extracted(Some(e))
-              case ExtractionFailed(e) => ExtractionFailed(e)
-            }
+            extractor <--? resp map (Some(_))
           } else Extracted(None))
     }
 }
