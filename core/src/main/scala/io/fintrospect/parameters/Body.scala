@@ -1,11 +1,10 @@
 package io.fintrospect.parameters
 
-import com.twitter.finagle.http.Status.NotFound
-import com.twitter.finagle.http.{Message, Response}
+import com.twitter.finagle.http.Message
 import com.twitter.io.Buf
 import io.fintrospect.ContentType
 import io.fintrospect.formats.{Argo, JsonLibrary}
-import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
+import io.fintrospect.util.Extractor
 
 import scala.xml.Elem
 
