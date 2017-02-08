@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.12.0
+- Performance: the `RouteSpec` validation mechanism now caches the parsed parameters, so further attempts to obtain parameters will use the pre-parsed version.
+
 ## 14.11.0
 - General tidy of Parameter hierarchy. No visible API change
 - Rename of `Request/ResponseFilter` helpers to be "verby". The names are very similar, just more verby! :)

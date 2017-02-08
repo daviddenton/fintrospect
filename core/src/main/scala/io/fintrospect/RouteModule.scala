@@ -8,7 +8,7 @@ import com.twitter.util.Future
 import io.fintrospect.Module.ServiceBinding
 import io.fintrospect.RouteModule.ModifyPath
 import io.fintrospect.renderers.ModuleRenderer
-import io.fintrospect.util.ExtractionFailed
+import io.fintrospect.util.{Extracted, ExtractionFailed}
 
 import scala.PartialFunction.empty
 
@@ -45,8 +45,8 @@ class RouteModule[RQ, RS] private(basePath: Path,
   private def validationFilter(route: ServerRoute[RQ, RS]) = Filter.mk[Request, Response, Request, Response] {
     (request, svc) =>
       route.routeSpec <--? request match {
+        case Extracted(extractedRequest) => svc(extractedRequest)
         case ExtractionFailed(invalid) => Future(moduleRenderer.badRequest(invalid))
-        case _ => svc(request)
       }
   }
 
