@@ -15,7 +15,7 @@ import scala.util.{Failure, Success, Try}
   * @param theExample   an example object of this body
   * @tparam T the type of the request when it has been deserialized from the request
   */
-class UniBody[T](inDescription: String, spec: BodySpec[T],
+case class UniBody[T](inDescription: String, spec: BodySpec[T],
                  theExample: Option[T])
   extends Body[T] {
   private val param = new BodyParameter with Bindable[T, RequestBinding] {

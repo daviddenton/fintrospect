@@ -9,7 +9,7 @@ import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}
 
-class UrlEncodedFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
+case class UrlEncodedFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
                          validator: FormValidator, extractor: FormFieldExtractor)
   extends Body[Form] {
 
