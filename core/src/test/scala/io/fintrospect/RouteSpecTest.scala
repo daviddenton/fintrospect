@@ -7,8 +7,7 @@ import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.path.{Root, Path => FPath}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await.result
-import com.twitter.util.{Await, Future}
-import io.fintrospect.RouteClient.BrokenContract
+import com.twitter.util.Future
 import io.fintrospect.formats.Argo.JsonFormat.obj
 import io.fintrospect.formats.PlainText.ResponseBuilder._
 import io.fintrospect.parameters._

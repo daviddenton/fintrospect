@@ -11,7 +11,7 @@ import io.fintrospect.formats.Argo
 import io.fintrospect.formats.Argo.JsonFormat.{obj, pretty, string}
 import io.fintrospect.util.ExtractionError.Invalid
 import io.fintrospect.util.{Extracted, ExtractionError, ExtractionFailed}
-import io.fintrospect.{ContentType, ContentTypes, RequestBuilder}
+import io.fintrospect.{BrokenContract, ContentType, ContentTypes, RequestBuilder}
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE
 import org.scalatest.{FunSpec, Matchers}
 
@@ -37,6 +37,10 @@ class BodyTest extends FunSpec with Matchers {
         val bodyJson = obj("field" -> string("value"))
         val request = Request("/")
         body.extract(ExtractedRouteRequest(request, Map(body -> Extracted(Some(bodyJson))))) shouldBe Extracted(Some(bodyJson))
+      }
+
+      it("retrieval fails with a broken contract when call fails without extracting first") {
+        intercept[BrokenContract](body <-- Request("/"))
       }
 
       it("validation when missing") {

@@ -1,5 +1,6 @@
 package io.fintrospect.parameters
 
+import io.fintrospect.BrokenContract
 import io.fintrospect.util.{Extracted, Extractor}
 
 /**
@@ -26,7 +27,7 @@ trait Mandatory[-From, T] extends Retrieval[From, T] with Extractor[From, T] {
 
   override def <--(from: From): T = extract(from) match {
     case Extracted(t) => t
-    case _ => throw new IllegalStateException("Extraction failed: Invalid")
+    case _ => throw new BrokenContract("Extraction failed: Invalid - did you specify the parameter in Route contract?")
   }
 }
 
@@ -35,6 +36,6 @@ trait Optional[-From, T] extends Retrieval[From, Option[T]] with Extractor[From,
 
   def <--(from: From): Option[T] = extract(from) match {
     case Extracted(value) => value
-    case _ => throw new IllegalStateException("Extraction failed: Invalid")
+    case _ => throw new BrokenContract("Extraction failed: Invalid - did you specify the parameter in Route contract?")
   }
 }
