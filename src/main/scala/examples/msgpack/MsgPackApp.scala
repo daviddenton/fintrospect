@@ -29,17 +29,15 @@ object MsgPackApp extends App {
   val viewLetterRoute = RouteSpec("returns a letter instance in MsgPack format")
     .producing(APPLICATION_X_MSGPACK)
     .at(Get) / "letter" bindTo
-    Service.mk[Request, Response] {
-      r => Ok(MsgPackMsg(Letter(StreetAddress("2 Bob St"), StreetAddress("20 Rita St"), "hi fools!")))
-    }
+    Service.mk[Request, Response] { _ => Ok(MsgPackMsg(Letter(StreetAddress("2 Bob St"), StreetAddress("20 Rita St"), "hi fools!"))) }
 
   // using AutoFilters, receives an address and then responds with a letter
   val replyToLetter = RouteSpec("send your address and we'll send you back a letter!")
     .consuming(APPLICATION_X_MSGPACK)
     .producing(APPLICATION_X_MSGPACK)
-    .at(Post) / "reply" bindTo Auto.InOut[StreetAddress, Letter](Service.mk { in: StreetAddress =>
+    .at(Post) / "reply" bindTo Auto.InOut(Service.mk { in: StreetAddress =>
     Future(Letter(StreetAddress("2 Bob St"), in, "hi fools!"))
-  })(Body(bodySpec[StreetAddress]()), MsgPack.Auto.tToMsgPackMsg)
+  })
 
   val module = RouteModule(Root, SimpleJson()).withRoute(viewLetterRoute).withRoute(replyToLetter)
 
@@ -56,6 +54,5 @@ object MsgPackClient extends App {
   val request = Request(Post, "reply")
   request.content = MsgPack.Format.encode(StreetAddress("1 hello street"))
 
-  val response = Await.result(Http.newService("localhost:8181")(request))
-  println(MsgPack.Format.decode[Letter](response.content))
+  println(MsgPack.Format.decode[Letter](Await.result(Http.newService("localhost:8181")(request)).content))
 }

@@ -1,10 +1,13 @@
 package io.fintrospect.formats
 
 import com.twitter.finagle.Service
+import com.twitter.finagle.http.Method.Get
+import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.io.Buf
 import com.twitter.util.Await.result
 import com.twitter.util.{Await, Future}
+import io.fintrospect.{RouteModule, RouteSpec}
 import io.fintrospect.parameters.{Body, BodySpec}
 import org.scalatest.{FunSpec, Matchers}
 
@@ -50,6 +53,11 @@ abstract class AutoSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
         val request = Request()
         request.contentString = "invalid"
         Await.result(svc(request)).status shouldBe Status.BadRequest
+      }
+
+      it("works when no body specified in route") {
+        val mSvc = RouteModule(Root).withRoute(RouteSpec().at(Get) bindTo svc).toService
+        fromBuf(result(mSvc(request)).content) shouldBe aLetter
       }
     }
 

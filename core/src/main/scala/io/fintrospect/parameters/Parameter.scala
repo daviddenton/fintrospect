@@ -81,13 +81,15 @@ abstract class ExtractableParameter[Raw, Wrapper, Bndg <: Binding, Bind, Out](sp
 
   override val paramType: ParamType = spec.paramType
 
+  private val fallback: Wrapper => Extraction[Out] = from => eab.valuesFrom(this, from)
+    .map(xs => Try(xs.map(spec.deserialize)) match {
+      case Success(x) => Extracted(tToOut(x))
+      case Failure(_) => ExtractionFailed(Invalid(this))
+    }).getOrElse(onMissing(this))
+
   def <--?(from: Wrapper): Extraction[Out] = from match {
-    case req: ExtractedRouteRequest => req.get(this)
-    case _ => eab.valuesFrom(this, from)
-      .map(xs => Try(xs.map(spec.deserialize)) match {
-        case Success(x) => Extracted(tToOut(x))
-        case Failure(_) => ExtractionFailed(Invalid(this))
-      }).getOrElse(onMissing(this))
+    case req: ExtractedRouteRequest => req.get(this, fallback)
+    case _ => fallback(from)
   }
 
   override def -->(value: Bind): Seq[Bndg] = bindFn(value).map(spec.serialize).map(v => eab.newBinding(this, v))
