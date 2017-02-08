@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.12.1
+- Bugfix: Auto filters fail if no body is specified in the route contract. 
+
 ## 14.12.0
 - Performance: the `RouteSpec` validation mechanism now caches the parsed parameters, so further attempts to obtain parameters will use the pre-parsed version.
 

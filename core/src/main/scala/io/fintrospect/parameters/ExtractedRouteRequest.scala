@@ -1,12 +1,9 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http.{Request, RequestProxy}
-import io.fintrospect.util.ExtractionError.Missing
-import io.fintrospect.util.{Extraction, ExtractionFailed}
+import io.fintrospect.util.Extraction
 
 case class ExtractedRouteRequest(override val request: Request, contents: Map[Any, Extraction[Any]]) extends RequestProxy {
-  def get[T](p: Parameter): Extraction[T] = contents.getOrElse(p, ExtractionFailed(Missing(p))).asInstanceOf[Extraction[T]]
-
-  def get[T](b: Body[T]): Extraction[T] = contents.getOrElse(b, ExtractionFailed(b.toSeq.map(Missing))).asInstanceOf[Extraction[T]]
-
+  def get[T, Wrapper](p: Any, fallback: Wrapper => Extraction[T]): Extraction[T] =
+    contents.getOrElse(p, fallback(request.asInstanceOf[Wrapper])).asInstanceOf[Extraction[T]]
 }
