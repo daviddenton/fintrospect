@@ -13,13 +13,6 @@ object RouteClient {
       svc(request)
     }
   }
-
-  /**
-    * This exception is thrown at runtime when not all of the required parameters have been passed to the RouteClient
-    * function
-    */
-  class BrokenContract(message: String) extends Exception(message)
-
 }
 
 /**
@@ -55,8 +48,8 @@ class RouteClient[Rsp](method: Method,
     val missing = requiredParams.diff(userSuppliedParams)
     val unknown = userSuppliedParams.diff(allPossibleParams)
 
-    if (missing.nonEmpty) exception(new RouteClient.BrokenContract("Client: Missing required params passed: " + missing.mkString(", ")))
-    else if (unknown.nonEmpty) exception(new RouteClient.BrokenContract("Client: Unknown params passed: " + unknown.mkString(", ")))
+    if (missing.nonEmpty) exception(new BrokenContract("Client: Missing required params passed: " + missing.mkString(", ")))
+    else if (unknown.nonEmpty) exception(new BrokenContract("Client: Unknown params passed: " + unknown.mkString(", ")))
     else service(buildRequest(suppliedBindings))
   }
 
