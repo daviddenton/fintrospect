@@ -6,7 +6,7 @@ import io.fintrospect.formats.Jackson.JsonFormat._
 import io.fintrospect.formats.Jackson._
 import io.fintrospect.parameters.{Body, Query}
 
-import scala.language.reflectiveCalls
+
 
 class JacksonJsonResponseBuilderTest extends JsonResponseBuilderSpec(Jackson)
 

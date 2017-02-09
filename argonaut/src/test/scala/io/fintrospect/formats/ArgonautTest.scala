@@ -11,7 +11,6 @@ import io.fintrospect.formats.Argonaut._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, BodySpec, Query}
 
-import scala.language.reflectiveCalls
 
 class ArgonautAutoTest extends AutoSpec(Argonaut.Auto) {
 

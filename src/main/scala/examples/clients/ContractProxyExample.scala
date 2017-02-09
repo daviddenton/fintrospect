@@ -11,8 +11,6 @@ import io.fintrospect.filters.RequestFilters.{AddHost, BasicAuthorization}
 import io.fintrospect.parameters.Query
 import io.fintrospect.{Contract, ContractEndpoint, ContractProxyModule, RouteSpec}
 
-import scala.language.reflectiveCalls
-
 /**
   * This example shows how to use a contract to provide a Swagger-documented Proxy API for a set of remote routes.
   */

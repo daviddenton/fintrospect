@@ -11,7 +11,7 @@ import io.fintrospect.formats.Circe._
 import io.fintrospect.formats.JsonFormat.InvalidJsonForDecoding
 import io.fintrospect.parameters.{Body, BodySpec, Query}
 
-import scala.language.reflectiveCalls
+
 
 class CirceJsonResponseBuilderTest extends JsonResponseBuilderSpec(Circe)
 

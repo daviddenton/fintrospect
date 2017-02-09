@@ -15,7 +15,7 @@ import io.fintrospect.{BrokenContract, ContentType, ContentTypes, RequestBuilder
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE
 import org.scalatest.{FunSpec, Matchers}
 
-import scala.language.reflectiveCalls
+
 import scala.xml.XML
 
 class BodyTest extends FunSpec with Matchers {

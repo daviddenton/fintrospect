@@ -11,7 +11,7 @@ import io.fintrospect.formats.Play._
 import io.fintrospect.parameters.{Body, BodySpec, Query}
 import play.api.libs.json._
 
-import scala.language.reflectiveCalls
+
 
 object helpers {
   implicit val SAWrites = new Writes[StreetAddress] {

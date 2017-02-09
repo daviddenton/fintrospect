@@ -5,7 +5,7 @@ import com.twitter.finagle.http.path.{Path, Root}
 import com.twitter.finagle.http.{Request, Response}
 import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
 
-import scala.language.reflectiveCalls
+
 import scala.reflect.runtime.universe.TypeTag
 import scala.reflect.runtime.{currentMirror, universe}
 

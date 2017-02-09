@@ -15,7 +15,7 @@ object Simple_Request_Parameters_Example extends App {
   import io.fintrospect.parameters.{Header, ParameterSpec, Query}
   import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
-  import scala.language.reflectiveCalls
+
 
   val operatorSpec: ParameterSpec[(Int, Int) => Int] = ParameterSpec.string().map {
     case "-" => (i: Int, j: Int) => i - j

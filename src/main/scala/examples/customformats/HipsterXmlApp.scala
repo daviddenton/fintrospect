@@ -11,7 +11,7 @@ import examples.customformats.HipsterXml.ResponseBuilder._
 import io.fintrospect.parameters._
 import io.fintrospect.{ContentTypes, RouteModule, RouteSpec}
 
-import scala.language.reflectiveCalls
+
 
 /**
   * This application shows how to define a custom rendering, body and parameter formats.
