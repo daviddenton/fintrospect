@@ -21,6 +21,10 @@ class PathTest extends FunSpec with Matchers {
   }
 
   describe("non fixed parameter") {
+    it("contains a single parameter") {
+      Path.string("a path piece").iterator.isEmpty shouldBe false
+    }
+
     it("does contain a param to describe") {
       Path.string("a path piece").map(_.name) shouldBe Seq("a path piece")
     }
