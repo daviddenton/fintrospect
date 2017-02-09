@@ -14,7 +14,7 @@ object MultiPart_Web_Form_Example extends App {
   import io.fintrospect.parameters.{Body, Form, FormField, MultiPartFile}
   import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
-  import scala.language.reflectiveCalls
+
 
   val usernameField = FormField.required.string("user")
   val fileField = FormField.required.file("data")

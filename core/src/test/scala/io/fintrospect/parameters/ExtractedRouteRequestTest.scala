@@ -5,7 +5,7 @@ import io.fintrospect.util.ExtractionError.Missing
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest.{FunSpec, Matchers}
 
-import scala.language.reflectiveCalls
+
 
 class ExtractedRouteRequestTest extends FunSpec with Matchers {
 

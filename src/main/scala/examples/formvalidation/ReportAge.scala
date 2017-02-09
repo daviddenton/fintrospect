@@ -8,7 +8,7 @@ import io.fintrospect.templating.View
 import io.fintrospect.util.EitherF.eitherF
 import io.fintrospect.{RouteSpec, ServerRoutes}
 
-import scala.language.reflectiveCalls
+
 
 /**
   * This is a set of 2 routes which model:

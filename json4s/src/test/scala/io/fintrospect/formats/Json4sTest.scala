@@ -7,7 +7,7 @@ import com.twitter.util.Future
 import io.fintrospect.parameters.{Body, BodySpec, Query}
 import org.json4s.MappingException
 
-import scala.language.reflectiveCalls
+
 
 abstract class Json4sAutoSpec[D](json4sLibrary: Json4sLibrary[D]) extends AutoSpec(json4sLibrary.Auto) {
 

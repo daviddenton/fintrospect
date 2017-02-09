@@ -14,7 +14,7 @@ object Composite_Request_Parameters_Example extends App {
   import io.fintrospect.util.Extraction
   import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
-  import scala.language.reflectiveCalls
+
 
   case class FooBar(foo: String, bar: Int)
 

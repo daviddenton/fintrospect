@@ -3,7 +3,7 @@ package io.fintrospect.formats
 import com.twitter.io.Buf
 import io.fintrospect.parameters.BodySpec
 
-import scala.language.reflectiveCalls
+
 
 class MsgPackAutoTest extends AutoSpec(MsgPack.Auto) {
 

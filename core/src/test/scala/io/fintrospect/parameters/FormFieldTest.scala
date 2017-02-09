@@ -7,7 +7,7 @@ import io.fintrospect.util.ExtractionError.{Invalid, Missing}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 import org.scalatest._
 
-import scala.language.reflectiveCalls
+
 
 class FormFieldTest extends FunSpec with Matchers {
 
