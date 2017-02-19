@@ -2,7 +2,8 @@ package cookbook.finagle
 
 import com.twitter.finagle.Http
 import com.twitter.finagle.http.Request
-import com.twitter.util.Await
+import com.twitter.util.Await.result
+import io.fintrospect.filters.RequestFilters.AddUserAgent
 
 object SSL_Client_Example extends App {
 
@@ -10,7 +11,5 @@ object SSL_Client_Example extends App {
 
   val request = Request("/users/daviddenton/repos")
 
-  request.headerMap("User-Agent") = "Fintrospect client"
-
-  println(Await.result(client(request)).contentString)
+  println(result(AddUserAgent("Fintrospect client").andThen(client)(request)).contentString)
 }
