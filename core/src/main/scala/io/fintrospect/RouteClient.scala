@@ -48,8 +48,8 @@ class RouteClient[Rsp](method: Method,
     val missing = requiredParams.diff(userSuppliedParams)
     val unknown = userSuppliedParams.diff(allPossibleParams)
 
-    if (missing.nonEmpty) exception(new BrokenContract("Client: Missing required params passed: " + missing.mkString(", ")))
-    else if (unknown.nonEmpty) exception(new BrokenContract("Client: Unknown params passed: " + unknown.mkString(", ")))
+    if (missing.nonEmpty) exception(new BrokenContract(s"Client: Missing required params passed: [${missing.mkString(", ")}]"))
+    else if (unknown.nonEmpty) exception(new BrokenContract(s"Client: Unknown params passed: [${unknown.mkString(", ")}]"))
     else service(buildRequest(suppliedBindings))
   }
 

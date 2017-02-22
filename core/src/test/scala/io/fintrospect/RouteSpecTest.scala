@@ -35,13 +35,13 @@ class RouteSpecTest extends FunSpec with Matchers {
 
     describe("invalid parameters are dealt with") {
       it("missing request parameters throws up") {
-        intercept[BrokenContract](result(clientWithQueryNameAndMaxAgeAndGender(name --> "bob", maxAge --> 7, gender --> "male"))).getMessage shouldBe "Client: Missing required params passed: Mandatory parameter query (string) in query"
+        intercept[BrokenContract](result(clientWithQueryNameAndMaxAgeAndGender(name --> "bob", maxAge --> 7, gender --> "male"))).getMessage shouldBe "Client: Missing required params passed: [Mandatory parameter query (string) in query]"
       }
       it("missing path parameters throws up") {
-        intercept[BrokenContract](result(clientWithQueryNameAndMaxAgeAndGender(query --> "bob", maxAge --> 7, gender --> "male"))).getMessage shouldBe "Client: Missing required params passed: {pathName}"
+        intercept[BrokenContract](result(clientWithQueryNameAndMaxAgeAndGender(query --> "bob", maxAge --> 7, gender --> "male"))).getMessage shouldBe "Client: Missing required params passed: [{pathName}]"
       }
       it("unknown parameters throws up") {
-        intercept[BrokenContract](result(clientWithNoParameters(maxAge.of(7)))).getMessage shouldBe "Client: Unknown params passed: {maxAge}"
+        intercept[BrokenContract](result(clientWithNoParameters(maxAge.of(7)))).getMessage shouldBe "Client: Unknown params passed: [{maxAge}]"
       }
     }
 
