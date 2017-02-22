@@ -20,7 +20,7 @@ object Circe extends JsonLibrary[Json, Json] {
     */
   object Auto extends Auto[Json](ResponseBuilder) {
 
-    implicit def tToBody[T](implicit e: Encoder[T], d: Decoder[T]): Body[T] = Body(bodySpec[T]())
+    implicit def tToBody[T](implicit e: Encoder[T], d: Decoder[T]): Body[T] = Body.of(bodySpec[T]())
 
     implicit def tToJson[T](implicit e: Encoder[T]): (T => Json) = (t: T) => e(t)
   }
@@ -76,7 +76,7 @@ object Circe extends JsonLibrary[Json, Json] {
     * supports inbound messages.
     */
   def patchBody[R](description: String = null, example: R = null)
-                  (implicit e: Encoder[R], d: Decoder[R => R]): Body[R => R] = Body[R => R](
+                  (implicit e: Encoder[R], d: Decoder[R => R]): Body[R => R] = Body.of[R => R](
     BodySpec.json(this).map(j => JsonFormat.decode[R => R](j),
       (u: R => R) => encode(u(example))), description, Option(example).map(_ => (r: R) => example).orNull)
 

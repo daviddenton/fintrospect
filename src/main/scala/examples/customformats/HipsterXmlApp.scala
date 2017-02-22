@@ -22,11 +22,11 @@ object HipsterXmlApp extends App {
 
   val xmlAsABody = BodySpec.string(ContentTypes.APPLICATION_XML).map(s => HipsterXmlFormat(s), (x: HipsterXmlFormat) => x.value)
   val xmlAsAParam = ParameterSpec.string().map(i => HipsterXmlFormat(i), (e: HipsterXmlFormat) => e.value)
-  val xmlAsPath = Path(ParameterSpec.string().as[HipsterBeardStyle], "anXmlParameter", "An XML document")
+  val xmlAsPath = Path.of(ParameterSpec.string().as[HipsterBeardStyle], "anXmlParameter", "An XML document")
 
   val route = RouteSpec("an xml endpoint")
     .taking(Header.optional(xmlAsAParam, "An XML document"))
-    .body(Body(xmlAsABody))
+    .body(Body.of(xmlAsABody))
     .at(Get) / "view" / xmlAsPath bindTo aService
 
   val module = RouteModule(Root / "xml", HipsterXmlModuleRenderer).withRoute(route)

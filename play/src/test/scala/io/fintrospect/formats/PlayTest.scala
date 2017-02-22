@@ -64,7 +64,7 @@ class PlayJsonFormatTest extends JsonFormatSpec(Play) {
     }
 
     it("body spec decodes content") {
-      (Body(bodySpec[Letter]()(helpers.Reads, helpers.Writes)) <-- Play.ResponseBuilder.Ok(encode(aLetter)(helpers.Writes)).build()) shouldBe aLetter
+      (Body.of(bodySpec[Letter]()(helpers.Reads, helpers.Writes)) <-- Play.ResponseBuilder.Ok(encode(aLetter)(helpers.Writes)).build()) shouldBe aLetter
     }
 
     it("param spec decodes content") {

@@ -7,6 +7,11 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.13.0
+- Performance tweak - only decode bodies once when using the `Auto` filters.
+- Improved error messages in case of broken contract scenarios.
+- API Improvement: hidden `ParameterSpec.apply()`. Should be using `ParameterSpec.<type>()` methods and then using `map()` instead. This hides the `ParamType` from the API user.
+- API Deprecations: moving to `Path.of()` and `Body.of()` instead of `Path()` and `Body()` in the case of custom path/body types. This aids API discoverability
 
 ## 14.12.2
 - Bugfix: #38 - Adding missing type signature on `Path` to remove reflective calls flag warning.

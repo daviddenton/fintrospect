@@ -24,7 +24,7 @@ object Full_Auto_Marshalling_Example extends App {
   }
 
   val route: ServerRoute[Request, Response] = RouteSpec()
-    .body(Body(Circe.bodySpec[Profile]()))
+    .body(Body.of(Circe.bodySpec[Profile]()))
     .at(Post) bindTo InOut(insultMe)
 
   val module: Module = RouteModule(Root).withRoute(route)

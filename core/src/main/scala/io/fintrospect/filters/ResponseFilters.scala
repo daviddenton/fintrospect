@@ -83,7 +83,6 @@ object ResponseFilters {
     }
   }
 
-
   /**
     * Extracts an object form the Response output object and feeds them into the underlying service.
     */

@@ -35,7 +35,7 @@ object Path extends Parameters[PathParameter, PathBindable] {
     * @tparam T the type of the parameter
     * @return a parameter for retrieving a value of type [T] from the request
     */
-  def apply[T](spec: ParameterSpec[T], name: String, description: String = null): PathParameter[T] with PathBindable[T] = new PathParameter[T](name, description, spec, false) with PathBindable[T] {
+  def of[T](spec: ParameterSpec[T], name: String, description: String = null): PathParameter[T] with PathBindable[T] = new PathParameter[T](name, description, spec, false) with PathBindable[T] {
 
     override val required = true
 
@@ -47,4 +47,7 @@ object Path extends Parameters[PathParameter, PathBindable] {
 
     override def iterator = Seq(this).iterator
   }
+
+  @deprecated("use .of() instead for API consistency", "14.13.0")
+  def apply[T](spec: ParameterSpec[T], name: String, description: String = null): PathParameter[T] with PathBindable[T] = of(spec, name, description)
 }

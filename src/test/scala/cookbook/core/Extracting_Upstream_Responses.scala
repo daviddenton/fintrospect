@@ -32,7 +32,7 @@ object Extracting_Upstream_Responses extends App {
 
   val spec: BodySpec[Pokemon] = BodySpec.json().map(Pokemon.from)
 
-  val nameAndWeight: Body[Pokemon] = Body(spec)
+  val nameAndWeight: Body[Pokemon] = Body.of(spec)
 
   val client: RouteClient[Extraction[Option[Pokemon]]] = RouteSpec().at(Get) / "api" / "v2" / "pokemon" / id / "" bindToClient
     ResponseFilters.ExtractBody(nameAndWeight).andThen(http)

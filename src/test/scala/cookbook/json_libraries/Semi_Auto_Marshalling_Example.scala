@@ -18,7 +18,7 @@ object Semi_Auto_Marshalling_Example extends App {
   import io.fintrospect.parameters.Body
   import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
-  val personBody = Body(Circe.bodySpec[Person]())
+  val personBody = Body.of(Circe.bodySpec[Person]())
 
   val insultMe: Service[Request, Response] = Service.mk[Request, Response] { req =>
     val person: Person = personBody <-- req
