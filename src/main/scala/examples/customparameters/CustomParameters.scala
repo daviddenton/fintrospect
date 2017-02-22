@@ -29,7 +29,7 @@ object CustomParameters extends App {
   // Reuse the spec in different parts of the request
   val optionalEmailQueryParameter = Query.optional(EmailAddress.spec, "anEmail", "a valid email address")
   val requiredEmailHeader = Header.required(EmailAddress.spec, "anotherEmail", "a valid email address")
-  val requiredEmailPathSegment = Path(EmailAddress.spec, "anEmailPath", "a valid email address")
+  val requiredEmailPathSegment = Path.of(EmailAddress.spec, "anEmailPath", "a valid email address")
 
   println("missing email: " + (optionalEmailQueryParameter <-- Request("/")))
   println("valid email: " + (optionalEmailQueryParameter <-- Request("/", "theEmailAddress" -> "myemail@somedomain.com")))

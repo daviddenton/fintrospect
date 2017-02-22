@@ -22,7 +22,7 @@ class EmailList(emails: Emails) {
 
   val route = RouteSpec("list the inbox contents")
     .returning(responseSpec(Status.Ok -> "list of emails for a user", Seq(exampleEmail)))
-    .at(Get) / "emails" / Path(EmailAddress.spec, "address", "user email") bindTo forUser
+    .at(Get) / "emails" / Path.of(EmailAddress.spec, "address", "user email") bindTo forUser
 }
 
 

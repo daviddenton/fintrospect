@@ -43,7 +43,7 @@ abstract class AutoSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
         r.content = toBuf(in)
         Future(r)
       }
-      })(Body(bodySpec, ""))
+      })(Body.of(bodySpec, ""))
 
       it("takes the object from the request") {
         fromBuf(result(svc(request)).content) shouldBe aLetter
@@ -74,7 +74,7 @@ abstract class AutoSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
 
     describe("InOut") {
       it("returns Ok") {
-        val svc = f.InOut(Service.mk { in: Letter => Future(in) }, Status.Created)(Body(bodySpec), transform())
+        val svc = f.InOut(Service.mk { in: Letter => Future(in) }, Status.Created)(Body.of(bodySpec), transform())
         val response = result(svc(request))
         response.status shouldBe Status.Created
         fromBuf(response.content) shouldBe aLetter
@@ -83,14 +83,14 @@ abstract class AutoSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
 
     describe("InOptionalOut") {
       it("returns Ok when present") {
-        val svc = f.InOptionalOut(Service.mk[Letter, Option[Letter]] { in => Future(Option(in)) })(Body(bodySpec), transform())
+        val svc = f.InOptionalOut(Service.mk[Letter, Option[Letter]] { in => Future(Option(in)) })(Body.of(bodySpec), transform())
         val response = result(svc(request))
         response.status shouldBe Status.Ok
         fromBuf(response.content) shouldBe aLetter
       }
 
       it("returns NotFound when missing present") {
-        val svc = f.InOptionalOut(Service.mk[Letter, Option[Letter]] { in => Future(None) })(Body(bodySpec), transform())
+        val svc = f.InOptionalOut(Service.mk[Letter, Option[Letter]] { in => Future(None) })(Body.of(bodySpec), transform())
         result(svc(request)).status shouldBe Status.NotFound
       }
     }

@@ -18,7 +18,7 @@ import scala.xml.{Elem, XML}
   * @tparam T the type of the deserialised parameter
   * @return a parameter for retrieving a value of type [T] from the request
   */
-case class ParameterSpec[T](paramType: ParamType,
+case class ParameterSpec[T] private (paramType: ParamType,
                             deserialize: String => T,
                             serialize: T => String = (s: T) => s.toString) {
 

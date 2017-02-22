@@ -65,7 +65,7 @@ class CirceJsonFormatTest extends JsonFormatSpec(Circe) {
     }
 
     it("body spec decodes content") {
-      (Body(bodySpec[Letter]()) <-- Circe.ResponseBuilder.Ok(encode(aLetter)).build()) shouldBe aLetter
+      (Body.of(bodySpec[Letter]()) <-- Circe.ResponseBuilder.Ok(encode(aLetter)).build()) shouldBe aLetter
     }
 
     it("patch body can be used to modify an existing case class object") {

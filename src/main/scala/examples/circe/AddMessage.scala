@@ -17,7 +17,7 @@ import io.fintrospect.parameters.{Body, Path}
 class AddMessage(emails: Emails) {
   private val exampleEmail = Email(EmailAddress("you@github.com"), EmailAddress("wife@github.com"), "when are you going to be home for dinner", 250)
 
-  private val email = Body(Circe.bodySpec[Email](), "email", exampleEmail)
+  private val email = Body.of(Circe.bodySpec[Email](), "email", exampleEmail)
 
   private def addEmail(address: EmailAddress): Service[Request, Response] =
     InOut(Service.mk {
@@ -31,5 +31,5 @@ class AddMessage(emails: Emails) {
   val route = RouteSpec("add an email and return the new inbox contents for the receiver")
     .body(email)
     .returning(responseSpec(Status.Ok -> "new list of emails for the 'to' user", Seq(exampleEmail)))
-    .at(Post) / "email" / Path(EmailAddress.spec, "email") bindTo addEmail
+    .at(Post) / "email" / Path.of(EmailAddress.spec, "email") bindTo addEmail
 }

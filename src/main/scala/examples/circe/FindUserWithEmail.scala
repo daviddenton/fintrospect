@@ -26,7 +26,7 @@ class FindUserWithEmail(emails: Emails) {
   val route = RouteSpec("Get the user for the particular email address")
     .returning(Ok -> "found the user")
     .returning(NotFound -> "who is that?")
-    .at(Get) / "user" / Path(EmailAddress.spec, "address", "user email") bindTo findByEmail
+    .at(Get) / "user" / Path.of(EmailAddress.spec, "address", "user email") bindTo findByEmail
 }
 
 

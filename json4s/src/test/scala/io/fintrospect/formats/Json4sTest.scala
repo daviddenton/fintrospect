@@ -56,7 +56,7 @@ abstract class RoundtripEncodeDecodeSpec[T](jsonLibrary: Json4sLibrary[T]) exten
 
 class Json4sNativeEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4s) {
   it("body spec decodes content") {
-    (Body(Json4s.bodySpec[Letter]()) <-- Json4s.ResponseBuilder.Ok(Json4s.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
+    (Body.of(Json4s.bodySpec[Letter]()) <-- Json4s.ResponseBuilder.Ok(Json4s.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
 
   it("param spec decodes content") {
@@ -73,7 +73,7 @@ class Json4sNativeJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4s
 
 class Json4sNativeDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sDoubleMode) {
   it("body spec decodes content") {
-    (Body(Json4sDoubleMode.bodySpec[Letter]()) <-- Json4sDoubleMode.ResponseBuilder.Ok(Json4sDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
+    (Body.of(Json4sDoubleMode.bodySpec[Letter]()) <-- Json4sDoubleMode.ResponseBuilder.Ok(Json4sDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
 
   it("param spec decodes content") {
@@ -90,7 +90,7 @@ class Json4sNativeDoubleJsonResponseBuilderTest extends JsonResponseBuilderSpec(
 
 class Json4sJacksonEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJackson) {
   it("body spec decodes content") {
-    (Body(Json4sJackson.bodySpec[Letter]()) <-- Json4sDoubleMode.ResponseBuilder.Ok(Json4sJackson.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
+    (Body.of(Json4sJackson.bodySpec[Letter]()) <-- Json4sDoubleMode.ResponseBuilder.Ok(Json4sJackson.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
 
   it("param spec decodes content") {
@@ -108,7 +108,7 @@ class Json4sJacksonJsonResponseBuilderTest extends JsonResponseBuilderSpec(Json4
 
 class Json4sJacksonDoubleEncodeDecodeTest extends RoundtripEncodeDecodeSpec(Json4sJacksonDoubleMode) {
   it("body spec decodes content") {
-    (Body(Json4sJacksonDoubleMode.bodySpec[Letter]()) <-- Json4sJacksonDoubleMode.ResponseBuilder.Ok(Json4sJacksonDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
+    (Body.of(Json4sJacksonDoubleMode.bodySpec[Letter]()) <-- Json4sJacksonDoubleMode.ResponseBuilder.Ok(Json4sJacksonDoubleMode.JsonFormat.encode(aLetter)).build()) shouldBe aLetter
   }
 
   it("param spec decodes content") {
