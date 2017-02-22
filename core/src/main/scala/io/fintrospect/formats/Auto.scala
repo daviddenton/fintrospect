@@ -2,7 +2,7 @@ package io.fintrospect.formats
 
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.finagle.{Filter, Service}
-import io.fintrospect.parameters.{Body, Mandatory, UniBody}
+import io.fintrospect.parameters.{Body, Mandatory}
 import io.fintrospect.util.{Extracted, ExtractionFailed}
 
 class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
@@ -20,7 +20,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
       (req, svc) =>
         body <--? req match {
           case Extracted(in) => svc(in)
-          case ExtractionFailed(_) => HttpResponse(Status.BadRequest)
+          case ExtractionFailed(e) => HttpResponse(Status.BadRequest).withErrorMessage(s"Failed to unmarshal body [${e.mkString(", ")}]")
         }
     }.andThen(svc)
   }
@@ -43,7 +43,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def InOut[IN, OUT](svc: Service[IN, OUT], successStatus: Status = Status.Ok)
-                     (implicit body: Body[IN], transform: OUT => R): Service[Request, Response]
+                    (implicit body: Body[IN], transform: OUT => R): Service[Request, Response]
   = In(Filter.mk[IN, Response, IN, OUT] { (req, svc) =>
     svc(req)
       .map(transform)
@@ -55,10 +55,10 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
   def InOptionalOut[IN, OUT](svc: Service[IN, Option[OUT]], successStatus: Status = Status.Ok)
-                             (implicit body: Body[IN], transform: OUT => R): Service[Request, Response]
+                            (implicit body: Body[IN], transform: OUT => R): Service[Request, Response]
   = In(OptionalOut(svc, successStatus)(transform))(body)
 
- /**
+  /**
     * Service wrapper to provide auto-marshalling of output case class instances for scenarios where an object may not be returned from the service
     * HTTP OK is returned by default in the auto-marshalled response (overridable), otherwise a 404 is returned
     */
@@ -70,7 +70,7 @@ class Auto[R](responseBuilder: AbstractResponseBuilder[R]) {
           .map(
             _.map(transform)
               .map(l => HttpResponse(successStatus).withContent(l))
-              .getOrElse(HttpResponse(Status.NotFound)))
+              .getOrElse(HttpResponse(Status.NotFound).withErrorMessage("No object available to unmarshal")))
           .map(_.build())
     }.andThen(svc)
 }

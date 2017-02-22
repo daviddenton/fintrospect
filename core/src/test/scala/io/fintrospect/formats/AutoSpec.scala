@@ -52,7 +52,9 @@ abstract class AutoSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
       it("rejects illegal content with a BadRequest") {
         val request = Request()
         request.contentString = "invalid"
-        Await.result(svc(request)).status shouldBe Status.BadRequest
+        val response = Await.result(svc(request))
+        response.status shouldBe Status.BadRequest
+        response.contentString should include ("Failed to unmarshal body [body:Invalid]")
       }
 
       it("works when no body specified in route") {
@@ -104,7 +106,9 @@ abstract class AutoSpec[J](val f: Auto[J]) extends FunSpec with Matchers {
 
       it("returns NotFound when missing present") {
         val svc = f.OptionalOut(Service.mk[Request, Option[Letter]] { _ => Future(None) }, Status.Created)(transform())
-        result(svc(request)).status shouldBe Status.NotFound
+        val response = result(svc(request))
+        response.status shouldBe Status.NotFound
+        response.contentString should include ("No object available to unmarshal")
       }
     }
 
