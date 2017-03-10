@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.14.0
+- Adding details of traceId and request to `DebuggingFilters.PrintResponse`
+
 ## 14.13.0
 - Performance tweak - only decode bodies once when using the `Auto` filters.
 - Improved error messages in case of broken contract scenarios.
