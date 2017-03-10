@@ -44,7 +44,7 @@ To activate the extension library features (JSON, templates etc), additional dep
 Add the following lines to ```build.sbt``` - the lib is hosted in Maven Central and JCenter:
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com"
-libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "14.13.0"
+libraryDependencies += "io.fintrospect" %% "fintrospect-core" % "14.14.0"
 ```
 
 ## See the code
