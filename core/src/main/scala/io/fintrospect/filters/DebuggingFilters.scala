@@ -1,6 +1,8 @@
 package io.fintrospect.filters
 
+import com.twitter.finagle.Filter
 import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.tracing.{Trace, TraceId}
 
 /**
   * A set of handy filters for use during development.
@@ -12,7 +14,7 @@ object DebuggingFilters {
     */
   val PrintRequest = RequestFilters.Tap {
     req: Request =>
-      println(Seq(s"***** REQUEST: ${req.method}: ${req.uri} *****",
+      println(Seq(s"***** REQUEST: ${req.method}: ${req.uri} (trace: ${Trace.id.traceId}) *****",
         "Headers: " + req.headerMap,
         "Params: " + req.params,
         s"Content (${req.length}b):" + req.contentString
@@ -22,17 +24,22 @@ object DebuggingFilters {
   /**
     * Print details of the response before it is returned.
     */
-  val PrintResponse = ResponseFilters.Tap {
-    response: Response =>
-      println(Seq(s"***** RESPONSE ${response.status.code} *****",
-        "Headers: " + response.headerMap,
-        s"Content (${response.length}b):" + response.contentString
-      ).mkString("\n"))
-  }.andThen(ResponseFilters.TapFailure {
-    t: Throwable =>
-      println(s"***** RESPONSE FAILED *****")
-      t.printStackTrace()
-  })
+  val PrintResponse = Filter.mk[Request, Response, Request, Response] {
+    (req, svc) =>
+      svc(req)
+        .onSuccess {
+          response =>
+            println(Seq(s"***** RESPONSE ${response.status.code} to ${req.method}: ${req.uri} (trace: ${Trace.id.traceId}) *****",
+              "Headers: " + response.headerMap,
+              s"Content (${response.length}b):" + response.contentString
+            ).mkString("\n"))
+        }
+        .onFailure {
+          t: Throwable =>
+            println(s"***** RESPONSE FAILED to ${req.method}: ${req.uri} (trace: ${Trace.id.traceId}) *****")
+            t.printStackTrace()
+        }
+  }
 
   /**
     * Print details of a request and it's response.
