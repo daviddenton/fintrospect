@@ -42,7 +42,7 @@ class ResponseBuilder[T](toFormat: T => Buf,
   }
 
   def withCode(status: Status): ResponseBuilder[T] = {
-    response.setStatusCode(status.code)
+    response.statusCode(status.code)
     this
   }
 
