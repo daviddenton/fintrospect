@@ -20,6 +20,6 @@ class RenderView[T](responseBuilder: AbstractResponseBuilder[T], renderer: Templ
 
   override def apply(request: Request, service: Service[Request, View]): Future[Response] = service(request) map {
     case Redirect(location, status) => responseBuilder.HttpResponse(status).withHeaders(LOCATION -> location)
-    case view => responseBuilder.Ok(renderer.toBuf(view))
+    case view => responseBuilder.HttpResponse(view.status).withContent(renderer.toBuf(view))
   }
 }
