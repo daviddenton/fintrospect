@@ -11,7 +11,9 @@ import org.scalatest.{FunSpec, Matchers}
 class RenderViewTest extends FunSpec with Matchers {
 
   describe("RenderView") {
-    val renderView = new RenderView(Html.ResponseBuilder, (view: View) => Bufs.utf8Buf(view.template))
+    val renderView = new RenderView(Html.ResponseBuilder, new TemplateRenderer {
+      override def toBuf(view: View) = Bufs.utf8Buf(view.template)
+    })
 
     it("creates a standard View") {
       val response = result(renderView(Request(), Service.const(OnClasspath(Nil))))
