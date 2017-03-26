@@ -1,7 +1,7 @@
 +++
 title = "web forms"
 tags = ["web", "form"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello

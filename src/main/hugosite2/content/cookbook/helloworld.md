@@ -1,7 +1,7 @@
 +++
 title = "helloworld"
-tags = ["theme"]
-categories = ["core"]
+tags = ["getting started"]
+categories = ["recipe"]
 +++
 
 hello

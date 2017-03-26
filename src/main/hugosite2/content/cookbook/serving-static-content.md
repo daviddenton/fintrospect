@@ -1,7 +1,7 @@
 +++
 title = "serving static content"
 tags = ["theme"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello

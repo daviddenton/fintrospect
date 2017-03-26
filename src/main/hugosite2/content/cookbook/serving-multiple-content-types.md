@@ -1,7 +1,7 @@
 +++
 title = "serving multiple content types"
-tags = ["theme"]
-categories = ["core"]
+tags = ["content negotiation"]
+categories = ["recipe"]
 +++
 
 hello

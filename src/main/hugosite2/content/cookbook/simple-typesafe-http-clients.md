@@ -1,7 +1,7 @@
 +++
 title = "typesafe http clients"
 tags = ["theme"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello

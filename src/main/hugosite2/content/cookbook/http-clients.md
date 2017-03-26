@@ -1,7 +1,7 @@
 +++
 title = "http clients"
-tags = ["client"]
-categories = ["core"]
+tags = ["client", "finagle api", "getting started"]
+categories = ["recipe"]
 +++
 
 hello

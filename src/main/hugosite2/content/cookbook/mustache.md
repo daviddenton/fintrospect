@@ -1,7 +1,7 @@
 +++
 title = "mustache"
-tags = ["web", "templating"]
-categories = ["core"]
+tags = ["web", "templating", "mustache"]
+categories = ["recipe"]
 +++
 
 hello

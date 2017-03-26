@@ -1,7 +1,7 @@
 +++
 title = "ssl"
 tags = ["ssl"]
-categories = ["finagle"]
+categories = ["recipe"]
 +++
 
 hello

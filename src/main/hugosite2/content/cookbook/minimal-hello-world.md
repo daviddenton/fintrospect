@@ -1,7 +1,7 @@
 +++
 title = "minimal hello world"
-tags = ["hello world"]
-categories = ["basic"]
+tags = ["getting started"]
+categories = ["recipe"]
 +++
 
 hello

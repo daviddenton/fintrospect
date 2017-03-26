@@ -1,7 +1,7 @@
 +++
 title = "handlebars"
-tags = ["web", "templating"]
-categories = ["core"]
+tags = ["web", "templating", "handlebars"]
+categories = ["recipe"]
 +++
 
 hello

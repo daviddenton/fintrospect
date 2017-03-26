@@ -1,7 +1,7 @@
 +++
 title = "dynamic path elements"
-tags = ["path"]
-categories = ["basic"]
+tags = ["path", "basics"]
+categories = ["recipe"]
 +++
 
 hello

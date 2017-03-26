@@ -1,7 +1,7 @@
 +++
 title = "oauth security"
 tags = ["security"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello

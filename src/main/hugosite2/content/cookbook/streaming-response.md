@@ -1,7 +1,7 @@
 +++
 title = "streaming responses"
 tags = ["streaming"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello

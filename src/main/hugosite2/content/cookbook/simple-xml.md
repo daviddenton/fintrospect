@@ -1,7 +1,7 @@
 +++
 title = "xml"
-tags = ["formats", "xml"]
-categories = ["core"]
+tags = ["message format", "xml"]
+categories = ["recipe"]
 +++
 
 hello

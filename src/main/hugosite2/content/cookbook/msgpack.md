@@ -1,7 +1,7 @@
 +++
 title = "msgpack"
-tags = ["msgpack", "formats"]
-categories = ["core"]
+tags = ["msgpack", "message format"]
+categories = ["recipe"]
 +++
 
 hello

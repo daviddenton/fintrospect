@@ -1,7 +1,7 @@
 +++
 title = "module filters"
-tags = ["theme"]
-categories = ["core"]
+tags = ["module", "filter"]
+categories = ["recipe"]
 +++
 
 hello

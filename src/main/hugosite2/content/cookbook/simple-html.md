@@ -1,7 +1,7 @@
 +++
 title = "html"
 tags = ["web", "html"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello

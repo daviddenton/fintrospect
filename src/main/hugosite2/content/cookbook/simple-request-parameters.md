@@ -1,7 +1,7 @@
 +++
 title = "simple request parameters"
 tags = ["theme"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello

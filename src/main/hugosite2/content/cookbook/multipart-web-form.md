@@ -1,7 +1,7 @@
 +++
 title = "multipart web forms"
 tags = ["form", "web", "multipart"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello

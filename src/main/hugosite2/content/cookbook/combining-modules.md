@@ -1,7 +1,7 @@
 +++
 title = "combining modules"
 tags = ["module"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello

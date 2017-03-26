@@ -1,7 +1,7 @@
 +++
 title = "json"
 tags = ["theme"]
-categories = ["core"]
+categories = ["recipe"]
 +++
 
 hello
