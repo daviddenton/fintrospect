@@ -51,15 +51,15 @@
 
                         <ul class="pager">
                             {{ if .Paginator.HasPrev }}
-                            <li class="previous"><a href="{{ .Site.BaseURL }}{{ .Paginator.Prev.URL }}">&larr; Newer</a></li>
+                            <li class="previous"><a href="{{ .Site.BaseURL }}{{ .Paginator.Prev.URL }}">&larr; Previous</a></li>
                             {{ else }}
-                            <li class="previous disabled"><a href="#">&larr; Newer</a></li>
+                            <li class="previous disabled"><a href="#">&larr; Previous</a></li>
                             {{ end }}
 
                             {{ if .Paginator.HasNext }}
-                            <li class="next"><a href="{{ .Site.BaseURL }}{{ .Paginator.Next.URL }}">Older &rarr;</a></li>
+                            <li class="next"><a href="{{ .Site.BaseURL }}{{ .Paginator.Next.URL }}">Next &rarr;</a></li>
                             {{ else }}
-                            <li class="next disabled"><a href="#">Older &rarr;</a></li>
+                            <li class="next disabled"><a href="#">Next &rarr;</a></li>
                             {{ end }}
                         </ul>
                     </div>

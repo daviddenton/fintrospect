@@ -24,8 +24,6 @@
 
                     <div class="col-md-9" id="cookbook-post">
 
-                        <p class="text-muted text-uppercase mb-small text-right">{{ if .Params.author }}By <a href="#">{{ .Params.author }}</a> | {{ end }}{{ .Date.Format .Site.Params.date_format }}</p>
-
                         <div id="post-content">
                           {{ .Content }}
                         </div>

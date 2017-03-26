@@ -4,7 +4,7 @@ languageCode = "en-us"
 googleAnalytics = ""
 theme = "hugo-universal-theme"
 defaultContentLanguage = "en"
-paginate = 50
+paginate = 10
 
 [menu]
 
@@ -57,52 +57,8 @@ paginate = 50
     url  = "https://coveralls.io/github/daviddenton/fintrospect?branch=master"
     weight = 9
 
-[params]
-    viewMorePostLink = "/cookbook/"
-    author = "DevCows"
-
-    # Google Maps API key (if not set will default to not passing a key.)
-    googleMapsApiKey = ""
-
-    # Style options: default (light-blue), blue, green, marsala, pink, red, turquoise, violet
-    style = "blue"
-
-    # Since this template is static, the contact form uses www.formspree.io as a
-    # proxy. The form makes a POST request to their servers to send the actual
-    # email. Visitors can send up to a 1000 emails each month for free.
-    #
-    # What you need to do for the setup?
-    #
-    # - set your email address under 'email' below
-    # - upload the generated site to your server
-    # - send a dummy email yourself to confirm your account
-    # - click the confirm link in the email from www.formspree.io
-    # - you're done. Happy mailing!
-    #
-    # Enable the contact form by entering your Formspree.io email
-    email = "your@email.com"
-
-    about_us = "<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>"
-    copyright = "Copyright (c) 2015 - 2016, YourCompany; all rights reserved."
-
-    # Format dates with Go's time formatting
-    date_format = "January 2, 2006"
-
-    logo = "img/logo.png"
-    address = """<p><strong>Universal Ltd.</strong>
-        <br>13/25 New Avenue
-        <br>Newtown upon River
-        <br>45Y 73J
-        <br>England
-        <br>
-        <strong>Great Britain</strong>
-      </p>
-      """
-    latitude = "-12.043333"
-    longitude = "-77.028333"
-
 [Permalinks]
-    cookbook = "/cookbook/:year/:month/:day/:filename/"
+    cookbook = "/cookbook/:filename/"
 
 # Enable and disable widgets for the right sidebar
 [params.widgets]

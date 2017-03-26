@@ -1,4 +1,4 @@
-weight: 6
+weight: 7
 name: "dependency-lite"
 icon: "fa fa-balance-scale"
 description: "Core library has only 3 dependencies. No Scalaz, Cats, or Shapeless."
