@@ -234,7 +234,7 @@ Hugo doesn't ship with a default theme. There are a few available (I counted a d
 
 We're going to create a new theme called "zafta." Since the goal of this tutorial is to show you how to fill out the files to pull in your content, the theme will not contain any CSS. In other words, ugly but functional.
 
-All themes have opinions on content and layout. For example, Zafta uses "post" over "blog". Strong opinions make for simpler templates but differing opinions make it tougher to use themes. When you build a theme, consider using the terms that other themes do.
+All themes have opinions on content and layout. For example, Zafta uses "post" over "cookbook". Strong opinions make for simpler templates but differing opinions make it tougher to use themes. When you build a theme, consider using the terms that other themes do.
 
 
 ### Create a Skeleton

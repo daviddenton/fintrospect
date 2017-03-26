@@ -20,8 +20,8 @@ paginate = 10
     weight = 1
 
 [[menu.main]]
-    name = "Blog"
-    url  = "/blog/"
+    name = "cookbook"
+    url  = "/cookbook/"
     weight = 2
 
 [[menu.main]]
@@ -36,7 +36,7 @@ paginate = 10
     weight = 4
 
 [params]
-    viewMorePostLink = "/blog/"
+    viewMorePostLink = "/cookbook/"
     author = "DevCows"
 
     # Google Maps API key (if not set will default to not passing a key.)
@@ -80,7 +80,7 @@ paginate = 10
     longitude = "-77.028333"
 
 [Permalinks]
-    blog = "/blog/:year/:month/:day/:filename/"
+    cookbook = "/cookbook/:year/:month/:day/:filename/"
 
 # Enable and disable widgets for the right sidebar
 [params.widgets]
@@ -126,5 +126,5 @@ paginate = 10
 
 [params.recent_posts]
     enable = true
-    title = "From our blog"
+    title = "From our cookbook"
     subtitle = "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo."

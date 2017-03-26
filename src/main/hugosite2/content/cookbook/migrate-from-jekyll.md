@@ -27,7 +27,7 @@ Additionally, you'll want any files that should reside at the root (such as `CNA
 Hugo can read your configuration as JSON, YAML or TOML. Hugo supports parameters custom configuration too. Refer to the [Hugo configuration documentation](/overview/configuration/) for details.
 
 ## Set your configuration publish folder to `_site`
-The default is for Jekyll to publish to `_site` and for Hugo to publish to `public`. If, like me, you have [`_site` mapped to a git submodule on the `gh-pages` branch](http://blog.blindgaenger.net/generate_github_pages_in_a_submodule.html), you'll want to do one of two alternatives:
+The default is for Jekyll to publish to `_site` and for Hugo to publish to `public`. If, like me, you have [`_site` mapped to a git submodule on the `gh-pages` branch](http://cookbook.blindgaenger.net/generate_github_pages_in_a_submodule.html), you'll want to do one of two alternatives:
 
 1. Change your submodule to point to map `gh-pages` to public instead of `_site` (recommended).
 
@@ -44,7 +44,7 @@ The default is for Jekyll to publish to `_site` and for Hugo to publish to `publ
         }
 
 ## Convert Jekyll templates to Hugo templates
-That's the bulk of the work right here. The documentation is your friend. You should refer to [Jekyll's template documentation](http://jekyllrb.com/docs/templates/) if you need to refresh your memory on how you built your blog and [Hugo's template](/layout/templates/) to learn Hugo's way.
+That's the bulk of the work right here. The documentation is your friend. You should refer to [Jekyll's template documentation](http://jekyllrb.com/docs/templates/) if you need to refresh your memory on how you built your cookbook and [Hugo's template](/layout/templates/) to learn Hugo's way.
 
 As a single reference data point, converting my templates for [heyitsalex.net](http://heyitsalex.net/) took me no more than a few hours.
 
