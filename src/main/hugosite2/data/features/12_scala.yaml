@@ -1,0 +1,4 @@
+weight: 12
+name: "multi-version"
+icon: "fa fa-code-fork"
+description: "Support for both Scala 2.11 and 2.12"

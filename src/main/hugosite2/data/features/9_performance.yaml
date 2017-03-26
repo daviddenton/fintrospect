@@ -1,0 +1,4 @@
+weight: 9
+name: "performance"
+icon: "fa fa-tachometer"
+description: "Easily outpaces Play, Akka-HTTP and http4s in the TechEmpower benchmarks."
