@@ -1,0 +1,4 @@
+weight: 2
+name: "self documenting apis"
+icon: "fa fa-file-text-o"
+description: "Runtime generation of API documentation in Swagger/OpenAPI format."

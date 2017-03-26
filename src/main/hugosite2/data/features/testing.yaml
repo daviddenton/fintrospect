@@ -1,0 +1,4 @@
+weight: 7
+name: "testable"
+icon: "fa fa-check-square-o"
+description: "Testable in or out of container. Easily create embeddable fake servers."
