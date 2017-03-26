@@ -1,6 +1,6 @@
 +++
 title = "streaming responses"
-tags = ["streaming"]
+tags = ["streaming", "finagle api"]
 categories = ["recipe"]
 +++
 

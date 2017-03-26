@@ -1,6 +1,6 @@
 +++
 title = "patching endpoint"
-tags = ["circe"]
+tags = ["circe", "patch", "route"]
 categories = ["recipe"]
 +++
 

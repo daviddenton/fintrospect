@@ -1,6 +1,6 @@
 +++
 title = "ssl"
-tags = ["ssl"]
+tags = ["ssl", "client"]
 categories = ["recipe"]
 +++
 

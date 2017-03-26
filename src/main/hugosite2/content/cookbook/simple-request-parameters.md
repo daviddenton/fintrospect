@@ -1,6 +1,6 @@
 +++
 title = "simple request parameters"
-tags = ["theme"]
+tags = ["getting started", "request", "contract"]
 categories = ["recipe"]
 +++
 

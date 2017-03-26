@@ -1,6 +1,6 @@
 +++
 title = "typesafe http clients"
-tags = ["theme"]
+tags = ["contract", "client"]
 categories = ["recipe"]
 +++
 

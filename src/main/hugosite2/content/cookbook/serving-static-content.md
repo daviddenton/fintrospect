@@ -1,6 +1,6 @@
 +++
 title = "serving static content"
-tags = ["theme"]
+tags = ["web", "static"]
 categories = ["recipe"]
 +++
 

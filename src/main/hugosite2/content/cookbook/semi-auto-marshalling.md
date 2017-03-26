@@ -1,6 +1,6 @@
 +++
 title = "semi-auto body marshalling"
-tags = ["theme"]
+tags = ["body", "contract", "json", "filter", "auto"]
 categories = ["recipe"]
 +++
 
