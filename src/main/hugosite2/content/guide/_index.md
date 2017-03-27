@@ -1,6 +1,6 @@
 +++
 title = "guide"
-sidebar = "false"
+sidebar = "true"
 +++
 
 welcome...
