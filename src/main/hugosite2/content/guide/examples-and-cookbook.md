@@ -1,6 +1,6 @@
 +++
-title = "testing"
-weight = 9
+title = "examples & cookbook"
+weight = 10
 +++
 
 # examples
@@ -21,7 +21,7 @@ The Fintrospect example code hosted [here](https://github.com/daviddenton/fintro
 - <a href="https://github.com/daviddenton/fintrospect/tree/master/src/main/scala/examples/validation">```/validation```</a>- shows cross-field validation of inputs taken from the request 
 
 # quickstart repo
-If you want to dive in head-first, there is example source project of a Fintrospect application with most of the features hosted in this <a href="http://github.com/daviddenton/fintrospect-example-app">Github Repo</a.>
+If you want to dive in head-first, there is example source project of a Fintrospect application with most of the features hosted in this <a href="http://github.com/daviddenton/fintrospect-example-app">Github Repo</a>
 
 # cookbook
 Check out the recipes in the <a href="/cookbook">cookbook</a>.

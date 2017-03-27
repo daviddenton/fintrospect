@@ -49,6 +49,6 @@ val dirModule = StaticModule(Root / "public", ResourceLoader.Directory("file/dir
 
 Note that due to security concerns, `ResourceLoader.Classpath` should be configured to use a package which does NOT overlap with class assets.
 
-<a class="next" href="http://fintrospect.io/testing"><button type="button" class="btn btn-sm btn-default">next: testing</button></a>
+<a class="next" href="/guide/testing"><button type="button" class="btn btn-sm btn-default">next: testing</button></a>
 
 

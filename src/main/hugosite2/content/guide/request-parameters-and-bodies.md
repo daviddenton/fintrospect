@@ -91,4 +91,4 @@ val email = Body(Argonaut.bodySpec[Email](Option("an email address")), Email("ji
 val retrieved: Email = email <-- request
 ```
 
-<a class="next" href="http://fintrospect.io/defining-routes"><button type="button" class="btn btn-sm btn-default">next: defining routes</button></a>
+<a class="next" href="/guide/defining-routes"><button type="button" class="btn btn-sm btn-default">next: defining routes</button></a>

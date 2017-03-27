@@ -81,4 +81,4 @@ RouteModule(Root / "employee")
 .securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future(key == "extremelySecretThing")))
 ```
 
-<a class="next" href="http://fintrospect.io/client-routes"><button type="button" class="btn btn-sm btn-default">next: client routes</button></a>
+<a class="next" href="/guide/client-routes"><button type="button" class="btn btn-sm btn-default">next: client routes</button></a>

@@ -28,4 +28,4 @@ an HTTP client contract and then simply reusing them as the server-side contract
 of which import the shared library. This obviously binary-couples the applications together to a certain degree, so utmost care should 
 be taken, backed up with sufficient CDC-style testing to ensure that the version of the contract deployed is valid on both ends.
 
-<a class="next" href="http://fintrospect.io/building-http-responses"><button type="button" class="btn btn-sm btn-default">next: building http responses</button></a>
+<a class="next" href="/guide/building-http-responses"><button type="button" class="btn btn-sm btn-default">next: building http responses</button></a>

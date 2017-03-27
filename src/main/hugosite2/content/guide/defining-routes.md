@@ -53,4 +53,4 @@ then be bound to:
 1. an HTTP <a href="server-routes">server</a> `Service` if you wish to serve that contract to other systems.
 2. an HTTP <a href="client-routes">client</a> `Service` if you wish to consume that contract from a remote system.
 
-<a class="next" href="http://fintrospect.io/server-routes"><button type="button" class="btn btn-sm btn-default">next: server routes</button></a>
+<a class="next" href="/guide/server-routes"><button type="button" class="btn btn-sm btn-default">next: server routes</button></a>
