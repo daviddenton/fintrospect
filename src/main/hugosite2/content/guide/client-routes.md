@@ -9,7 +9,7 @@ returns a Twitter ```Future``` containing the response. Any required manipulatio
 headers) can be done in the standard way by chaining a ```Filter``` to the client ```Service```. Note that ```Content-Type``` headers for posted HTTP 
 bodies is already handled by the bound ```Body``` instance.:
 
-```
+```scala
 val employeeId = Path.integer("employeeId")
 val name = Query.required.string("name")
 val client: RouteClient = RouteSpec()

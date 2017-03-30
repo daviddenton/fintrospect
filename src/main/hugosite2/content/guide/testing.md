@@ -5,7 +5,7 @@ weight = 8
 
 ### routes
 Provided trait ```TestingFintrospectRoute``` can be used to unit test your routes, as in the simple example below: 
-```
+```scala
 object EchoRoute {
   val route = RouteSpec().at(Method.Get) / Path.string("message") bindTo( (message: String) => Service.mk {
     req: Request => Future(PlainText.ResponseBuilder.OK(message))
@@ -30,7 +30,7 @@ generated fake servers for downstream dependencies - simply complete the stub im
 especially well if you are utilising custom serialisation formats (such as one of the auto-marshalling JSON libraries), as there is 
 absolutely no marshalling code required to send back objects over the wire from your stub.
 
-```
+```scala
 val route = RouteSpec().at(Get) / "myRoute" bindTo(() => Service.mk {r => Future(Response(Status.Ok))})
 new TestHttpServer(9999, route).start()
 ```

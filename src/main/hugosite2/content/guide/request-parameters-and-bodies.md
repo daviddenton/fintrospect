@@ -10,12 +10,12 @@ interface to which the main functions are:
 
 Parameters are created in a uniform way using the objects ```Path```, ```Header```, ```Query```, ```FormField``` and ```Body```. 
 The general form for definition is as follows, although since ```Path``` and ```Body``` parameters are always required, the middle step is omitted: 
-```
+```scala
 <parameter location class>.<required|optional>.<param type>("<name>")
 ```
 
 Descriptions can be attached to these definitions for documentation purposes. Note the retrieved type for the optional param:
-```
+```scala
 val anniversary = Header.required.localDate("anniversary", "the date you should not forget! format: yyyy-mm-dd")
 val myAnniversary: LocalDate = age <-- request
 
@@ -29,14 +29,14 @@ val ohDearDear: Elem = anniversary <-- request
 There are convenience methods for a standard set of "primitive" types, plus extensions for such as native Scala XML, Forms and JSON.
 
 Additionally, there is another form for parameters which can appear multiple times in a request - simply insert the ```*()``` method in the chain:
-```
+```scala
 val kidsBirthdays = Query.required.*.localDate("birthdays", "the dates you should not forget! format: yyyy-mm-dd")
 val ourKidsBirthdays: Seq[LocalDate] = kidsBirthdays <-- request
 ```
 
 #### forms
 These represent a slightly special case you first need to retrieve the form from the request, and then the fields from the form.
-```
+```scala
 val name = FormField.required.string("name")
 val isMarried = FormField.optional.boolean("married")
 val form = Body.form(name, isMarried)
@@ -58,7 +58,7 @@ with the happy case on-the-wire values. These throw exceptions if unsuccessful -
 a rejected ```BadRequest``` (400) response which is returned to the caller.
 
 An example for a simple domain case class Birthday:
-```
+```scala
 case class Birthday(value: LocalDate)
 
 val birthdayAsAQueryParam = Query.required(ParameterSpec.localDate().map(Birthday(_), (b:Birthday) => b.value), "DOB")
@@ -74,7 +74,7 @@ after the library in question. When defining a ```Body``` or ```Parameter```, if
 use (else it will default to the bundled Argo JSON library) - and if this is done centrally then you can switch out JSON libraries with only 
 a single line of code change.
 
-```
+```scala
 val jsonFormat = Argonaut.JsonFormat
 val exampleObject = jsonFormat.obj("fieldName" -> json.string("hello"))
 val json = Body.json(Option("my lovely JSON object"), exampleObject, Argonaut)
@@ -85,7 +85,7 @@ Notice that in the above we specified an example of the JSON message. This is no
 <a href="http://json-schema.org/">JSON Schema</a> to be included in the auto-generated API documentation.
 
 Additionally, in the case of some JSON libraries that provide auto marshalling and demarshalling to case class instances, you can remove the JSON step altogether:
-```
+```scala
 case class Email(address: String)
 val email = Body(Argonaut.bodySpec[Email](Option("an email address")), Email("jim@example.com"))
 val retrieved: Email = email <-- request

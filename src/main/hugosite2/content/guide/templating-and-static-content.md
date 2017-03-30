@@ -9,7 +9,7 @@ Templates are applied by using a custom ```RenderView``` filter to convert ```Vi
 the filter. You can do this for entire modules by making the ```RouteModule``` itself generified on ```View``` by using the 
 templating ```Filter``` as a Module-level filter:
 
-```
+```scala
 case class ViewMessage(value: String) extends View
 
 val showMessage = Service.mk[Request, View] { _ => Future(ViewMessage("some value to be displayed")) }
@@ -25,7 +25,7 @@ val webModule = RouteModule(Root / "web",
 ## redirects
 After Form posts, it might be desirable to return an HTTP redirect instead of a View in the case of success. 
 For this purpose, use an instance of the `View.Redirect` class. The location and the status code (default 303) are configurable:
-```
+```scala
 val redirect = Service.mk[Request, View] { _ => Future(View.Redirect("http://my.server/myRoute")) }
 ```
 
@@ -42,7 +42,7 @@ INSERT LINK TO FORMAT TABLE HERE
 # static content
 Static files can easily be served from the either the Classpath or a Directory by using an instance of ```StaticModule``` with an 
 appropriately injected ```ResourceLoader```:
-```
+```scala
 val cpModule = StaticModule(Root / "public", ResourceLoader.Classpath("package/path"))
 val dirModule = StaticModule(Root / "public", ResourceLoader.Directory("file/dir/path"))
 ```

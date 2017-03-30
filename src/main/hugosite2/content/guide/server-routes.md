@@ -16,7 +16,7 @@ this bound ```Service```, so no validation code is required. The response return
 - ```Bad Request 400```: if there are any ```Header```, ```Query```, or ```Body``` params are missing (required only) or invalid
 
 ### simple example
-```
+```scala
 val holidays = Query.required.*.localDate("datesTakenAsHoliday")
 val includeManagement = Header.optional.boolean("includeManagement")
 
@@ -39,7 +39,7 @@ val route = ServerRoute[Request, Response] =
 ### modules
 A Module is a collection of ```ServerRoute``` that share a common URL context, which is built up from the ```Root``` object. Add the 
 routes and then convert into a standard Finagle Service object which is then attached in the normal way to an HTTP server.
-```
+```scala
 def listEmployees(): Service[Request, Response] = Service.mk(req => Future(Response()))
 
 Http.serve(":8080",
@@ -47,10 +47,9 @@ Http.serve(":8080",
     .withRoute(RouteSpec("lists all employees").at(Method.Get) bindTo listEmployees)
     .toService
 )
-
 ```
 Modules with different root contexts can also be combined with one another and then converted to a `Service`:
-```
+```scala
 RouteModule(Root / "a").combine(RouteModule(Root / "b")).toService
 ```
 
@@ -65,7 +64,7 @@ Bundled with Fintrospect are:
 - Sitemap XML format
 
 Other implementations are pluggable by implementing the ```ModuleRenderer```  trait - see the example code for a simple XML implementation.
-```
+```scala
 val service = RouteModule(Root / "employee", Swagger2dot0Json(ApiInfo("an employee discovery API", "3.0"))).toService
 Http.serve(":8080", new HttpFilter(Cors.UnsafePermissivePolicy).andThen(service))
 ```
@@ -76,7 +75,7 @@ without it, the server will reject any cross-domain requests initiated inside a 
 Module routes can secured by adding an implementation of the ```Security``` trait - this essentially provides a filter through which 
 all requests will be passed. An ```ApiKey``` implementation is bundled with the library which return an ```401 Unauthorized``` HTTP 
 response code when a request does not pass authentication.
-```
+```scala
 RouteModule(Root / "employee")
 .securedBy(ApiKey(Header.required.string("api_key"), (key: String) => Future(key == "extremelySecretThing")))
 ```

@@ -10,7 +10,7 @@ For this purpose, you can use an `Extractor` - a trait which provides a single m
 states: `Extracted(Option(value))` and `ExtractionFailed(parameter)` for missing or 
 invalid values. These constructs can be used inside a for comprehension to provide cross-field validation, and eventual creation of a target 
 object. Below is a service that implements this logic - note the use of a predicate and a failure reason which provides the logic for the check:
-```
+```scala
 case class DateRange(startDate: LocalDate, endDate: Option[LocalDate])
 
 val range: Extractor[Request, DateRange] = Extractor.mk {
@@ -36,7 +36,7 @@ to do so since any missing or invalid mandatory parameters short-circuit the com
 incoming request.
 
 The above example can be further simplified by use of the built-in `RequestFilters.ExtractableRequest` filter to transform the input:
-```
+```scala
   RequestFilters.ExtractableRequest(range).andThen(Service.mk[DateRange, Response] {
     dateRange => ...
   })
