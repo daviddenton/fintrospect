@@ -1,12 +1,13 @@
 +++
 title = "services and filters"
-tags = ["service", "filter", "finagle api"]
+tags = ["server", "client", "service", "filter", "finagle api"]
 categories = ["recipe"]
 +++
 
 At it's core, Finagle relies on 2 concepts for implementing HTTP services, `Service` and `Filter`. 
-A Service is effectively just a simple function (although technically it's an abstract class with several utility methods). This type is symmetrically used for both incoming and outgoing HTTP services - which is both neat and advantageous for 
-reasons we'll come to later. Service represent the endpoint of a request processing chain and is generic in it's input and output types:
+
+#### Services
+A Service is effectively just a simple function (although technically it's an abstract class with several utility methods) and represents the endpoint of a request processing chain. It is generic in it's input and output types:
 ```scala
 import com.twitter.util.Future
 
@@ -19,9 +20,31 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 
 val svc = Service.mk[String, Int] { in => Future(in.toInt * 2) }
-val futureInt = svc("1234")
+val futureInt = svc("1234") // yields 2468
 ```
 
+##### Usage in Finagle/Fintrospect
+The Service type is used symmetrically to provide both incoming HTTP endpoints and HTTP clients, and this is a really rather neat idea. Here is the only code required to create a simple HTTP server:
+```scala
+import com.twitter.finagle.{Http, Service}
+import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.util.Future
+
+val httpServer = Http.serve(":9999", Service.mk { in:Request => Future(Response(Status.Ok)) })
+val futureOk = httpServer(Request()) // yields an empty Ok response
+```
+
+And here is the equivalent for HTTP clients:
+```scala
+import com.twitter.finagle.{Http, Service}
+import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.util.Future
+
+val httpClient = Http.newService("localhost:9999")
+val futureOk = httpClient(Request()) // yields an empty Ok response
+```
+
+#### Filters
 Filters are also just effectively simple functions. Their purpose is to apply inject transformations or side-effects into the request processing chain and as such have 2 pairs of request/response generics (the first representing the "outer" pair, 
 the second representing the "Inner" pair):
 ```scala
@@ -33,6 +56,7 @@ trait Filter[ReqIn, RespOut, ReqOut, RespIn] {
 }
 ```
 In an HTTP context, examples of such operations are: 
+
 - checking the queries of an incoming request and immediately returning a BadRequest response if any are missing
 - adding caching headers to an outgoing response
 - transform the incoming request body into a JSON document to be 
@@ -41,8 +65,7 @@ In an HTTP context, examples of such operations are:
 Filters can easily be created by extending `com.twitter.finagle.Filter`, or just using the utility method `mk()`. Similar to composing functions, Filters can be chained together to provide reusable "blocks" of functionality
 and then combined with a Service:
 ```scala
-import com.twitter.finagle.Filter
-import com.twitter.finagle.Service
+import com.twitter.finagle.{Filter, Service}
 import com.twitter.util.Future
 
 val convert = Filter.mk[String, String, Int, Int] { 
@@ -52,6 +75,8 @@ val square = Filter.mk[Int, Int, Int, Int] {
   (in, next) => next(in * in) 
 }
 
-val futureSquareThenDouble: Service[String, String] = convert.andThen(square).andThen(Service.mk { i: Int => Future(i * 2)})
+val svc: Service[String, String] = convert
+                                    .andThen(square)
+                                    .andThen(Service.mk { i: Int => Future(i * 2)})
+val futureInt = svc("10") // yields 200
 ```
-
