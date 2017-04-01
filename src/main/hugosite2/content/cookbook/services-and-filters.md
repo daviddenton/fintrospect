@@ -6,7 +6,7 @@ categories = ["recipe"]
 
 At it's core, Finagle relies on 2 concepts for implementing HTTP services, `Service` and `Filter`. 
 
-#### Services
+## Services
 A Service is effectively just a simple function (although technically it's an abstract class with several utility methods) and represents the endpoint of a request processing chain. It is generic in it's input and output types:
 ```scala
 import com.twitter.util.Future
@@ -22,9 +22,11 @@ import com.twitter.util.Future
 val svc = Service.mk[String, Int] { in => Future(in.toInt * 2) }
 val futureInt = svc("1234") // yields 2468
 ```
+<br/>
 
-##### Usage in Finagle/Fintrospect
-The Service type is used symmetrically to provide both incoming HTTP endpoints and HTTP clients, and this is a really rather neat idea. Here is the only code required to create a simple HTTP server:
+#### Usage in Finagle/Fintrospect
+The Service type is used symmetrically to provide both incoming HTTP endpoints and HTTP clients, and this is a really rather neat idea. Here is the only code required to create a simple HTTP server using the Finagle API:
+
 ```scala
 import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http.{Request, Response, Status}
@@ -44,7 +46,7 @@ val httpClient = Http.newService("localhost:9999")
 val futureOk = httpClient(Request()) // yields an empty Ok response
 ```
 
-#### Filters
+## Filters
 Filters are also just effectively simple functions. Their purpose is to apply inject transformations or side-effects into the request processing chain and as such have 2 pairs of request/response generics (the first representing the "outer" pair, 
 the second representing the "Inner" pair):
 ```scala
