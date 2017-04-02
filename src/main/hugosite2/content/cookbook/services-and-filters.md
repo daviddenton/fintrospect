@@ -34,8 +34,8 @@ import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 
-val httpServer = Http.serve(":9999", Service.mk { in:Request => Future(Response(Status.Ok)) })
-val futureOk = httpServer(Request()) // eventually yields an empty Ok response
+val server = Http.serve(":9999", Service.mk { in:Request => Future(Response(Status.Ok)) })
+val futureOk = server(Request("/")) // eventually yields an empty Ok response
 ```
 
 And here is the equivalent for creating an HTTP client. See the [Client recipe](../http-clients) for more examples:
@@ -44,8 +44,8 @@ import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 
-val httpClient = Http.newService("localhost:9999")
-val futureOk = httpClient(Request()) // eventually yields an empty Ok response
+val client = Http.newService("pokeapi.co:80")
+val futureOk = client(Request("/")) // eventually yields some JSON from the pokemon api
 ```
 
 ## Filters
