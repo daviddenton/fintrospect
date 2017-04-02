@@ -18,17 +18,13 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          {{ if isset .Params "author" }}
-                                          By <a href="#">{{ .Params.author }}</a>
-                                          {{ end }}
-                                          {{ if isset .Params "categories" }}
-                                          {{ if gt (len .Params.categories) 0 }}
-                                          in <a href="{{ $.Site.BaseURL }}categories/{{ index .Params.categories 0 | urlize | lower }}">{{ index .Params.categories 0 }}</a>
-                                          {{ end }}
-                                          {{ end }}
-                                        </p>
+                                    <div class="clearfix required-modules">
+                                        <ul class="module-cloud">
+                                            required modules:
+                                            {{ range .Params.categories }}
+                                            <li><a href="/categories/{{ . }}">{{ . }}</a></li>
+                                            {{ end }}
+                                        </ul>
                                     </div>
                                     <p class="intro">{{ .Params.intro }}</p>
                                     <p class="read-more"><a href="{{ .Permalink }}" class="btn btn-template-main">Continue reading</a>

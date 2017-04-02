@@ -11,15 +11,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-9" id="cookbook-post">
-                    <div class="clearfix">
-                        requirements:
-                        <ul>
+                    <div class="clearfix required-modules">
+                        <ul class="module-cloud">
+                            required modules:
                             {{ range .Params.categories }}
-                            <li>{{ . }}</li>
+                            <li><a href="/categories/{{ . }}">{{ . }}</a></li>
                             {{ end }}
                         </ul>
-                        <p>
-                        </p>
                     </div>
                     <div id="post-content">
                         <p>
