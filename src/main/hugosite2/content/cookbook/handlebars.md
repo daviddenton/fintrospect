@@ -2,7 +2,7 @@
 title = "handlebars"
 tags = ["web", "templating", "handlebars"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala

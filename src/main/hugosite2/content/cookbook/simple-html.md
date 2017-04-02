@@ -2,7 +2,7 @@
 title = "html"
 tags = ["web", "html"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala

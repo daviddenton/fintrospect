@@ -2,7 +2,7 @@
 title = "oauth security"
 tags = ["security", "filter", "contract"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala

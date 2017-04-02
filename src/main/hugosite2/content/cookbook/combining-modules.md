@@ -2,7 +2,7 @@
 title = "combining modules"
 tags = ["module"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala

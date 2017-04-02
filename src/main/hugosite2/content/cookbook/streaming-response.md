@@ -2,7 +2,7 @@
 title = "streaming responses"
 tags = ["streaming", "finagle api"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala

@@ -2,7 +2,7 @@
 title = "msgpack"
 tags = ["msgpack", "message format"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala

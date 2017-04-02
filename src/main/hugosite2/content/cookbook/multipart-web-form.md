@@ -2,7 +2,7 @@
 title = "multipart web forms"
 tags = ["form", "web", "multipart", "contract"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala

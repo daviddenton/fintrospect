@@ -2,7 +2,7 @@
 title = "serving static content"
 tags = ["web", "static"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala

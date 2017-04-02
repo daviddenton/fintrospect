@@ -2,7 +2,7 @@
 title = "json"
 tags = ["json", "message format"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala

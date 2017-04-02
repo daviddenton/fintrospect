@@ -2,7 +2,7 @@
 title = "xml"
 tags = ["message format", "xml"]
 categories = ["recipe"]
-intro = "asd"
+intro = ""
 +++
 
 ```scala
