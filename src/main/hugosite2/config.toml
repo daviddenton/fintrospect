@@ -65,3 +65,8 @@ paginate = 10
 
 [params.features]
     enable = true
+
+[params.widgets]
+    categories = true
+    tags = true
+    search = true
