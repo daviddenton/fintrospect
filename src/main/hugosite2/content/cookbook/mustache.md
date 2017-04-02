@@ -2,6 +2,7 @@
 title = "mustache"
 tags = ["web", "templating", "mustache"]
 categories = ["recipe"]
+intro = "asd"
 +++
 
 ```scala

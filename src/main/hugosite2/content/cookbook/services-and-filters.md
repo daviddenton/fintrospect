@@ -2,6 +2,7 @@
 title = "services and filters"
 tags = ["server", "client", "service", "filter", "finagle api"]
 categories = ["recipe"]
+intro = "asd"
 +++
 
 At it's core, Finagle relies on 2 concepts for implementing HTTP services, `Service` and `Filter`. These are documented [elsewhere](#reading). but elow is a brief overview with code examples.

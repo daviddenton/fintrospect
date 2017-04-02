@@ -2,6 +2,7 @@
 title = "custom security"
 tags = ["security", "filter", "contract"]
 categories = ["recipe"]
+intro = "asd"
 +++
 
 ```scala

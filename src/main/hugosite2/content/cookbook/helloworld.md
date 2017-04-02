@@ -2,6 +2,7 @@
 title = "helloworld"
 tags = ["getting started"]
 categories = ["recipe"]
+intro = "asd"
 +++
 
 ```scala

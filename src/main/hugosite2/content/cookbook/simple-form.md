@@ -2,6 +2,7 @@
 title = "simple forms"
 tags = ["form", "web"]
 categories = ["recipe"]
+intro = "asd"
 +++
 
 ```scala

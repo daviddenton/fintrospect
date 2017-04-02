@@ -2,6 +2,7 @@
 title = "module filters"
 tags = ["module", "filter"]
 categories = ["recipe"]
+intro = "asd"
 +++
 
 ```scala
