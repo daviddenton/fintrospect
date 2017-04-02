@@ -4,10 +4,10 @@ tags = ["server", "client", "service", "filter", "finagle api"]
 categories = ["recipe"]
 +++
 
-At it's core, Finagle relies on 2 concepts for implementing HTTP services, `Service` and `Filter`. 
+At it's core, Finagle relies on 2 concepts for implementing HTTP services, `Service` and `Filter`. These are documented [elsewhere](#reading). but elow is a brief overview with code examples.
 
 ## Services
-A Service is effectively just a simple function (although technically it's an abstract class with several utility methods) and represents the endpoint of a request processing chain. It is generic in it's input and output types:
+A Service is effectively just a simple function (although technically it's an abstract class with several utility methods) that represents a service boundary (the endpoint of a request processing chain). It is generic in it's input and output types:
 ```scala
 import com.twitter.util.Future
 
@@ -20,12 +20,14 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 
 val svc = Service.mk[String, Int] { in => Future(in.toInt * 2) }
-val futureInt = svc("1234") // yields 2468
+val futureInt = svc("1234") // eventually yields 2468
 ```
 <br/>
 
 #### Usage in Finagle/Fintrospect
-The Service type is used symmetrically to provide both incoming HTTP endpoints and HTTP clients, and this is a really rather neat idea. Here is the only code required to create a simple HTTP server using the Finagle API:
+The Service API is used symmetrically to provide both incoming HTTP endpoints and HTTP clients.
+
+Here is the only code required to create a simple HTTP server using the Finagle API:
 
 ```scala
 import com.twitter.finagle.{Http, Service}
@@ -33,17 +35,17 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 
 val httpServer = Http.serve(":9999", Service.mk { in:Request => Future(Response(Status.Ok)) })
-val futureOk = httpServer(Request()) // yields an empty Ok response
+val futureOk = httpServer(Request()) // eventually yields an empty Ok response
 ```
 
-And here is the equivalent for HTTP clients:
+And here is the equivalent for creating an HTTP client. See the [Client recipe](../http-clients) for more examples:
 ```scala
 import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 
 val httpClient = Http.newService("localhost:9999")
-val futureOk = httpClient(Request()) // yields an empty Ok response
+val futureOk = httpClient(Request()) // eventually yields an empty Ok response
 ```
 
 ## Filters
@@ -80,5 +82,11 @@ val square = Filter.mk[Int, Int, Int, Int] {
 val svc: Service[String, String] = convert
                                     .andThen(square)
                                     .andThen(Service.mk { i: Int => Future(i * 2)})
-val futureInt = svc("10") // yields 200
+val futureInt = svc("10") // eventually yields 200
 ```
+
+## Further reading
+<a name="reading"></a>
+
+- Finagle Services & Filters [guide](https://twitter.github.io/finagle/guide/ServicesAndFilters.html)
+- Paper: ["Your server as a function"](https://monkey.org/~marius/funsrv.pdf)
