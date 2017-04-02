@@ -60,12 +60,6 @@ paginate = 10
 [Permalinks]
     cookbook = "/cookbook/:filename/"
 
-# Enable and disable widgets for the right sidebar
-[params.widgets]
-    categories = true
-    tags = true
-    search = true
-
 [params.carousel]
     enable = true
 

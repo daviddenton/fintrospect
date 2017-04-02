@@ -1,6 +1,3 @@
-{{ if .Site.Params.widgets.categories }}
-{{ if isset .Site.Taxonomies "categories" }}
-{{ if not (eq (len .Site.Taxonomies.categories) 0) }}
 <div class="panel panel-default sidebar-menu">
 
     <div class="panel-heading">
@@ -16,6 +13,3 @@
         </ul>
     </div>
 </div>
-{{ end }}
-{{ end }}
-{{ end }}
