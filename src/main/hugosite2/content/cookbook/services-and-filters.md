@@ -32,10 +32,13 @@ Here is the only code required to create a simple HTTP server using the Finagle 
 ```scala
 import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http.{Request, Response, Status}
-import com.twitter.util.Future
+import com.twitter.util.{Await, Future}
 
 val server = Http.serve(":9999", Service.mk { in:Request => Future(Response(Status.Ok)) })
-val futureOk = server(Request("/")) // eventually yields an empty Ok response
+
+Await.ready(server) // block forever
+
+// curl -v http://localhost:9999
 ```
 
 And here is the equivalent for creating an HTTP client. See the [Client recipe](../http-clients) for more examples:
