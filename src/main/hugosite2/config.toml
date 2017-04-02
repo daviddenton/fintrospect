@@ -2,7 +2,6 @@ baseurl = "http://fintrospect.io/"
 title = "fintrospect"
 languageCode = "en-us"
 googleAnalytics = ""
-theme = "hugo-universal-theme"
 defaultContentLanguage = "en"
 paginate = 10
 
