@@ -1,12 +1,12 @@
 +++
 title = "html"
 tags = ["web", "html"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
-// fintrospect-core
+
 object Simple_HTML_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

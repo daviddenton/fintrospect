@@ -1,17 +1,13 @@
 +++
 title = "full auto service wrappers"
 tags = ["circe", "auto", "marshalling", "json", "message format", "filter", "route", "auto"]
-categories = ["recipe"]
+categories = ["fintrospect-core", "fintrospect-circe"]
 intro = ""
 +++
 
 ```scala
-
-
 case class Profile(name: String, age: Option[Int])
 
-// fintrospect-core
-// fintrospect-circe
 object Full_Auto_Marshalling_Example extends App {
 
   import com.twitter.finagle.http.Method.Post

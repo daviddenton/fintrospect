@@ -1,14 +1,11 @@
 +++
 title = "mustache"
 tags = ["web", "templating", "mustache"]
-categories = ["recipe"]
+categories = ["fintrospect-core", "fintrospect-mustache"]
 intro = ""
 +++
 
 ```scala
-
-// fintrospect-core
-// fintrospect-mustache
 case class MustacheView(name: String, age: Int) extends io.fintrospect.templating.View
 
 object Mustache_Example extends App {

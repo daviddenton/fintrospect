@@ -1,12 +1,12 @@
 +++
 title = "module filters"
 tags = ["module", "filter"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
-// fintrospect-core
+
 object Module_Filters_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

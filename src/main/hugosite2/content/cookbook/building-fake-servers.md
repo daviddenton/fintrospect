@@ -1,12 +1,11 @@
 +++
 title = "building fake servers"
 tags = ["fake", "contract", "testing", "client"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
-// fintrospect-core
 object Building_Fake_Servers_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

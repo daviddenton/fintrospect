@@ -1,13 +1,13 @@
 +++
 title = "serving static content"
 tags = ["web", "static"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
+
 object Serving_Static_Content_Example extends App {
 
   import com.twitter.finagle.Http

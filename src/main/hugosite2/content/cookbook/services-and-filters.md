@@ -1,7 +1,7 @@
 +++
 title = "services and filters"
 tags = ["server", "client", "service", "filter", "finagle api"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 

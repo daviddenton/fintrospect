@@ -2,12 +2,11 @@
 title = "accepting multi body types"
 menu = "accepting multi body types"
 tags = ["content negotiation"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
-// fintrospect-core
 object Accepting_Multiple_Body_Types_Example extends App {
 
   import argo.jdom.JsonRootNode

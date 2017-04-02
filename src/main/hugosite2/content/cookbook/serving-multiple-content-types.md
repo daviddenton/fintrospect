@@ -1,13 +1,13 @@
 +++
 title = "serving multiple content types"
 tags = ["content negotiation"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
+
 object Serving_Multiple_Content_Types_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

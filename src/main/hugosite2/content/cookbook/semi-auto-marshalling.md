@@ -1,7 +1,7 @@
 +++
 title = "semi-auto body marshalling"
 tags = ["body", "contract", "json", "filter", "auto"]
-categories = ["recipe"]
+categories = ["fintrospect-core", "fintrospect-circe"]
 intro = ""
 +++
 
@@ -9,8 +9,6 @@ intro = ""
 
 case class Person(name: String, age: Option[Int])
 
-// fintrospect-core
-// fintrospect-circe
 object Semi_Auto_Marshalling_Example extends App {
 
   import com.twitter.finagle.http.Method.Post

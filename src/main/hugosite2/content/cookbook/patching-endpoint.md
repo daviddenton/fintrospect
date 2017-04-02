@@ -1,16 +1,13 @@
 +++
 title = "patching endpoint"
 tags = ["circe", "patch", "route"]
-categories = ["recipe"]
+categories = ["fintrospect-core", "fintrospect-circe"]
 intro = ""
 +++
 
 ```scala
-
 case class Employee(name: String, age: Option[Int])
 
-// fintrospect-core
-// fintrospect-circe
 object Patching_Endpoint_Example extends App {
 
   import com.twitter.finagle.http.Method.Post

@@ -1,12 +1,12 @@
 +++
 title = "simple forms"
 tags = ["form", "web"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
-// fintrospect-core
+
 object Simple_Form_Example extends App {
 
   import com.twitter.finagle.http.Method.Post

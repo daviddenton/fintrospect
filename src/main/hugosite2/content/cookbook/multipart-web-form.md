@@ -1,13 +1,13 @@
 +++
 title = "multipart web forms"
 tags = ["form", "web", "multipart", "contract"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
+
 object MultiPart_Web_Form_Example extends App {
 
   import com.twitter.finagle.http.Method.Post

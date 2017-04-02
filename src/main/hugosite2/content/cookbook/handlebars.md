@@ -1,13 +1,11 @@
 +++
 title = "handlebars"
 tags = ["web", "templating", "handlebars"]
-categories = ["recipe"]
+categories = ["fintrospect-core", "fintrospect-handlebars"]
 intro = ""
 +++
 
 ```scala
-// fintrospect-core
-// fintrospect-handlebars
 case class HandlebarsView(name: String, age: Int) extends io.fintrospect.templating.View
 
 object Handlebars_Example extends App {

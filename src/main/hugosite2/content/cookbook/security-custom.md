@@ -1,13 +1,13 @@
 +++
 title = "custom security"
 tags = ["security", "filter", "contract"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
+
 object Security_Custom_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

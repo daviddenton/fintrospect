@@ -1,13 +1,13 @@
 +++
 title = "streaming responses"
 tags = ["streaming", "finagle api"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
+
 object Streaming_Response_Example extends App {
 
   import argo.jdom.JsonRootNode

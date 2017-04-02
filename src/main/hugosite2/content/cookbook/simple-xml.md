@@ -1,13 +1,13 @@
 +++
 title = "xml"
 tags = ["message format", "xml"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
+
 object Simple_XML_Example extends App {
 
   import com.twitter.finagle.http.Method.Post

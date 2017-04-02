@@ -1,7 +1,7 @@
 +++
 title = "msgpack"
 tags = ["msgpack", "message format"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 

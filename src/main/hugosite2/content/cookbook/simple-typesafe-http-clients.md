@@ -1,13 +1,13 @@
 +++
 title = "typesafe http clients"
 tags = ["contract", "client"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
+
 object Simple_Typesafe_HTTP_Clients_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

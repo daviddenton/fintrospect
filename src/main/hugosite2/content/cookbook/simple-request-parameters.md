@@ -1,13 +1,13 @@
 +++
 title = "simple request parameters"
 tags = ["getting started", "request", "contract"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
+
 object Simple_Request_Parameters_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

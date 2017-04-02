@@ -1,13 +1,12 @@
 +++
 title = "dynamic path elements"
 tags = ["path", "basics", "contract", "route"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
 object Dynamic_Paths_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

@@ -1,13 +1,11 @@
 +++
 title = "combining modules"
 tags = ["module"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
-
-// fintrospect-core
 object Combining_Modules_Example extends App {
 
   import com.twitter.finagle.http.Method.Get

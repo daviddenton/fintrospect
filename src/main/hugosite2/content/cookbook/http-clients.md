@@ -1,11 +1,9 @@
 +++
 title = "http clients"
 tags = ["client", "ssl", "secure", "finagle api", "getting started"]
-categories = ["recipe"]
-intro = ""
+categories = ["fintrospect-core"]
+intro = "Unlike traditional HTTP client libraries, Finagle HTTP clients are configured to only talk to a single service using one or more hosts that are known at creation time of that client."
 +++
-
-Unlike traditional HTTP client libraries, **Finagle HTTP clients are configured to only talk to a single service** using one or more hosts that are known at creation time of that client. 
 
 ### Simple HTTP
 ```scala

@@ -1,7 +1,7 @@
 +++
 title = "helloworld"
 tags = ["getting started"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 

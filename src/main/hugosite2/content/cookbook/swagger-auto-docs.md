@@ -1,13 +1,13 @@
 +++
 title = "auto-documentation with swagger"
 tags = ["swagger", "openapi", "docs"]
-categories = ["recipe"]
+categories = ["fintrospect-core"]
 intro = ""
 +++
 
 ```scala
 
-// fintrospect-core
+
 object Swagger_Auto_Docs_Example extends App {
 
   import argo.jdom.JsonRootNode
