@@ -1,0 +1,4 @@
+weight: 3
+name: "multi-format"
+icon: "fa fa-exchange"
+description: "Core support for JSON and XML. Optional modules for most popular JSON libraries."

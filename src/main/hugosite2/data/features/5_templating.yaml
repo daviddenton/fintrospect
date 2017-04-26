@@ -1,0 +1,4 @@
+weight: 5
+name: "templating"
+icon: "fa fa-code"
+description: "Pluggable support for popular templating libraries, all with Hot-Reload."

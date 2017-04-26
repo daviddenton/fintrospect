@@ -1,0 +1,43 @@
+/* your styles go here */
+
+.box-image-text .image {
+  min-height: 200px;
+  max-height: 200px;
+}
+
+.box-simple {
+  min-height: 230px;
+}
+
+ul.module-cloud {
+  list-style: none;
+  padding-left: 0;
+}
+ul.module-cloud li {
+  display: inline-block;
+}
+ul.module-cloud li a {
+  display: inline-block;
+  padding: 5px;
+  border: solid 1px #eeeeee;
+  border-radius: 0;
+  color: #38a7bb;
+  margin: 5px 5px 5px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  font-size: 12px;
+}
+ul.module-cloud li a:hover {
+  color: #38a7bb;
+  text-decoration: none;
+  border-color: #38a7bb;
+}
+
+.required-modules {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 300;
+  font-size: 12px;
+}

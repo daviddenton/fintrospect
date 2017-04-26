@@ -1,0 +1,4 @@
+weight: 4
+name: "documenting"
+icon: "fa fa-file-text-o"
+description: "Runtime generation of API documentation in Swagger format with JSON Schema models."

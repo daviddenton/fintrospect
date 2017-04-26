@@ -1,0 +1,4 @@
+weight: 8
+name: "lightweight"
+icon: "fa fa-balance-scale"
+description: "Core library has only 3 dependencies. No Scalaz, Cats or Shapeless."
