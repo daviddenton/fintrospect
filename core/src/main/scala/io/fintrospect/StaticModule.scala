@@ -20,7 +20,7 @@ object StaticModule {
     * @param moduleFilter
     * @return
     */
-  def apply(basePath: Path, resourceLoader: ResourceLoader = ResourceLoader.Classpath("/"), moduleFilter: Filter[Request, Response, Request, Response] = Filter.identity) = {
+  def apply(basePath: Path, resourceLoader: ResourceLoader = ResourceLoader.Classpath(), moduleFilter: Filter[Request, Response, Request, Response] = Filter.identity) = {
     new StaticModule(basePath, resourceLoader, moduleFilter)
   }
 }

@@ -1,8 +1,8 @@
 package io.fintrospect.filters
 
+import java.time.Duration
 import java.time.Duration.ofSeconds
-import java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME
-import java.time.{Duration, ZonedDateTime}
+import java.time.Instant.ofEpochMilli
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request, Response, Status}
@@ -79,11 +79,11 @@ class ResponseFiltersTest extends FunSpec with Matchers {
     }
 
     describe("Add date header") {
-      val clock = fixed()
+      val clock = fixed(ofEpochMilli(0))
 
       it("works") {
-        val response = result(AddDate[Request](clock)(Request(), Service.mk { req: Request => Future(Response()) }))
-        headerOf("Date")(response) shouldBe RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock))
+        val response = result(AddDate[Request](clock)(Request(), Service.mk { _: Request => Future(Response()) }))
+        headerOf("Date")(response) shouldBe "Thu, 1 Jan 1970 00:00:00 GMT"
       }
     }
 
