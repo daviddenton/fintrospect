@@ -2,6 +2,9 @@
 echo Publishing site for v$1
 set -e
 
+export PATH=~/dev/packages/node/node-v5.1.0-darwin-x64/bin:$PATH
+
+npm run setup
 npm run cleanSite
 rm -rf /tmp/site
 git clone git@github.com:fintrospect/fintrospect.github.io.git /tmp/site

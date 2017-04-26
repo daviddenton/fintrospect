@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "bower": "^1.7.2",
-    "harp": "^0.20.1"
+    "harp": "^0.20.1",
+    "node-sass": "^4.5.2"
   },
   "scripts": {
     "cleanSite": "rm -rf target/www",
