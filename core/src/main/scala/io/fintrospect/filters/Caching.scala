@@ -1,11 +1,12 @@
 package io.fintrospect.filters
 
-import java.security.MessageDigest
+import java.security.MessageDigest.getInstance
 import java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME
 import java.time.{Clock, Duration, ZonedDateTime}
 
 import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
+import com.twitter.io.Buf.ByteArray.Owned.extract
 import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names._
 
@@ -87,6 +88,7 @@ object Caching {
       }
     }
 
+
     /**
       * Hash algo stolen from http://stackoverflow.com/questions/26423662/scalatra-response-hmac-calulation
       * By default, only applies when the status code of the response is < 400. This is overridable.
@@ -97,7 +99,7 @@ object Caching {
           .map {
             rsp => {
               if (predicate(rsp)) {
-                val hashedBody = MessageDigest.getInstance("MD5").digest(rsp.contentString.getBytes).map("%02x".format(_)).mkString
+                val hashedBody = getInstance("MD5").digest(extract(rsp.content)).map("%02x".format(_)).mkString
                 rsp.headerMap(ETAG) = hashedBody
               }
               rsp
