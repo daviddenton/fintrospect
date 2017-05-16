@@ -6,6 +6,15 @@
     "description": "module description"
   },
   "basePath": "/",
+  "tags": [
+    {
+      "name": "tag1"
+    },
+    {
+      "name": "tag2",
+      "description": "description of tag"
+    }
+  ],
   "paths": {
     "/basepath/welcome/{firstName}/bertrand/{secondName}": {
       "get": {
@@ -60,7 +69,7 @@
     "/basepath/echo/{message}": {
       "post": {
         "tags": [
-          "/basepath"
+          "tag2"
         ],
         "summary": "a post endpoint",
         "description": null,
@@ -116,7 +125,7 @@
       },
       "get": {
         "tags": [
-          "/basepath"
+          "tag1"
         ],
         "summary": "summary of this route",
         "description": "some rambling description of what this thing actually does",

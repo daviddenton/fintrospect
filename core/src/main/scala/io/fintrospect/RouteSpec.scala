@@ -15,7 +15,8 @@ case class RouteSpec private(summary: String,
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
                              requestParams: Seq[QueryOrHeader[_]],
-                             responses: Seq[ResponseSpec]) {
+                             responses: Seq[ResponseSpec],
+                             tags: Seq[TagInfo]) {
 
   private[fintrospect] def <--?(request: Request): Extraction[Request] = {
     val contents = Map[Any, Extraction[_]]((requestParams ++ body).map(r => (r, r <--? request)): _*)
@@ -67,6 +68,16 @@ case class RouteSpec private(summary: String,
     */
   def returning(code: (Status, String), example: String): RouteSpec = copy(responses = new ResponseSpec(code, Option(example)) +: responses)
 
+  /**
+    * Add tags to this routes. Provides the ability to group routes by tag in a generated schema.
+    */
+  def taggedWith(tag: String): RouteSpec = copy(tags = tags :+ TagInfo(tag))
+
+  /**
+    * Add tags to this routes. Provides the ability to group routes by tag in a generated schema.
+    */
+  def taggedWith(tags: TagInfo*): RouteSpec = copy(tags = this.tags ++ tags)
+
   def at(method: Method) = UnboundRoute(this, method)
 }
 
@@ -74,5 +85,5 @@ object RouteSpec {
   type QueryOrHeader[T] = HasParameters with Extractor[Request, _] with Rebindable[Request, _, Binding]
 
   def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
-    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil)
+    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil, Nil)
 }
