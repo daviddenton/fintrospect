@@ -44,6 +44,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
             .returning(ResponseSpec.json(Status.Forbidden -> "no way jose", obj("aString" -> Argo.JsonFormat.string("a message of some kind"))))
             .taking(Query.required.int("query"))
             .body(customBody)
+            .taggedWith("tag1")
             .taggedWith(TagInfo("tag2", "description of tag"), TagInfo("tag2", "description of tag"))
             .at(Post) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
