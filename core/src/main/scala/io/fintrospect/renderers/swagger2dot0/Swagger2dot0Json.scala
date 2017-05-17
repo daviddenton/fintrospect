@@ -54,11 +54,17 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       (p, exampleOption, render(p, exampleOption))
     })
 
+    val tags = {
+      val routeTags = route.routeSpec.tags
+      if (routeTags.isEmpty) List(TagInfo(basePath.toString)) // providing a default tag if none were specified
+      else routeTags
+    }
+
     val allParams = route.pathParams.flatten ++ route.routeSpec.requestParams
     val nonBodyParams = allParams.flatMap(render(_, Option.empty))
 
     val jsonRoute = route.method.toString().toLowerCase -> obj(
-      "tags" -> array(string(basePath.toString)),
+      "tags" -> array(tags.map(_.name).map(string)),
       "summary" -> string(route.routeSpec.summary),
       "description" -> route.routeSpec.description.map(string).getOrElse(nullNode()),
       "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
@@ -96,6 +102,22 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
   private def render(apiInfo: ApiInfo): JsonNode =
     obj("title" -> string(apiInfo.title), "version" -> string(apiInfo.version), "description" -> string(Option(apiInfo.description).getOrElse("")))
 
+  private def renderTags(tagInfo: Seq[TagInfo]): JsonNode = array {
+    tagInfo.map { info =>
+      val fields =
+        List("name" -> string(info.name)) ++
+          info.description.map(d => "description" -> string(d))
+
+      obj(fields)
+    }
+  }
+
+  // Note that having duplicate tag names will break Swagger rendering
+  private def fetchTags(routes: Seq[ServerRoute[_, _]]): Seq[TagInfo] =
+    routes.flatMap { route =>
+      route.routeSpec.tags
+    }.distinct.sortBy(_.name)
+
   override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = {
     val pathsAndDefinitions = routes
       .groupBy(_.describeFor(basePath))
@@ -111,6 +133,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "swagger" -> string("2.0"),
       "info" -> render(apiInfo),
       "basePath" -> string("/"),
+      "tags" -> renderTags(fetchTags(routes)),
       "paths" -> obj(pathsAndDefinitions.fields),
       "securityDefinitions" -> render(security),
       "definitions" -> obj(pathsAndDefinitions.definitions)

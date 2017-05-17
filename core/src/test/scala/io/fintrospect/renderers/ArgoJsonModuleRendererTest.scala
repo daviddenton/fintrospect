@@ -11,7 +11,7 @@ import io.fintrospect.formats.Argo.JsonFormat.{number, obj, parse}
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.util.{Echo, ExtractionError}
-import io.fintrospect.{ApiKey, ResponseSpec, RouteModule, RouteSpec}
+import io.fintrospect._
 import org.scalatest.{FunSpec, Matchers}
 
 import scala.io.Source
@@ -34,6 +34,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
             .taking(Header.optional.string("header", "description of the header"))
             .returning(ResponseSpec.json(Status.Ok -> "peachy", obj("anAnotherObject" -> obj("aNumberField" -> number(123)))))
             .returning(Status.Forbidden -> "no way jose")
+            .taggedWith("tag1")
             .at(Get) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
           RouteSpec("a post endpoint")
@@ -42,6 +43,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
             .returning(ResponseSpec.json(Status.Forbidden -> "no way jose", obj("aString" -> Argo.JsonFormat.string("a message of some kind"))))
             .taking(Query.required.int("query"))
             .body(customBody)
+            .taggedWith(TagInfo("tag2", "description of tag"))
             .at(Post) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
           RouteSpec("a friendly endpoint")
@@ -52,7 +54,6 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
       val actual = Await.result(module.toService(Request("/basepath"))).contentString
-      //                  println(actual)
       parse(actual) shouldBe expected
     }
 
