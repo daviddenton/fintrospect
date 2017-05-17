@@ -13,6 +13,9 @@
     {
       "name": "tag2",
       "description": "description of tag"
+    },
+    {
+      "name": "tag3"
     }
   ],
   "paths": {
@@ -125,7 +128,8 @@
       },
       "get": {
         "tags": [
-          "tag1"
+          "tag1",
+          "tag3"
         ],
         "summary": "summary of this route",
         "description": "some rambling description of what this thing actually does",

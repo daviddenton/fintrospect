@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.17.1
+- Fix tag ordering for routes in Swagger renderer.
+
 ## 14.17.0
 - Implemented #42 - Support for custom tags in Swagger documentation rendering. Thanks to @ncreep for the PR.
 - Bumped Circe and Json4s versions

@@ -57,7 +57,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     val tags = {
       val routeTags = route.routeSpec.tags
       if (routeTags.isEmpty) List(TagInfo(basePath.toString)) // providing a default tag if none were specified
-      else routeTags
+      else routeTags.toList.sortBy(_.name)
     }
 
     val allParams = route.pathParams.flatten ++ route.routeSpec.requestParams
