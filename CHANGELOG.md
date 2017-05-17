@@ -7,6 +7,10 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.17.0
+- Implemented #42 - Support for custom tags in Swagger documentation rendering. Thanks to @ncreep for the PR.
+- Bumped Circe and Json4s versions
+
 ## 14.16.0
 - Upgrade Finagle to v6.44.0
 
