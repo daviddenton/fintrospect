@@ -72,6 +72,7 @@
     "/basepath/echo/{message}": {
       "post": {
         "tags": [
+          "tag1",
           "tag2"
         ],
         "summary": "a post endpoint",
