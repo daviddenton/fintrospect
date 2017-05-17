@@ -112,11 +112,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     }
   }
 
-  // Note that having duplicate tag names will break Swagger rendering
-  private def fetchTags(routes: Seq[ServerRoute[_, _]]): Seq[TagInfo] =
-    routes.flatMap { route =>
-      route.routeSpec.tags
-    }.distinct.sortBy(_.name)
+  private def fetchTags(routes: Seq[ServerRoute[_, _]]) = routes.flatMap(_.routeSpec.tags).sortBy(_.name)
 
   override def description(basePath: Path, security: Security, routes: Seq[ServerRoute[_, _]]): Response = {
     val pathsAndDefinitions = routes

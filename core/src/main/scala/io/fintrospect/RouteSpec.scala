@@ -4,7 +4,7 @@ import com.twitter.finagle.http.{Method, Request, Response, Status}
 import io.fintrospect.RouteSpec.QueryOrHeader
 import io.fintrospect.formats.{Argo, JsonLibrary}
 import io.fintrospect.parameters._
-import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
+import io.fintrospect.util.{Extraction, Extractor}
 
 /**
   * Encapsulates the specification of an HTTP endpoint, for use by either a Finagle server or client.
@@ -16,7 +16,7 @@ case class RouteSpec private(summary: String,
                              body: Option[Body[_]],
                              requestParams: Seq[QueryOrHeader[_]],
                              responses: Seq[ResponseSpec],
-                             tags: Seq[TagInfo]) {
+                             tags: Set[TagInfo]) {
 
   private[fintrospect] def <--?(request: Request): Extraction[Request] = {
     val contents = Map[Any, Extraction[_]]((requestParams ++ body).map(r => (r, r <--? request)): _*)
@@ -71,7 +71,7 @@ case class RouteSpec private(summary: String,
   /**
     * Add tags to this routes. Provides the ability to group routes by tag in a generated schema.
     */
-  def taggedWith(tag: String): RouteSpec = copy(tags = tags :+ TagInfo(tag))
+  def taggedWith(tag: String): RouteSpec = taggedWith(TagInfo(tag))
 
   /**
     * Add tags to this routes. Provides the ability to group routes by tag in a generated schema.
@@ -85,5 +85,5 @@ object RouteSpec {
   type QueryOrHeader[T] = HasParameters with Extractor[Request, _] with Rebindable[Request, _, Binding]
 
   def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
-    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil, Nil)
+    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil, Set.empty)
 }

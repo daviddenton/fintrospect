@@ -6,12 +6,12 @@ import com.twitter.finagle.http.path.Root
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.{Await, Future}
 import io.fintrospect.ContentTypes.{APPLICATION_ATOM_XML, APPLICATION_JSON, APPLICATION_SVG_XML}
+import io.fintrospect._
 import io.fintrospect.formats.Argo
 import io.fintrospect.formats.Argo.JsonFormat.{number, obj, parse}
 import io.fintrospect.parameters._
 import io.fintrospect.util.HttpRequestResponseUtil.statusAndContentFrom
 import io.fintrospect.util.{Echo, ExtractionError}
-import io.fintrospect._
 import org.scalatest.{FunSpec, Matchers}
 
 import scala.io.Source
@@ -43,7 +43,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
             .returning(ResponseSpec.json(Status.Forbidden -> "no way jose", obj("aString" -> Argo.JsonFormat.string("a message of some kind"))))
             .taking(Query.required.int("query"))
             .body(customBody)
-            .taggedWith(TagInfo("tag2", "description of tag"))
+            .taggedWith(TagInfo("tag2", "description of tag"), TagInfo("tag2", "description of tag"))
             .at(Post) / "echo" / Path.string("message") bindTo ((s: String) => Echo(s)))
         .withRoute(
           RouteSpec("a friendly endpoint")
