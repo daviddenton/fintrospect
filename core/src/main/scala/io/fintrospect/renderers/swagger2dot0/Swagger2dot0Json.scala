@@ -136,7 +136,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
       "tags" -> renderTags(fetchTags(routes)),
       "paths" -> obj(pathsAndDefinitions.fields),
       "securityDefinitions" -> render(security),
-      "definitions" -> obj(pathsAndDefinitions.definitions)
+      "definitions" -> obj(pathsAndDefinitions.definitions.toSet)
     ))
   }
 }

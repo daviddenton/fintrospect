@@ -9,6 +9,7 @@ The main API is stable, but expect some amount of breaking changes around major 
 
 ## 14.17.3
 - Fix for #39. Routes can no longer contain duplicate response codes.
+- Fix for #39. Swagger renderer was producing duplicate model definitions when same object was returned in multiple responses.
 
 ## 14.17.2
 - Fix tag duplication for routes in Swagger renderer.

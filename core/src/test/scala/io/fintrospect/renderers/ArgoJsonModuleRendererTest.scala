@@ -33,6 +33,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
             .producing(APPLICATION_JSON)
             .taking(Header.optional.string("header", "description of the header"))
             .returning(ResponseSpec.json(Status.Ok -> "peachy", obj("anAnotherObject" -> obj("aNumberField" -> number(123)))))
+            .returning(ResponseSpec.json(Status.Accepted -> "peachy", obj("anAnotherObject" -> obj("aNumberField" -> number(123)))))
             .returning(Status.Forbidden -> "no way jose")
             .taggedWith("tag3")
             .taggedWith("tag1")
@@ -56,6 +57,7 @@ abstract class ArgoJsonModuleRendererTest() extends FunSpec with Matchers {
       val expected = parse(Source.fromInputStream(this.getClass.getResourceAsStream(s"$name.json")).mkString)
 
       val actual = Await.result(module.toService(Request("/basepath"))).contentString
+//      println(Argo.JsonFormat.pretty(parse(actual)))
       parse(actual) shouldBe expected
     }
 

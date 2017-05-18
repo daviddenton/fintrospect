@@ -159,6 +159,12 @@
             "description": "no way jose",
             "schema": null
           },
+          "202": {
+            "description": "peachy",
+            "schema": {
+              "$ref": "#/definitions/object730416582"
+            }
+          },
           "200": {
             "description": "peachy",
             "schema": {
@@ -201,10 +207,10 @@
         }
       }
     },
-    "object-126230811": {
+    "object-945611728": {
       "type": "object",
       "properties": {
-        "notAStringField": {
+        "aNumberField": {
           "type": "integer"
         }
       }
@@ -217,10 +223,10 @@
         }
       }
     },
-    "object-945611728": {
+    "object-126230811": {
       "type": "object",
       "properties": {
-        "aNumberField": {
+        "notAStringField": {
           "type": "integer"
         }
       }
