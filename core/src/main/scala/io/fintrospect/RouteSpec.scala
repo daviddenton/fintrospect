@@ -15,7 +15,7 @@ case class RouteSpec private(summary: String,
                              consumes: Set[ContentType],
                              body: Option[Body[_]],
                              requestParams: Seq[QueryOrHeader[_]],
-                             responses: Seq[ResponseSpec],
+                             responses: Map[Status, ResponseSpec],
                              tags: Set[TagInfo]) {
 
   private[fintrospect] def <--?(request: Request): Extraction[Request] = {
@@ -46,12 +46,12 @@ case class RouteSpec private(summary: String,
   /**
     * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
     */
-  def returning(newResponse: ResponseSpec): RouteSpec = copy(responses = newResponse +: responses)
+  def returning(newResponse: ResponseSpec): RouteSpec = copy(responses = responses + ((newResponse.status, newResponse)))
 
   /**
     * Register one or more possible responses which could be produced by this route.
     */
-  def returning(codes: (Status, String)*): RouteSpec = copy(responses = responses ++ codes.map(c => new ResponseSpec(c, null)))
+  def returning(codesAndReasons: (Status, String)*): RouteSpec = copy(responses = responses ++ codesAndReasons.map(c => c._1 -> new ResponseSpec(c, null)))
 
   /**
     * Register an exact possible response which could be produced by this route. Will be used for schema generation if content is JSON.
@@ -61,12 +61,14 @@ case class RouteSpec private(summary: String,
   /**
     * Register a possible response which could be produced by this route, with an example JSON body (used for schema generation).
     */
-  def returning[T](code: (Status, String), example: T, jsonLib: JsonLibrary[T, _] = Argo): RouteSpec = copy(responses = ResponseSpec.json(code, example, jsonLib) +: responses)
+  def returning[T](codeAndReason: (Status, String), example: T, jsonLib: JsonLibrary[T, _] = Argo): RouteSpec = {
+    copy(responses = responses + (codeAndReason._1 -> ResponseSpec.json(codeAndReason, example, jsonLib)))
+  }
 
   /**
     * Register a possible response which could be produced by this route, with an example body (used for schema generation).
     */
-  def returning(code: (Status, String), example: String): RouteSpec = copy(responses = new ResponseSpec(code, Option(example)) +: responses)
+  def returning(codeAndReason: (Status, String), example: String): RouteSpec = copy(responses = responses + (codeAndReason._1 -> new ResponseSpec(codeAndReason, Option(example))))
 
   /**
     * Add tags to this routes. Provides the ability to group routes by tag in a generated schema.
@@ -85,5 +87,5 @@ object RouteSpec {
   type QueryOrHeader[T] = HasParameters with Extractor[Request, _] with Rebindable[Request, _, Binding]
 
   def apply(summary: String = "<unknown>", description: String = null): RouteSpec =
-    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Nil, Set.empty)
+    RouteSpec(summary, Option(description), Set.empty, Set.empty, None, Nil, Map.empty, Set.empty)
 }

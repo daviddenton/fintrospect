@@ -45,7 +45,7 @@ case class Swagger2dot0Json(apiInfo: ApiInfo) extends ModuleRenderer {
     )
 
   private def render(basePath: Path, security: Security, route: ServerRoute[_, _]): FieldAndDefinitions = {
-    val FieldsAndDefinitions(responses, responseDefinitions) = render(route.routeSpec.responses)
+    val FieldsAndDefinitions(responses, responseDefinitions) = render(route.routeSpec.responses.values.toList.sortBy(_.status.code))
 
     val bodyParameters = route.routeSpec.body.flatMap(p => Option(p.toList)).getOrElse(Nil)
 

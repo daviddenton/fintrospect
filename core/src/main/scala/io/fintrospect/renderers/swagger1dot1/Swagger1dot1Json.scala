@@ -39,8 +39,7 @@ class Swagger1dot1Json extends ModuleRenderer {
       "produces" -> array(route.routeSpec.produces.map(m => string(m.value))),
       "consumes" -> array(route.routeSpec.consumes.map(m => string(m.value))),
       "parameters" -> array(allParams.flatMap(render)),
-      "errorResponses" -> array(route.routeSpec.responses
-        .filter(_.status.code > 399)
+      "errorResponses" -> array(route.routeSpec.responses.values.filter(_.status.code > 399)
         .map(resp => obj("code" -> number(resp.status.code), "reason" -> string(resp.description))))
     )
   }
