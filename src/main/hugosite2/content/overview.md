@@ -3,9 +3,9 @@ title = "overview"
 sidebar = "false"
 +++
 
-Fintrospect is a library that adds an intelligent HTTP routing layer to the 
+Fintrospect is a Scala web-framework with an intelligent HTTP routing layer based on the 
 <a href="http://twitter.github.io/finagle/">Finagle</a> RPC framework from Twitter. Via a shared contract, it provides a simple way to 
-implement both server endpoints and HTTP clients which are:
+implement fast webservice endpoints and HTTP clients which are:
 
 - ```Type-safe``` : auto-marshalls all request parameters/bodies into the correct types (including primitives + JSON/XML etc...)
 - ```Auto-validating``` : the presence of required and optional request parameters and bodies are checked before entering service-layer code
