@@ -7,7 +7,7 @@
 <a href="https://bintray.com/daviddenton/maven/fintrospect/view?source=watch"><img height="45" src="https://www.bintray.com/docs/images/bintray_badge_color.png"/></a>&nbsp;&nbsp;&nbsp;
 </h1>
 
-Fintrospect is a Scala web-framework with an intelligent HTTP routing layer based on the 
+Fintrospect is a Scala web-framework with an intelligent HTTP routing layer, based on the 
 <a href="http://twitter.github.io/finagle/">Finagle</a> RPC framework from Twitter. Via a shared contract, it provides a simple way to 
 implement fast webservice endpoints and HTTP clients which are:
 
