@@ -70,14 +70,14 @@ lazy val gson = project
   .settings(moduleName := "fintrospect-gson")
   .settings(description := "GSON JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.8.0")
+  .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.8.1")
 
 lazy val jackson = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-jackson")
   .settings(description := "Jackson JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.4")
+  .settings(libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.0")
 
 lazy val json4s = project
   .settings(baseSettings)
@@ -92,14 +92,14 @@ lazy val play = project
   .settings(moduleName := "fintrospect-play")
   .settings(description := "Play JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.0-M1")
+  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.3")
 
 lazy val spray = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-spray")
   .settings(description := "Spray JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "io.spray" %% "spray-json" % "1.3.2")
+  .settings(libraryDependencies += "io.spray" %% "spray-json" % "1.3.3")
 
 lazy val msgpack = project
   .settings(baseSettings)
@@ -122,7 +122,7 @@ lazy val mustache = project
   .settings(moduleName := "fintrospect-mustache")
   .settings(description := "Mustache templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % "0.9.4")
+  .settings(libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % "0.9.5")
 
 // other
 lazy val examples = project.in(file("."))
@@ -131,4 +131,4 @@ lazy val examples = project.in(file("."))
   .settings(moduleName := "fintrospect-examples")
   .aggregate(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
   .dependsOn(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
-  .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.3.0")
+  .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.6.45")
