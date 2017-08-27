@@ -33,7 +33,7 @@ lazy val baseSettings = Seq(
   credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
 )
 
-val finagleVersion = "6.45.0"
+val finagleVersion = "7.0.0"
 val json4sVersion = "3.5.2"
 val circeVersion = "0.8.0"
 
