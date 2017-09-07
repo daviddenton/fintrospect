@@ -42,7 +42,7 @@ object LibraryApp extends App {
   println("See the service description at: http://localhost:8080/library")
 
   Await.ready(
-    Http.serve(":8080", globalCorsFilter.andThen(libraryModule.combine(statusModule).toService))
+    Http.serve(":8080", globalCorsFilter.andThen(libraryModule.andThen(statusModule).toService))
   )
 }
 

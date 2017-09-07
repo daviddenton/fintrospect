@@ -33,13 +33,16 @@ object Module {
 
 trait Module {
 
-  /**
-    * Finaliser for the module builder to combine itself with another module into a Partial Function which matches incoming requests.
-    */
+  @deprecated("use andThen() instead", "14.19.1")
   def combine(that: Module): Module = Module.combine(this, that)
 
   /**
-    * Finaliser for the module builder to convert itself to a Finagle Service. Use this function when there is only one module.
+    * Compose 2 modules together. If this module does not match a Request, fallback to the next in the queue.
+    */
+  def andThen(that: Module): Module = Module.combine(this, that)
+
+  /**
+    * Finaliser for the module builder to convert itself to a Finagle Service.
     */
   def toService: Service[Request, Response] = Module.toService(serviceBinding)
 

@@ -48,9 +48,9 @@ Http.serve(":8080",
     .toService
 )
 ```
-Modules with different root contexts can also be combined with one another and then converted to a `Service`:
+Modules with different root contexts can also be composed with one another and then converted to a `Service`:
 ```scala
-RouteModule(Root / "a").combine(RouteModule(Root / "b")).toService
+RouteModule(Root / "a").andThen(RouteModule(Root / "b")).toService
 ```
 
 #### self-describing Module APIs

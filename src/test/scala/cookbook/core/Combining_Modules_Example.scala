@@ -17,7 +17,7 @@ object Combining_Modules_Example extends App {
   val childModule: Module = RouteModule(Root / "child").withRoute(route)
   val rootModule: Module = RouteModule(Root).withRoute(route)
 
-  ready(Http.serve(":9999", childModule.combine(rootModule).toService))
+  ready(Http.serve(":9999", childModule.andThen(rootModule).toService))
 }
 
 //curl -v http://localhost:9999/child
