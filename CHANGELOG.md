@@ -8,6 +8,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
 
+## 14.20.0
+- Upgrade Finagle to new version (with new versioning scheme)
+
 ## 14.19.1
 - Replace `combine` method with `andThen` for clarity and consistency with the Filter API
 
