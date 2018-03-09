@@ -3,7 +3,6 @@ package io.fintrospect.formats
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets.UTF_8
 
-import com.google.common.net.HttpHeaders
 import com.twitter.concurrent.AsyncStream
 import com.twitter.finagle.http.{Cookie, Response, Status}
 import com.twitter.io.Buf.Utf8

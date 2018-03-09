@@ -33,9 +33,9 @@ lazy val baseSettings = Seq(
   credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
 )
 
-val finagleVersion = "17.10.0"
-val json4sVersion = "3.5.2"
-val circeVersion = "0.8.0"
+val finagleVersion = "18.1.0"
+val json4sVersion = "3.5.3"
+val circeVersion = "0.9.1"
 
 lazy val core = project
   .settings(baseSettings)
@@ -43,6 +43,7 @@ lazy val core = project
   .settings(libraryDependencies ++= Seq(
     "net.sourceforge.argo" % "argo" % "3.40",
     "com.twitter" %% "finagle-http" % finagleVersion,
+    "com.google.guava" % "guava" % "23.0",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
     "org.scalatest" %% "scalatest" % "3.0.0" % "test"
   ))
@@ -53,7 +54,7 @@ lazy val argonaut = project
   .settings(moduleName := "fintrospect-argonaut")
   .settings(description := "Argonaut JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.2-RC2")
+  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.2.1")
 
 lazy val circe = project
   .settings(baseSettings)
@@ -99,7 +100,7 @@ lazy val spray = project
   .settings(moduleName := "fintrospect-spray")
   .settings(description := "Spray JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "io.spray" %% "spray-json" % "1.3.3")
+  .settings(libraryDependencies += "io.spray" %% "spray-json" % "1.3.4")
 
 lazy val msgpack = project
   .settings(baseSettings)
@@ -131,4 +132,4 @@ lazy val examples = project.in(file("."))
   .settings(moduleName := "fintrospect-examples")
   .aggregate(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
   .dependsOn(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
-  .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "0.6.45")
+  .settings(libraryDependencies += "com.github.finagle" %% "finagle-oauth2" % "17.12.0")

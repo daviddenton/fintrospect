@@ -3,7 +3,6 @@ package io.fintrospect.filters
 import java.nio.charset.StandardCharsets.ISO_8859_1
 import java.util.Base64
 
-import com.google.common.net.HttpHeaders
 import com.twitter.finagle.Filter
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
@@ -14,6 +13,7 @@ import io.fintrospect.renderers.ModuleRenderer
 import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
 import io.fintrospect.{ContentType, ContentTypes}
+import io.netty.handler.codec.http.HttpHeaderNames
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{ACCEPT, AUTHORIZATION, HOST}
 
 /**
@@ -71,7 +71,7 @@ object RequestFilters {
     */
   def AddUserAgent[T](user: String): Filter[Request, T, Request, T] = Filter.mk[Request, T, Request, T] {
     (req, svc) => {
-      req.headerMap(HttpHeaders.USER_AGENT) = user
+      req.headerMap(HttpHeaderNames.USER_AGENT.toString) = user
       svc(req)
     }
   }
@@ -108,4 +108,9 @@ object RequestFilters {
       }
     }
   }
+}
+
+
+object A extends App {
+  println(HttpHeaderNames.USER_AGENT.toString)
 }
