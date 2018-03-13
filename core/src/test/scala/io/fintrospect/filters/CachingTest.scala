@@ -98,7 +98,7 @@ class CachingTest extends FunSpec with Matchers {
       it("adds when predicate succeeds") {
         val response = Response()
         response.contentString = "bob"
-        result(Caching.Response.AddETag[Request](_ => true)(Request(), Service.mk { req => Future(response) })).headerMap("ETag") shouldBe "9f9d51bc70ef21ca5c14f307980a29d8"
+        result(Caching.Response.AddETag[Request](_ => true)(Request(), Service.mk { req => Future(response) })).headerMap("ETag") shouldBe """"9f9d51bc70ef21ca5c14f307980a29d8""""
       }
 
       it("does not add when predicate fails") {

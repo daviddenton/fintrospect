@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 14.21.2
+- Fix #46 - ETags should be wrapped in quotes.
+
 ## 14.21.1
 - Upgrade Finagle to new version
 

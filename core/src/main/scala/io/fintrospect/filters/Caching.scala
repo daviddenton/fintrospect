@@ -100,7 +100,7 @@ object Caching {
             rsp => {
               if (predicate(rsp)) {
                 val hashedBody = getInstance("MD5").digest(extract(rsp.content)).map("%02x".format(_)).mkString
-                rsp.headerMap(ETAG) = hashedBody
+                rsp.headerMap(ETAG) = s""""$hashedBody""""
               }
               rsp
             }
