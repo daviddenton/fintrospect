@@ -1,7 +1,7 @@
 package io.fintrospect.parameters
 
 import com.twitter.finagle.http._
-import com.twitter.finagle.http.exp.Multipart
+import com.twitter.finagle.http.exp.{Multipart, MultipartDecoder}
 import io.fintrospect.ContentTypes.MULTIPART_FORM
 import io.fintrospect.util.{Extraction, ExtractionError, ExtractionFailed, Extractor}
 
@@ -32,7 +32,7 @@ case class MultiPartFormBody(formContents: Seq[FormField[_] with Extractor[Form,
   override def <--?(message: Message): Extraction[Form] = message match {
     case r: Request =>
       Try {
-        val multipart = r.multipart.get
+        val multipart = MultipartDecoder.decode(r).get
         validator(formContents, Form(multipart.attributes, filterOutFilesWithNoFilename(multipart)))
       } match {
         case Success(form) => extractor(formContents, form)
