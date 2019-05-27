@@ -12,7 +12,7 @@ class MultipartFileTest extends FunSpec with Matchers {
   describe("OnDiskMultiPartFile") {
     it("converts toFileElement") {
       val tempFile = File.createTempFile("temp", "file")
-      Files.asCharSink(tempFile, UTF_8).write("hello bob")
+      Files.write("hello bob", tempFile, UTF_8)
       tempFile.deleteOnExit()
       Bufs.asUtf8String(OnDiskMultiPartFile("file", tempFile, None).toFileElement("hello").content) shouldBe "hello bob"
     }
