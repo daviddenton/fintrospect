@@ -6,7 +6,7 @@ import java.lang.reflect.{Field, Method}
 import com.github.mustachejava.Iteration
 import com.github.mustachejava.reflect.ReflectionObjectHandler
 
-import scala.collection.JavaConversions.mapAsJavaMap
+import scala.collection.JavaConverters
 import scala.reflect.ClassTag
 import scala.runtime.BoxedUnit
 
@@ -17,7 +17,7 @@ class ScalaObjectHandler extends ReflectionObjectHandler {
   override def checkField(member: Field) {}
 
   override def coerce(value: AnyRef) = value match {
-    case m: collection.Map[_, _] => mapAsJavaMap(m)
+    case m: collection.Map[_, _] => JavaConverters.mapAsJavaMap(m)
     case _: BoxedUnit => null
     case Some(some: AnyRef) => coerce(some)
     case None => null
