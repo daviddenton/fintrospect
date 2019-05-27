@@ -1,4 +1,0 @@
-weight: 2
-name: "extensible"
-icon: "fa fa-arrows-alt"
-description: "Define custom extractions for de-marshaling your own types."

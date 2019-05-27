@@ -1,6 +1,0 @@
-name: "circe"
-type: "json"
-url: "https://circe.github.io/circe/"
-features:
-  - case class marshalling
-  - patch endpoint decoding

@@ -1,4 +1,0 @@
-weight: 10
-name: "test friendly"
-icon: "fa fa-check-square-o"
-description: "Routes are testable in or out of container. Easily create embeddable fake servers."

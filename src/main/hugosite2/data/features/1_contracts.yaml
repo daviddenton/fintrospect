@@ -1,4 +1,0 @@
-weight: 1
-name: "contracts"
-icon: "fa fa-handshake-o"
-description: "Define and reuse self-validating, typesafe HTTP contracts for both clients and servers."
