@@ -4,7 +4,7 @@ import java.io.OutputStream
 
 import com.twitter.concurrent.AsyncStream
 import com.twitter.io.{Buf, Reader}
-import org.jboss.netty.buffer.ChannelBuffer
+import io.netty.buffer.ByteBuf
 
 /**
   * Magnet to convert content types (such as String, Buf, custom JSON types etc) to a common type that
@@ -32,8 +32,8 @@ object ResponseContentMagnet {
   /**
     * Convert ChannelBuffer to a ResponseBuilderMagnet for building responses
     */
-  implicit def channelBufferToMagnet[T](channelBuffer: ChannelBuffer): ResponseContentMagnet[T] = new ResponseContentMagnet[T] {
-    override def apply(b: ResponseBuilder[T]) = b.withContent(channelBuffer)
+  implicit def channelBufferToMagnet[T](bytebuf: ByteBuf): ResponseContentMagnet[T] = new ResponseContentMagnet[T] {
+    override def apply(b: ResponseBuilder[T]) = b.withContent(bytebuf)
   }
 
   /**
@@ -46,7 +46,7 @@ object ResponseContentMagnet {
   /**
     * Convert Reader to a ResponseBuilderMagnet for building responses
     */
-  implicit def readerToMagnet[T](reader: Reader): ResponseContentMagnet[T] = new ResponseContentMagnet[T] {
+  implicit def readerToMagnet[T](reader: Reader[Buf]): ResponseContentMagnet[T] = new ResponseContentMagnet[T] {
     override def apply(b: ResponseBuilder[T]) = b.withContent(reader)
   }
 

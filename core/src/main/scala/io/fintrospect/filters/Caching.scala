@@ -8,7 +8,6 @@ import com.twitter.finagle.http.{Method, Request, Response}
 import com.twitter.finagle.{Filter, Service, SimpleFilter}
 import com.twitter.io.Buf.ByteArray.Owned.extract
 import com.twitter.util.Future
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names._
 
 /**
   * Useful filters for applying Cache-Controls to request/responses
@@ -35,7 +34,7 @@ object Caching {
   object Request {
     def AddIfModifiedSince[T](clock: Clock, maxAge: Duration) = Filter.mk[Request, T, Request, T] {
       (req, svc) => {
-        req.headerMap(IF_MODIFIED_SINCE) = RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock).minus(maxAge))
+        req.headerMap("If-Modified-Since") = RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock).minus(maxAge))
         svc(req)
       }
     }
@@ -65,7 +64,7 @@ object Caching {
       * For example you could combine this with a MaxAge for everything >= 400
       */
     def NoCache(predicate: Response => Boolean = _.statusCode < 400): Filter[Request, Response, Request, Response] = new CacheFilter(predicate) {
-      override def headersFor(response: Response) = Map(CACHE_CONTROL -> "private, must-revalidate", EXPIRES -> "0")
+      override def headersFor(response: Response) = Map("Cache-Control" -> "private, must-revalidate", "Expires" -> "0")
     }
 
     /**
@@ -73,12 +72,12 @@ object Caching {
       */
     def MaxAge(clock: Clock, maxAge: Duration, predicate: Response => Boolean = _.statusCode < 400): Filter[Request, Response, Request, Response] = new CacheFilter(predicate) {
       override def headersFor(response: Response) = Map(
-        CACHE_CONTROL -> Seq("public", MaxAgeTtl(maxAge).toHeaderValue).mkString(", "),
-        EXPIRES -> RFC_1123_DATE_TIME.format(now(response).plusSeconds(maxAge.getSeconds)))
+        "Cache-Control" -> Seq("public", MaxAgeTtl(maxAge).toHeaderValue).mkString(", "),
+        "Expires" -> RFC_1123_DATE_TIME.format(now(response).plusSeconds(maxAge.getSeconds)))
 
       private def now(response: Response): ZonedDateTime = {
         try {
-          response.headerMap.get(DATE)
+          response.headerMap.get("Date")
             .map(RFC_1123_DATE_TIME.parse)
             .map(ZonedDateTime.from)
             .getOrElse(ZonedDateTime.now(clock))
@@ -100,7 +99,7 @@ object Caching {
             rsp => {
               if (predicate(rsp)) {
                 val hashedBody = getInstance("MD5").digest(extract(rsp.content)).map("%02x".format(_)).mkString
-                rsp.headerMap(ETAG) = s""""$hashedBody""""
+                rsp.headerMap("Etag") = s""""$hashedBody""""
               }
               rsp
             }
@@ -126,10 +125,10 @@ object Caching {
       }
 
       private def addDefaultCacheHeadersIfAbsent(response: Response): Response = {
-        addDefaultHeaderIfAbsent(response, CACHE_CONTROL,
+        addDefaultHeaderIfAbsent(response, "Cache-Control",
           Seq("public", defaultCacheTimings.maxAge.toHeaderValue, defaultCacheTimings.staleWhenRevalidateTtl.toHeaderValue, defaultCacheTimings.staleIfErrorTtl.toHeaderValue).mkString(", "))
-        addDefaultHeaderIfAbsent(response, EXPIRES, RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock).plus(defaultCacheTimings.maxAge.value)))
-        addDefaultHeaderIfAbsent(response, VARY, "Accept-Encoding")
+        addDefaultHeaderIfAbsent(response, "Expires", RFC_1123_DATE_TIME.format(ZonedDateTime.now(clock).plus(defaultCacheTimings.maxAge.value)))
+        addDefaultHeaderIfAbsent(response, "Vary", "Accept-Encoding")
         response
       }
     }

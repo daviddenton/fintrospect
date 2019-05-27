@@ -4,7 +4,6 @@ import com.twitter.finagle.http.Message
 import com.twitter.io.Buf.ByteArray.Shared
 import io.fintrospect.util.ExtractionError.Invalid
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed}
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}
 
@@ -27,8 +26,8 @@ case class UniBody[T](inDescription: String, spec: BodySpec[T],
 
     override def -->(value: T) = Seq(new RequestBinding(this, t => {
       val content = spec.serialize(value)
-      t.headerMap.add(Names.CONTENT_TYPE, spec.contentType.value)
-      t.headerMap.add(Names.CONTENT_LENGTH, content.length.toString)
+      t.headerMap.add("Content-type", spec.contentType.value)
+      t.headerMap.add("Content-length", content.length.toString)
       t.content = content
       t
     }))

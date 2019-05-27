@@ -14,7 +14,6 @@ import io.fintrospect.renderers.simplejson.SimpleJson
 import io.fintrospect.util.{Extracted, Extraction, ExtractionFailed, Extractor}
 import io.fintrospect.{ContentType, ContentTypes}
 import io.netty.handler.codec.http.HttpHeaderNames
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names.{ACCEPT, AUTHORIZATION, HOST}
 
 /**
   * These filters operate on Requests (pre-flight)
@@ -51,7 +50,7 @@ object RequestFilters {
     */
   def AddAccept[T](contentTypes: ContentType*): Filter[Request, T, Request, T] = Filter.mk[Request, T, Request, T] {
     (req, svc) => {
-      contentTypes.foreach(c => req.headerMap.add(ACCEPT, c.value))
+      contentTypes.foreach(c => req.headerMap.add("Accept", c.value))
       svc(req)
     }
   }
@@ -61,7 +60,7 @@ object RequestFilters {
     */
   def AddHost[T](authority: Authority): Filter[Request, T, Request, T] = Filter.mk[Request, T, Request, T] {
     (req, svc) => {
-      req.headerMap(HOST) = authority.toString
+      req.headerMap("Host") = authority.toString
       svc(req)
     }
   }
@@ -83,7 +82,7 @@ object RequestFilters {
     Filter.mk[Request, Response, Request, Response] {
       (req, svc) => {
         val base64Credentials = Base64.getEncoder.encodeToString(s"${credentials.username}:${credentials.password}".getBytes(ISO_8859_1))
-        req.headerMap(AUTHORIZATION) = "Basic " + base64Credentials.trim
+        req.headerMap("Authorization") = "Basic " + base64Credentials.trim
         svc(req)
       }
     }

@@ -9,8 +9,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import io.fintrospect.Headers
 import io.fintrospect.formats.{AbstractResponseBuilder, Argo}
 import io.fintrospect.util.{Extracted, Extraction, Extractor}
-import org.apache.commons.lang.time.FastDateFormat.getInstance
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names.DATE
+import org.apache.commons.lang3.time.FastDateFormat.getInstance
 
 /**
   * These filters operate on Responses (post-flight)
@@ -41,7 +40,7 @@ object ResponseFilters {
     (req, svc) => {
       svc(req)
         .map(Response => {
-          Response.headerMap(DATE) = dateFormat.format(ZonedDateTime.now(clock).toInstant.toEpochMilli)
+          Response.headerMap("Date") = dateFormat.format(ZonedDateTime.now(clock).toInstant.toEpochMilli)
           Response
         })
     }
