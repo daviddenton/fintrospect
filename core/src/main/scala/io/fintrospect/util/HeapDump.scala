@@ -29,7 +29,7 @@ class HeapDump(processIdentifier: String = "", clock: Clock = Clock.systemUTC())
 
     val response = HttpResponse(ContentType("application/x-heap-dump"))
       .withHeaders("Content-disposition" -> ("inline; filename=\"" + dumpFileName + ".hprof\""))
-      .withContent(Readers.newFileReader(dumpFile)).build()
+      .withContent(Readers.newFileReader(dumpFile, 1024)).build()
 
     Future(response).ensure(dumpFile.delete())
   }

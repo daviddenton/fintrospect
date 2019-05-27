@@ -5,7 +5,6 @@ import java.net.{URLDecoder, URLEncoder}
 import com.twitter.finagle.http._
 import io.fintrospect.ContentTypes.APPLICATION_FORM_URLENCODED
 import io.fintrospect.util.{Extraction, ExtractionError, ExtractionFailed, Extractor}
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names
 
 import scala.util.{Failure, Success, Try}
 
@@ -37,8 +36,8 @@ case class UrlEncodedFormBody(formContents: Seq[FormField[_] with Extractor[Form
   override def -->(value: Form): Seq[RequestBinding] =
     Seq(new RequestBinding(null, req => {
       val contentString = encode(value)
-      req.headerMap.add(Names.CONTENT_TYPE, contentType.value)
-      req.headerMap.add(Names.CONTENT_LENGTH, contentString.length.toString)
+      req.headerMap.add("Content-type", contentType.value)
+      req.headerMap.add("Content-length", contentString.length.toString)
       req.contentString = contentString
       req
     })) ++ formContents.map(f => new FormFieldBinding(f, ""))

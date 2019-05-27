@@ -9,7 +9,7 @@ import com.twitter.io.Buf.Utf8
 import com.twitter.io.{Buf, Reader}
 import com.twitter.util.Future
 import io.fintrospect.ContentType
-import org.jboss.netty.buffer.ChannelBuffer
+import io.netty.buffer.ByteBuf
 
 import scala.language.implicitConversions
 
@@ -50,7 +50,7 @@ class ResponseBuilder[T](toFormat: T => Buf,
     this
   }
 
-  def withContent(reader: Reader): ResponseBuilder[T] = {
+  def withContent(reader: Reader[Buf]): ResponseBuilder[T] = {
     val newResponse = Response(response.version, response.status, reader)
     response.headerMap.foreach(kv => newResponse.headerMap.add(kv._1, kv._2))
     response = newResponse
@@ -67,8 +67,8 @@ class ResponseBuilder[T](toFormat: T => Buf,
     this
   }
 
-  def withContent(channelBuffer: ChannelBuffer): ResponseBuilder[T] = {
-    response.setContentString(channelBuffer.toString(UTF_8))
+  def withContent(byteBuf: ByteBuf): ResponseBuilder[T] = {
+    response.setContentString(byteBuf.toString(UTF_8))
     this
   }
 

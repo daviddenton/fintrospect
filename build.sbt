@@ -33,7 +33,7 @@ lazy val baseSettings = Seq(
   credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
 )
 
-val finagleVersion = "18.8.0"
+val finagleVersion = "19.5.0"
 val json4sVersion = "3.5.3"
 val circeVersion = "0.9.3"
 
@@ -41,6 +41,7 @@ lazy val core = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-core")
   .settings(libraryDependencies ++= Seq(
+    "org.apache.commons" % "commons-lang3" % "3.9",
     "net.sourceforge.argo" % "argo" % "3.40",
     "com.twitter" %% "finagle-http" % finagleVersion,
     "com.google.guava" % "guava" % "23.0",

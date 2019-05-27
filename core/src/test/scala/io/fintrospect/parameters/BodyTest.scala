@@ -12,7 +12,6 @@ import io.fintrospect.formats.Argo.JsonFormat.{obj, pretty, string}
 import io.fintrospect.util.ExtractionError.Invalid
 import io.fintrospect.util.{Extracted, ExtractionError, ExtractionFailed}
 import io.fintrospect.{BrokenContract, ContentType, ContentTypes, RequestBuilder}
-import org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE
 import org.scalatest.{FunSpec, Matchers}
 
 
@@ -82,7 +81,7 @@ class BodyTest extends FunSpec with Matchers {
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
       request.contentString shouldBe "aString="
-      request.headerMap(CONTENT_TYPE) shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
+      request.headerMap("Content-type") shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
       deserializedForm shouldBe inputForm
     }
@@ -95,7 +94,7 @@ class BodyTest extends FunSpec with Matchers {
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
       request.contentString shouldBe "date=1976-08-31"
-      request.headerMap(CONTENT_TYPE) shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
+      request.headerMap("Content-type") shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
       deserializedForm shouldBe inputForm
     }
@@ -107,7 +106,7 @@ class BodyTest extends FunSpec with Matchers {
       val bindings = formBody --> inputForm
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
-      request.headerMap(CONTENT_TYPE) shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
+      request.headerMap("Content-type") shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
       val deserializedForm = formBody from request
       deserializedForm shouldBe inputForm
     }
@@ -136,7 +135,7 @@ class BodyTest extends FunSpec with Matchers {
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
       request.contentString shouldBe "aString=asd"
-      request.headerMap(CONTENT_TYPE) shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
+      request.headerMap("Content-type") shouldBe ContentTypes.APPLICATION_FORM_URLENCODED.value
       formBody from request shouldBe new Form(inputForm.fields, Map.empty, Seq(ExtractionError(anotherString, "Custom")))
     }
   }
@@ -150,7 +149,7 @@ class BodyTest extends FunSpec with Matchers {
       val bindings = formBody --> inputForm
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
-      request.headerMap(CONTENT_TYPE).startsWith(MULTIPART_FORM.value) shouldBe true
+      request.headerMap("Content-type").startsWith(MULTIPART_FORM.value) shouldBe true
       val deserializedForm = formBody from request
       date <-- deserializedForm shouldBe LocalDate.of(1976, 8, 31)
       Bufs.asUtf8String((file <-- deserializedForm).asInstanceOf[InMemoryMultiPartFile].content) shouldBe "bob"
@@ -194,7 +193,7 @@ class BodyTest extends FunSpec with Matchers {
       val bindings = formBody --> inputForm
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
-      request.headerMap(CONTENT_TYPE).startsWith(MULTIPART_FORM.value) shouldBe true
+      request.headerMap("Content-type").startsWith(MULTIPART_FORM.value) shouldBe true
       formBody from request shouldBe new Form(inputForm.fields, Map.empty, Seq(ExtractionError(file, "Custom")))
     }
   }
@@ -209,7 +208,7 @@ class BodyTest extends FunSpec with Matchers {
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
       request.contentString shouldBe "{\"bob\":\"builder\"}"
-      request.headerMap(CONTENT_TYPE) shouldBe ContentTypes.APPLICATION_JSON.value
+      request.headerMap("Content-type") shouldBe ContentTypes.APPLICATION_JSON.value
       val deserializedJson = jsonBody <-- request
       deserializedJson shouldBe inputJson
     }
@@ -235,7 +234,7 @@ class BodyTest extends FunSpec with Matchers {
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
       request.contentString shouldBe "<field>value</field>"
-      request.headerMap(CONTENT_TYPE) shouldBe ContentTypes.APPLICATION_XML.value
+      request.headerMap("Content-type") shouldBe ContentTypes.APPLICATION_XML.value
       val deserializedXml = xmlBody <-- request
       deserializedXml shouldBe inputXml
     }
@@ -261,7 +260,7 @@ class BodyTest extends FunSpec with Matchers {
       val request = bindings.foldLeft(RequestBuilder(Get)) { (requestBuild, next) => next(requestBuild) }.build()
 
       request.content shouldBe input
-      request.headerMap(CONTENT_TYPE) shouldBe contentType.value
+      request.headerMap("Content-type") shouldBe contentType.value
       val deserializedBinary = binaryBody <-- request
       deserializedBinary shouldBe input
     }
