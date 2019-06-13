@@ -2,7 +2,7 @@ package io.fintrospect.parameters
 
 import java.time.LocalDate
 
-import argo.jdom.JsonRootNode
+import argo.jdom.JsonNode
 import com.twitter.finagle.http.Method.Get
 import com.twitter.finagle.http.Request
 import com.twitter.io.{Buf, Bufs}
@@ -201,7 +201,7 @@ class BodyTest extends FunSpec with Matchers {
   describe("json") {
     it("should serialize and deserialize into the request") {
 
-      val jsonBody = Body.json[JsonRootNode]()
+      val jsonBody = Body.json[JsonNode]()
       val inputJson = obj("bob" -> string("builder"))
       val bindings = jsonBody --> inputJson
 
