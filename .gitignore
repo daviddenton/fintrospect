@@ -19,6 +19,10 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 
+
+# bloop
+.bloop
+
 # site
 node_modules
 bower_components
