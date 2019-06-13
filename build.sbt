@@ -1,9 +1,11 @@
+import Dependencies._
+
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
   version := "15.0.2",
-  scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.12.3", "2.11.8"),
+  scalaVersion := "2.12.8",
+  crossScalaVersions := Seq("2.12.8", "2.11.8"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   resolvers += "JCenter" at "https://jcenter.bintray.com",
   scalacOptions := Seq(
@@ -33,20 +35,16 @@ lazy val baseSettings = Seq(
   credentials += Credentials(Path.userHome / ".sonatype" / ".credentials")
 )
 
-val finagleVersion = "19.5.0"
-val json4sVersion = "3.6.6"
-val circeVersion = "0.11.1"
-
 lazy val core = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-core")
   .settings(libraryDependencies ++= Seq(
-    "org.apache.commons" % "commons-lang3" % "3.9",
-    "net.sourceforge.argo" % "argo" % "3.40",
+    "org.apache.commons" % "commons-lang3" % commonsLang3Version,
+    "net.sourceforge.argo" % "argo" % argoVersion,
     "com.twitter" %% "finagle-http" % finagleVersion,
-    "com.google.guava" % "guava" % "27.1-jre",
-    "org.scala-lang.modules" %% "scala-xml" % "1.2.0",
-    "org.scalatest" %% "scalatest" % "3.0.7" % "test"
+    "com.google.guava" % "guava" % guavaVersion,
+    "org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion,
+    "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
   ))
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
 
@@ -55,7 +53,7 @@ lazy val argonaut = project
   .settings(moduleName := "fintrospect-argonaut")
   .settings(description := "Argonaut JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % "6.2.3")
+  .settings(libraryDependencies += "io.argonaut" %% "argonaut" % argonautVersion)
 
 lazy val circe = project
   .settings(baseSettings)
@@ -72,14 +70,14 @@ lazy val gson = project
   .settings(moduleName := "fintrospect-gson")
   .settings(description := "GSON JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.google.code.gson" % "gson" % "2.8.5")
+  .settings(libraryDependencies += "com.google.code.gson" % "gson" % gsonVersion)
 
 lazy val jackson = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-jackson")
   .settings(description := "Jackson JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.9")
+  .settings(libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion)
 
 lazy val json4s = project
   .settings(baseSettings)
@@ -94,14 +92,14 @@ lazy val play = project
   .settings(moduleName := "fintrospect-play")
   .settings(description := "Play JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % "2.7.3")
+  .settings(libraryDependencies += "com.typesafe.play" %% "play-json" % playJsonVersion)
 
 lazy val spray = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-spray")
   .settings(description := "Spray JSON library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "io.spray" %% "spray-json" % "1.3.5")
+  .settings(libraryDependencies += "io.spray" %% "spray-json" % sprayJsonVersion)
 
 lazy val msgpack = project
   .settings(baseSettings)
@@ -117,19 +115,19 @@ lazy val handlebars = project
   .settings(moduleName := "fintrospect-handlebars")
   .settings(description := "Handlebars templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "io.github.daviddenton" %% "handlebars-scala-fork" % "2.2.6" exclude("org.slf4j", "slf4j-simple"))
+  .settings(libraryDependencies += "io.github.daviddenton" %% "handlebars-scala-fork" % handlebarsScalaForkVersion exclude("org.slf4j", "slf4j-simple"))
 
 lazy val mustache = project
   .settings(baseSettings)
   .settings(moduleName := "fintrospect-mustache")
   .settings(description := "Mustache templating library support for Fintrospect")
   .dependsOn(core % "compile->test")
-  .settings(libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % "0.9.6")
+  .settings(libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % mustacheCompilerVersion)
 
 // other
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
-  .settings(unidocSettings: _*)
+ // .settings(unidocSettings: _*)
   .settings(moduleName := "fintrospect-examples")
   .aggregate(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
   .dependsOn(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
