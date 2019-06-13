@@ -2,13 +2,13 @@ package examples.extended
 
 import java.lang.Integer.parseInt
 
-import argo.jdom.JsonNode
+import argo.jdom.{JsonNode, JsonRootNode}
 import io.fintrospect.formats.Argo.JsonFormat.{number, obj, string}
 
 import scala.util.Try
 
 case class Book(title: String, author: String, pages: Int) {
-  def toJson: JsonNode = obj("title" -> string(title), "pages" -> number(pages), "author" -> obj("name" -> string(author)))
+  def toJson: JsonRootNode = obj("title" -> string(title), "pages" -> number(pages), "author" -> obj("name" -> string(author)))
 }
 
 object Book {
