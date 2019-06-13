@@ -3,7 +3,7 @@ package cookbook.core
 // fintrospect-core
 object Accepting_Multiple_Body_Types_Example extends App {
 
-  import argo.jdom.JsonRootNode
+  import argo.jdom.JsonNode
   import com.twitter.finagle.http.Method.Post
   import com.twitter.finagle.http.path.Root
   import com.twitter.finagle.http.{Request, Response}
@@ -15,7 +15,7 @@ object Accepting_Multiple_Body_Types_Example extends App {
 
   import scala.xml.Elem
 
-  val json: Body[JsonRootNode] = Body.json()
+  val json: Body[JsonNode] = Body.json()
 
   val echoJson: Service[Request, Response] = Service.mk[Request, Response] { req =>
     import io.fintrospect.formats.Argo.ResponseBuilder._

@@ -3,7 +3,7 @@ package cookbook.core
 // fintrospect-core
 object Streaming_Response_Example extends App {
 
-  import argo.jdom.JsonRootNode
+  import argo.jdom.JsonNode
   import com.twitter.concurrent.AsyncStream
   import com.twitter.finagle.http.Method.Get
   import com.twitter.finagle.http.path.Root
@@ -21,7 +21,7 @@ object Streaming_Response_Example extends App {
 
   def ints(i: Int): AsyncStream[Int] = i +:: AsyncStream.fromFuture(sleep(fromSeconds(1))(timer)).flatMap(_ => ints(i + 1))
 
-  def jsonStream: AsyncStream[JsonRootNode] = ints(0).map(i => obj("number" -> number(i)))
+  def jsonStream: AsyncStream[JsonNode] = ints(0).map(i => obj("number" -> number(i)))
 
   val count: Service[Request, Response] = Service.mk[Request, Response] { req => Ok(jsonStream) }
 

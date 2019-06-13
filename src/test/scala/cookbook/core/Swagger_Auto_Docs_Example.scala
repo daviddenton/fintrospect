@@ -3,7 +3,7 @@ package cookbook.core
 // fintrospect-core
 object Swagger_Auto_Docs_Example extends App {
 
-  import argo.jdom.JsonRootNode
+  import argo.jdom.JsonNode
   import com.twitter.finagle.http.Method.Post
   import com.twitter.finagle.http.filter.Cors
   import com.twitter.finagle.http.filter.Cors.HttpFilter
@@ -20,11 +20,11 @@ object Swagger_Auto_Docs_Example extends App {
   import io.fintrospect.renderers.swagger2dot0.{ApiInfo, Swagger2dot0Json}
   import io.fintrospect.{ApiKey, Module, RouteModule, RouteSpec, ServerRoute}
 
-  def buildResponse(id: Int, sent: JsonRootNode) = obj("id" -> number(id), "sent" -> sent)
+  def buildResponse(id: Int, sent: JsonNode) = obj("id" -> number(id), "sent" -> sent)
 
-  val exampleBody: JsonRootNode = array(obj("lastName" -> string("Jane")), obj("name" -> string("Jim")))
-  val exampleResponse: JsonRootNode = buildResponse(222, exampleBody)
-  val sentDocument: Body[JsonRootNode] = Body.json("family description", exampleBody)
+  val exampleBody: JsonNode = array(obj("lastName" -> string("Jane")), obj("name" -> string("Jim")))
+  val exampleResponse: JsonNode = buildResponse(222, exampleBody)
+  val sentDocument: Body[JsonNode] = Body.json("family description", exampleBody)
 
   def svc(id: Int): Service[Request, Response] = Service.mk[Request, Response] { req =>
     Ok(buildResponse(id, sentDocument <-- req))

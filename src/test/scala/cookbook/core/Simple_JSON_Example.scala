@@ -6,7 +6,7 @@ object Simple_JSON_Example extends App {
 
   import java.time.ZonedDateTime
 
-  import argo.jdom.JsonRootNode
+  import argo.jdom.JsonNode
   import com.twitter.finagle.http.Method.Post
   import com.twitter.finagle.http.path.Root
   import com.twitter.finagle.http.{Request, Response}
@@ -17,11 +17,11 @@ object Simple_JSON_Example extends App {
   import io.fintrospect.parameters.Body
   import io.fintrospect.{Module, RouteModule, RouteSpec, ServerRoute}
 
-  val json: Body[JsonRootNode] = Body.json()
+  val json: Body[JsonNode] = Body.json()
 
   val echo: Service[Request, Response] = Service.mk[Request, Response] { req =>
-    val requestJson: JsonRootNode = json <-- req
-    val responseJson: JsonRootNode = obj(
+    val requestJson: JsonNode = json <-- req
+    val responseJson: JsonNode = obj(
       "posted" -> requestJson,
       "time" -> string(ZonedDateTime.now().toString)
     )
