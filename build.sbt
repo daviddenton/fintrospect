@@ -128,7 +128,7 @@ lazy val mustache = project
 // other
 lazy val examples = project.in(file("."))
   .settings(baseSettings)
- // .settings(unidocSettings: _*)
+  .enablePlugins(ScalaUnidocPlugin)
   .settings(moduleName := "fintrospect-examples")
   .aggregate(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
   .dependsOn(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
