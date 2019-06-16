@@ -65,7 +65,7 @@ object ParameterSpec {
 
   def int() = ParameterSpec[Int](IntegerParamType, _.toInt, _.toString)
 
-  def integer() = ParameterSpec[Integer](IntegerParamType, new Integer(_), _.toString)
+  def integer() = ParameterSpec[Integer](IntegerParamType, i => Integer.parseInt(i), _.toString)
 
   def json[T](jsonLib: JsonLibrary[T, _] = Argo) = ParameterSpec[T](ObjectParamType, jsonLib.JsonFormat.parse, jsonLib.JsonFormat.compact)
 
