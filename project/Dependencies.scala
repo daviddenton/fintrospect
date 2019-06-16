@@ -16,5 +16,6 @@ object Dependencies {
   val scalaTestVersion = "3.0.8"
   val scalaXmlVersion = "1.2.0"
   val sprayJsonVersion = "1.3.5"
+  val javaXActivationVersion = "1.2.0"
 
 }

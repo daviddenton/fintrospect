@@ -44,6 +44,7 @@ lazy val core = project
     "com.twitter" %% "finagle-http" % finagleVersion,
     "com.google.guava" % "guava" % guavaVersion,
     "org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion,
+    "com.sun.activation" % "javax.activation" % javaXActivationVersion,
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
   ))
   .settings(description := "Implement fast, type-safe HTTP contracts for Finagle (aka Twitter RPC)")
