@@ -7,6 +7,10 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 15.1.0
+- use Java 11 to build
+- upgrade some dependencies (including Argo)
+
 ## 15.0.2
 - Upgrade to various dependencies, including Finagle to version `19.5.0`. This has resulted in 
 various API changes due to Finagle dropping the dependency on Netty v3 (now v4).

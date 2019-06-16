@@ -3,7 +3,7 @@ import Dependencies._
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
-  version := "15.0.2",
+  version := "15.1.0",
   scalaVersion := "2.12.8",
   crossScalaVersions := Seq("2.12.8", "2.11.8"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
