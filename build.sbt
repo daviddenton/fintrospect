@@ -3,9 +3,9 @@ import Dependencies._
 lazy val baseSettings = Seq(
   name := "fintrospect",
   organization := "io.fintrospect",
-  version := "16.0.0",
-  scalaVersion := "2.12.12",
-  crossScalaVersions := Seq("2.12.12"),
+  version := "17.0.0",
+  scalaVersion := "2.13.3",
+  crossScalaVersions := Seq("2.13.3"),
   licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   resolvers += "JCenter" at "https://jcenter.bintray.com",
   scalacOptions := Seq(
