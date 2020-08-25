@@ -6,7 +6,7 @@ object Dependencies {
   val circeVersion = "0.13.0" // 13
   val commonsLang3Version = "3.11"
   val finagleVersion = "20.8.0" // 13
-  val handlebarsScalaForkVersion = "2.2.6"
+  val handlebarsScalaForkVersion = "2.3.0"
   val gsonVersion = "2.8.6"
   val guavaVersion = "29.0-jre"
   val jacksonVersion = "2.11.2"

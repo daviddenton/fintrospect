@@ -44,7 +44,7 @@ object Argonaut extends JsonLibrary[Json, Json] {
 
     override def number(value: Double) = jNumber(value)
 
-    override def number(value: BigDecimal) = jNumber(value.doubleValue())
+    override def number(value: BigDecimal) = jNumber(value.doubleValue)
 
     override def number(value: Long) = jNumber(value)
 

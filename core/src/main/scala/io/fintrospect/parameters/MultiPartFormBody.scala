@@ -5,6 +5,7 @@ import com.twitter.finagle.http.exp.{Multipart, MultipartDecoder}
 import io.fintrospect.ContentTypes.MULTIPART_FORM
 import io.fintrospect.util.{Extraction, ExtractionError, ExtractionFailed, Extractor}
 
+import scala.collection.MapView
 import scala.util.{Failure, Success, Try}
 
 case class MultiPartFormBody(formContents: Seq[FormField[_] with Extractor[Form, _]],
@@ -41,8 +42,9 @@ case class MultiPartFormBody(formContents: Seq[FormField[_] with Extractor[Form,
     case _ => ExtractionFailed(formContents.map(f => ExtractionError(f, "Could not parse")))
   }
 
-  private def filterOutFilesWithNoFilename(multipart: Multipart) = multipart.files
+  private def filterOutFilesWithNoFilename(multipart: Multipart): Map[String, Seq[MultiPartFile]] = multipart.files
+    .view
     .mapValues(_.filterNot(_.fileName.isEmpty)
       .map(MultiPartFile(_)))
-    .filterNot(_._2.isEmpty)
+    .filterNot(_._2.isEmpty).toMap
 }

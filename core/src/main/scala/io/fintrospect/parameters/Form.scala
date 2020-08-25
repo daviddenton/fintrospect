@@ -70,7 +70,7 @@ case class Form protected[parameters](fields: Map[String, Seq[String]] = Map.emp
 object Form {
 
   /**
-    * Make a form to send to a downsteam system from a set of bindings
+    * Make a form to send to a downstream system from a set of bindings
     */
   def apply(bindings: Iterable[FormElementBinding]*): Form = bindings.flatten.foldLeft(new Form())((f, b) => b(f))
 }

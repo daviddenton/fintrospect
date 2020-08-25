@@ -102,13 +102,13 @@ lazy val spray = project
   .dependsOn(core % "compile->test")
   .settings(libraryDependencies += "io.spray" %% "spray-json" % sprayJsonVersion)
 
-lazy val msgpack = project
-  .settings(baseSettings)
-  .settings(moduleName := "fintrospect-msgpack")
-  .settings(description := "MsgPack library support for Fintrospect")
-  .dependsOn(core % "compile->test")
-  .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % json4sVersion,
-    "org.velvia" %% "msgpack4s" % "0.6.0"))
+//lazy val msgpack = project
+//  .settings(baseSettings)
+//  .settings(moduleName := "fintrospect-msgpack")
+//  .settings(description := "MsgPack library support for Fintrospect")
+//  .dependsOn(core % "compile->test")
+//  .settings(libraryDependencies ++= Seq("org.json4s" %% "json4s-native" % json4sVersion,
+//    "org.velvia" %% "msgpack4s" % "0.6.0"))
 
 // Templating libraries
 lazy val handlebars = project
@@ -130,5 +130,5 @@ lazy val examples = project.in(file("."))
   .settings(baseSettings)
   .enablePlugins(ScalaUnidocPlugin)
   .settings(moduleName := "fintrospect-examples")
-  .aggregate(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
-  .dependsOn(core, argonaut, circe, gson, jackson, json4s, play, spray, msgpack, handlebars, mustache)
+  .aggregate(core, argonaut, circe, gson, jackson, json4s, play, spray, handlebars, mustache)
+  .dependsOn(core, argonaut, circe, gson, jackson, json4s, play, spray, handlebars, mustache)
