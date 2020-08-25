@@ -89,7 +89,7 @@ class RouteSpecTest extends FunSpec with Matchers {
       val clientWithNameHeader = RouteSpec().taking(nameHeader).at(Get) bindToClient returnsHeaders
 
       it("when there are some, includes them") {
-        responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldBe(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:, name -> bob)")
+        responseFor(clientWithNameHeader(nameHeader --> "bob")) shouldBe(Status.Ok, "Map(name -> bob, X-Fintrospect-Route-Name -> GET:)")
       }
       it("optional query params are ignored if not there") {
         responseFor(clientWithNameHeader()) shouldBe(Status.Ok, "Map(X-Fintrospect-Route-Name -> GET:)")

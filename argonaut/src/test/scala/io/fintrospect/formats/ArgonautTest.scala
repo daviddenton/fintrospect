@@ -67,5 +67,5 @@ class ArgonautJsonFormatTest extends JsonFormatSpec(Argonaut) {
 
   }
 
-  override val expectedJson: String = """{"string":"hello","null":null,"bigInt":12344,"object":{"field1":"aString"},"decimal":1.2,"double":1.2,"array":["world",true],"long":2,"bool":true,"int":10}"""
+  override val expectedJson: String = """{"string":"hello","null":null,"bool":true,"int":10,"bigInt":12344,"object":{"field1":"aString"},"decimal":1.2,"double":1.2,"array":["world",true],"long":2}"""
 }

@@ -98,7 +98,7 @@ object NameAndAgeForm {
     val formErrors = webForm.errors.map(ip => ip.param.name -> ip.reason)
     val allErrors = generalError.map(message => "general" -> message).toSeq ++ formErrors
     new NameAndAgeForm(names,
-      webForm.fields.mapValues(_.mkString(",")),
+      webForm.fields.view.mapValues(_.mkString(",")).toMap,
       Map(allErrors: _*)
     )
   }

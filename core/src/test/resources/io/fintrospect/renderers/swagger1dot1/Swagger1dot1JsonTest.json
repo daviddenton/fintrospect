@@ -3,6 +3,51 @@
   "resourcePath": "/",
   "apis": [
     {
+      "path": "/basepath/welcome/{firstName}/bertrand/{secondName}",
+      "operations": [
+        {
+          "Method": "GET",
+          "nickname": "a friendly endpoint",
+          "notes": null,
+          "produces": [],
+          "consumes": [
+            "application/x-www-form-urlencoded"
+          ],
+          "parameters": [
+            {
+              "name": "firstName",
+              "description": null,
+              "paramType": "path",
+              "required": true,
+              "dataType": "string"
+            },
+            {
+              "name": "secondName",
+              "description": null,
+              "paramType": "path",
+              "required": true,
+              "dataType": "string"
+            },
+            {
+              "name": "query",
+              "description": "description of the query",
+              "paramType": "query",
+              "required": true,
+              "dataType": "boolean"
+            },
+            {
+              "name": "form",
+              "description": "description of the form",
+              "paramType": "form",
+              "required": true,
+              "dataType": "integer"
+            }
+          ],
+          "errorResponses": []
+        }
+      ]
+    },
+    {
       "path": "/basepath/echo/{message}",
       "operations": [
         {
@@ -77,51 +122,6 @@
               "reason": "no way jose"
             }
           ]
-        }
-      ]
-    },
-    {
-      "path": "/basepath/welcome/{firstName}/bertrand/{secondName}",
-      "operations": [
-        {
-          "Method": "GET",
-          "nickname": "a friendly endpoint",
-          "notes": null,
-          "produces": [],
-          "consumes": [
-            "application/x-www-form-urlencoded"
-          ],
-          "parameters": [
-            {
-              "name": "firstName",
-              "description": null,
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
-            {
-              "name": "secondName",
-              "description": null,
-              "paramType": "path",
-              "required": true,
-              "dataType": "string"
-            },
-            {
-              "name": "query",
-              "description": "description of the query",
-              "paramType": "query",
-              "required": true,
-              "dataType": "boolean"
-            },
-            {
-              "name": "form",
-              "description": "description of the form",
-              "paramType": "form",
-              "required": true,
-              "dataType": "integer"
-            }
-          ],
-          "errorResponses": []
         }
       ]
     }
