@@ -7,6 +7,9 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 16.0.0
+- upgrade some dependencies, drop compatibility for Scala 2.11
+
 ## 15.1.0
 - use Java 11 to build
 - upgrade some dependencies (including Argo)
