@@ -1,18 +1,18 @@
 package io.fintrospect.formats
 
-import java.nio.charset.Charset.defaultCharset
-
+import com.google.common.base.Charsets
 import com.twitter.concurrent.AsyncStream
 import com.twitter.finagle.http.{Cookie, Status}
 import com.twitter.io.Buf.Utf8
 import com.twitter.io.Bufs.utf8Buf
-import com.twitter.io.{Bufs, Reader}
+import com.twitter.io.{BufReader, Bufs, Reader}
 import com.twitter.util.Await
 import io.fintrospect.ContentType
 import io.fintrospect.ContentTypes.TEXT_PLAIN
 import io.fintrospect.formats.ResponseBuilder.HttpResponse
 import io.fintrospect.util.HttpRequestResponseUtil.headerOf
 import io.netty.buffer.Unpooled.copiedBuffer
+import org.apache.commons.lang3.CharSet
 import org.scalatest.FunSpec
 import org.scalatest.Matchers._
 
@@ -54,7 +54,7 @@ class ResponseBuilderTest extends FunSpec {
 
   it("should set the content correctly given channel buffer") {
     val response = new ResponseBuilder[PlainTextValue](i => Utf8(i.value), PlainTextValue, e => PlainTextValue(e.getMessage), ContentType("anyContentType"))
-      .withContent(copiedBuffer("hello", defaultCharset())).build()
+      .withContent(copiedBuffer("hello", Charsets.UTF_8)).build()
     response.contentString shouldBe "hello"
   }
 
@@ -88,7 +88,7 @@ class ResponseBuilderTest extends FunSpec {
     val stream = AsyncStream.fromSeq(Seq.range(0, 10).map(i => PlainTextValue(i.toString)))
     val response = new ResponseBuilder[PlainTextValue](i => Utf8(i.value), PlainTextValue, e => PlainTextValue(e.getMessage), ContentType("anyContentType"))
       .withContent(stream).build()
-    new String(Bufs.ownedByteArray(Await.result(Reader.readAll(response.reader)))) shouldBe "0123456789"
+    new String(Bufs.ownedByteArray(Await.result(BufReader.readAll(response.reader)))) shouldBe "0123456789"
   }
 
   it("should set the content correctly when writing to output stream") {
