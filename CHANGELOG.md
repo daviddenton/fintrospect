@@ -7,6 +7,11 @@ The main API is stable, but expect some amount of breaking changes around major 
 - Add strict `Accept` header checking for `RouteSpec`s based on `producing()` settings. Option for non-strictness.
 - Add integrated self-hosted Swagger UI/ReDoc UI module
 
+## 17.0.0
+- Release for Scala 2.13.0, including internal API changes
+- Drop msgpack module - underlying lib is abandoned in GitHub.
+- Drop compatibility for 2.12 as collections are not compatible.
+
 ## 16.0.0
 - upgrade some dependencies, drop compatibility for Scala 2.11
 

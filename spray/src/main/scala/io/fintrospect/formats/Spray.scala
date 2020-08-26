@@ -10,7 +10,7 @@ import spray.json.{JsObject, _}
   */
 object Spray extends JsonLibrary[JsValue, JsValue] {
 
-  object JsonFormat extends JsonFormat[JsValue, JsValue] {
+  object JsonFormat extends  io.fintrospect.formats.JsonFormat[JsValue, JsValue] {
 
     override def parse(in: String) = JsonParser(in)
 

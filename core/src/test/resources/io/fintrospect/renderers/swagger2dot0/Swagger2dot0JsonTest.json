@@ -19,56 +19,6 @@
     }
   ],
   "paths": {
-    "/basepath/welcome/{firstName}/bertrand/{secondName}": {
-      "get": {
-        "tags": [
-          "/basepath"
-        ],
-        "summary": "a friendly endpoint",
-        "description": null,
-        "produces": [],
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "firstName",
-            "description": null,
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "path",
-            "name": "secondName",
-            "description": null,
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "query",
-            "description": "description of the query",
-            "required": true,
-            "type": "boolean"
-          },
-          {
-            "in": "form",
-            "name": "form",
-            "description": "description of the form",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "responses": {},
-        "supportedContentTypes": [],
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
-      }
-    },
     "/basepath/echo/{message}": {
       "post": {
         "tags": [
@@ -175,6 +125,56 @@
         "supportedContentTypes": [
           "application/json"
         ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/basepath/welcome/{firstName}/bertrand/{secondName}": {
+      "get": {
+        "tags": [
+          "/basepath"
+        ],
+        "summary": "a friendly endpoint",
+        "description": null,
+        "produces": [],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "firstName",
+            "description": null,
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "secondName",
+            "description": null,
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "description": "description of the query",
+            "required": true,
+            "type": "boolean"
+          },
+          {
+            "in": "form",
+            "name": "form",
+            "description": "description of the form",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {},
+        "supportedContentTypes": [],
         "security": [
           {
             "api_key": []

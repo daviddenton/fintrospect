@@ -11,7 +11,7 @@ import org.json4s.{Formats, JValue, JsonMethods, NoTypeHints, Serialization, _}
 
 class Json4sFormat[+T](jsonMethods: JsonMethods[T],
                        val serialization: Serialization,
-                       useBigDecimalForDouble: Boolean) extends JsonFormat[JValue, JValue] {
+                       useBigDecimalForDouble: Boolean) extends io.fintrospect.formats.JsonFormat[JValue, JValue] {
 
   override def pretty(in: JValue): String = jsonMethods.pretty(jsonMethods.render(in))
 

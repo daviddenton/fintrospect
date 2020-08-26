@@ -25,7 +25,7 @@ case class UrlEncodedFormBody(formContents: Seq[FormField[_] with Extractor[Form
         (URLDecoder.decode(parts(0), "UTF-8"), if (parts.length > 1) URLDecoder.decode(parts(1), "UTF-8") else "")
       })
       .groupBy(_._1)
-      .mapValues(_.map(_._2))
+      .view.mapValues(_.map(_._2).toSeq).toMap
   }
 
   private def encode(form: Form): String = form.fields.flatMap {

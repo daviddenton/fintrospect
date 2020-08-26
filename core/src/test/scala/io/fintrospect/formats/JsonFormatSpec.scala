@@ -17,7 +17,7 @@ abstract class JsonFormatSpec[X <: Y, Y](val jsonLib: JsonLibrary[X, Y]) extends
 
   describe(format.getClass.getSimpleName) {
     it("creates JSON objects as expected") {
-      format.compact(format.objSym(
+      val str = format.compact(format.objSym(
         'string -> format.string("hello"),
         'object -> format.obj("field1" -> format.string("aString")),
         'int -> format.number(10),
@@ -28,7 +28,9 @@ abstract class JsonFormatSpec[X <: Y, Y](val jsonLib: JsonLibrary[X, Y]) extends
         'bool -> format.boolean(true),
         'null -> format.nullNode(),
         'array -> format.array(format.string("world"), format.boolean(true))
-      )) shouldEqual expectedJson
+      ))
+      println(str)
+      str shouldEqual expectedJson
     }
 
     describe("Parse blows up when invalid") {
