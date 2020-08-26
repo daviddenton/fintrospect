@@ -29,7 +29,6 @@ abstract class JsonFormatSpec[X <: Y, Y](val jsonLib: JsonLibrary[X, Y]) extends
         'null -> format.nullNode(),
         'array -> format.array(format.string("world"), format.boolean(true))
       ))
-      println(str)
       str shouldEqual expectedJson
     }
 
