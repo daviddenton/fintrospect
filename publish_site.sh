@@ -2,7 +2,8 @@
 echo Publishing site for v$1
 set -e
 
-nvm use 5.1.0
+export PATH=~/.nvm/versions/node/v5.1.0/bin:$PATH
+
 npm run setup
 npm run cleanSite
 rm -rf /tmp/site
